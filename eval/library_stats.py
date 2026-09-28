@@ -21,6 +21,32 @@ from differential.sim.observables import (
 from eval import metrics_io
 
 
+def symptom_stats() -> dict[str, object]:
+    """How much a complaint narrows the suspects (needs trained symptom models)."""
+    from differential.config import MODELS_DIR
+    from differential.engine.symptom_prior import FEATURES, SymptomModel
+
+    out: dict[str, object] = {}
+    for cid in CIRCUIT_IDS:
+        path = MODELS_DIR / cid / "symptom_model.json"
+        if not path.exists():
+            continue
+        sm = SymptomModel.load(path)
+        faults = [i for i, h in enumerate(sm.hypotheses) if h != "healthy"]
+        rate = sm.symptomatic_rate
+        assert rate is not None
+        per_feature = {f: int(sum(sm.p_feature[i, j] >= 0.5 for i in faults))
+                       for j, f in enumerate(FEATURES)}
+        out[cid] = {
+            "faults": len(faults),
+            "latent_faults": int(sum(rate[i] < 0.5 for i in faults)),
+            "symptomatic_faults": int(sum(rate[i] >= 0.5 for i in faults)),
+            "faults_per_symptom": per_feature,
+            "max_faults_sharing_a_symptom": max(per_feature.values()),
+        }
+    return out
+
+
 def main() -> None:
     circuits = {}
     for cid in CIRCUIT_IDS:
@@ -56,6 +82,9 @@ def main() -> None:
             "unmodeled_prior": DEFAULT_UNMODELED_PRIOR, "train_draws": 400, "val_draws": 100,
         },
     }
+    sym = symptom_stats()
+    if sym:
+        data["symptoms"] = sym
     metrics_io.update("library", data)
     hc_path = SIM_DIR.parent.parent / "results" / "hand_calcs.json"
     if hc_path.exists():

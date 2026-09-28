@@ -1,0 +1,48 @@
+{
+  "width": 864,
+  "height": 732,
+  "viewBox": [
+    0,
+    0,
+    864,
+    732
+  ],
+  "test_points": {
+    "TP1": {
+      "x": 201.7,
+      "y": 226.42,
+      "hv": false,
+      "node": "vunreg"
+    },
+    "TP2": {
+      "x": 367.3,
+      "y": 316.42,
+      "hv": false,
+      "node": "vz"
+    },
+    "TP3": {
+      "x": 615.7,
+      "y": 226.42,
+      "hv": false,
+      "node": "vreg"
+    },
+    "TP4": {
+      "x": 201.7,
+      "y": 550.42,
+      "hv": true,
+      "node": "hv1"
+    },
+    "TP5": {
+      "x": 459.1,
+      "y": 550.42,
+      "hv": true,
+      "node": "hv2"
+    },
+    "TP6": {
+      "x": 624.7,
+      "y": 550.42,
+      "hv": true,
+      "node": "bplus"
+    }
+  }
+}

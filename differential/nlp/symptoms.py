@@ -226,7 +226,7 @@ def extract(text: str, client: Any | None = None) -> SymptomReport:
     if client is not None and getattr(client, "live", False):
         try:
             return extract_llm(text, client)
-        except Exception:  # noqa: BLE001 - fall back rather than fail the session
+        except Exception:
             report = extract_rules(text)
             report.source = "rules (live extraction failed)"
             return report

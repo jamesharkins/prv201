@@ -51,7 +51,7 @@ def run_circuit(cid: str, n_cases: int, seed: int = 1) -> dict[str, object]:
     pool = df[(df.draw >= 300) & df.ok & df.hypothesis.isin(symptomatic)]
     rows = pool.sample(min(n_cases, len(pool)), random_state=seed)
     out: dict[str, object] = {
-        "cases": int(len(rows)),
+        "cases": len(rows),
         "hypotheses": gen.n_hyp,
         "symptomatic_faults": len(symptomatic),
         "latent_faults": gen.n_hyp - 1 - len(symptomatic),

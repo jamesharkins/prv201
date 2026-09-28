@@ -178,8 +178,8 @@ class _FlowDumper(yaml.SafeDumper):
 
 
 def _dict_representer(dumper: yaml.SafeDumper, data: dict[str, Any]) -> yaml.Node:
-    flow = all(not isinstance(v, (dict, list)) or k in {"elements", "params", "measurements"}
-               for k, v in data.items()) and "ref" in data or "node" in data
+    flow = (all(not isinstance(v, (dict, list)) or k in {"elements", "params", "measurements"}
+               for k, v in data.items()) and "ref" in data) or "node" in data
     return dumper.represent_mapping("tag:yaml.org,2002:map", data.items(), flow_style=flow)
 
 

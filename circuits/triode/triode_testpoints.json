@@ -1,0 +1,36 @@
+{
+  "width": 828,
+  "height": 540,
+  "viewBox": [
+    0,
+    0,
+    828,
+    540
+  ],
+  "test_points": {
+    "TP7": {
+      "x": 457.3,
+      "y": 327.13,
+      "hv": false,
+      "node": "grid"
+    },
+    "TP8": {
+      "x": 511.3,
+      "y": 385.45,
+      "hv": false,
+      "node": "cath"
+    },
+    "TP9": {
+      "x": 511.3,
+      "y": 264.13,
+      "hv": true,
+      "node": "plate"
+    },
+    "TP10": {
+      "x": 662.5,
+      "y": 237.13,
+      "hv": false,
+      "node": "tone_in"
+    }
+  }
+}

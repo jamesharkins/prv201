@@ -1,0 +1,48 @@
+{
+  "width": 960,
+  "height": 624,
+  "viewBox": [
+    0,
+    0,
+    960,
+    624
+  ],
+  "test_points": {
+    "TP12": {
+      "x": 259.3,
+      "y": 327.13,
+      "hv": false,
+      "node": "tone_out"
+    },
+    "TP13": {
+      "x": 435.7,
+      "y": 327.13,
+      "hv": false,
+      "node": "op_in"
+    },
+    "TP14": {
+      "x": 478.9,
+      "y": 435.13,
+      "hv": false,
+      "node": "op_fb"
+    },
+    "TP15": {
+      "x": 567.1,
+      "y": 349.63,
+      "hv": false,
+      "node": "op_pin"
+    },
+    "TP16": {
+      "x": 367.3,
+      "y": 435.13,
+      "hv": false,
+      "node": "vref"
+    },
+    "TP17": {
+      "x": 777.7,
+      "y": 349.63,
+      "hv": false,
+      "node": "drv_in"
+    }
+  }
+}

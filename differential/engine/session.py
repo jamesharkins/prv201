@@ -33,7 +33,9 @@ from differential.sim.measurement import (
 )
 from differential.sim.observables import ObservableSpec
 
-POLICIES = ("eig_per_cost", "eig", "fixed_order", "random")
+POLICIES = ("eig_per_cost", "eig", "fixed_order", "half_split", "random")
+SCRIPTED = ("fixed_order", "half_split")
+NORMAL_BAND_SD = 3.0
 LIKELIHOODS = ("generative", "discriminative")
 DEFAULT_BUDGET = 40.0
 STOP_THRESHOLD = 0.90
@@ -234,7 +236,7 @@ class DiagnosisSession:
         for key, o in self._obs.items():
             if key in taken or o.cost > self.remaining + 1e-9:
                 continue
-            if o.is_lift and (not self.allow_lifts or self.policy in ("fixed_order", "random")):
+            if o.is_lift and (not self.allow_lifts or self.policy in (*SCRIPTED, "random")):
                 continue
             out.append(o)
         return out
@@ -244,7 +246,7 @@ class DiagnosisSession:
         if g.max() >= self.stop_threshold:
             return True, "confident"
         cands = self.candidates()
-        if self.policy == "fixed_order":
+        if self.policy in SCRIPTED:
             cands = [c for c in cands if c.key in self._order]
         if not cands:
             return True, "budget" if self.remaining < max(o.cost for o in self._obs.values()) \
@@ -256,12 +258,14 @@ class DiagnosisSession:
         cands = self.candidates()
         if not cands:
             return None
-        if self.policy == "fixed_order":
-            taken = self.taken()
-            for key in self._order:
-                if key not in taken and key in {c.key for c in cands}:
-                    return Recommendation(self._obs[key], 0.0, 0.0, policy=self.policy)
-            return None
+        if self.policy in SCRIPTED:
+            avail = {c.key for c in cands}
+            nxt = self._half_split_next(avail) if self.policy == "half_split" else None
+            if nxt is None:
+                taken = self.taken()
+                nxt = next((k for k in self._order if k not in taken and k in avail), None)
+            return None if nxt is None else Recommendation(self._obs[nxt], 0.0, 0.0,
+                                                           policy=self.policy)
         if self.policy == "random":
             pool = [c for c in cands if not c.is_lift]
             if not pool:
@@ -341,6 +345,70 @@ class DiagnosisSession:
         if self._last_rec is None:
             return math.inf
         return self._last_rec.eig_bits
+
+    # -------------------------------------------------------- half-split
+    def _healthy_band(self, key: str) -> tuple[float, float]:
+        """Healthy range of a reading in engine space (mixture mean +- 3 sd, noise included):
+        what a technician reads off a service-manual chart with its tolerances."""
+        if not hasattr(self, "_bands"):
+            h = self.gen.hypotheses.index("healthy")
+            sel = self.gen.comp_hyp == h
+            w = np.exp(self.gen.comp_logw[sel] - logsumexp(self.gen.comp_logw[sel]))
+            mu = self.gen.comp_mean[sel]
+            var = np.diagonal(self.gen.comp_cov[sel], axis1=1, axis2=2)
+            m = (w[:, None] * mu).sum(axis=0)
+            v = (w[:, None] * (var + mu**2)).sum(axis=0) - m**2
+            sd = np.sqrt(np.maximum(v, 1e-12))
+            self._bands = {k: (float(m[i] - NORMAL_BAND_SD * sd[i]),
+                               float(m[i] + NORMAL_BAND_SD * sd[i]))
+                           for i, k in enumerate(self.gen.keys)}
+        return self._bands[key]
+
+    def _is_normal(self, r: Reading) -> bool:
+        if r.engine_value is None or r.key not in self.gen.keys:
+            return True
+        lo, hi = self._healthy_band(r.key)
+        return lo <= r.engine_value <= hi
+
+    def _half_split_next(self, avail: set[str]) -> str | None:
+        """Scripted expert practice: supply rails first; then, if the output is wrong,
+        half-split the signal path with the 1 kHz test tone to find the first stage whose
+        output is out of range; then that stage's (and the preceding stage's) DC points.
+        Returns None to fall back to the fixed chart order."""
+        c = self.bundle.circuit
+        got = {r.key: r for r in self.readings}
+        rails = [k for k in self._order if k.startswith("dc:")
+                 and (c.test_point(k[3:]).stage.startswith("psu") or k[3:] in ("TP16", "TP23"))]
+        for k in rails:
+            if k not in got:
+                return k if k in avail else None
+        if any(not self._is_normal(got[k]) for k in rails):
+            psu_dc = [f"dc:{tp.id}" for tp in c.test_points
+                      if tp.stage.startswith("psu") and "dc" in tp.measurements]
+            return next((k for k in psu_dc if k not in got and k in avail), None)
+        sig = [f"ac:{tp.id}" for tp in c.test_points if "ac" in tp.measurements]
+        if not sig:
+            return None
+        if sig[-1] not in got:
+            return sig[-1] if sig[-1] in avail else None
+        if self._is_normal(got[sig[-1]]):
+            return None  # gain path fine: continue down the chart (DC, hum, response)
+        lo, hi = 0, len(sig) - 1
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if sig[mid] not in got:
+                return sig[mid] if sig[mid] in avail else None
+            if self._is_normal(got[sig[mid]]):
+                lo = mid + 1
+            else:
+                hi = mid
+        first_bad = c.test_point(sig[hi][3:])
+        stages = [first_bad.stage]
+        if hi > 0:
+            stages.insert(0, c.test_point(sig[hi - 1][3:]).stage)
+        stage_dc = [f"dc:{tp.id}" for tp in c.test_points
+                    if tp.stage in stages and "dc" in tp.measurements]
+        return next((k for k in stage_dc if k not in got and k in avail), None)
 
     # --------------------------------------------------------- predictions
     def expected_reading(self, key: str, hypothesis: str) -> tuple[float, float, float] | None:

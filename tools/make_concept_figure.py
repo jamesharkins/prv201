@@ -63,10 +63,10 @@ def main() -> None:
     w1, gap = 0.2025, 0.027
     xs = [0.075 + i * (w1 + gap) for i in range(4)]
     row1 = [
-        ("Reference circuits", "original ngspice netlists:\n5 blocks + channel strip,\ntest points, HV flags"),
-        ("Fault catalog", "every single-part fault\n× component tolerances\n(datasheet spreads)"),
-        ("Monte Carlo SPICE", "DC, AC gain, 120 Hz hum,\nTHD for every draw; seeds\nand hashes in a manifest"),
-        ("Learned physics", "fault likelihoods (GMM,\nboosted trees), ambiguity\ngroups, symptom priors"),
+        ("Circuit model", "netlist from the schematic\n(here: 5 original blocks\n+ a channel strip)"),
+        ("Fault catalog", "every single-part fault\n× part tolerances\n(datasheet spreads)"),
+        ("Monte Carlo SPICE", "DC, gain, 120 Hz hum and\ndistortion at every test\npoint, for every unit"),
+        ("Fault signatures", "learned likelihoods\n(GMM, boosted trees),\nambiguity groups"),
     ]
     h1 = box_height(3)
     y1 = 0.985 - h1
@@ -80,7 +80,7 @@ def main() -> None:
     hb = box_height(4)
     yb = y1 - 0.105 - hb
     xb, wb = 0.47, 0.205
-    box(ax, xb, yb, wb, "Bayesian belief", "prior from symptoms ×\nlikelihood of each reading;\nan “unmodeled” hypothesis\ncatches multiple faults",
+    box(ax, xb, yb, wb, "Bayesian belief", "a probability for every\nsuspect, updated after each\nreading; “no single fault\nfits” is a hypothesis too",
         BLUE, BLUE_T)
     h3 = box_height(3)
     yc = yb + (hb - h3) / 2
@@ -91,7 +91,7 @@ def main() -> None:
 
     xr, wr = 0.715, 0.27
     yn = yb + hb - h3
-    box(ax, xr, yn, wr, "Next measurement", "maximum expected information\nper unit of effort, explained\nin plain language by the agent",
+    box(ax, xr, yn, wr, "Next measurement", "most suspects ruled out per\nunit of effort, with expected\nreadings; explained in plain words",
         BLUE, BLUE_T)
     h2 = box_height(2)
     yt = yn - 0.075 - h2
@@ -108,14 +108,14 @@ def main() -> None:
     ht = box_height(2)
     yk = yb - 0.06 - ht
     assert yk > 0.125, yk
-    box(ax, xb, yk, wb, "Repair ticket", "at ≥ 90% confidence:\ndiagnosis + evidence trail", GRAY, GRAY_T)
+    box(ax, xb, yk, wb, "Repair ticket", "at ≥ 90% confidence: diagnosis,\nevidence trail, technician sign-off", GRAY, GRAY_T)
     arrow(ax, (xb + wb / 2, yb - 0.004), (xb + wb / 2, yk + ht + 0.004), GRAY)
 
     # Guardrails band
     ax.add_patch(FancyBboxPatch((0.075, 0.02), 0.91, 0.085, boxstyle="round,pad=0.004,rounding_size=0.012",
                                 linewidth=0.9, edgecolor="#c3c2b7", facecolor="#f7f6f3"))
-    ax.text(0.53, 0.0625, "Deterministic safety layer (HV warnings, refusals)  ·  numeric grounding check  ·  "
-            "service notes treated as data  ·  human confirms every reading",
+    ax.text(0.53, 0.0625, "Safety rules (worst-case high-voltage map, discharge lock, refusals)  ·  every number traced  ·  "
+            "retrieved text treated as data",
             ha="center", va="center", fontsize=6.6, color="#3a3936")
     lane_label(ax, 0.0625, "IN CODE")
     figstyle.save(fig, ROOT / "results" / "figures" / "concept")

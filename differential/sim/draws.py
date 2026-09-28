@@ -76,8 +76,21 @@ def _log_uniform(rng: np.random.Generator, lo: float, hi: float) -> float:
     return float(math.exp(rng.uniform(math.log(lo), math.log(hi))))
 
 
-def healthy_draw(circuit: CircuitSpec, rng: np.random.Generator) -> Draw:
-    """Draw every tolerance-affected parameter of a healthy unit."""
+def _widen(lo: float, hi: float, scale: float) -> tuple[float, float]:
+    """Widen a multiplicative spread [lo, hi] around its geometric centre."""
+    if scale == 1.0:
+        return lo, hi
+    c = math.sqrt(lo * hi)
+    return c * (lo / c) ** scale, c * (hi / c) ** scale
+
+
+def healthy_draw(circuit: CircuitSpec, rng: np.random.Generator, tol_scale: float = 1.0) -> Draw:
+    """Draw every tolerance-affected parameter of a healthy unit.
+
+    ``tol_scale`` widens every spread (the stress set uses 1.5); at 1.0 the random
+    stream and the values are exactly those of the training data.
+    """
+    s = tol_scale
     d = Draw()
     net = circuit.netlist
     for comp in circuit.components:
@@ -85,7 +98,8 @@ def healthy_draw(circuit: CircuitSpec, rng: np.random.Generator) -> Draw:
         if kind in ("resistor", "film_cap", "electrolytic"):
             nominal = comp.nominal
             assert nominal is not None and comp.tolerance is not None
-            val = nominal * (1.0 + _trunc_normal(rng, comp.tolerance / 2, comp.tolerance))
+            tol = comp.tolerance * s
+            val = nominal * (1.0 + _trunc_normal(rng, tol / 2, tol))
             d.alters[comp.main_element] = val
             d.lift[comp.ref] = val
             if kind == "electrolytic":
@@ -96,38 +110,42 @@ def healthy_draw(circuit: CircuitSpec, rng: np.random.Generator) -> Draw:
         elif kind == "potentiometer":
             nominal = comp.nominal
             assert nominal is not None and comp.tolerance is not None and comp.setting is not None
-            total = nominal * (1.0 + _trunc_normal(rng, comp.tolerance / 2, comp.tolerance))
-            setting = min(0.99, max(0.01, comp.setting + float(rng.uniform(-0.02, 0.02))))
+            tol = comp.tolerance * s
+            total = nominal * (1.0 + _trunc_normal(rng, tol / 2, tol))
+            setting = min(0.99, max(0.01, comp.setting + float(rng.uniform(-0.02 * s, 0.02 * s))))
             d.alters[comp.elements["upper"]] = total * (1.0 - setting)
             d.alters[comp.elements["lower"]] = total * setting
             d.alters[comp.elements["wiper"]] = float(rng.uniform(0.5, 2.0))
             d.lift[comp.ref] = total
         elif kind == "bjt":
             assert comp.model is not None
-            lo, hi = BETA_SCALE_RANGE[comp.family]
+            lo, hi = _widen(*BETA_SCALE_RANGE[comp.family], s)
             scale = _log_uniform(rng, lo, hi)
             d.altermods[(device_model_name(comp), "bf")] = MODEL_BF[comp.model] * scale
             d.lift[comp.ref] = scale  # relative hFE as read on a transistor tester
         elif kind == "zener":
-            dv = ZENER_VZ_NOMINAL * _trunc_normal(rng, 0.025, 0.05)
+            dv = ZENER_VZ_NOMINAL * _trunc_normal(rng, 0.025 * s, 0.05 * s)
             d.alters[comp.params["vz"]] = ZENER_VZ_SOURCE + dv
             d.lift[comp.ref] = ZENER_VZ_NOMINAL + dv
         elif kind == "diode":
             d.lift[comp.ref] = 1.0  # forward drop reads normal on a diode test
         elif kind == "triode":
             d.alters[comp.params["pv"]] = 1.0
-            d.alters[comp.params["mu"]] = TRIODE_MU * float(rng.uniform(0.9, 1.1))
-            d.alters[comp.params["kg"]] = TRIODE_KG1 * _log_uniform(rng, 0.8, 1.25)
+            mu_lo, mu_hi = (0.9, 1.1) if s == 1.0 else (1 - 0.1 * s, 1 + 0.1 * s)
+            d.alters[comp.params["mu"]] = TRIODE_MU * float(rng.uniform(mu_lo, mu_hi))
+            kg_lo, kg_hi = _widen(0.8, 1.25, s)
+            d.alters[comp.params["kg"]] = TRIODE_KG1 * _log_uniform(rng, kg_lo, kg_hi)
             d.lift[comp.ref] = TRIODE_KG1 / d.alters[comp.params["kg"]]  # relative emission
         elif kind == "opamp":
-            d.alters[comp.params["gbw"]] = OPAMP_GBW_MHZ * float(rng.uniform(0.7, 1.3))
+            g_lo, g_hi = (0.7, 1.3) if s == 1.0 else (1 - 0.3 * s, 1 + 0.3 * s)
+            d.alters[comp.params["gbw"]] = OPAMP_GBW_MHZ * float(rng.uniform(g_lo, g_hi))
             d.alters[comp.params["dead"]] = 0.0
             d.alters[comp.params["rail"]] = 1.0
             d.lift[comp.ref] = d.alters[comp.params["gbw"]] / OPAMP_GBW_MHZ
         else:  # pragma: no cover - guarded by the YAML schema test
             raise ValueError(f"unknown kind {kind}")
     if circuit.hum is not None:
-        mains = 1.0 + float(rng.uniform(-MAINS_TOL, MAINS_TOL))
+        mains = 1.0 + float(rng.uniform(-MAINS_TOL * s, MAINS_TOL * s))
         d.severity["mains_factor"] = mains
         for rect in circuit.hum.rectifiers:
             d.alters[rect.pk_source] = rect.pk_nominal * mains

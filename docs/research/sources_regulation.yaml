@@ -897,6 +897,12 @@
       quote: "If the capacitors or associated equipment are handled in meeting this requirement, they shall be treated as energized."
     - claim: "A qualified person must verify the de-energised condition with test equipment (29 CFR 1910.333(b)(2)(iv)(B))."
       quote: "A qualified person shall use test equipment to test the circuit elements and electrical parts of equipment to which employees will be exposed and shall verify that the circuit elements and equipment parts are deenergized."
+    - claim: "The de-energising rule has an exception: it applies unless de-energising introduces additional or increased hazards or is infeasible due to equipment design or operational limitations (29 CFR 1910.333(a)(1)). Verified 2026-09-28 in the same corpus (commit 8c08921)."
+      quote: "unless the employer can demonstrate that deenergizing introduces additional or increased hazards or is infeasible due to equipment design or operational limitations"
+    - claim: "Note 2 to 1910.333(a)(1) gives testing of electric circuits that can only be performed energised as an example of work that may be done on or near energised parts."
+      quote: "Examples of work that may be performed on or near energized circuit parts because of infeasibility due to equipment design or operational limitations include testing of electric circuits that can only be performed with the circuit energized"
+    - claim: "Only qualified persons may work on circuit parts that have not been de-energised, and they must know the precautionary techniques, protective equipment, insulating and shielding materials and insulated tools (29 CFR 1910.333(c)(2))."
+      quote: "Only qualified persons may work on electric circuit parts or equipment that have not been deenergized under the procedures of paragraph (b) of this section. Such persons shall be capable of working safely on energized circuits and shall be familiar with the proper use of special precautionary techniques, personal protective equipment, insulating and shielding materials, and insulated tools."
 
 - key: osha_1910_334
   type: regulation

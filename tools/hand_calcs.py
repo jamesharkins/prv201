@@ -382,7 +382,7 @@ def main() -> None:
     ratios = [h["ratio"] for h in hum if h["ratio"] is not None]
     lines += [
         "",
-        f"Across these conditions the small-signal model over-states the transient ripple",
+        "Across these conditions the small-signal model over-states the transient ripple",
         f"fundamental by {100 * (min(ratios) - 1):.1f} % to {100 * (max(ratios) - 1):.1f} %"
         " (the 2 Idc amplitude assumes",
         "narrow charging pulses; real conduction pulses are wider, which lowers the fundamental).",

@@ -208,7 +208,7 @@ class LLMClient:
                     out = handler(block["name"], dict(block.get("input") or {}))
                     results.append({"type": "tool_result", "tool_use_id": block["id"],
                                     "content": json.dumps(out, default=str)})
-                except Exception as exc:  # noqa: BLE001 - reported to the model as a tool error
+                except Exception as exc:
                     results.append({"type": "tool_result", "tool_use_id": block["id"],
                                     "content": f"Error: {exc}", "is_error": True})
             msgs.append({"role": "user", "content": results})

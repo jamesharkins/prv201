@@ -7,7 +7,6 @@ measurement of the same unit. That makes paired comparisons sharp.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import time
 from concurrent.futures import ProcessPoolExecutor
@@ -23,6 +22,7 @@ from differential.config import EVAL_DATA_DIR, MODELS_DIR, n_workers
 from differential.engine.bundle import EngineBundle, load_bundle
 from differential.engine.generative import GenerativeModel
 from differential.engine.session import DiagnosisSession
+from differential.instruments.simulated import noise_seed
 from differential.nlp.symptoms import extract_rules
 from differential.sim.faults import UNMODELED, parse_fault_id, part_kind
 from differential.sim.measurement import simulate_lift, simulate_reading
@@ -44,6 +44,7 @@ class SystemSpec:
 SYSTEMS: dict[str, SystemSpec] = {
     "random": SystemSpec("random", policy="random"),
     "fixed_order": SystemSpec("fixed_order", policy="fixed_order"),
+    "half_split": SystemSpec("half_split", policy="half_split"),
     "engine_gen": SystemSpec("engine_gen"),
     "engine_disc": SystemSpec("engine_disc", likelihood="discriminative"),
     "hybrid": SystemSpec("hybrid", prior="symptoms_rules"),
@@ -57,11 +58,6 @@ SYSTEMS: dict[str, SystemSpec] = {
     "engine_n100": SystemSpec("engine_n100", model_variant="n100"),
     "engine_n200": SystemSpec("engine_n200", model_variant="n200"),
 }
-
-
-def noise_seed(case_id: str, key: str) -> int:
-    h = hashlib.sha256(f"{case_id}|{key}".encode()).digest()
-    return int.from_bytes(h[:8], "little")
 
 
 @lru_cache(maxsize=32)

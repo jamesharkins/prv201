@@ -1,0 +1,150 @@
+{
+  "width": 2436,
+  "height": 1008,
+  "viewBox": [
+    0,
+    0,
+    2436,
+    1008
+  ],
+  "test_points": {
+    "TP1": {
+      "x": 1019.62,
+      "y": 222.82,
+      "hv": false,
+      "node": "vunreg"
+    },
+    "TP2": {
+      "x": 1185.22,
+      "y": 312.82,
+      "hv": false,
+      "node": "vz"
+    },
+    "TP3": {
+      "x": 1433.62,
+      "y": 222.82,
+      "hv": false,
+      "node": "vreg"
+    },
+    "TP4": {
+      "x": 201.7,
+      "y": 222.82,
+      "hv": true,
+      "node": "hv1"
+    },
+    "TP5": {
+      "x": 459.1,
+      "y": 222.82,
+      "hv": true,
+      "node": "hv2"
+    },
+    "TP6": {
+      "x": 624.7,
+      "y": 222.82,
+      "hv": true,
+      "node": "bplus"
+    },
+    "TP7": {
+      "x": 597.7,
+      "y": 600.82,
+      "hv": false,
+      "node": "grid"
+    },
+    "TP8": {
+      "x": 651.7,
+      "y": 659.14,
+      "hv": false,
+      "node": "cath"
+    },
+    "TP9": {
+      "x": 651.7,
+      "y": 537.82,
+      "hv": true,
+      "node": "plate"
+    },
+    "TP10": {
+      "x": 813.7,
+      "y": 510.82,
+      "hv": false,
+      "node": "tone_in"
+    },
+    "TP11": {
+      "x": 995.5,
+      "y": 771.82,
+      "hv": false,
+      "node": "bass_w"
+    },
+    "TP12": {
+      "x": 1200.7,
+      "y": 555.82,
+      "hv": false,
+      "node": "tone_out"
+    },
+    "TP13": {
+      "x": 1404.1,
+      "y": 555.82,
+      "hv": false,
+      "node": "op_in"
+    },
+    "TP14": {
+      "x": 1447.3,
+      "y": 663.82,
+      "hv": false,
+      "node": "op_fb"
+    },
+    "TP15": {
+      "x": 1535.5,
+      "y": 578.32,
+      "hv": false,
+      "node": "op_pin"
+    },
+    "TP16": {
+      "x": 1335.7,
+      "y": 663.82,
+      "hv": false,
+      "node": "vref"
+    },
+    "TP17": {
+      "x": 1746.1,
+      "y": 578.32,
+      "hv": false,
+      "node": "drv_in"
+    },
+    "TP18": {
+      "x": 1897.3,
+      "y": 578.32,
+      "hv": false,
+      "node": "q1b"
+    },
+    "TP19": {
+      "x": 1947.76,
+      "y": 614.32,
+      "hv": false,
+      "node": "q1e"
+    },
+    "TP20": {
+      "x": 1974.76,
+      "y": 515.32,
+      "hv": false,
+      "node": "q1c"
+    },
+    "TP21": {
+      "x": 2028.82,
+      "y": 558.52,
+      "hv": false,
+      "node": "q2e"
+    },
+    "TP22": {
+      "x": 2250.1,
+      "y": 578.32,
+      "hv": false,
+      "node": "out"
+    },
+    "TP23": {
+      "x": 1836.1,
+      "y": 380.32,
+      "hv": false,
+      "node": "vcc_d"
+    }
+  }
+}

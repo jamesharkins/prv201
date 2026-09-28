@@ -38,6 +38,7 @@ from differential.sim.measurement import simulate_lift, simulate_reading
 from differential.sim.montecarlo import BASE_SEED, load_dataset
 
 OFFSETS = [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 6.0]
+MC_VARIANTS = (50, 100, 200)  # Monte Carlo sample-size ablation (the full model uses 400)
 FPR_BUDGET = 0.05
 
 
@@ -112,9 +113,9 @@ def train_circuit(cid: str, skip_disc: bool = False) -> dict[str, object]:
     cal = calibrate_unmodeled(bundle, va_df, unmod_df)
     bundle.meta = {
         "circuit": cid,
-        "train_rows": int(len(tr.X)),
-        "val_rows": int(len(va.X)),
-        "components_total": int(len(gen.comp_hyp)),
+        "train_rows": len(tr.X),
+        "val_rows": len(va.X),
+        "components_total": len(gen.comp_hyp),
         "groups": int(groups.n_groups),
         "nontrivial_groups": [g for g in groups.nontrivial()],
         "symptom_eps": sm.eps,
@@ -125,6 +126,10 @@ def train_circuit(cid: str, skip_disc: bool = False) -> dict[str, object]:
     }
     d = bundle.save()
     sm.save(d / "symptom_model.json")
+    # Sample-size ablation: the same generative model fitted on fewer draws per fault.
+    for n in MC_VARIANTS:
+        GenerativeModel.fit(build_engine_data(cid, tr_df, max_draws=n),
+                            workers=n_workers()).save(d / f"generative_n{n}.npz")
     return bundle.meta
 
 

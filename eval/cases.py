@@ -29,6 +29,8 @@ from differential.sim.montecarlo import BASE_SEED, SPLIT_INDEX, Job, load_datase
 N_TEST = {COMPOSITE_ID: 500, **dict.fromkeys(BLOCK_IDS, 100)}
 N_UNMOD_TEST = {COMPOSITE_ID: 50, **dict.fromkeys(BLOCK_IDS, 10)}
 N_UNMOD_VAL = {COMPOSITE_ID: 60, **dict.fromkeys(BLOCK_IDS, 20)}
+# Stress sets (channel strip only): tolerances 1.5x wider than the models assume.
+N_WIDE = {"test_wide": 300, "pilot_wide": 150}
 MAX_REDRAWS = 20
 
 
@@ -65,7 +67,7 @@ def unmodeled_hypotheses(cid: str, n: int, rng: np.random.Generator, sm: Symptom
     passive = [comp.ref for comp in c.components if comp.kind in ("resistor", "film_cap", "electrolytic")]
     bridges = _bridge_pairs(cid)
     out = []
-    n_double = int(round(0.7 * n))
+    n_double = round(0.7 * n)
     while len(out) < n_double:
         a, b = rng.choice(len(symp), size=2, replace=False)
         fa, fb = parse_fault_id(symp[a]), parse_fault_id(symp[b])
@@ -94,6 +96,9 @@ def build_split(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, obje
     if split == "test":
         pool = symptomatic_faults(sm)
         hyps = [pool[int(rng.integers(len(pool)))] for _ in range(N_TEST[cid])]
+    elif split in N_WIDE:
+        pool = symptomatic_faults(sm)
+        hyps = [pool[int(rng.integers(len(pool)))] for _ in range(N_WIDE[split])]
     elif split == "unmodeled_test":
         hyps = unmodeled_hypotheses(cid, N_UNMOD_TEST[cid], rng, sm)
     elif split == "unmodeled_val":
@@ -112,7 +117,7 @@ def build_split(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, obje
         for i, h in pending:
             row = df.loc[(100000 + i, attempts[i])]
             facts = derive_facts(circ, sm.reference, row) if bool(row["ok"]) else None
-            need_symptom = split == "test"
+            need_symptom = split == "test" or split in N_WIDE
             if row["ok"] and (facts is not None) and (facts.any or not need_symptom):
                 rec = row.to_dict()
                 rec.update({"case_id": f"{cid}-{split}-{i:04d}", "case_index": i, "circuit": cid,
@@ -176,10 +181,6 @@ def main() -> None:
             print(f"{cid} {split}: {n} cases ({bad} failed)", flush=True)
 
 
-if __name__ == "__main__":
-    main()
-
-
 def load_cases(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, object]]]:
     df = pd.read_parquet(EVAL_DATA_DIR / f"cases__{cid}__{split}.parquet")
     meta = [json.loads(line) for line in
@@ -189,3 +190,7 @@ def load_cases(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, objec
 
 def all_catalog_ids(cid: str) -> list[str]:
     return [f.id for f in fault_catalog(get_circuit(cid))]
+
+
+if __name__ == "__main__":
+    main()

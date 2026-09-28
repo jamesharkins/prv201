@@ -47,7 +47,11 @@ SPLIT_INDEX = {
     "unmodeled_val": 3,
     "unmodeled_test": 4,
     "demo": 5,
+    "test_wide": 6,
+    "pilot_wide": 7,
 }
+# Stress splits: every tolerance spread widened (target T18, sim-to-real proxy).
+TOL_SCALE = {"test_wide": 1.5, "pilot_wide": 1.5}
 CHUNK = 50
 log = logging.getLogger("differential.sim")
 
@@ -85,7 +89,7 @@ def make_draw(circuit_id: str, split: str, hyp_index: int, hypothesis: str, draw
     """Deterministically construct the parameter draw for one simulation."""
     circuit = get_circuit(circuit_id)
     rng = draw_rng(circuit_id, split, hyp_index, draw)
-    d = healthy_draw(circuit, rng)
+    d = healthy_draw(circuit, rng, TOL_SCALE.get(split, 1.0))
     for fid in hypothesis.split("+"):
         apply_fault(circuit, d, parse_fault_id(fid), rng)
     return d
@@ -221,7 +225,7 @@ def run_jobs(
         all_fail = [json.loads(line) for line in fpath.read_text().splitlines() if line.strip()]
     if not df.empty:
         df = df.sort_values(["hyp_index", "draw"], kind="stable").reset_index(drop=True)
-        df = df.drop_duplicates(subset=["hypothesis", "draw", "split"], keep="last")
+        df = df.drop_duplicates(subset=["hyp_index", "hypothesis", "draw", "split"], keep="last")
     del job_keys
     return df, all_fail
 
@@ -305,7 +309,7 @@ def write_manifest(entries: dict[str, Any], path: Path | None = None) -> Path:
 
 def summarise(df: pd.DataFrame) -> dict[str, Any]:
     return {
-        "rows": int(len(df)),
+        "rows": len(df),
         "hypotheses": int(df["hypothesis"].nunique()) if len(df) else 0,
         "failed_draws": int((~df["ok"]).sum()) if len(df) else 0,
         "retried_draws": int((df["attempt"] > 0).sum()) if len(df) else 0,

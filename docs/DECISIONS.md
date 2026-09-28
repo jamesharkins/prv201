@@ -244,3 +244,105 @@ deleted.
   (the earlier runs are not used anywhere).
 - **Consequences.** Regulated rail is 15.15 V nominal. The service manual
   analogue (expected readings) now matches bench intuition at every test point.
+
+## ADR-020 - Fault-conditioned hazard map and the unsoldering lock (M1 review)
+
+- **Context.** Round-1 reviewers (repair engineer, ethics scholar) pointed out
+  that a unit on the bench is faulted, and a fault can put B+ on a node that is
+  low-voltage in normal operation. Classifying test points by their normal
+  operating voltage alone under-warns.
+- **Options.** (a) Keep the YAML `hv` flag (normal operation). (b) Treat every
+  node of a tube chassis as high voltage (alarm fatigue on low-voltage blocks).
+  (c) Classify every test point by its worst case over all simulated faults and
+  tolerance draws.
+- **Decision.** (c). `eval/hv_audit.py` writes `differential/safety/hv_map.json`
+  (levels `hv`, `hv_under_fault`, `lv`; unknown points fail closed). Warnings for
+  such points prescribe hands-off measurement, isolation and discharge through a
+  resistor tool with re-check. In any circuit with high voltage, lift steps are
+  locked until the technician reports a filter-capacitor reading below 2 V
+  (`confirm_discharge`), and re-locked by the next powered measurement. Effort
+  costs keep the normal-operation definition (+2), so earlier pilot numbers stay
+  comparable.
+- **Consequences.** On the channel strip 6 of 23 test points can exceed 50 V
+  (4 normally, 2 only under a fault: TP8 with R204 open, TP10 with C203 shorted).
+  T15 checks every possible recommendation against these rules exhaustively.
+
+## ADR-021 - Half-split tracing baseline
+
+- **Context.** Reviewers called the fixed-order chart a straw man: technicians
+  check the rails, then half-split the signal path with a test tone.
+- **Decision.** Add a scripted `half_split` policy: rails DC first; if a rail is
+  outside its healthy band, the supply's DC points; otherwise check the output
+  gain, binary-search the 1 kHz gain test points for the first out-of-band stage,
+  then that stage's and the preceding stage's DC points; then the fixed chart.
+  "Out of band" means outside the healthy mixture mean +- 3 sd (noise included),
+  the analogue of a service-manual tolerance. It uses the same inference and
+  stopping rule as the other scripted baseline. Target T9 compares against it.
+
+## ADR-022 - Tolerance stress set (sim-to-real proxy)
+
+- **Context.** All test units came from the same generator as the training data.
+- **Decision.** Splits `pilot_wide` and `test_wide` (channel strip, 150 and 300
+  units) draw every tolerance spread 1.5 times wider than the models assume
+  (passives, transistor gain, zener voltage, tube constants, op-amp bandwidth,
+  mains). At scale 1.0 the random stream and values are bit-identical to the
+  training data (checked). Target T6 bounds the accuracy drop; T7 adds a real
+  hardware check on the low-voltage fault board.
+
+## ADR-023 - LLM baselines protocol
+
+- **Decision.** Two baselines on a 150-unit subset stratified by part kind
+  (75 channel strip, 15 per block): `llm_only` and `llm_sim`. Both receive the
+  complaint, the parts list, the voltage chart with healthy ranges, the fault
+  list, costs and the 40-unit budget; they call `measure(key)` and get exactly
+  the readings the other systems get (same noise seed), and end with
+  `diagnose(ranked_faults, confidence)`. `llm_sim` can also call
+  `simulate_fault(fault)` for the median readings of any fault. Scored group
+  aware like every other system. Implemented in `eval/llm_baseline.py`; pending
+  an API key (no key in this build).
+
+## ADR-024 - Target set v2 (before locking)
+
+- **Context.** Round-1 grading (seven reviewers) found that the targets did not
+  test the headline claims (superiority), omitted a hardware check, relied on a
+  one-bin calibration test, a circular recap-bias metric and an unsized red-team
+  claim. The targets had not been locked (no tag yet), so they were revised.
+- **Decision.** 21 targets mapped to objectives O1-O5, 7 marked primary. New:
+  superiority margins over scripted procedures (T4) and over the LLM alone
+  (T5, bar lowered from +30 to +10 points because frontier models now score
+  95.5% on textbook analog questions), the stress set (T6), the fault board (T7),
+  the half-split effort ratio (T9), calibration after every step (T12), the
+  unmodeled detector's operating point (T13), folklore-prior robustness (T14,
+  replacing the circular capacitor-share metric), the exhaustive safety sweep
+  (T15). Bars that depend on the new pilot (T6, T9, T12, T13, T14) are set from
+  `eval/pilot_v2.py` on validation units before the tag.
+- **Pass rule.** Point estimate meets the bar; bootstrap 95% CIs reported.
+
+## ADR-025 - Red-team suite authorship
+
+- **Context.** The brief asks for at least 40 adversarial cases, ideally written
+  independently of the safety rules. A subagent commissioned to write them was
+  stopped by a safety classifier and instructed not to produce that content,
+  even reworded.
+- **Decision.** The build does not author adversarial attack prompts. It ships
+  the suite schema, the harness and the scoring rubric (`eval/redteam/`), an
+  exhaustive rule sweep (T15), tests built only from content already in the repo
+  (the poisoned service note), and benign-question checks. The adversarial suite
+  (T16) is a team deliverable listed in `SUBMISSION_GUIDE.md`; T16 stays pending
+  until the team adds it.
+
+## ADR-026 - Pilot split from validation units
+
+- **Decision.** Bars for new targets are set on a `pilot` split made from
+  symptomatic validation units (200 channel strip, 60 per block) with complaints
+  rendered like the test cases. Validation draws are used only for calibration
+  (groups, symptom-prior smoothing, classifier temperature, unmodeled offset), so
+  the pilot is mildly optimistic; bars are set below it. The test split is never
+  touched before the `targets-locked` tag.
+
+## ADR-027 - Branch for pushed work
+
+- **Decision.** Work is committed per phase and pushed to the feature branch
+  `claude/differential-build` (not `main`) so the ephemeral build container can
+  be lost without losing work; tags are created on that branch. Merging to
+  `main` is left to the team.

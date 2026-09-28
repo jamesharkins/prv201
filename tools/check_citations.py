@@ -24,7 +24,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from doclib import ROOT, is_mirror, load_bibliography  # noqa: E402
+from doclib import ROOT, is_mirror, load_bibliography
 
 UA = "Mozilla/5.0 (Differential citation checker; +https://github.com/)"
 

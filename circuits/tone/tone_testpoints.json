@@ -1,0 +1,30 @@
+{
+  "width": 816,
+  "height": 576,
+  "viewBox": [
+    0,
+    0,
+    816,
+    576
+  ],
+  "test_points": {
+    "TP10": {
+      "x": 244.9,
+      "y": 150.73,
+      "hv": false,
+      "node": "tone_in"
+    },
+    "TP11": {
+      "x": 426.7,
+      "y": 411.73,
+      "hv": false,
+      "node": "bass_w"
+    },
+    "TP12": {
+      "x": 631.9,
+      "y": 195.73,
+      "hv": false,
+      "node": "tone_out"
+    }
+  }
+}

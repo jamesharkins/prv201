@@ -127,16 +127,29 @@ CERTAINTY_TEXT = (
 )
 
 
-def hv_warning(voltage: float | None, where: str, discharge_parts: list[str]) -> list[str]:
-    v = f"about {voltage:.0f} V DC" if voltage is not None else "high voltage"
+def hv_warning(voltage: float | None, where: str, discharge_parts: list[str],
+               worst_case: float | None = None, example_fault: str | None = None) -> list[str]:
+    """Isolation and discharge instructions for a point that is, or can become, high voltage."""
     parts = ", ".join(discharge_parts) if discharge_parts else "the B+ filter capacitors"
+    if voltage is not None and voltage >= HV_THRESHOLD_V:
+        first = (f"HIGH VOLTAGE: {where} sits at about {voltage:.0f} V DC in normal operation, "
+                 "above the 50 V threshold.")
+    elif worst_case is not None:
+        cause = f" (for example {example_fault})" if example_fault else ""
+        first = (f"HIGH VOLTAGE POSSIBLE: {where} is normally low, but a fault{cause} can put up "
+                 f"to about {worst_case:.0f} V DC here. Treat it as live high voltage.")
+    else:
+        first = f"HIGH VOLTAGE: treat {where} as live high voltage."
     return [
-        f"HIGH VOLTAGE: {where} sits at {v} in normal operation, above the 50 V threshold.",
-        "Isolation: use a meter and probe leads rated for at least that voltage, clip the black "
-        "lead to chassis ground before powering up, and measure with one hand, keeping the other "
-        "hand away from the chassis.",
-        f"Discharge: before any hands-in work, switch off, unplug, wait, discharge {parts} through a "
-        "resistor, and confirm 0 V with the meter.",
+        first,
+        "Hands-off measurement: with power off, clip the black lead to chassis ground and the red "
+        "lead (rated for the voltage) to the point, then power up, read, and power down before "
+        "touching anything. If you must probe live, use one hand and keep the other away from "
+        "the chassis.",
+        f"Discharge before any hands-in work: switch off, unplug, discharge {parts} through a "
+        "resistor tool (not a screwdriver), confirm below 2 V with the meter, and re-check "
+        "before touching: capacitors can recover charge, and a bleeder resistor may have failed "
+        "open.",
     ]
 
 

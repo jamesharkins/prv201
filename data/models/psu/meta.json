@@ -70,123 +70,118 @@
     "n_single": 80,
     "n_unmodeled": 20,
     "offsets": {
-      "unmod_offset": 3.7,
-      "unmod_offset_nocomplaint": 2.3
+      "unmod_offset": 4.0,
+      "unmod_offset_nocomplaint": 2.8
     },
-    "protocol": "eval/recalibrate_unmodeled.py; negatives: symptomatic single-fault validation units, draws 0-49; positives: unmodeled_val split",
+    "protocol": "eval/recalibrate_unmodeled.py; negatives: uniform sample of symptomatic single-fault validation units; positives: unmodeled_val split",
     "regimes": {
       "complaint": {
         "chosen": {
-          "fpr": 0.0375,
-          "offset": 3.7,
-          "tpr": 0.4
+          "fpr": 0.025,
+          "offset": 4.0,
+          "tpr": 0.45
         },
         "grid": [
           {
             "fpr": 0.0,
             "offset": 0.0,
-            "tpr": 0.0
-          },
-          {
-            "fpr": 0.0,
-            "offset": 1.0,
-            "tpr": 0.0
-          },
-          {
-            "fpr": 0.0,
-            "offset": 2.0,
             "tpr": 0.05
           },
           {
             "fpr": 0.0,
-            "offset": 3.0,
-            "tpr": 0.25
+            "offset": 1.0,
+            "tpr": 0.05
+          },
+          {
+            "fpr": 0.0,
+            "offset": 2.0,
+            "tpr": 0.15
           },
           {
             "fpr": 0.025,
-            "offset": 3.5,
-            "tpr": 0.35
-          },
-          {
-            "fpr": 0.0375,
-            "offset": 3.6,
-            "tpr": 0.35
-          },
-          {
-            "fpr": 0.0375,
-            "offset": 3.7,
-            "tpr": 0.4
+            "offset": 4.0,
+            "tpr": 0.45
           },
           {
             "fpr": 0.0625,
-            "offset": 3.8,
-            "tpr": 0.35
+            "offset": 4.1,
+            "tpr": 0.5
           },
           {
-            "fpr": 0.1375,
-            "offset": 4.0,
-            "tpr": 0.4
+            "fpr": 0.0625,
+            "offset": 4.2,
+            "tpr": 0.45
+          },
+          {
+            "fpr": 0.2625,
+            "offset": 4.5,
+            "tpr": 0.65
+          },
+          {
+            "fpr": 0.6125,
+            "offset": 5.0,
+            "tpr": 0.9
+          },
+          {
+            "fpr": 1.0,
+            "offset": 6.0,
+            "tpr": 1.0
           }
         ],
         "system": "hybrid"
       },
       "no_complaint": {
         "chosen": {
-          "fpr": 0.0375,
-          "offset": 2.3,
-          "tpr": 0.3
+          "fpr": 0.05,
+          "offset": 2.8,
+          "tpr": 0.5
         },
         "grid": [
           {
             "fpr": 0.0,
             "offset": 0.0,
-            "tpr": 0.15
+            "tpr": 0.2
           },
           {
             "fpr": 0.0,
             "offset": 1.0,
-            "tpr": 0.2
+            "tpr": 0.25
           },
           {
             "fpr": 0.0,
             "offset": 2.0,
-            "tpr": 0.2
-          },
-          {
-            "fpr": 0.0125,
-            "offset": 2.2,
-            "tpr": 0.25
+            "tpr": 0.35
           },
           {
             "fpr": 0.0375,
-            "offset": 2.3,
-            "tpr": 0.3
+            "offset": 2.5,
+            "tpr": 0.4
+          },
+          {
+            "fpr": 0.05,
+            "offset": 2.8,
+            "tpr": 0.5
           },
           {
             "fpr": 0.0625,
-            "offset": 2.4,
-            "tpr": 0.25
+            "offset": 2.9,
+            "tpr": 0.55
           },
           {
-            "fpr": 0.0875,
-            "offset": 2.5,
-            "tpr": 0.3
-          },
-          {
-            "fpr": 0.1,
+            "fpr": 0.075,
             "offset": 3.0,
-            "tpr": 0.3
+            "tpr": 0.55
           },
           {
-            "fpr": 0.3375,
+            "fpr": 0.2125,
             "offset": 4.0,
-            "tpr": 0.8
+            "tpr": 0.75
           }
         ],
         "system": "engine_gen"
       }
     },
-    "seconds": 12.8
+    "seconds": 12.5
   },
   "unmodeled_calibration_v1": {
     "chosen": {

@@ -139,7 +139,9 @@ TOOL_SPECS: list[dict[str, Any]] = [
             "proposal: the technician must confirm it before it is recorded."),
         "input_schema": {
             "type": "object",
-            "properties": {"photo_id": {"type": "string"}},
+            "properties": {"photo_id": {"type": "string"},
+                           "key": {"type": "string",
+                                   "description": "The measurement the photo is for, if known"}},
             "required": ["photo_id"],
             "additionalProperties": False,
         },
@@ -463,7 +465,7 @@ class ToolBox:
                 "message": "Discharge confirmed. Lift steps are unlocked until the unit is "
                            "powered again."}
 
-    def t_read_meter_photo(self, photo_id: str) -> dict[str, Any]:
+    def t_read_meter_photo(self, photo_id: str, key: str | None = None) -> dict[str, Any]:
         if photo_id not in self.photos:
             raise KeyError(f"unknown photo '{photo_id}'")
         from differential import vision
@@ -474,8 +476,31 @@ class ToolBox:
         proposal: dict[str, Any] = dict(reader(self.photos[photo_id],
                                                client=self.llm if self.use_llm else None))
         proposal["requires_confirmation"] = True
+        if key and proposal.get("legible"):
+            proposal["plausibility"] = self._photo_plausibility(proposal, key)
         self.photo_proposals[photo_id] = proposal
         return proposal
+
+    def _photo_plausibility(self, proposal: dict[str, Any], key: str) -> dict[str, Any]:
+        """Check a photo reading against the step it is for: meter function, range,
+        unit slips, reversed leads and (for DC) the suspects' predicted 95 % intervals."""
+        from differential.vision.meter_read import MeterReading, plausibility
+
+        o = self._obs(key)
+        reading = MeterReading(value=proposal.get("value"), text=str(proposal.get("text", "")),
+                               unit=str(proposal.get("unit", "")), mode=str(proposal.get("mode", "other")),
+                               confidence=float(proposal.get("confidence", 0.0)),
+                               source=str(proposal.get("source", "")))
+        expected = low = high = None
+        if o.kind == "dc":
+            preds = [p for p in self._expected(key) if "range_95" in p]
+            if preds:
+                expected = float(preds[0]["predicted"])
+                low = min(float(p["range_95"][0]) for p in preds)
+                high = max(float(p["range_95"][1]) for p in preds)
+        result = plausibility(reading, o.kind, expected, low, high)
+        result["for"] = key
+        return result
 
     def t_generate_repair_ticket(self) -> dict[str, Any]:
         from differential.agent.ticket import build_ticket

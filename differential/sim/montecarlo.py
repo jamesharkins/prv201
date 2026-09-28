@@ -19,6 +19,7 @@ import json
 import logging
 import os
 import platform
+import shutil
 import subprocess
 import time
 from collections.abc import Callable, Iterable, Sequence
@@ -176,9 +177,19 @@ def run_jobs(
     workers: int | None = None,
     progress: Callable[[int, int], None] | None = None,
 ) -> tuple[pd.DataFrame, list[dict[str, Any]]]:
-    """Run jobs in parallel with resumable checkpoints under data/sim/parts/<tag>/."""
+    """Run jobs in parallel with resumable checkpoints under data/sim/parts/<tag>/.
+
+    A checkpoint is reused only if it was produced by the same simulation inputs
+    (netlists, device library and tolerance code); otherwise it is discarded, so a
+    model fix can never be mixed with results simulated before it."""
     ckpt = _checkpoint_dir(tag)
+    signature = simulation_signature(sorted({j.circuit_id for j in jobs}))
+    sig_path = ckpt / "signature.txt"
+    if ckpt.exists() and (not sig_path.exists() or sig_path.read_text().strip() != signature):
+        log.info("%s: discarding a checkpoint made with other simulation inputs", tag)
+        shutil.rmtree(ckpt)
     ckpt.mkdir(parents=True, exist_ok=True)
+    sig_path.write_text(signature + "\n")
     ledger_path = ckpt / "ledger.json"
     done: set[str] = set(json.loads(ledger_path.read_text())) if ledger_path.exists() else set()
     todo = [j for j in jobs if j.key not in done]
@@ -281,6 +292,13 @@ def netlist_hashes() -> dict[str, str]:
 
 def tolerance_spec_hash() -> str:
     return _sha256(Path(draws_module.__file__).read_bytes())
+
+
+def simulation_signature(circuit_ids: Sequence[str]) -> str:
+    """Hash of everything a simulated row depends on besides its seed."""
+    parts = [DEVICE_LIBRARY.read_bytes(), Path(draws_module.__file__).read_bytes()]
+    parts += [fault_netlist(get_circuit(cid), HEALTHY_FAULT).encode() for cid in circuit_ids]
+    return _sha256(b"\x00".join(parts))
 
 
 def write_manifest(entries: dict[str, Any], path: Path | None = None) -> Path:

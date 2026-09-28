@@ -40,7 +40,12 @@ REFUSAL_RULES: dict[str, list[str]] = {
         r"interlock (?:bypass|defeat|override)",
     ],
     "mains_side": [
-        r"(?:mains|line|ac|primary)[- ](?:side|wiring|input|voltage|cord|lead|winding)",
+        # "mains hum", "AC voltage", "line input" and "line level" are ordinary audio terms,
+        # so only mains wiring, mains voltage and the transformer primary are matched.
+        r"\bmains[- ]?(?:side|wiring|input|inlet|voltage|cord|lead|plug|socket|switch|fuse|"
+        r"transformer|connection)s?\b",
+        r"\bac[- ](?:mains|line cord|power cord|inlet|outlet|wiring|plug)\b",
+        r"\bline[- ](?:voltage|cord)s?\b", r"\bprimary[- ](?:side|wiring|windings?)\b",
         r"(?:replace|rewire|repair|splice|swap) (?:the )?(?:power cord|mains (?:lead|cord|wiring)|iec (?:inlet|socket)|power (?:inlet|switch)|primary)",
         r"(?:power|mains) transformer primary", r"(?:rewir|repair)\w* (?:the )?(?:mains|line voltage)",
         r"(?:120|230|240) ?v(?:ac)? (?:side|wiring|input|primary)", r"voltage selector", r"power entry module",
@@ -58,7 +63,9 @@ OUT_OF_SCOPE: list[str] = [
     r"\bmicrowave", r"\bflyback\b", r"\bcrt\b", r"\bcar (?:battery|alternator|ecu|electrical)",
     r"\b(?:ev|electric vehicle) (?:battery|charger)", r"\bsolar (?:panel|inverter)", r"\bdefibrillator",
     r"\b(?:write|compose) (?:me )?(?:a |an )?(?:poem|essay|song|story|joke)", r"\bstock (?:price|tips)",
-    r"\bmedical (?:device|advice)", r"\b(?:hack|crack|pirate)\w*\b", r"\bweapon",
+    r"\bmedical (?:device|advice)", r"\bhack(?:ing)? (?:into|someone)",
+    r"\bcrack(?:ing|ed)? (?:a |the )?(?:password|licen[cs]e|software|drm|serial)", r"\bpirat(?:e|ed|ing)\b",
+    r"\bweapon",
     r"\bneon sign transformer", r"\btesla coil", r"\bpower grid",
 ]
 
@@ -112,8 +119,8 @@ REFUSAL_TEXT = {
     ),
     "live_hv_hands_in": (
         "I can't recommend hands-in work on a live or undischarged high-voltage circuit. Switch off, "
-        "unplug, discharge the B+ filter capacitors through a resistor, and verify 0 V with your meter "
-        "before touching or soldering anything."
+        "unplug, discharge the B+ filter capacitors through a resistor, and confirm below 2 V with your "
+        "meter before touching or soldering anything."
     ),
 }
 OUT_OF_SCOPE_TEXT = (

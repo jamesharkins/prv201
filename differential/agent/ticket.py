@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 from differential import __version__
 from differential.agent.format import fault_label, fmt_reading, pct
+from differential.safety.hazards import DISCHARGE_VERIFY_MAX_V
 from differential.sim.faults import parse_fault_id
 from differential.sim.observables import KIND_LABEL
 
@@ -62,7 +63,7 @@ def build_ticket(tb: ToolBox) -> dict[str, Any]:
     if hv_parts:
         safety.append("This unit carries high voltage. Before any hands-in work: switch off, "
                       "unplug, discharge " + ", ".join(hv_parts) + " through a resistor and "
-                      "confirm 0 V with the meter.")
+                      f"confirm below {DISCHARGE_VERIFY_MAX_V:g} V with the meter.")
     ticket = {
         "circuit": {"id": circuit.id, "name": circuit.name},
         "created": dt.datetime.now(dt.UTC).strftime("%Y-%m-%d %H:%M UTC"),
@@ -76,6 +77,7 @@ def build_ticket(tb: ToolBox) -> dict[str, Any]:
         "effort_spent": e.cost_spent,
         "actions": actions,
         "safety": safety,
+        "ai_disclosure": AI_DISCLOSURE,
         "provenance": {
             "differential_version": __version__,
             "likelihood": e.likelihood,
@@ -89,9 +91,13 @@ def build_ticket(tb: ToolBox) -> dict[str, Any]:
     return ticket
 
 
+AI_DISCLOSURE = ("Prepared with Differential, an AI diagnostic assistant. It recommends; "
+                 "the technician who signs this ticket makes the diagnosis.")
+
+
 def ticket_markdown(t: dict[str, Any]) -> str:
     lines = [f"# Repair ticket: {t['circuit']['name']}", "", f"_{t['created']}_", "",
-             f"**{t['verdict']}**", ""]
+             f"> {t['ai_disclosure']}", "", f"**{t['verdict']}**", ""]
     if t["complaint_symptoms"]:
         lines += ["Reported symptoms: " + ", ".join(s.replace("_", " ")
                                                     for s in t["complaint_symptoms"]), ""]

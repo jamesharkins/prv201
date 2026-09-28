@@ -28,6 +28,9 @@ from differential.engine.data import EngineData
 from differential.sim.measurement import VAR_FLOOR, engine_noise_sd
 
 LOG_2PI = math.log(2.0 * math.pi)
+MIN_SAMPLES_PER_COMPONENT = 25  # a k-component mixture needs at least 25 k draws
+REG_COVAR = 1e-5
+EM_MAX_ITER = 300
 
 
 def _fit_one(args: tuple[np.ndarray, int, int]) -> tuple[np.ndarray, np.ndarray, np.ndarray, int]:
@@ -35,15 +38,15 @@ def _fit_one(args: tuple[np.ndarray, int, int]) -> tuple[np.ndarray, np.ndarray,
     n = len(X)
     best: tuple[float, GaussianMixture] | None = None
     for k in range(1, max_k + 1):
-        if n < 25 * k:
+        if n < MIN_SAMPLES_PER_COMPONENT * k:
             break
         gm = GaussianMixture(
             n_components=k,
             covariance_type="full",
-            reg_covar=1e-5,
+            reg_covar=REG_COVAR,
             n_init=2 if k > 1 else 1,
             random_state=seed,
-            max_iter=300,
+            max_iter=EM_MAX_ITER,
         )
         gm.fit(X)
         bic = float(gm.bic(X))
@@ -51,7 +54,7 @@ def _fit_one(args: tuple[np.ndarray, int, int]) -> tuple[np.ndarray, np.ndarray,
             best = (bic, gm)
     if best is None:  # too few samples: moment estimate
         mean = X.mean(axis=0, keepdims=True)
-        cov = np.cov(X.T).reshape(1, X.shape[1], X.shape[1]) + 1e-5 * np.eye(X.shape[1])
+        cov = np.cov(X.T).reshape(1, X.shape[1], X.shape[1]) + REG_COVAR * np.eye(X.shape[1])
         return np.array([1.0]), mean, cov, 1
     gm = best[1]
     return gm.weights_, gm.means_, gm.covariances_, gm.n_components

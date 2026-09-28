@@ -147,7 +147,8 @@ def build_split(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, obje
         df = df.set_index(["hyp_index", "draw"])
         nxt = []
         for i in pending:
-            row = df.loc[(100000 + i, attempts[i])]
+            hits = df.loc[[(100000 + i, attempts[i])]]
+            row = hits[hits["hypothesis"] == hyps[i]].iloc[-1]
             tried[i].append(hyps[i])
             facts = derive_facts(circ, sm.reference, row) if bool(row["ok"]) else None
             if facts is not None and facts.any:

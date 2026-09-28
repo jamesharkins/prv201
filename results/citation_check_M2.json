@@ -1,0 +1,134 @@
+{
+ "documents": [
+  "submissions/M2/M2.typ"
+ ],
+ "n_sources": 10,
+ "summary": {
+  "canonical:unreachable": 10,
+  "source:site-block": 3,
+  "source:ok": 1
+ },
+ "reference_points_at_mirror": [],
+ "snippet_only": [
+  "bastani_genai_learning_2025",
+  "bcg_field_service_ai_2026",
+  "ec_ip_26_1714",
+  "eu_ai_omnibus_2026_1744",
+  "eu_pld_2024_2853",
+  "musically_riaa_h1_2026"
+ ],
+ "results": [
+  {
+   "key": "bastani_genai_learning_2025",
+   "role": "canonical",
+   "url": "https://doi.org/10.1073/pnas.2422633122",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "bcg_field_service_ai_2026",
+   "role": "canonical",
+   "url": "https://www.bcg.com/assets/2026/executive-perspectives-future-of-field-service-with-applied-ai.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ec_ip_26_1714",
+   "role": "canonical",
+   "url": "https://digital-strategy.ec.europa.eu/en/news/commission-starts-enforcing-ai-act-rules-and-new-transparency-requirements-2-august",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eu_ai_act_text_mirror",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "eu_ai_act_text_mirror",
+   "role": "source",
+   "url": "https://github.com/bojkovski-cpu/ai-act-annotated",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "eu_ai_omnibus_2026_1744",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eu_pld_2024_2853",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/dir/2024/2853/oj/eng",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "musically_riaa_h1_2026",
+   "role": "canonical",
+   "url": "https://musically.com/2026/09/01/us-recorded-music-revenues-grew-by-6-9-in-the-first-half-of-2026/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "osha_1910_333",
+   "role": "canonical",
+   "url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.333",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_333",
+   "role": "source",
+   "url": "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_334",
+   "role": "canonical",
+   "url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.334",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_334",
+   "role": "source",
+   "url": "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "pattipati_alexandridis_1990",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/21.105086",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "pattipati_alexandridis_1990",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/21/1990.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  }
+ ]
+}

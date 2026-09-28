@@ -13,6 +13,8 @@ Context available in every template:
     target(id)      locked target from results/targets.json
     lead(n)         "Section lead" name for part n (from team.yaml)
     pct(x, d), num(x, d)   number formatting
+    requirements    the traceability matrix from docs/requirements.yaml
+    design          code-derived design constants (results/design.json)
 """
 
 from __future__ import annotations
@@ -23,6 +25,7 @@ import sys
 from pathlib import Path
 
 import jinja2
+import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from doclib import (
@@ -101,7 +104,15 @@ def context(tracker: PartTracker | None = None) -> dict[str, object]:
         tracker.current = n
         return f'#part({n}, "{title}", "{lead(n)}")'
 
+    reqs_path = ROOT / "docs" / "requirements.yaml"
+    requirements = yaml.safe_load(reqs_path.read_text())["requirements"] if reqs_path.exists() else []
+
+    design_path = RESULTS / "design.json"
+    design = load_json(design_path) if design_path.exists() else {}
+
     return {
+        "design": design,
+        "requirements": requirements,
         "cite": cite,
         "references": citer.references,
         "part": part,

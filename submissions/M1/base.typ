@@ -48,6 +48,8 @@
     block(width: 100%, [#text(font: "Inter", weight: "semibold", fill: accent)[#it.supplement #context it.counter.display(it.numbering).] #it.body])
   }
   set figure(gap: 0.5em)
+  // Table captions above the table (IEEE style), so a caption never lands on another page.
+  show figure.where(kind: table): set figure.caption(position: top)
   show figure: set block(breakable: false)
   set table(stroke: (x, y) => (
     top: if y == 0 { 0.8pt + ink } else if y == 1 { 0.5pt + ink } else { 0pt },
@@ -91,8 +93,7 @@
   inset: (left: 8pt, y: 4pt, right: 4pt),
   breakable: true,
 )[
-  #text(font: "Inter", size: 8.4pt, weight: "semibold", fill: accent)[DESIGN DECISION · #title]
-  #v(-3pt)
+  #block(sticky: true, below: 0.5em)[#text(font: "Inter", size: 8.4pt, weight: "semibold", fill: accent)[DESIGN DECISION · #title]]
   #set text(size: 9.4pt)
   #body
 ]

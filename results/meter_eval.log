@@ -1,0 +1,10 @@
+         synthetic | offline | exact match 99.3 % [98.3 %, 100.0 %] of 300; no answer 0.3 %, wrong 0.3 %
+                   |         | easy 100.0 % (n=120), medium 100.0 % (n=120), hard 96.7 % (n=60); 87 ms/image
+                   |         | errors {'no_answer': 1, 'value_text': 1} chars {'5->1': 1} units {} modes {}
+         synthetic | claude  | pending (requires DIFFERENTIAL_API_KEY)
+   synthetic pilot | offline | exact match 98.7 % [97.3 %, 99.7 %] of 300; no answer 1.3 %, wrong 0.0 %
+                   |         | easy 100.0 % (n=120), medium 100.0 % (n=120), hard 93.3 % (n=60); 87 ms/image
+                   |         | errors {'no_answer': 4} chars {} units {} modes {}
+   synthetic pilot | claude  | pending (requires DIFFERENTIAL_API_KEY)
+              real | no labelled real photos (data/meter_photos/real/labels.jsonl not present)
+wrote section 'vision' to /home/user/prv201/results/metrics.json

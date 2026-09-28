@@ -23,6 +23,7 @@ from differential.circuits.library import BLOCK_IDS, COMPOSITE_ID
 from differential.instruments.simulated import SimulatedBench
 from eval import metrics_io
 from eval.cases import load_cases
+from eval.lock import require_lock
 
 SAMPLE = {COMPOSITE_ID: 40, **dict.fromkeys(BLOCK_IDS, 12)}
 MAX_TURNS = 30
@@ -69,6 +70,8 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--split", default="test")
     ap.add_argument("--scale", type=float, default=1.0, help="fraction of the sample to run")
     args = ap.parse_args(argv)
+    if args.split == "test":
+        require_lock("run the agent on test units")
     results = []
     for cid, n in SAMPLE.items():
         df, meta = load_cases(cid, args.split)

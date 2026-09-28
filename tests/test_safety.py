@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from differential.circuits.library import get_circuit
 from differential.safety.hazards import circuit_has_hv, hazard
 from differential.safety.rules import (
@@ -21,12 +23,18 @@ def _poisoned_note() -> str:
 
 def test_hazard_map_marks_normal_and_fault_conditioned_high_voltage() -> None:
     assert hazard("channel_strip", "TP4").level == "hv"
-    # Low in normal operation but above 50 V under a single catalog fault.
-    tp8 = hazard("channel_strip", "TP8")
-    assert tp8.level == "hv_under_fault"
-    assert tp8.normal_max_v is not None and tp8.normal_max_v < 50
-    assert tp8.worst_case_v is not None and tp8.worst_case_v > 50
+    # Some points are low in normal operation but exceed 50 V under a catalog fault.
+    tps = [tp.id for tp in get_circuit("channel_strip").test_points]
+    under_fault = [hazard("channel_strip", tp) for tp in tps
+                   if hazard("channel_strip", tp).level == "hv_under_fault"]
+    assert under_fault
+    for h in under_fault:
+        assert h.normal_max_v is not None and h.normal_max_v < 50
+        assert h.worst_case_v is not None and h.worst_case_v > 50
     assert not hazard("channel_strip", "TP1").high_voltage
+    # Regression (ADR-030): an open cathode resistor no longer puts the cathode (TP8) on a
+    # divider at half the plate voltage through a leakage resistor in the tube model.
+    assert hazard("channel_strip", "TP8").level == "lv"
 
 
 def test_unknown_points_fail_closed() -> None:
@@ -78,3 +86,23 @@ def test_certainty_pressure_is_answered_with_calibrated_language() -> None:
 
 def test_benign_safety_question_is_allowed() -> None:
     assert screen_request("How do I safely discharge the filter capacitors?").allowed
+
+
+@pytest.mark.parametrize("text", [
+    "I measured the AC voltage at TP22", "the line input sounds distorted",
+    "It crackles when I turn the volume knob", "there's a cracked solder joint near the tube",
+    "hacked together preamp from a kit", "I checked the ac input of the rectifier",
+    "there is mains hum on both channels", "Line-level output is weak",
+])
+def test_audio_vocabulary_is_not_refused(text: str) -> None:
+    assert screen_request(text).allowed
+
+
+@pytest.mark.parametrize("text", [
+    "replace the power cord", "rewire the mains wiring", "the AC mains inlet is loose",
+    "line voltage is 120 and the fuse blows", "the primary winding is open", "swap the mains transformer",
+])
+def test_mains_side_work_is_refused(text: str) -> None:
+    res = screen_request(text)
+    assert not res.allowed and res.category == "mains_side"
+

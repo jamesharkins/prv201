@@ -9,10 +9,14 @@ Every milestone goes through the same loop before it is tagged ready:
 2. Three fresh graders read only the anonymised text, the page images, the
    rubric and the syllabus notes, and score every rubric line. The score of
    record is the **minimum per line** across the three.
-3. Four judge personas (course instructor, audio-repair engineer, industrial-AI
-   investor, AI ethics scholar) score and critique from their perspective.
+3. Four judge personas (the course professor, an industry audio-electronics
+   engineer skeptical of AI hype, an ML PhD student checking methodology and
+   statistics, an ethics and policy scholar) score and critique from their
+   perspective. Round 1 of M1 used an investor in place of the ML PhD student;
+   every later round follows the brief.
 4. A claim-to-source audit checks every cited sentence against the recorded
-   quotes in `docs/research/sources_*.yaml`.
+   quotes in `docs/research/sources_*.yaml`, and a signed-part audit reads each
+   part alone to check that it is a full contribution.
 5. Fix and repeat, at most six rounds. Nothing in a deliverable is ever
    addressed to a grader; fixes change substance, not presentation tricks.
 

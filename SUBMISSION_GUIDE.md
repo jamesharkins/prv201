@@ -38,6 +38,8 @@ Set `DIFFERENTIAL_API_KEY` (the project never reads `ANTHROPIC_API_KEY`), then:
 export DIFFERENTIAL_API_KEY=...            # never commit it
 python -m eval.llm_baseline                # T5: LLM alone and LLM with simulator
 python -m eval.agent_eval --mode live      # T17 live pre-check rate, T21 cost
+python -m eval.nlp_benchmark               # T18 Claude part (held-out paraphrases)
+python -m eval.meter_eval                  # T19 Claude part (post-lock test photos)
 python -m eval.redteam.harness --mode live # T16 live (after step 4)
 make eval docs                             # re-render documents with the new numbers
 ```

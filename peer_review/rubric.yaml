@@ -1,0 +1,59 @@
+# Shared rubric applied to each reviewed team (M4). Until the course publishes its
+# own peer-review rubric, these are the M3 lines of rubric/derived_rubric.md, with
+# what full marks look like and the words the pipeline searches for as evidence.
+# Replace this file with the course's rubric when it is published; the pipeline
+# reads nothing else about the criteria.
+milestone: M3
+page_limit: 12
+criteria:
+  - id: C1
+    name: Working implementation, runs from a clean clone end to end
+    points: 16
+    full_marks: >-
+      A tagged repository that a stranger can clone and run with a few documented
+      commands; the demo runs end to end without private keys or hidden steps; a
+      container or CI run shows it.
+    keywords: [clone, install, make, docker, readme, quickstart, demo, ci, runs, command, tag, repository]
+  - id: C2
+    name: Technical depth and correctness (models, agent, tests)
+    points: 12
+    full_marks: >-
+      The core method is non-trivial and correct, its design choices are justified,
+      and tests cover the parts that can go wrong; no errors in equations, units or
+      claims about the code.
+    keywords: [model, algorithm, engine, agent, tool, test, coverage, likelihood, training, architecture, implementation]
+  - id: C3
+    name: Results against success criteria, baselines and ablations
+    points: 12
+    full_marks: >-
+      Every pre-registered target is reported as met or missed with an interval;
+      baselines are fair and ablations isolate the design choices.
+    keywords: [target, met, missed, baseline, ablation, accuracy, interval, confidence, results, versus, compared]
+  - id: C4
+    name: Analysis attributing behavior to mechanisms; limitations; failure analysis
+    points: 8
+    full_marks: >-
+      Failures are explained by mechanism, not only counted; limitations are stated
+      plainly with their consequences.
+    keywords: [failure, error, miss, because, mechanism, limitation, why, analysis, confusion, case]
+  - id: C5
+    name: Ethics and safety evaluation (red team, bias, transparency)
+    points: 8
+    full_marks: >-
+      Safety and misuse are tested adversarially, bias is measured across the groups
+      that matter, and transparency features are shown working.
+    keywords: [ethics, safety, red team, bias, fairness, privacy, transparency, misuse, risk, injection, harm]
+  - id: C6
+    name: Documentation and reproducibility
+    points: 4
+    full_marks: >-
+      README, model or system card and data description let a reader reproduce every
+      number; seeds, versions and commands are given.
+    keywords: [readme, documentation, reproduc, seed, version, card, data, license, command]
+  - id: C7
+    name: Write-up quality and response to feedback
+    points: 4
+    full_marks: >-
+      Clear, well organised, within length; figures and tables readable; earlier
+      feedback is listed with what changed.
+    keywords: [feedback, response, changed, clarity, figure, table, summary]

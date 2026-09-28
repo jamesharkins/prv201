@@ -1,0 +1,145 @@
+{
+ "agent": {
+  "grounding_small_count_max": 12,
+  "modes": 3,
+  "tools": 12
+ },
+ "calibration": {
+  "false_alarm_budget": 0.05,
+  "provisional_grid_max": 6.0,
+  "resolution": 0.1,
+  "single_units": {
+   "channel_strip": 200,
+   "driver": 80,
+   "opamp": 80,
+   "psu": 80,
+   "tone": 80,
+   "triode": 80
+  }
+ },
+ "cases": {
+  "max_attempts": 200,
+  "n": {
+   "pilot": {
+    "channel_strip": 200,
+    "driver": 60,
+    "opamp": 60,
+    "psu": 60,
+    "tone": 60,
+    "triode": 60
+   },
+   "pilot_wide": {
+    "channel_strip": 150
+   },
+   "test": {
+    "channel_strip": 500,
+    "driver": 100,
+    "opamp": 100,
+    "psu": 100,
+    "tone": 100,
+    "triode": 100
+   },
+   "test_wide": {
+    "channel_strip": 300
+   },
+   "unmodeled_pilot": {
+    "channel_strip": 60,
+    "driver": 20,
+    "opamp": 20,
+    "psu": 20,
+    "tone": 20,
+    "triode": 20
+   },
+   "unmodeled_test": {
+    "channel_strip": 50,
+    "driver": 10,
+    "opamp": 10,
+    "psu": 10,
+    "tone": 10,
+    "triode": 10
+   },
+   "unmodeled_val": {
+    "channel_strip": 60,
+    "driver": 20,
+    "opamp": 20,
+    "psu": 20,
+    "tone": 20,
+    "triode": 20
+   }
+  }
+ },
+ "engine": {
+  "budget": 40.0,
+  "disc_early_stopping": 20,
+  "disc_keep_p": [
+   0.05,
+   0.95
+  ],
+  "disc_learning_rate": 0.08,
+  "disc_leaves": 15,
+  "disc_masked_copies": 3,
+  "disc_max_rounds": 300,
+  "eig_min_bits": 0.001,
+  "eig_samples": 128,
+  "gmm_max_components": 3,
+  "gmm_min_samples_per_component": 25,
+  "group_draws_per_fault": 40,
+  "group_threshold": 0.1,
+  "half_split_band_sd": 3.0,
+  "max_steps": 200,
+  "stop_threshold": 0.9,
+  "tie_tolerance": 0.001,
+  "unmodeled_prior": 0.05
+ },
+ "measurement": {
+  "dmm_counts": 2,
+  "dmm_pct": 0.5,
+  "hum_floor_uv": 100.0,
+  "lift_false_positive_pct": 1.0,
+  "lift_sensitivity": 0.97,
+  "scope_pct": 3.0,
+  "thd_pct": 10.0
+ },
+ "safety": {
+  "discharge_verify_max_v": 2.0,
+  "hv_threshold_v": 50.0,
+  "injection_markers": 11,
+  "refusal_categories": 5,
+  "scpi_max_v": 24.0
+ },
+ "simulation": {
+  "base_seed": 20260928,
+  "chunk_draws": 50,
+  "stress_tolerance_scale": 1.5,
+  "train_draws": 400,
+  "val_draws": 100
+ },
+ "statistics": {
+  "bar_k": 1.5,
+  "bar_weights": {
+   "channel_strip": 0.5,
+   "driver": 0.1,
+   "opamp": 0.1,
+   "psu": 0.1,
+   "tone": 0.1,
+   "triode": 0.1
+  },
+  "bootstrap_resamples": 2000,
+  "ece_bins": 10,
+  "seed": 20260928,
+  "step_ece_case_resamples": 500
+ },
+ "symptoms": {
+  "bias_rel_pct": 10.0,
+  "dc_out_v": 0.1,
+  "distortion_factor": 3.0,
+  "distortion_min_pct": 1.0,
+  "hum_margin_db": 6.0,
+  "low_gain_db": -3.0,
+  "n_features": 8,
+  "no_output_db": -30.0,
+  "rail_dead_pct": 50.0,
+  "rail_drift_pct": 5.0,
+  "response_db": 3.0
+ }
+}

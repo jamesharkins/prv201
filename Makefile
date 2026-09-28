@@ -57,6 +57,7 @@ demo:        ## web demo on http://localhost:8000 (offline unless DIFFERENTIAL_A
 	$(PY) -m differential.app.server
 
 docs:        ## render milestone documents (MS=M1 ... or all)
+	$(PY) tools/design_constants.py
 	$(PY) tools/render_docs.py $(MS)
 
 docs-check:  ## page limits, claims, balance and anonymised preview for rendered documents

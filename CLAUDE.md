@@ -14,8 +14,10 @@ agent or person continuing the work follows these rules.
    "note to the grader"). Earn the score on merit.
 3. **Keep every number template-driven.** Documents are rendered from
    `templates/` by `tools/render_docs.py`; numbers come from
-   `results/metrics.json`, `results/targets.json`, cited source claims in
-   `docs/research/sources_*.yaml`, or circuit design files.
+   `results/metrics.json`, `results/targets.json`, `results/design.json` (design
+   constants read from the code by `tools/design_constants.py`, run by
+   `make docs`), cited source claims in `docs/research/sources_*.yaml`, or
+   circuit design files.
    `tools/check_claims.py` must pass on every rendered PDF.
 4. **Be honest.** Never fabricate data, results, quotes, citations, user studies
    or endorsements. Report negative results and missed targets plainly, with an
@@ -32,8 +34,14 @@ agent or person continuing the work follows these rules.
    (`differential/safety/`); do not weaken them to make a demo or a test pass.
 8. **Held-out data stays held out.** Never tune the complaint extractor on
    `differential/nlp/paraphrase_bank.py`; never look at test-split results
-   before a change is final; the test split is evaluated only after
-   `targets-locked` (`eval/run_eval.py` refuses otherwise).
+   before a change is final; test units, test paraphrases and test photos are
+   scored only after `targets-locked` (`eval/lock.py`; the evaluation scripts
+   refuse otherwise).
+9. **No stale simulations.** Simulation checkpoints carry a signature of the
+   netlists, device library and tolerance code and are discarded when those
+   change; after any model fix, re-simulate, retrain, re-audit hazards and
+   rebuild every evaluation set before quoting a number.
+
 
 ## Layout
 

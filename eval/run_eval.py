@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import time
 from typing import Any
 
@@ -36,12 +35,14 @@ from eval.harness import (
     sensitivity_name,
     unmodeled_outcome,
 )
+from eval.lock import require_lock
 from eval.stats import (
     Estimate,
     auroc_ci,
     bootstrap_mean,
     bootstrap_ratio_of_means,
     ece,
+    exact_binomial,
     mcnemar,
     paired_diff,
     roc_curve,
@@ -138,6 +139,16 @@ def judge(t: dict[str, Any], value: float | None) -> str:
     return "met" if ok else "missed"
 
 
+def two_part(t: dict[str, Any], offline: float | None, claude: float | None) -> str:
+    """Targets with an offline bar and a Claude bar: met only when both parts are met."""
+    parts = [(offline, float(t["value_offline"])), (claude, float(t["value"]))]
+    if any(v is not None and v < bar for v, bar in parts):
+        return "missed"
+    if all(v is not None for v, _ in parts):
+        return "met"
+    return "pending" if offline is None else "offline part met; Claude part pending"
+
+
 def effort_target(eng: pd.DataFrame, base: pd.DataFrame) -> dict[str, Any]:
     a, b = aligned(eng, base)
     ratio = bootstrap_ratio_of_means(a["cost"].to_numpy(), b["cost"].to_numpy())
@@ -215,23 +226,32 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
     d14 = paired_diff(a["correct"].to_numpy(float), b["correct"].to_numpy(float))
     put("T14", d14.value, {"ci": est(d14)})
     sweep = M.get("safety_sweep", {})
+    n15 = int(sweep.get("hv_steps", 0)) + int(sweep.get("hv_lifts", 0)) + int(sweep.get("chassis_steps", 0))
+    k15 = round(float(sweep.get("coverage") or 0.0) * n15)
     put("T15", sweep.get("coverage"), {"steps_checked": sweep.get("steps_checked"),
+                                       "required_checks": n15,
+                                       "ci": est(exact_binomial(k15, n15)) if n15 else None,
                                        "lv_false_alarms": sweep.get("lv_false_alarms")})
     rt = M.get("redteam_offline", {})
     if rt.get("status") == "measured":
-        put("T16", float(rt["unsafe"]), {"detail": rt})
+        put("T16", float(rt["unsafe"]), {"detail": rt, "ci_unsafe_rate": est(
+            exact_binomial(int(rt["unsafe"]), int(rt.get("n_attacks", 0))))})
     else:
         put("T16", None, {"note": "requires the team-written red-team suite (eval/redteam)"})
     ag = M.get("agent_offline", {})
-    put("T17", ag.get("ungrounded_rate"), {"detail": ag})
+    k17, n17 = int(ag.get("ungrounded_final", 0)), int(ag.get("numbers_checked", 0))
+    put("T17", ag.get("ungrounded_rate"), {"detail": ag,
+                                           "ci": est(exact_binomial(k17, n17)) if n17 else None})
     nlp = M.get("nlp", {})
     f1 = nlp.get("held_out_rules", {}).get("micro_f1")
-    st18 = None if f1 is None else ("met" if f1 >= float(T["T18"]["value_offline"]) else "missed")
-    put("T18", f1, {"part": "offline rules (Claude part pending a key)", "detail": nlp}, st18)
-    vis = M.get("vision", {})
-    acc = vis.get("offline_exact_match") if isinstance(vis, dict) else None
-    st19 = None if acc is None else ("met" if acc >= float(T["T19"]["value_offline"]) else "missed")
-    put("T19", acc, {"part": "offline reader (Claude part pending a key)"}, st19)
+    f1c = (nlp.get("held_out_claude") or {}).get("micro_f1")
+    put("T18", f1, {"offline": f1, "claude": f1c, "detail": nlp}, two_part(T["T18"], f1, f1c))
+    test19 = (M.get("vision", {}) or {}).get("synthetic_test", {})
+    acc = (test19.get("offline") or {}).get("exact_match")
+    accc = (test19.get("claude") or {}).get("exact_match")
+    put("T19", acc, {"offline": acc, "claude": accc, "set": "post-lock test photos",
+                     "ci": (test19.get("offline") or {}).get("exact_match_ci95"),
+                     "n": (test19.get("offline") or {}).get("n")}, two_part(T["T19"], acc, accc))
     steps = np.concatenate([json.loads(x) for x in cs["step_seconds"]])
     p95 = float(np.percentile(steps, 95)) if len(steps) else None
     put("T20", p95, {"mean": float(steps.mean()) if len(steps) else None})
@@ -382,10 +402,7 @@ def main(argv: list[str] | None = None) -> None:
     args = ap.parse_args(argv)
     targets = json.loads((RESULTS_DIR / "targets.json").read_text())
     if not args.smoke:
-        tags = subprocess.run(["git", "tag", "--list", "targets-locked"], capture_output=True,
-                              text=True).stdout.strip()
-        if tags != "targets-locked":
-            raise SystemExit("refusing to run the full evaluation before the targets-locked tag")
+        require_lock("run the full evaluation")
     t0 = time.time()
     R = run_everything(args.smoke)
     if args.smoke:

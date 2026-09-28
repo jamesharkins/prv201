@@ -256,3 +256,20 @@ def test_build_deck_draw_ids() -> None:
     rng = np.random.default_rng(0)
     deck = build_deck(c, Fault("R203", "open"), [(4, healthy_draw(c, rng))])
     assert deck.draw_ids == (4,) and "R203" in deck.text
+
+
+def test_stale_checkpoints_are_discarded(tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    import pandas as pd
+
+    from differential.sim import montecarlo as mc
+
+    monkeypatch.setattr(mc, "SIM_DIR", tmp_path)
+    ckpt = tmp_path / "parts" / "driver__demo"
+    ckpt.mkdir(parents=True)
+    (ckpt / "signature.txt").write_text("made-with-an-older-model\n")
+    (ckpt / "ledger.json").write_text('["driver|demo|healthy|0-0"]')
+    pd.DataFrame([{"hyp_index": 0, "hypothesis": "healthy", "draw": 0, "split": "demo"}]).to_parquet(
+        ckpt / "part_00000.parquet")
+    df, _ = mc.run_jobs([], "driver__demo")
+    assert df.empty and not list(ckpt.glob("part_*.parquet"))
+    assert (ckpt / "signature.txt").read_text().strip() == mc.simulation_signature([])

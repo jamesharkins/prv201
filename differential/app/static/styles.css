@@ -240,6 +240,10 @@ td.num, th.num { text-align: right; }
 .mode-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--neutral-mark); }
 .mode-badge[data-mode="live"] .mode-dot { background: var(--good); }
 .mode-badge[data-mode="replay"] .mode-dot { background: var(--accent-bar); }
+.ai-note {
+  font-size: 12px; font-weight: 500; color: var(--ink-3); white-space: nowrap;
+  border-left: 1px solid var(--border-strong); padding-left: 8px; margin-left: 2px;
+}
 .demo-tag {
   font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
   color: var(--ink-3); border: 1px solid var(--border-strong); border-radius: 4px;
@@ -1004,6 +1008,7 @@ tr.is-new td { animation: row-flash 1.8s ease-out; }
   .circuit-field label { display: none; }
   .circuit-field select { width: clamp(140px, 40vw, 260px); }
   .mode-badge .mode-text { display: none; }
+  .ai-note { font-size: 11px; white-space: normal; max-width: 12em; line-height: 1.2; }
 }
 @media (max-width: 520px) {
   .pred-table .num { white-space: normal; }

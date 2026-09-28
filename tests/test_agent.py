@@ -138,3 +138,31 @@ def test_llm_baseline_protocol_with_scripted_model(tmp_path: Any) -> None:
     res = run_case(c, bundle, row, "It has no output.", with_sim=False)
     assert res["correct"] is True and res["cost"] == bundle.observables[dc].cost
     assert json.loads(res["ranked"]) == [truth]
+
+
+def test_photo_proposal_is_checked_against_the_step() -> None:
+    from io import BytesIO
+
+    import numpy as np
+
+    from differential.agent.tools import ToolBox
+    from differential.vision.meter_render import render_meter
+
+    tb = ToolBox("driver")
+
+    def photo(text: str, unit: str, mode: str) -> str:
+        img, _ = render_meter(text, unit, mode, np.random.default_rng(5))
+        buf = BytesIO()
+        img.save(buf, format="PNG")
+        pid = f"p{len(tb.photos)}"
+        tb.photos[pid] = buf.getvalue()
+        return pid
+
+    ok = tb.call("read_meter_photo", {"photo_id": photo("8.59", "V", "DC"), "key": "dc:TP21"})
+    assert ok["requires_confirmation"] and ok["plausibility"]["for"] == "dc:TP21"
+    assert ok["plausibility"]["plausible"]
+    wrong_mode = tb.call("read_meter_photo", {"photo_id": photo("8.59", "V", "AC"), "key": "dc:TP21"})
+    assert not wrong_mode["plausibility"]["plausible"]
+    assert any(i.startswith("mode_mismatch") for i in wrong_mode["plausibility"]["issues"])
+    no_step = tb.call("read_meter_photo", {"photo_id": photo("8.59", "V", "DC")})
+    assert "plausibility" not in no_step

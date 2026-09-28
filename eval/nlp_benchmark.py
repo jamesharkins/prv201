@@ -27,6 +27,7 @@ from differential.nlp.symptoms import extract_rules
 from differential.sim.montecarlo import BASE_SEED
 from eval import metrics_io
 from eval.cases import load_cases
+from eval.lock import require_lock
 
 
 def facts_from(d: dict[str, Any]) -> SymptomFacts:
@@ -52,6 +53,31 @@ def score(pairs: list[tuple[dict[str, bool], dict[str, bool]]]) -> dict[str, flo
             "recall": tp / (tp + fn) if tp + fn else 1.0, "n": len(pairs)}
 
 
+def score_claude(held_texts: list[tuple[str, dict[str, bool], str]]) -> dict[str, Any]:
+    """Claude extraction on the same held-out texts (live, or replayed from the cache).
+    A text whose extraction fails counts as an empty prediction, and the failures are counted."""
+    from differential.agent.llm import LLMClient, LLMUnavailable
+    from differential.nlp.symptoms import extract_llm
+
+    client = LLMClient()
+    by: dict[str, list[tuple[dict[str, bool], dict[str, bool]]]] = {}
+    failures = 0
+    for i, (persona, gold, text) in enumerate(held_texts):
+        try:
+            pred = extract_llm(text, client).features()
+        except LLMUnavailable:
+            if i == 0:
+                return {"claude": "pending: requires DIFFERENTIAL_API_KEY (or a replay cache)"}
+            pred, failures = {}, failures + 1
+        except Exception:  # malformed output: scored as no symptoms read
+            pred, failures = {}, failures + 1
+        by.setdefault(persona, []).append((gold, pred))
+    return {"held_out_claude": score([p for v in by.values() for p in v]),
+            "held_out_claude_by_persona": {k: score(v) for k, v in by.items()},
+            "claude_failures": failures, "claude_model": client.model,
+            "claude_cost_usd": client.usage.cost_usd(client.model)}
+
+
 def main() -> None:
     import argparse
 
@@ -60,8 +86,11 @@ def main() -> None:
                     help="write the paraphrase files for the hybrid_paraphrase ablation without "
                          "scoring anything (safe before the targets are locked)")
     render_only = ap.parse_args().render_only
+    if not render_only:
+        require_lock("score the held-out paraphrases of test units")
     held: dict[str, list[tuple[dict[str, bool], dict[str, bool]]]] = {}
     dev: dict[str, list[tuple[dict[str, bool], dict[str, bool]]]] = {}
+    held_texts: list[tuple[str, dict[str, bool], str]] = []  # (persona, gold, text) for Claude
     leaks = 0
     for cid in [COMPOSITE_ID, *BLOCK_IDS]:
         circ = get_circuit(cid)
@@ -81,6 +110,7 @@ def main() -> None:
             if render_only:
                 continue
             gold = facts.features
+            held_texts.append((persona, gold, text))
             held.setdefault(persona, []).append((gold, extract_rules(text).features()))
             dev.setdefault(persona, []).append((gold, extract_rules(str(m["complaint"])).features()))
         with (EVAL_DATA_DIR / f"paraphrases__{cid}__test.jsonl").open("w") as fh:
@@ -95,7 +125,7 @@ def main() -> None:
         "development_rules": score([p for v in dev.values() for p in v]),
         "development_rules_by_persona": {k: score(v) for k, v in dev.items()},
         "held_out_texts_with_leakage": leaks,
-        "claude": "pending: requires DIFFERENTIAL_API_KEY",
+        **score_claude(held_texts),
     }
     metrics_io.update("nlp", result)
     print(json.dumps(result, indent=1))

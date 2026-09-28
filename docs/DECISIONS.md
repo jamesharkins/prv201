@@ -464,3 +464,37 @@ deleted.
   after these changes, before the targets are locked. The test set drawn before
   this change was never evaluated (apart from the CI smoke check disclosed in
   ADR-029) and is replaced.
+
+## ADR-031 - Evaluation lock in every script; T19 test photos; exact intervals; screening fixes
+
+- **Context.** A code audit before M2 found: (1) only `eval/run_eval.py` checked the
+  `targets-locked` tag; the agent, NLP, language-model and meter-photo evaluations
+  could score test data at any time. (2) T19 was judged on the synthetic photo set
+  the offline reader was developed on; the "held-out" set (seed 20261001) had also
+  been scored during development. (3) M1 promised exact intervals for zero-event
+  targets, but only bootstrap intervals existed, which collapse to a point at 0 or
+  100 %. (4) Request screening refused ordinary audio vocabulary: "AC voltage" and
+  "line input" as mains-side work, "crackle" and "cracked joint" as out of scope
+  (the pattern `crack\w*` was meant for software cracking). (5) The meter-photo
+  plausibility check existed but nothing called it. (6) The ticket told the
+  technician to confirm 0 V while the unsoldering lock opens below 2 V.
+- **Decision.** (1) `eval/lock.py` holds the check; the agent, NLP, language-model
+  and full evaluations refuse test data before the tag. (2) T19 is judged on a new
+  test set (seed 20261028) rendered and scored only after the lock; the seed-20261001
+  set is reported as a pilot. (3) `eval.stats.exact_binomial` (Clopper-Pearson)
+  gives the intervals for T15, T16 and T17. (4) Screening now matches mains wiring,
+  mains voltage and the transformer primary only; "mains hum", "AC voltage", "line
+  input/level", "crackle" and "cracked joint" pass (regression tests in
+  `tests/test_safety.py`). (5) A photo reading is checked against the step it is for
+  (meter function, range, unit slips, reversed leads, and for DC the suspects'
+  predicted intervals) and the result is shown with the proposal. (6) Ticket and
+  refusal texts say "below 2 V", matching the lock. The interface header and every
+  ticket now state that Differential is an AI assistant and that the technician
+  decides. (7) Rebuilding the evaluation sets after the tube-model fix exposed that
+  simulation checkpoints were keyed by job and tag only, so a rebuilt set could
+  reuse rows simulated before a model change (it crashed on a duplicate instead).
+  Every checkpoint now carries a signature of the netlists, the device library and
+  the tolerance code, and is discarded when they differ; all evaluation-set
+  checkpoints were deleted before the rebuild, so no set mixes old and new models.
+- **Consequences.** No bar changes. T19's pre-lock numbers stay in `metrics.json`
+  as the pilot; the test set's result is new at the full evaluation.

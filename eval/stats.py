@@ -21,6 +21,16 @@ class Estimate:
         return {"value": self.value, "lo": self.lo, "hi": self.hi}
 
 
+def exact_binomial(k: int, n: int, alpha: float = 0.05) -> Estimate:
+    """Clopper-Pearson interval for k successes in n trials. For a zero-event or
+    all-event result, where a bootstrap interval collapses to a point, the open end is
+    the exact one-sided (1 - alpha/2) bound, e.g. 0 of 200 gives an upper bound of 1.8 %."""
+    if n <= 0:
+        return Estimate(float("nan"), float("nan"), float("nan"))
+    ci = binomtest(int(k), int(n)).proportion_ci(confidence_level=1 - alpha, method="exact")
+    return Estimate(k / n, float(ci.low), float(ci.high))
+
+
 def bootstrap_mean(x: np.ndarray, n_boot: int = N_BOOT, seed: int = SEED,
                    stat=np.mean) -> Estimate:  # type: ignore[no-untyped-def]
     x = np.asarray(x, dtype=float)

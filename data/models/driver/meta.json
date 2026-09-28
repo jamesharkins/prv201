@@ -38,62 +38,62 @@
     "n_single": 80,
     "n_unmodeled": 20,
     "offsets": {
-      "unmod_offset": 4.9,
-      "unmod_offset_nocomplaint": 4.0
+      "unmod_offset": 4.5,
+      "unmod_offset_nocomplaint": 3.5
     },
-    "protocol": "eval/recalibrate_unmodeled.py; negatives: symptomatic single-fault validation units, draws 0-49; positives: unmodeled_val split",
+    "protocol": "eval/recalibrate_unmodeled.py; negatives: uniform sample of symptomatic single-fault validation units; positives: unmodeled_val split",
     "regimes": {
       "complaint": {
         "chosen": {
           "fpr": 0.05,
-          "offset": 4.9,
-          "tpr": 0.7
+          "offset": 4.5,
+          "tpr": 0.65
         },
         "grid": [
           {
-            "fpr": 0.0125,
+            "fpr": 0.0,
             "offset": 0.0,
-            "tpr": 0.4
-          },
-          {
-            "fpr": 0.0125,
-            "offset": 1.0,
             "tpr": 0.45
           },
           {
-            "fpr": 0.0375,
+            "fpr": 0.0,
+            "offset": 1.0,
+            "tpr": 0.5
+          },
+          {
+            "fpr": 0.0125,
             "offset": 2.0,
-            "tpr": 0.55
+            "tpr": 0.5
           },
           {
             "fpr": 0.0375,
             "offset": 4.0,
-            "tpr": 0.65
+            "tpr": 0.55
           },
           {
-            "fpr": 0.0375,
+            "fpr": 0.05,
             "offset": 4.5,
             "tpr": 0.65
           },
           {
-            "fpr": 0.05,
-            "offset": 4.8,
-            "tpr": 0.7
-          },
-          {
-            "fpr": 0.05,
-            "offset": 4.9,
-            "tpr": 0.7
+            "fpr": 0.0625,
+            "offset": 4.6,
+            "tpr": 0.65
           },
           {
             "fpr": 0.0625,
+            "offset": 4.8,
+            "tpr": 0.6
+          },
+          {
+            "fpr": 0.1,
             "offset": 5.0,
             "tpr": 0.7
           },
           {
-            "fpr": 0.875,
+            "fpr": 0.8375,
             "offset": 6.0,
-            "tpr": 0.95
+            "tpr": 1.0
           }
         ],
         "system": "hybrid"
@@ -101,60 +101,55 @@
       "no_complaint": {
         "chosen": {
           "fpr": 0.05,
-          "offset": 4.0,
-          "tpr": 0.55
+          "offset": 3.5,
+          "tpr": 0.4
         },
         "grid": [
           {
             "fpr": 0.0,
             "offset": 0.0,
-            "tpr": 0.35
+            "tpr": 0.15
           },
           {
             "fpr": 0.0,
             "offset": 1.0,
-            "tpr": 0.4
+            "tpr": 0.3
+          },
+          {
+            "fpr": 0.0125,
+            "offset": 2.0,
+            "tpr": 0.35
           },
           {
             "fpr": 0.0375,
-            "offset": 2.0,
-            "tpr": 0.5
+            "offset": 3.0,
+            "tpr": 0.3
           },
           {
             "fpr": 0.05,
+            "offset": 3.5,
+            "tpr": 0.4
+          },
+          {
+            "fpr": 0.0625,
+            "offset": 3.6,
+            "tpr": 0.35
+          },
+          {
+            "fpr": 0.0625,
+            "offset": 3.8,
+            "tpr": 0.45
+          },
+          {
+            "fpr": 0.075,
             "offset": 4.0,
-            "tpr": 0.55
-          },
-          {
-            "fpr": 0.0625,
-            "offset": 4.1,
-            "tpr": 0.65
-          },
-          {
-            "fpr": 0.0625,
-            "offset": 4.2,
-            "tpr": 0.65
-          },
-          {
-            "fpr": 0.0875,
-            "offset": 4.5,
-            "tpr": 0.7
-          },
-          {
-            "fpr": 0.2125,
-            "offset": 5.0,
-            "tpr": 0.85
-          },
-          {
-            "fpr": 1.0,
-            "offset": 6.0,
-            "tpr": 1.0
+            "tpr": 0.45
           }
         ],
         "system": "engine_gen"
       }
     },
-    "seconds": 13.2
+    "seconds": 11.0
   },
   "unmodeled_calibration_v1": {
     "chosen": {

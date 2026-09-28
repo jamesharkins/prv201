@@ -8,16 +8,17 @@ bootstrap 95 % CI, the no-answer and wrong-answer rates and a confusion summary.
 Sets:
   * ``data/meter_photos/synthetic``: the rendered set (regenerated with the
     default seed when missing). The offline reader was developed on this set.
-  * a held-out synthetic set rendered on the fly with a seed never used during
-    development (not saved), which checks that the reader was not tuned to the
-    images it is scored on;
+  * a pilot set rendered on the fly with seed 20261001, never used during
+    development but scored before the targets were locked (reported, not judged);
+  * the test set for T19, rendered on the fly with seed 20261028 and scored only
+    once the git tag ``targets-locked`` exists (``eval/lock.py``);
   * ``data/meter_photos/real``: evaluated when it contains a ``labels.jsonl``
     (lines {"file", "value_text", "unit", "mode"}).
 
 Claude vision needs ``DIFFERENTIAL_API_KEY``; without a live client its accuracy
 is reported as pending, never estimated.
 
-    python -m eval.meter_eval [--regenerate] [--holdout-n 300] [--limit N]
+    python -m eval.meter_eval [--regenerate] [--n 300] [--limit N]
 """
 
 from __future__ import annotations
@@ -45,6 +46,7 @@ from differential.vision.meter_render import (
     normalize_value_text,
 )
 from eval import metrics_io
+from eval.lock import targets_locked
 from eval.stats import bootstrap_mean
 
 REAL_DIR = METER_DIR / "real"
@@ -52,7 +54,8 @@ PENDING = {"status": "pending (requires DIFFERENTIAL_API_KEY)"}
 # Seeds of the synthetic sets looked at while the offline reader was developed; the
 # held-out seed below was not used until the final evaluation.
 DEVELOPMENT_SEEDS = (DEFAULT_SEED, 7, DEFAULT_SEED + 1)
-HOLDOUT_SEED = 20261001
+PILOT_SEED = 20261001  # scored before the lock (was called the held-out set)
+TEST_SEED = 20261028  # scored only after the lock
 MEDIA_TYPES = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
                ".webp": "image/webp", ".gif": "image/gif"}
 Reader = Callable[[bytes, str], MeterReading | None]
@@ -240,8 +243,7 @@ def print_summary(name: str, result: dict[str, Any]) -> None:
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--regenerate", action="store_true", help="re-render data/meter_photos/synthetic")
-    ap.add_argument("--holdout-n", type=int, default=300, help="held-out photos to render (0 = skip)")
-    ap.add_argument("--holdout-seed", type=int, default=HOLDOUT_SEED)
+    ap.add_argument("--n", type=int, default=300, help="photos per rendered set (0 = skip)")
     ap.add_argument("--limit", type=int, default=None, help="evaluate only the first N photos per set")
     args = ap.parse_args(argv)
 
@@ -254,12 +256,15 @@ def main(argv: list[str] | None = None) -> None:
     results["synthetic"]["dataset"]["seed"] = DEFAULT_SEED
     print_summary("synthetic", results["synthetic"])
 
-    if args.holdout_n > 0:
+    rendered = [("synthetic_pilot", PILOT_SEED)]
+    if targets_locked():
+        rendered.append(("synthetic_test", TEST_SEED))
+    for name, seed in rendered if args.n > 0 else []:
         with tempfile.TemporaryDirectory() as tmp:
-            hold = generate_dataset(args.holdout_n, Path(tmp), args.holdout_seed)[: args.limit]
-            results["synthetic_holdout"] = evaluate_set(Path(tmp), hold, client)
-        results["synthetic_holdout"]["dataset"]["seed"] = args.holdout_seed
-        print_summary("synthetic held-out", results["synthetic_holdout"])
+            photos = generate_dataset(args.n, Path(tmp), seed)[: args.limit]
+            results[name] = evaluate_set(Path(tmp), photos, client)
+        results[name]["dataset"]["seed"] = seed
+        print_summary(name.replace("_", " "), results[name])
 
     if (REAL_DIR / "labels.jsonl").exists():
         real = load_labels(REAL_DIR)[: args.limit]
@@ -270,16 +275,18 @@ def main(argv: list[str] | None = None) -> None:
         results["real"] = {"status": f"no labelled real photos ({missing} not present)"}
         print(f"{'real':>18} | {results['real']['status']}")
 
-    offline = results["synthetic"]["offline"]["exact_match"]
-    results["target"] = {"id": "T19", "offline": 0.90, "claude": 0.95,
-                         "offline_met": bool(offline >= 0.90),
-                         "claude_met": None if client is None else
-                         bool(results["synthetic"]["claude"]["exact_match"] >= 0.95)}
+    test = results.get("synthetic_test")
+    results["target"] = {"id": "T19", "offline": 0.90, "claude": 0.95, "judged_on": "synthetic_test",
+                         "offline_met": None if test is None else
+                         bool(test["offline"]["exact_match"] >= 0.90),
+                         "claude_met": None if test is None or client is None else
+                         bool(test["claude"]["exact_match"] >= 0.95)}
     results["protocol"] = ("exact match = normalised display text, unit and mode all correct; no answer "
                            "counts as wrong; 95 % CI from 2000 bootstrap resamples. The offline reader "
                            f"was developed on synthetic sets with seeds {list(DEVELOPMENT_SEEDS)}; the "
-                           "held-out set uses a seed not seen during development. Every reading is "
-                           "confirmed by the technician before it is recorded.")
+                           f"pilot set (seed {PILOT_SEED}) was scored before the targets were locked; "
+                           f"T19 is judged on the test set (seed {TEST_SEED}), scored only after the "
+                           "lock. Every reading is confirmed by the technician before it is recorded.")
     metrics_io.update("vision", results)
     print(f"wrote section 'vision' to {metrics_io.METRICS}")
 

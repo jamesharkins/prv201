@@ -1,4 +1,4 @@
-"""LLM baselines (target T10): the same bench, the same budget, no Differential engine.
+"""LLM baselines (target T5): the same bench, the same budget, no Differential engine.
 
 Protocol (identical for both variants, fixed before any live run):
   * Model: ``DIFFERENTIAL_MODEL`` (default claude-sonnet-5-5), default sampling; every
@@ -186,7 +186,9 @@ def run_case(client: LLMClient, bundle: EngineBundle, row: dict[str, Any], compl
 def run(system: str = "llm_only", client: LLMClient | None = None) -> pd.DataFrame | None:
     """Run a baseline over the stratified subset; None when no key and no cache."""
     from eval.harness import bundle_for, load_split
+    from eval.lock import require_lock
 
+    require_lock("run the language-model baselines on test units")
     client = client or LLMClient()
     rows = []
     try:

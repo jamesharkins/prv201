@@ -329,6 +329,9 @@ export class ChatPanel {
     if (issues.length) {
       kids.push(h("ul", { class: "photo-issues" }, issues.map((i) => h("li", {}, String(i).replace(/^[a-z_]+:\s*/, "")))));
     }
+    if (p.plausibility && p.plausibility.suggestion) {
+      kids.push(h("p", { class: "muted" }, String(p.plausibility.suggestion)));
+    }
 
     // Confirmation form: pick the measurement key and confirm or edit the value.
     const keyId = nextId("photo-key");

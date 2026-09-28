@@ -34,8 +34,14 @@ def add_noise(X: np.ndarray, kinds: list[str], rng: np.random.Generator) -> np.n
     return out
 
 
+KEEP_P_RANGE = (0.05, 0.95)  # per-row probability that a reading is kept
+LGB_PARAMS = {"learning_rate": 0.08, "num_leaves": 15, "min_data_in_leaf": 20,
+              "feature_fraction": 0.9, "bagging_fraction": 0.8, "bagging_freq": 1, "lambda_l2": 1.0}
+EARLY_STOPPING_ROUNDS = 20
+
+
 def random_masks(n: int, d: int, rng: np.random.Generator) -> np.ndarray:
-    keep_p = rng.uniform(0.05, 0.95, size=(n, 1))
+    keep_p = rng.uniform(*KEEP_P_RANGE, size=(n, 1))
     mask = rng.uniform(size=(n, d)) < keep_p
     return mask
 
@@ -88,13 +94,7 @@ class DiscriminativeModel:
         params = {
             "objective": "multiclass",
             "num_class": len(train.hypotheses),
-            "learning_rate": 0.08,
-            "num_leaves": 15,
-            "min_data_in_leaf": 20,
-            "feature_fraction": 0.9,
-            "bagging_fraction": 0.8,
-            "bagging_freq": 1,
-            "lambda_l2": 1.0,
+            **LGB_PARAMS,
             "verbose": -1,
             "seed": seed,
             "deterministic": True,
@@ -108,7 +108,7 @@ class DiscriminativeModel:
             dtr,
             num_boost_round=num_boost_round,
             valid_sets=[dva],
-            callbacks=[lgb.early_stopping(20, verbose=False)],
+            callbacks=[lgb.early_stopping(EARLY_STOPPING_ROUNDS, verbose=False)],
         )
         model = cls(train.circuit_id, list(train.hypotheses), train.keys,
                     booster.model_to_string(), 1.0, booster)

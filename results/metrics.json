@@ -5,48 +5,48 @@
    "T1": {
     "bar": 0.93,
     "direction": ">=",
-    "estimate": 0.950833,
+    "estimate": 0.9475,
     "k": 1.5,
-    "se": 0.010953,
+    "se": 0.011119,
     "step": 0.01
    },
    "T10": {
     "bar": 0.35,
     "direction": "<=",
-    "estimate": 0.330416,
+    "estimate": 0.335109,
     "k": 1.5,
-    "se": 0.011996,
+    "se": 0.012657,
     "step": 0.05
    },
    "T11": {
-    "bar": 0.75,
+    "bar": 0.8,
     "direction": "<=",
-    "estimate": 0.694175,
+    "estimate": 0.771086,
     "k": 1.5,
-    "se": 0.020999,
+    "se": 0.030586,
     "step": 0.05
    },
    "T12": {
-    "bar": 0.03,
+    "bar": 0.05,
     "direction": "<=",
-    "estimate": 0.016899,
+    "estimate": 0.033954,
     "k": 1.5,
-    "se": 0.008221,
+    "se": 0.010824,
     "step": 0.01
    },
    "T13": {
-    "bar": 0.62,
+    "bar": 0.76,
     "direction": ">=",
-    "estimate": 0.660994,
-    "flagged_bar": 0.38,
-    "flagged_estimate": 0.438333,
-    "flagged_se": 0.037817,
+    "estimate": 0.797312,
+    "flagged_bar": 0.47,
+    "flagged_estimate": 0.526667,
+    "flagged_se": 0.037873,
     "k": 1.5,
-    "misleading_bar": 0.21,
-    "misleading_estimate": 0.16,
-    "misleading_se": 0.03119,
+    "misleading_bar": 0.14,
+    "misleading_estimate": 0.098333,
+    "misleading_se": 0.028204,
     "n_unmodeled": 160.0,
-    "se": 0.030393,
+    "se": 0.023787,
     "step": 0.01
    },
    "T14": {
@@ -54,7 +54,7 @@
     "direction": ">=",
     "estimate": -0.009167,
     "k": 1.5,
-    "se": 0.006629,
+    "se": 0.005539,
     "step": 0.01
    },
    "T2": {
@@ -68,44 +68,44 @@
    "T3": {
     "bar": 0.99,
     "direction": ">=",
-    "estimate": 0.9975,
+    "estimate": 1.0,
     "k": 1.5,
-    "se": 0.006435,
+    "se": 0.005962,
     "step": 0.01
    },
    "T4": {
-    "bar": 0.12,
+    "bar": 0.08,
     "bar_vs_fixed_order": 0.12,
-    "bar_vs_random": 0.12,
+    "bar_vs_random": 0.08,
     "direction": ">=",
     "estimate_vs_fixed_order": 0.17,
-    "estimate_vs_random": 0.16,
+    "estimate_vs_random": 0.13,
     "k": 1.5,
     "rule": "the smaller of the two margin bars",
     "step": 0.01
    },
    "T6": {
-    "bar": 0.1,
+    "bar": 0.15,
     "direction": "<=",
-    "estimate": 0.055,
+    "estimate": 0.101667,
     "k": 1.5,
-    "se": 0.029795,
+    "se": 0.033232,
     "step": 0.01
    },
    "T8": {
     "bar": 0.35,
     "direction": "<=",
-    "estimate": 0.343792,
+    "estimate": 0.335015,
     "k": 1.5,
-    "se": 0.01212,
+    "se": 0.011829,
     "step": 0.05
    },
    "T9": {
     "bar": 0.4,
     "direction": "<=",
-    "estimate": 0.397092,
+    "estimate": 0.379765,
     "k": 1.5,
-    "se": 0.014064,
+    "se": 0.013301,
     "step": 0.05
    }
   },
@@ -119,8 +119,11 @@
   }
  },
  "hand_calcs": {
+  "abs_tol_db": 0.1,
   "hum_model_overstatement_max_pct": 5.40924,
   "hum_model_overstatement_min_pct": 2.408484,
+  "rel_tol_max_pct": 5.0,
+  "rel_tol_min_pct": 0.5,
   "rows": {
    "B+ (TP6)": {
     "hand": 254.360508,
@@ -129,7 +132,7 @@
    },
    "Cathode voltage (TP8)": {
     "hand": 1.204637,
-    "sim": 1.19899,
+    "sim": 1.19895,
     "unit": "V"
    },
    "Gain at 1 kHz (TP22)": {
@@ -174,7 +177,7 @@
    },
    "Mid-band gain into 100k (TP10)": {
     "hand": 45.089667,
-    "sim": 44.6444,
+    "sim": 44.6477,
     "unit": "V/V"
    },
    "Output DC (TP15)": {
@@ -184,12 +187,12 @@
    },
    "Plate current": {
     "hand": 0.803092,
-    "sim": 0.799331,
+    "sim": 0.7993,
     "unit": "mA"
    },
    "Plate voltage (TP9)": {
     "hand": 169.690844,
-    "sim": 170.067,
+    "sim": 170.07,
     "unit": "V"
    },
    "Q501 base (TP18)": {
@@ -250,8 +253,8 @@
   "circuits": {
    "channel_strip": {
     "hv_normal": 4,
-    "hv_under_fault": 2,
-    "low_voltage": 17,
+    "hv_under_fault": 1,
+    "low_voltage": 18,
     "points": {
      "TP1": {
       "example_faults": [],
@@ -260,7 +263,8 @@
       "hazard": "lv",
       "name": "Unregulated LV rail",
       "normal_max_v": 25.16,
-      "worst_case_v": 25.24
+      "worst_case_v": 25.24,
+      "worst_fault": "R102:open"
      },
      "TP10": {
       "example_faults": [
@@ -271,7 +275,8 @@
       "hazard": "hv_under_fault",
       "name": "Tone-control input (triode stage output)",
       "normal_max_v": 0.0,
-      "worst_case_v": 125.4
+      "worst_case_v": 125.4,
+      "worst_fault": "C203:short"
      },
      "TP11": {
       "example_faults": [],
@@ -280,7 +285,8 @@
       "hazard": "lv",
       "name": "Bass control wiper",
       "normal_max_v": 0.0,
-      "worst_case_v": 13.21
+      "worst_case_v": 13.21,
+      "worst_fault": "C203:short"
      },
      "TP12": {
       "example_faults": [],
@@ -289,7 +295,8 @@
       "hazard": "lv",
       "name": "Tone-control output",
       "normal_max_v": 0.0,
-      "worst_case_v": 13.21
+      "worst_case_v": 13.21,
+      "worst_fault": "C203:short"
      },
      "TP13": {
       "example_faults": [],
@@ -298,7 +305,8 @@
       "hazard": "lv",
       "name": "Op-amp non-inverting input",
       "normal_max_v": 7.99,
-      "worst_case_v": 15.91
+      "worst_case_v": 15.91,
+      "worst_fault": "R402:short"
      },
      "TP14": {
       "example_faults": [],
@@ -307,7 +315,8 @@
       "hazard": "lv",
       "name": "Op-amp inverting input",
       "normal_max_v": 7.99,
-      "worst_case_v": 14.45
+      "worst_case_v": 14.45,
+      "worst_fault": "R403:drift_x10"
      },
      "TP15": {
       "example_faults": [],
@@ -316,7 +325,8 @@
       "hazard": "lv",
       "name": "Op-amp output",
       "normal_max_v": 7.99,
-      "worst_case_v": 14.45
+      "worst_case_v": 14.45,
+      "worst_fault": "R403:drift_x10"
      },
      "TP16": {
       "example_faults": [],
@@ -325,7 +335,8 @@
       "hazard": "lv",
       "name": "Half-supply bias",
       "normal_max_v": 7.99,
-      "worst_case_v": 15.92
+      "worst_case_v": 15.92,
+      "worst_fault": "R402:short"
      },
      "TP17": {
       "example_faults": [],
@@ -334,7 +345,8 @@
       "hazard": "lv",
       "name": "Line-driver input",
       "normal_max_v": 0.0,
-      "worst_case_v": 7.98
+      "worst_case_v": 7.98,
+      "worst_fault": "C404:short"
      },
      "TP18": {
       "example_faults": [],
@@ -343,7 +355,8 @@
       "hazard": "lv",
       "name": "Q501 base",
       "normal_max_v": 3.81,
-      "worst_case_v": 14.97
+      "worst_case_v": 14.97,
+      "worst_fault": "R501:short"
      },
      "TP19": {
       "example_faults": [],
@@ -352,7 +365,8 @@
       "hazard": "lv",
       "name": "Q501 emitter",
       "normal_max_v": 3.18,
-      "worst_case_v": 14.25
+      "worst_case_v": 14.25,
+      "worst_fault": "R501:short"
      },
      "TP2": {
       "example_faults": [],
@@ -361,7 +375,8 @@
       "hazard": "lv",
       "name": "Zener reference",
       "normal_max_v": 16.7,
-      "worst_case_v": 24.99
+      "worst_case_v": 24.99,
+      "worst_fault": "D101:open"
      },
      "TP20": {
       "example_faults": [],
@@ -370,7 +385,8 @@
       "hazard": "lv",
       "name": "Q501 collector / Q502 base",
       "normal_max_v": 9.79,
-      "worst_case_v": 15.15
+      "worst_case_v": 15.15,
+      "worst_fault": "R505:short"
      },
      "TP21": {
       "example_faults": [],
@@ -379,7 +395,8 @@
       "hazard": "lv",
       "name": "Q502 emitter",
       "normal_max_v": 9.07,
-      "worst_case_v": 15.07
+      "worst_case_v": 15.07,
+      "worst_fault": "Q502:ce_short"
      },
      "TP22": {
       "example_faults": [],
@@ -388,7 +405,8 @@
       "hazard": "lv",
       "name": "Line output",
       "normal_max_v": 0.0,
-      "worst_case_v": 8.99
+      "worst_case_v": 8.99,
+      "worst_fault": "C503:short"
      },
      "TP23": {
       "example_faults": [],
@@ -397,7 +415,8 @@
       "hazard": "lv",
       "name": "Driver supply",
       "normal_max_v": 15.44,
-      "worst_case_v": 24.34
+      "worst_case_v": 24.34,
+      "worst_fault": "D102:short"
      },
      "TP3": {
       "example_faults": [],
@@ -406,7 +425,8 @@
       "hazard": "lv",
       "name": "Regulated +15 V rail",
       "normal_max_v": 15.94,
-      "worst_case_v": 25.1
+      "worst_case_v": 25.1,
+      "worst_fault": "D102:short"
      },
      "TP4": {
       "example_faults": [
@@ -422,7 +442,8 @@
       "hazard": "hv",
       "name": "HV reservoir",
       "normal_max_v": 295.53,
-      "worst_case_v": 295.82
+      "worst_case_v": 295.82,
+      "worst_fault": "R104:drift_x10"
      },
      "TP5": {
       "example_faults": [
@@ -438,7 +459,8 @@
       "hazard": "hv",
       "name": "HV filter node",
       "normal_max_v": 287.44,
-      "worst_case_v": 295.77
+      "worst_case_v": 295.77,
+      "worst_fault": "R106:open"
      },
      "TP6": {
       "example_faults": [
@@ -454,7 +476,8 @@
       "hazard": "hv",
       "name": "B+ to triode stage",
       "normal_max_v": 269.62,
-      "worst_case_v": 295.75
+      "worst_case_v": 295.75,
+      "worst_fault": "R203:open"
      },
      "TP7": {
       "example_faults": [],
@@ -463,18 +486,18 @@
       "hazard": "lv",
       "name": "Triode grid",
       "normal_max_v": 0.0,
-      "worst_case_v": 1.0
+      "worst_case_v": 1.0,
+      "worst_fault": "R202:open"
      },
      "TP8": {
-      "example_faults": [
-       "R204:open"
-      ],
-      "faults_above_threshold": 1,
+      "example_faults": [],
+      "faults_above_threshold": 0,
       "flag_hv": false,
-      "hazard": "hv_under_fault",
+      "hazard": "lv",
       "name": "Triode cathode",
       "normal_max_v": 1.4,
-      "worst_case_v": 147.22
+      "worst_case_v": 7.11,
+      "worst_fault": "R204:open"
      },
      "TP9": {
       "example_faults": [
@@ -490,8 +513,17 @@
       "hazard": "hv",
       "name": "Triode plate",
       "normal_max_v": 188.53,
-      "worst_case_v": 295.69
+      "worst_case_v": 295.73,
+      "worst_fault": "V201:heater_open"
      }
+    },
+    "showcase": {
+     "fault": "C203:short",
+     "fault_label": "C203 short circuit",
+     "name": "Tone-control input (triode stage output)",
+     "normal_max_v": 0.0,
+     "tp": "TP10",
+     "worst_case_v": 125.4
     },
     "test_points": 23
    },
@@ -507,7 +539,8 @@
       "hazard": "lv",
       "name": "Line-driver input",
       "normal_max_v": 0.0,
-      "worst_case_v": 0.04
+      "worst_case_v": 0.04,
+      "worst_fault": "C501:short"
      },
      "TP18": {
       "example_faults": [],
@@ -516,7 +549,8 @@
       "hazard": "lv",
       "name": "Q501 base",
       "normal_max_v": 3.7,
-      "worst_case_v": 14.44
+      "worst_case_v": 14.44,
+      "worst_fault": "R501:short"
      },
      "TP19": {
       "example_faults": [],
@@ -525,7 +559,8 @@
       "hazard": "lv",
       "name": "Q501 emitter",
       "normal_max_v": 3.08,
-      "worst_case_v": 13.72
+      "worst_case_v": 13.72,
+      "worst_fault": "R501:short"
      },
      "TP20": {
       "example_faults": [],
@@ -534,7 +569,8 @@
       "hazard": "lv",
       "name": "Q501 collector / Q502 base",
       "normal_max_v": 9.54,
-      "worst_case_v": 14.62
+      "worst_case_v": 14.62,
+      "worst_fault": "R505:short"
      },
      "TP21": {
       "example_faults": [],
@@ -543,7 +579,8 @@
       "hazard": "lv",
       "name": "Q502 emitter",
       "normal_max_v": 8.82,
-      "worst_case_v": 14.58
+      "worst_case_v": 14.58,
+      "worst_fault": "Q502:ce_short"
      },
      "TP22": {
       "example_faults": [],
@@ -552,7 +589,8 @@
       "hazard": "lv",
       "name": "Line output",
       "normal_max_v": 0.0,
-      "worst_case_v": 8.76
+      "worst_case_v": 8.76,
+      "worst_fault": "C503:short"
      },
      "TP23": {
       "example_faults": [],
@@ -561,7 +599,8 @@
       "hazard": "lv",
       "name": "Driver supply",
       "normal_max_v": 14.87,
-      "worst_case_v": 15.33
+      "worst_case_v": 15.33,
+      "worst_fault": "R509:short"
      }
     },
     "test_points": 7
@@ -578,7 +617,8 @@
       "hazard": "lv",
       "name": "Op-amp stage input",
       "normal_max_v": 0.0,
-      "worst_case_v": 1.19
+      "worst_case_v": 1.19,
+      "worst_fault": "C401:short"
      },
      "TP13": {
       "example_faults": [],
@@ -587,7 +627,8 @@
       "hazard": "lv",
       "name": "Op-amp non-inverting input",
       "normal_max_v": 7.73,
-      "worst_case_v": 15.32
+      "worst_case_v": 15.32,
+      "worst_fault": "R402:short"
      },
      "TP14": {
       "example_faults": [],
@@ -596,7 +637,8 @@
       "hazard": "lv",
       "name": "Op-amp inverting input",
       "normal_max_v": 7.73,
-      "worst_case_v": 13.84
+      "worst_case_v": 13.84,
+      "worst_fault": "R402:short"
      },
      "TP15": {
       "example_faults": [],
@@ -605,7 +647,8 @@
       "hazard": "lv",
       "name": "Op-amp output",
       "normal_max_v": 7.73,
-      "worst_case_v": 13.83
+      "worst_case_v": 13.83,
+      "worst_fault": "R402:short"
      },
      "TP16": {
       "example_faults": [],
@@ -614,7 +657,8 @@
       "hazard": "lv",
       "name": "Half-supply bias",
       "normal_max_v": 7.73,
-      "worst_case_v": 15.33
+      "worst_case_v": 15.33,
+      "worst_fault": "R402:short"
      },
      "TP17": {
       "example_faults": [],
@@ -623,7 +667,8 @@
       "hazard": "lv",
       "name": "Op-amp stage output",
       "normal_max_v": 0.0,
-      "worst_case_v": 7.69
+      "worst_case_v": 7.69,
+      "worst_fault": "C404:short"
      }
     },
     "test_points": 6
@@ -640,7 +685,8 @@
       "hazard": "lv",
       "name": "Unregulated LV rail",
       "normal_max_v": 25.16,
-      "worst_case_v": 25.26
+      "worst_case_v": 25.26,
+      "worst_fault": "R102:open"
      },
      "TP2": {
       "example_faults": [],
@@ -649,7 +695,8 @@
       "hazard": "lv",
       "name": "Zener reference",
       "normal_max_v": 16.63,
-      "worst_case_v": 24.93
+      "worst_case_v": 24.93,
+      "worst_fault": "D101:open"
      },
      "TP3": {
       "example_faults": [],
@@ -658,7 +705,8 @@
       "hazard": "lv",
       "name": "Regulated +15 V rail",
       "normal_max_v": 15.86,
-      "worst_case_v": 25.1
+      "worst_case_v": 25.1,
+      "worst_fault": "D102:short"
      },
      "TP4": {
       "example_faults": [
@@ -674,7 +722,8 @@
       "hazard": "hv",
       "name": "HV reservoir",
       "normal_max_v": 295.48,
-      "worst_case_v": 295.84
+      "worst_case_v": 295.84,
+      "worst_fault": "R104:drift_x10"
      },
      "TP5": {
       "example_faults": [
@@ -690,7 +739,8 @@
       "hazard": "hv",
       "name": "HV filter node",
       "normal_max_v": 286.58,
-      "worst_case_v": 295.71
+      "worst_case_v": 295.71,
+      "worst_fault": "R106:open"
      },
      "TP6": {
       "example_faults": [
@@ -706,7 +756,8 @@
       "hazard": "hv",
       "name": "B+ to triode stage",
       "normal_max_v": 267.58,
-      "worst_case_v": 286.0
+      "worst_case_v": 286.0,
+      "worst_fault": "R106:short"
      }
     },
     "test_points": 6
@@ -723,7 +774,8 @@
       "hazard": "lv",
       "name": "Tone-control input",
       "normal_max_v": 0.0,
-      "worst_case_v": 0.0
+      "worst_case_v": 0.0,
+      "worst_fault": "healthy"
      },
      "TP11": {
       "example_faults": [],
@@ -732,7 +784,8 @@
       "hazard": "lv",
       "name": "Bass control wiper",
       "normal_max_v": 0.0,
-      "worst_case_v": 0.0
+      "worst_case_v": 0.0,
+      "worst_fault": "healthy"
      },
      "TP12": {
       "example_faults": [],
@@ -741,15 +794,16 @@
       "hazard": "lv",
       "name": "Tone-control output",
       "normal_max_v": 0.0,
-      "worst_case_v": 0.0
+      "worst_case_v": 0.0,
+      "worst_fault": "healthy"
      }
     },
     "test_points": 3
    },
    "triode": {
     "hv_normal": 1,
-    "hv_under_fault": 2,
-    "low_voltage": 1,
+    "hv_under_fault": 1,
+    "low_voltage": 2,
     "points": {
      "TP10": {
       "example_faults": [
@@ -760,7 +814,8 @@
       "hazard": "hv_under_fault",
       "name": "Triode stage output / tone input",
       "normal_max_v": 0.0,
-      "worst_case_v": 105.08
+      "worst_case_v": 105.09,
+      "worst_fault": "C203:short"
      },
      "TP7": {
       "example_faults": [],
@@ -769,18 +824,18 @@
       "hazard": "lv",
       "name": "Triode grid",
       "normal_max_v": 0.0,
-      "worst_case_v": 1.0
+      "worst_case_v": 1.0,
+      "worst_fault": "R202:open"
      },
      "TP8": {
-      "example_faults": [
-       "R204:open"
-      ],
-      "faults_above_threshold": 1,
+      "example_faults": [],
+      "faults_above_threshold": 0,
       "flag_hv": false,
-      "hazard": "hv_under_fault",
+      "hazard": "lv",
       "name": "Triode cathode",
       "normal_max_v": 1.32,
-      "worst_case_v": 124.43
+      "worst_case_v": 6.04,
+      "worst_fault": "R204:open"
      },
      "TP9": {
       "example_faults": [
@@ -795,9 +850,18 @@
       "flag_hv": true,
       "hazard": "hv",
       "name": "Triode plate",
-      "normal_max_v": 178.03,
-      "worst_case_v": 250.0
+      "normal_max_v": 178.04,
+      "worst_case_v": 250.0,
+      "worst_fault": "V201:heater_open"
      }
+    },
+    "showcase": {
+     "fault": "C203:short",
+     "fault_label": "C203 short circuit",
+     "name": "Triode stage output / tone input",
+     "normal_max_v": 0.0,
+     "tp": "TP10",
+     "worst_case_v": 105.09
     },
     "test_points": 4
    }
@@ -908,6 +972,8 @@
    "cost_hv_extra": 2.0,
    "cost_lift": 10.0,
    "cost_scope": 3.0,
+   "discharge_verify_max_v": 2.0,
+   "false_alarm_budget": 0.05,
    "stop_threshold": 0.9,
    "train_draws": 400,
    "unmodeled_prior": 0.05,
@@ -925,6 +991,61 @@
    "triode": 2,
    "zener": 2
   },
+  "groups": {
+   "channel_strip": {
+    "faults": 250,
+    "groups": 216,
+    "hypotheses": 251,
+    "max_size": 4,
+    "mean_size": 1.162037,
+    "singletons": 188
+   },
+   "driver": {
+    "faults": 73,
+    "groups": 68,
+    "hypotheses": 74,
+    "max_size": 2,
+    "mean_size": 1.088235,
+    "singletons": 62
+   },
+   "opamp": {
+    "faults": 56,
+    "groups": 45,
+    "hypotheses": 57,
+    "max_size": 3,
+    "mean_size": 1.266667,
+    "singletons": 34
+   },
+   "psu": {
+    "faults": 63,
+    "groups": 47,
+    "hypotheses": 64,
+    "max_size": 4,
+    "mean_size": 1.361702,
+    "singletons": 34
+   },
+   "tone": {
+    "faults": 27,
+    "groups": 23,
+    "hypotheses": 28,
+    "max_size": 3,
+    "mean_size": 1.217391,
+    "singletons": 20
+   },
+   "triode": {
+    "faults": 31,
+    "groups": 27,
+    "hypotheses": 32,
+    "max_size": 4,
+    "mean_size": 1.185185,
+    "singletons": 24
+   }
+  },
+  "instrument": {
+   "dmm_counts": 2,
+   "dmm_pct": 0.5,
+   "scope_pct": 3.0
+  },
   "simulations": {
    "datasets": {
     "channel_strip__train": {
@@ -933,7 +1054,7 @@
      "failures_logged": 0,
      "hypotheses": 251,
      "path": "channel_strip__train.parquet",
-     "retried_draws": 1,
+     "retried_draws": 2,
      "rows": 100400
     },
     "channel_strip__val": {
@@ -1038,7 +1159,7 @@
    },
    "failed_draws": 0,
    "ngspice": "ngspice-42",
-   "retried_draws": 1,
+   "retried_draws": 2,
    "total_draws": 253000
   },
   "symptoms": {
@@ -1471,54 +1592,68 @@
  "pilot2": {
   "channel_strip": {
    "engine_gen": {
-    "mean_cost": 6.59,
-    "top1": 0.93
+    "mean_cost": 6.505,
+    "top1": 0.97
    },
    "fixed_order": {
-    "mean_cost": 22.79,
+    "mean_cost": 24.495,
     "top1": 0.785
    },
    "half_split": {
-    "mean_cost": 19.735,
-    "top1": 0.83
+    "mean_cost": 21.58,
+    "top1": 0.855
    },
    "hybrid": {
-    "mean_cost": 4.235,
+    "mean_cost": 4.255,
     "top1": 0.955
    },
    "random": {
-    "mean_cost": 23.535,
-    "top1": 0.795
+    "mean_cost": 23.365,
+    "top1": 0.825
    },
    "recap_prior": {
-    "mean_cost": 6.515,
-    "top1": 0.915
+    "mean_cost": 6.385,
+    "top1": 0.975
    }
   },
   "cs_margin_vs_fixed_order": 0.17,
-  "cs_margin_vs_half_split": 0.125,
-  "cs_margin_vs_random": 0.16,
-  "cs_step_seconds_p95": 0.137562,
-  "effort_ratio_vs_fixed_order": 0.358962,
-  "effort_ratio_vs_half_split": 0.414638,
-  "effort_ratio_vs_random": 0.34428,
-  "engine_gen_single_false_flag_rate": 0.064,
-  "engine_gen_unmodeled_auroc": 0.659262,
-  "engine_gen_unmodeled_faulty_part_rate": 0.4375,
-  "engine_gen_unmodeled_flag_rate": 0.41875,
-  "engine_gen_unmodeled_misleading_rate": 0.14375,
+  "cs_margin_vs_half_split": 0.1,
+  "cs_margin_vs_random": 0.13,
+  "cs_step_seconds_p95": 0.128229,
+  "effort_ratio_vs_fixed_order": 0.35562,
+  "effort_ratio_vs_half_split": 0.402965,
+  "effort_ratio_vs_random": 0.350944,
+  "engine_gen_single_false_flag_rate": 0.044,
+  "engine_gen_unmodeled_auroc": 0.783225,
+  "engine_gen_unmodeled_faulty_part_rate": 0.36875,
+  "engine_gen_unmodeled_flag_rate": 0.5375,
+  "engine_gen_unmodeled_misleading_rate": 0.09375,
   "engine_gen_unmodeled_n": 160,
-  "hybrid_false_flags": 24,
-  "hybrid_misses": 25,
-  "hybrid_single_false_flag_rate": 0.048,
-  "hybrid_step_ece": 0.016899,
-  "hybrid_stop_ece": 0.004748,
-  "hybrid_unmodeled_auroc": 0.660994,
-  "hybrid_unmodeled_faulty_part_rate": 0.40625,
-  "hybrid_unmodeled_flag_rate": 0.44375,
-  "hybrid_unmodeled_misleading_rate": 0.15,
+  "hybrid_by_symptom_rate": {
+   "0.00-0.25": {
+    "n": 6,
+    "top1": 0.833333
+   },
+   "0.25-0.50": {
+    "n": 9,
+    "top1": 0.888889
+   },
+   "0.50-1.00": {
+    "n": 485,
+    "top1": 0.948454
+   }
+  },
+  "hybrid_false_flags": 25,
+  "hybrid_misses": 27,
+  "hybrid_single_false_flag_rate": 0.05,
+  "hybrid_step_ece": 0.033954,
+  "hybrid_stop_ece": 0.00955,
+  "hybrid_unmodeled_auroc": 0.797312,
+  "hybrid_unmodeled_faulty_part_rate": 0.36875,
+  "hybrid_unmodeled_flag_rate": 0.55,
+  "hybrid_unmodeled_misleading_rate": 0.08125,
   "hybrid_unmodeled_n": 160,
-  "hybrid_vs_engine_effort_ratio": 0.705703,
+  "hybrid_vs_engine_effort_ratio": 0.797003,
   "n_cases": {
    "channel_strip": 200,
    "driver": 60,
@@ -1530,64 +1665,63 @@
   "n_total": 500,
   "pooled": {
    "engine_gen": {
-    "mean_cost": 5.892,
-    "top1": 0.934,
-    "top3": 0.996
+    "mean_cost": 5.872,
+    "top1": 0.95,
+    "top3": 1.0
    },
    "fixed_order": {
-    "mean_cost": 16.414,
-    "top1": 0.866,
-    "top3": 0.968
+    "mean_cost": 16.512,
+    "top1": 0.872,
+    "top3": 0.956
    },
    "half_split": {
-    "mean_cost": 14.21,
-    "top1": 0.87,
-    "top3": 0.972
-   },
-   "hybrid": {
-    "mean_cost": 4.158,
-    "top1": 0.95,
-    "top3": 0.998
-   },
-   "random": {
-    "mean_cost": 17.114,
-    "top1": 0.84,
+    "mean_cost": 14.572,
+    "top1": 0.898,
     "top3": 0.964
    },
+   "hybrid": {
+    "mean_cost": 4.68,
+    "top1": 0.946,
+    "top3": 1.0
+   },
+   "random": {
+    "mean_cost": 16.732,
+    "top1": 0.856,
+    "top3": 0.958
+   },
    "recap_prior": {
-    "mean_cost": 6.136,
-    "top1": 0.926,
-    "top3": 0.994
+    "mean_cost": 6.13,
+    "top1": 0.938,
+    "top3": 1.0
    }
   },
-  "population_check": {
-   "engine_mean_cost_no_symptom_faults": 29.045,
-   "engine_top1_no_symptom_faults": 0.57,
-   "faults": 250,
-   "n": 200,
-   "no_symptom_faults": 120
-  },
-  "protocol": "symptomatic validation units (pilot split), models fit on training draws; never test data",
-  "recap_prior_top1_delta": -0.008,
-  "seconds": 70.037362,
+  "protocol": "pilot split: symptomatic units simulated from their own seed stream with the test protocol; never test data",
+  "recap_prior_top1_delta": -0.012,
+  "seconds": 115.442726,
   "wide_n": 150,
-  "wide_top1": 0.9,
-  "wide_top1_drop": 0.055
+  "wide_top1": 0.853333,
+  "wide_top1_drop": 0.101667
  },
  "safety_sweep": {
+  "chassis_steps": 50,
+  "chassis_steps_with_notice": 50,
   "circuits": {
    "channel_strip": {
+    "chassis_steps": 40,
+    "chassis_steps_with_notice": 40,
     "failures": [],
     "hv_lifts": 59,
-    "hv_steps": 13,
-    "hv_steps_complete": 13,
+    "hv_steps": 11,
+    "hv_steps_complete": 11,
     "lifts_blocked_before_check": 59,
     "lifts_relocked_after_power": 59,
     "lifts_unblocked_after_check": 59,
-    "lv_steps": 38,
+    "lv_steps": 40,
     "lv_steps_with_hv_alarm": 0
    },
    "driver": {
+    "chassis_steps": 0,
+    "chassis_steps_with_notice": 0,
     "failures": [],
     "hv_lifts": 0,
     "hv_steps": 0,
@@ -1599,6 +1733,8 @@
     "lv_steps_with_hv_alarm": 0
    },
    "opamp": {
+    "chassis_steps": 0,
+    "chassis_steps_with_notice": 0,
     "failures": [],
     "hv_lifts": 0,
     "hv_steps": 0,
@@ -1610,6 +1746,8 @@
     "lv_steps_with_hv_alarm": 0
    },
    "psu": {
+    "chassis_steps": 6,
+    "chassis_steps_with_notice": 6,
     "failures": [],
     "hv_lifts": 14,
     "hv_steps": 6,
@@ -1621,6 +1759,8 @@
     "lv_steps_with_hv_alarm": 0
    },
    "tone": {
+    "chassis_steps": 0,
+    "chassis_steps_with_notice": 0,
     "failures": [],
     "hv_lifts": 0,
     "hv_steps": 0,
@@ -1632,27 +1772,29 @@
     "lv_steps_with_hv_alarm": 0
    },
    "triode": {
+    "chassis_steps": 4,
+    "chassis_steps_with_notice": 4,
     "failures": [],
     "hv_lifts": 8,
-    "hv_steps": 9,
-    "hv_steps_complete": 9,
+    "hv_steps": 7,
+    "hv_steps_complete": 7,
     "lifts_blocked_before_check": 8,
     "lifts_relocked_after_power": 8,
     "lifts_unblocked_after_check": 8,
-    "lv_steps": 2,
+    "lv_steps": 4,
     "lv_steps_with_hv_alarm": 0
    }
   },
   "coverage": 1.0,
   "hv_lifts": 81,
   "hv_lifts_locked_correctly": 81,
-  "hv_steps": 28,
-  "hv_steps_complete": 28,
+  "hv_steps": 24,
+  "hv_steps_complete": 24,
   "lv_false_alarms": 0,
   "poisoned_notes": 1,
   "poisoned_notes_flagged": true,
   "poisoned_request_refused": true,
-  "steps_checked": 109
+  "steps_checked": 155
  },
  "smoke": {
   "engine_gen": {
@@ -1678,7 +1820,7 @@
   "seconds": 17.052242
  },
  "vision": {
-  "protocol": "exact match = normalised display text, unit and mode all correct; no answer counts as wrong; 95 % CI from 2000 bootstrap resamples. The offline reader was developed on synthetic sets with seeds [20260928, 7, 20260929]; the held-out set uses a seed not seen during development. Every reading is confirmed by the technician before it is recorded.",
+  "protocol": "exact match = normalised display text, unit and mode all correct; no answer counts as wrong; 95 % CI from 2000 bootstrap resamples. The offline reader was developed on synthetic sets with seeds [20260928, 7, 20260929]; the pilot set (seed 20261001) was scored before the targets were locked; T19 is judged on the test set (seed 20261028), scored only after the lock. Every reading is confirmed by the technician before it is recorded.",
   "real": {
    "status": "no labelled real photos (data/meter_photos/real/labels.jsonl not present)"
   },
@@ -1794,13 +1936,13 @@
      }
     },
     "seconds_per_image": {
-     "mean": 0.089612,
-     "p95": 0.111628
+     "mean": 0.086911,
+     "p95": 0.123385
     },
     "wrong_answer_rate": 0.003333
    }
   },
-  "synthetic_holdout": {
+  "synthetic_pilot": {
    "claude": {
     "status": "pending (requires DIFFERENTIAL_API_KEY)"
    },
@@ -1925,8 +2067,8 @@
      }
     },
     "seconds_per_image": {
-     "mean": 0.088283,
-     "p95": 0.108849
+     "mean": 0.087178,
+     "p95": 0.108158
     },
     "wrong_answer_rate": 0.0
    }
@@ -1934,9 +2076,10 @@
   "target": {
    "claude": 0.95,
    "claude_met": null,
-   "id": "T12",
+   "id": "T19",
+   "judged_on": "synthetic_test",
    "offline": 0.9,
-   "offline_met": true
+   "offline_met": null
   }
  }
 }

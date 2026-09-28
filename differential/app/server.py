@@ -262,7 +262,10 @@ async def photo(sid: str, file: UploadFile = File(...)) -> dict[str, Any]:  # no
     pid = uuid.uuid4().hex[:8]
     agent: DifferentialAgent = s["agent"]
     agent.tb.photos[pid] = data
-    proposal = agent.tb.call("read_meter_photo", {"photo_id": pid})
+    args: dict[str, Any] = {"photo_id": pid}
+    if agent.pending_key and agent.pending_key != "discharge":
+        args["key"] = agent.pending_key
+    proposal = agent.tb.call("read_meter_photo", args)
     return {"photo_id": pid, "proposal": proposal}
 
 

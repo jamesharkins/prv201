@@ -14,10 +14,10 @@ Python; simulated values come from the nominal netlists in ngspice.
 | psu | HV filter node (TP5) | 273 V | 273 V | +0.000388 | ±1.0 % | TP4 - I R105 |
 | psu | B+ (TP6) | 254.4 V | 254.4 V | +0.000492 | ±1.0 % | TP5 - I R106 |
 | psu | LV ripple fundamental at TP1 (hand only) | 0.03657 V | - | - | - | 2 Idc |ESR + 1/(j w C101)| = sawtooth fundamental I/(120 pi C) |
-| triode | Plate current | 0.8031 mA | 0.7993 mA | -0.00376 | ±1.0 % | solve Ip = Koren(Vp = B+ - Ra Ip, Vgk = -Rk Ip) |
-| triode | Cathode voltage (TP8) | 1.205 V | 1.199 V | -0.00565 | ±1.0 % | Rk Ip |
-| triode | Plate voltage (TP9) | 169.7 V | 170.1 V | +0.376 | ±1.0 % | B+ - Ra Ip |
-| triode | Mid-band gain into 100k (TP10) | 45.09 V/V | 44.64 V/V | -0.445 | ±3.0 % | mu (Ra||RL) / (rp + Ra||RL), gm and rp from the Koren equations |
+| triode | Plate current | 0.8031 mA | 0.7993 mA | -0.00379 | ±1.0 % | solve Ip = Koren(Vp = B+ - Ra Ip, Vgk = -Rk Ip) |
+| triode | Cathode voltage (TP8) | 1.205 V | 1.199 V | -0.00569 | ±1.0 % | Rk Ip |
+| triode | Plate voltage (TP9) | 169.7 V | 170.1 V | +0.379 | ±1.0 % | B+ - Ra Ip |
+| triode | Mid-band gain into 100k (TP10) | 45.09 V/V | 44.65 V/V | -0.442 | ±3.0 % | mu (Ra||RL) / (rp + Ra||RL), gm and rp from the Koren equations |
 | triode | Koren Ip at Va=250 V, Vg=-2 V (datasheet 1.2 mA) | 0.9518 mA | - | - | - | model vs Philips ECC83 typical characteristics |
 | tone | Response at 20 Hz | -25.76 dB | -25.76 dB | +6.31e-06 | ±0.1 dB | nodal analysis (numpy), tone controls centred |
 | tone | Response at 1000 Hz | -27.04 dB | -27.04 dB | +3.76e-06 | ±0.1 dB | nodal analysis (numpy), tone controls centred |

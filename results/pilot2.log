@@ -1,5 +1,5 @@
 {
- "protocol": "symptomatic validation units (pilot split), models fit on training draws; never test data",
+ "protocol": "pilot split: symptomatic units simulated from their own seed stream with the test protocol; never test data",
  "n_cases": {
   "channel_strip": 200,
   "psu": 60,
@@ -10,97 +10,104 @@
  },
  "pooled": {
   "engine_gen": {
-   "top1": 0.934,
-   "top3": 0.996,
-   "mean_cost": 5.892
+   "top1": 0.95,
+   "top3": 1.0,
+   "mean_cost": 5.872
   },
   "hybrid": {
-   "top1": 0.95,
-   "top3": 0.998,
-   "mean_cost": 4.158
+   "top1": 0.946,
+   "top3": 1.0,
+   "mean_cost": 4.68
   },
   "fixed_order": {
-   "top1": 0.866,
-   "top3": 0.968,
-   "mean_cost": 16.414
+   "top1": 0.872,
+   "top3": 0.956,
+   "mean_cost": 16.512
   },
   "half_split": {
-   "top1": 0.87,
-   "top3": 0.972,
-   "mean_cost": 14.21
+   "top1": 0.898,
+   "top3": 0.964,
+   "mean_cost": 14.572
   },
   "random": {
-   "top1": 0.84,
-   "top3": 0.964,
-   "mean_cost": 17.114
+   "top1": 0.856,
+   "top3": 0.958,
+   "mean_cost": 16.732
   },
   "recap_prior": {
-   "top1": 0.926,
-   "top3": 0.994,
-   "mean_cost": 6.136
+   "top1": 0.938,
+   "top3": 1.0,
+   "mean_cost": 6.13
   }
  },
  "n_total": 500,
- "hybrid_misses": 25,
- "hybrid_false_flags": 24,
+ "hybrid_misses": 27,
+ "hybrid_false_flags": 25,
  "channel_strip": {
   "engine_gen": {
-   "top1": 0.93,
-   "mean_cost": 6.59
+   "top1": 0.97,
+   "mean_cost": 6.505
   },
   "hybrid": {
    "top1": 0.955,
-   "mean_cost": 4.235
+   "mean_cost": 4.255
   },
   "fixed_order": {
    "top1": 0.785,
-   "mean_cost": 22.79
+   "mean_cost": 24.495
   },
   "half_split": {
-   "top1": 0.83,
-   "mean_cost": 19.735
+   "top1": 0.855,
+   "mean_cost": 21.58
   },
   "random": {
-   "top1": 0.795,
-   "mean_cost": 23.535
+   "top1": 0.825,
+   "mean_cost": 23.365
   },
   "recap_prior": {
-   "top1": 0.915,
-   "mean_cost": 6.515
+   "top1": 0.975,
+   "mean_cost": 6.385
   }
  },
- "effort_ratio_vs_fixed_order": 0.3589618618252711,
- "effort_ratio_vs_half_split": 0.41463757916959887,
- "effort_ratio_vs_random": 0.3442795372209887,
- "hybrid_vs_engine_effort_ratio": 0.7057026476578412,
+ "effort_ratio_vs_fixed_order": 0.35562015503875966,
+ "effort_ratio_vs_half_split": 0.40296458962393633,
+ "effort_ratio_vs_random": 0.3509442983504662,
+ "hybrid_vs_engine_effort_ratio": 0.7970027247956403,
  "cs_margin_vs_fixed_order": 0.16999999999999993,
- "cs_margin_vs_random": 0.15999999999999992,
- "cs_margin_vs_half_split": 0.125,
- "hybrid_step_ece": 0.01689928797468358,
- "hybrid_stop_ece": 0.004747688149199835,
- "recap_prior_top1_delta": -0.008000000000000007,
- "cs_step_seconds_p95": 0.137562,
- "wide_top1": 0.9,
- "wide_top1_drop": 0.05499999999999994,
+ "cs_margin_vs_random": 0.13,
+ "cs_margin_vs_half_split": 0.09999999999999998,
+ "hybrid_step_ece": 0.03395434314429291,
+ "hybrid_stop_ece": 0.009549909292136591,
+ "recap_prior_top1_delta": -0.01200000000000001,
+ "cs_step_seconds_p95": 0.12822899999999995,
+ "wide_top1": 0.8533333333333334,
+ "wide_top1_drop": 0.10166666666666657,
  "wide_n": 150,
- "hybrid_unmodeled_auroc": 0.66099375,
- "hybrid_unmodeled_flag_rate": 0.44375,
- "hybrid_unmodeled_faulty_part_rate": 0.40625,
- "hybrid_unmodeled_misleading_rate": 0.15,
+ "hybrid_unmodeled_auroc": 0.7973125,
+ "hybrid_unmodeled_flag_rate": 0.55,
+ "hybrid_unmodeled_faulty_part_rate": 0.36875,
+ "hybrid_unmodeled_misleading_rate": 0.08125,
  "hybrid_unmodeled_n": 160,
- "hybrid_single_false_flag_rate": 0.048,
- "engine_gen_unmodeled_auroc": 0.6592625,
- "engine_gen_unmodeled_flag_rate": 0.41875,
- "engine_gen_unmodeled_faulty_part_rate": 0.4375,
- "engine_gen_unmodeled_misleading_rate": 0.14375,
+ "hybrid_single_false_flag_rate": 0.05,
+ "engine_gen_unmodeled_auroc": 0.783225,
+ "engine_gen_unmodeled_flag_rate": 0.5375,
+ "engine_gen_unmodeled_faulty_part_rate": 0.36875,
+ "engine_gen_unmodeled_misleading_rate": 0.09375,
  "engine_gen_unmodeled_n": 160,
- "engine_gen_single_false_flag_rate": 0.064,
- "population_check": {
-  "n": 200,
-  "engine_top1_no_symptom_faults": 0.57,
-  "engine_mean_cost_no_symptom_faults": 29.045,
-  "no_symptom_faults": 120,
-  "faults": 250
+ "engine_gen_single_false_flag_rate": 0.044,
+ "hybrid_by_symptom_rate": {
+  "0.00-0.25": {
+   "n": 6,
+   "top1": 0.8333333333333334
+  },
+  "0.25-0.50": {
+   "n": 9,
+   "top1": 0.8888888888888888
+  },
+  "0.50-1.00": {
+   "n": 485,
+   "top1": 0.9484536082474226
+  }
  },
- "seconds": 70.03736233711243
+ "seconds": 115.44272565841675
 }

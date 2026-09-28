@@ -2,19 +2,18 @@
  "documents": [
   "submissions/M1/M1.typ"
  ],
- "n_sources": 47,
+ "n_sources": 44,
  "summary": {
-  "canonical:unreachable": 41,
+  "canonical:unreachable": 39,
   "source:ok": 9,
   "canonical:ok": 2,
   "source:site-block": 3,
   "source:unreachable": 2,
-  "canonical:site-block": 4
+  "canonical:site-block": 3
  },
  "reference_points_at_mirror": [],
  "snippet_only": [
   "bls_oews_492097_2023",
-  "bls_ooh_eeir",
   "brynjolfsson_genai_at_work_2023",
   "e2e_circuit_analysis_2025",
   "ec_ip_26_1714",
@@ -41,7 +40,6 @@
   "siemens_maintenance_copilot_2025",
   "stereophile_retales_13",
   "tx_hb2963_2025",
-  "us_ai_lead_act_s2937",
   "us_rise_act_s2081"
  ],
  "results": [
@@ -65,14 +63,6 @@
    "key": "bls_oews_492097_2023",
    "role": "canonical",
    "url": "https://www.bls.gov/oes/2023/may/oes492097.htm",
-   "status": "unreachable",
-   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
-   "verified": "search_snippet_only"
-  },
-  {
-   "key": "bls_ooh_eeir",
-   "role": "canonical",
-   "url": "https://www.bls.gov/ooh/installation-maintenance-and-repair/electrical-and-electronics-installers-and-repairers.htm",
    "status": "unreachable",
    "detail": "URLError: Tunnel connection failed: 403 Forbidden",
    "verified": "search_snippet_only"
@@ -310,14 +300,6 @@
    "verified": "search_snippet_only"
   },
   {
-   "key": "kulicki_trypuz_j3016_ontology",
-   "role": "canonical",
-   "url": "https://github.com/kul-ai/ontology-autonomous-driving",
-   "status": "site-block",
-   "detail": "403",
-   "verified": "fetched"
-  },
-  {
    "key": "msft_d365_field_service_page",
    "role": "canonical",
    "url": "https://www.microsoft.com/en-us/dynamics-365/products/field-service",
@@ -513,14 +495,6 @@
    "key": "tx_hb2963_2025",
    "role": "canonical",
    "url": "https://capitol.texas.gov/tlodocs/89R/billtext/html/HB02963F.htm",
-   "status": "unreachable",
-   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
-   "verified": "search_snippet_only"
-  },
-  {
-   "key": "us_ai_lead_act_s2937",
-   "role": "canonical",
-   "url": "https://www.hawley.senate.gov/hawley-durbin-introduce-legislation-empowering-americans-to-bring-liability-claims-against-ai-companies/",
    "status": "unreachable",
    "detail": "URLError: Tunnel connection failed: 403 Forbidden",
    "verified": "search_snippet_only"

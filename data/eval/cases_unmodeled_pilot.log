@@ -1,0 +1,10 @@
+channel_strip unmodeled_pilot: 60 cases (0 failed)
+psu unmodeled_pilot: 20 cases (0 failed)
+triode unmodeled_pilot: 20 cases (0 failed)
+tone unmodeled_pilot: 20 cases (0 failed)
+opamp unmodeled_pilot: 20 cases (0 failed)
+driver unmodeled_pilot: 20 cases (0 failed)
+
+real	0m30.935s
+user	0m31.971s
+sys	0m2.506s

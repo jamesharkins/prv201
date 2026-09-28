@@ -12,6 +12,7 @@ Usage: python tools/check_claims.py submissions/M1/M1.pdf [more.pdf ...]
 
 from __future__ import annotations
 
+import contextlib
 import json
 import re
 import subprocess
@@ -76,10 +77,8 @@ def _text_numbers(text: str, acc: set[str]) -> None:
         tok = m.group(0)
         acc.add(tok)
         acc.add(tok.replace(",", ""))
-        try:
+        with contextlib.suppress(ValueError):
             acc |= _variants(float(tok.replace(",", "")))
-        except ValueError:
-            pass
 
 
 def known_numbers() -> set[str]:

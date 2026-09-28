@@ -2,9 +2,13 @@
 
 Symptomatic validation units, drawn like the test cases: each circuit's faults that
 produce a symptom in at least half of units, a unit kept only if it shows a
-symptom, complaint rendered from the main template bank. Validation draws are not
-used to fit the likelihood models, only for calibration, so these pilot numbers
-are slightly optimistic; the targets therefore sit below them.
+symptom, complaint rendered from the main template bank. Only validation draws
+50-99 are used: draws 0-49 set the unmodeled detector's threshold
+(eval/recalibrate_unmodeled.py), so the pilot checks that threshold on units it
+was not tuned on. The likelihood models never see validation draws, but the other
+calibration steps (ambiguity groups, symptom-prior smoothing, classifier
+temperature) use all of them, so the pilot stays mildly optimistic and the bars
+sit below it.
 """
 
 from __future__ import annotations
@@ -21,6 +25,7 @@ from differential.sim.montecarlo import BASE_SEED, load_dataset
 from eval.cases import symptom_model, symptomatic_faults
 
 N_PILOT = {COMPOSITE_ID: 200, **dict.fromkeys(BLOCK_IDS, 60)}
+PILOT_MIN_DRAW = 50  # validation draws 0-49 are reserved for calibration
 
 
 def build(cid: str) -> int:
@@ -30,7 +35,8 @@ def build(cid: str) -> int:
     tp_stage = {tp.id: tp.stage for tp in circ.test_points}
     pool = set(symptomatic_faults(sm))
     val = load_dataset(cid, "val")
-    val = val[val["ok"] & val["hypothesis"].isin(pool)].sample(frac=1.0, random_state=11)
+    val = val[val["ok"] & val["hypothesis"].isin(pool) & (val["draw"] >= PILOT_MIN_DRAW)]
+    val = val.sample(frac=1.0, random_state=11)
     rng = np.random.default_rng([BASE_SEED, 55, len(cid)])
     rows, meta = [], []
     for _, r in val.iterrows():

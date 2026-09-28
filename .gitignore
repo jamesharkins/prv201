@@ -22,3 +22,6 @@ data/sim/*.log
 # Scratch
 *.tmp
 .DS_Store
+
+# Uncompressed legacy classifier files (the bundle stores discriminative.txt.gz)
+data/models/*/discriminative.txt

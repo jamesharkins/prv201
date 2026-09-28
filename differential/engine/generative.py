@@ -69,6 +69,10 @@ class GenerativeModel:
     comp_cov: np.ndarray  # (C, D, D) including measurement noise and floor
     unmod_width: np.ndarray  # (D,) support width for the unmodeled density
     unmod_offset: float = 0.0  # calibrated log-density offset per observed dimension
+    # Offset for sessions whose prior carries no complaint information (uniform or
+    # folklore prior): a complaint concentrates the prior on consistent faults, so
+    # the two regimes need separately calibrated levels (ADR-029). NaN = same.
+    unmod_offset_nocomplaint: float = float("nan")
     n_train: int = 0
 
     # ------------------------------------------------------------------ fit
@@ -143,7 +147,7 @@ class GenerativeModel:
         z = np.linalg.solve(L, diff)[..., 0]
         maha = np.einsum("ci,ci->c", z, z)
         logdet = 2.0 * np.log(np.diagonal(L, axis1=1, axis2=2)).sum(axis=1)
-        return self.comp_logw - 0.5 * (maha + logdet + len(idx) * LOG_2PI)
+        return np.asarray(self.comp_logw - 0.5 * (maha + logdet + len(idx) * LOG_2PI))
 
     def loglik(self, x: np.ndarray, idx: np.ndarray) -> np.ndarray:
         """log p(x_S | h) for every hypothesis h."""
@@ -186,8 +190,23 @@ class GenerativeModel:
         var = var_c - np.einsum("csj,csj->cj", B, B)
         return cl, mean, np.maximum(var, 1e-10)
 
+    @property
+    def unmod_center(self) -> np.ndarray:
+        """Centre of U's support per dimension: midpoint of the component means' range
+        (U's width already spans the training data range with a margin)."""
+        return np.asarray((self.comp_mean.min(axis=0) + self.comp_mean.max(axis=0)) / 2.0)
+
     def unmodeled_loglik(self, idx: np.ndarray) -> float:
-        return float(-np.log(self.unmod_width[idx]).sum() + self.unmod_offset * len(idx))
+        return self.unmodeled_loglik_at(idx, self.unmod_offset)
+
+    def offset_for(self, complaint: bool) -> float:
+        """Calibrated offset for a session with (or without) a complaint prior."""
+        if complaint or math.isnan(self.unmod_offset_nocomplaint):
+            return self.unmod_offset
+        return self.unmod_offset_nocomplaint
+
+    def unmodeled_loglik_at(self, idx: np.ndarray, offset: float) -> float:
+        return float(-np.log(self.unmod_width[idx]).sum() + offset * len(idx))
 
     # ------------------------------------------------------------- storage
     def save(self, path: Path) -> None:
@@ -204,6 +223,7 @@ class GenerativeModel:
             comp_cov=self.comp_cov.astype(np.float64),
             unmod_width=self.unmod_width,
             unmod_offset=np.array(self.unmod_offset),
+            unmod_offset_nocomplaint=np.array(self.unmod_offset_nocomplaint),
             n_train=np.array(self.n_train),
         )
 
@@ -221,5 +241,7 @@ class GenerativeModel:
             comp_cov=z["comp_cov"],
             unmod_width=z["unmod_width"],
             unmod_offset=float(z["unmod_offset"]),
+            unmod_offset_nocomplaint=float(z["unmod_offset_nocomplaint"])
+            if "unmod_offset_nocomplaint" in z.files else float("nan"),
             n_train=int(z["n_train"]),
         )

@@ -22,6 +22,10 @@ from differential.instruments.base import InstrumentError, InstrumentReading
 from differential.sim.observables import ObservableSpec
 
 MAX_BENCH_VOLTS = 24.0
+# Reading rules for the low-voltage fault board (hardware/fault_board/procedure.md):
+# quantities the model does not contain are reported as the model's zero.
+DC_ZERO_BAND_V = {"TP17": 0.010, "TP22": 0.100}  # generator offset / capacitor leakage
+NOISE_FLOOR_VRMS = 0.005  # below this the scope shows noise, not a sine: gain is 0
 
 DEFAULT_COMMANDS: dict[str, dict[str, str]] = {
     "dmm": {"dc": "MEAS:VOLT:DC?"},
@@ -75,11 +79,16 @@ class ScpiInstrument:
         if self.role == "dmm":
             raw = str(self._res.query(self.commands["dc"]))
             value = _parse_float(raw)
+            if obs.tp in DC_ZERO_BAND_V and abs(value) <= DC_ZERO_BAND_V[obs.tp]:
+                value = 0.0
             if abs(value) > MAX_BENCH_VOLTS * 1.1:
                 raise InstrumentError(
                     f"{value:.1f} V exceeds the fault board's {MAX_BENCH_VOLTS:.0f} V limit")
             return InstrumentReading(obs.key, value, "V", self.name, raw.strip())
         tp = _parse_float(str(self._res.query(self.commands["vrms_tp"])))
+        if obs.kind != "hum" and tp < NOISE_FLOOR_VRMS:
+            return InstrumentReading(obs.key, 0.0, "V/V", self.name,
+                                     f"CH1 {tp:.4g} Vrms: noise only, gain reported as 0")
         if obs.kind == "hum":
             return InstrumentReading(obs.key, tp, "V", self.name, f"CH1 {tp:.4g} Vrms")
         ref = _parse_float(str(self._res.query(self.commands["vrms_ref"])))

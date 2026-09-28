@@ -71,6 +71,8 @@ class DifferentialAgent:
         self.grounding_log: list[dict[str, Any]] = []
         self.safety_log: list[dict[str, Any]] = []
         self.confirmed_photo_values: list[float] = []
+        self.history_snapshots: list[dict[str, Any]] = []  # belief after each reading (UI chart)
+        self.signoff: dict[str, str] | None = None
         c = self.tb.bundle.circuit
         self._hv_tokens = {tp.id for tp in c.test_points if hazard(c.id, tp.id).high_voltage} | {
             p.ref for p in c.components if c.component_is_hv(p.ref)}
@@ -102,6 +104,7 @@ class DifferentialAgent:
         if "error" in res:
             return self._reply(f"I couldn't record that: {res['error']}")
         self.turns.append(Turn("event", f"{key} = {res['recorded']['text']} ({source})"))
+        self.snapshot(key)
         if self.mode != "offline":
             self.history.append({"role": "user", "content":
                                  f"[bench event] The technician recorded {key} = "
@@ -120,8 +123,24 @@ class DifferentialAgent:
         self.confirmed_photo_values.append(float(value))
         return self.reading_event(key, value, source=f"photo:{photo_id} (confirmed)")
 
+    def snapshot(self, label: str) -> None:
+        top = self.tb.engine.top_hypotheses(6)
+        self.history_snapshots.append({
+            "step": len(self.tb.engine.readings), "label": label,
+            "effort": self.tb.engine.cost_spent,
+            "top": [{"fault": h, "label": fault_label(h), "p": round(p, 4)} for h, p in top]})
+
+    def sign_off(self, name: str) -> dict[str, str]:
+        import datetime as _dt
+
+        self.signoff = {"by": name.strip() or "technician",
+                        "at": _dt.datetime.now(_dt.UTC).strftime("%Y-%m-%d %H:%M UTC")}
+        return self.signoff
+
     def ticket(self) -> dict[str, Any]:
         t = self.tb.call("generate_repair_ticket")
+        t["signoff"] = self.signoff
+        t["status"] = "signed off" if self.signoff else "draft - awaiting technician sign-off"
         rep = check_grounding(t["markdown"], self._evidence())
         t["grounding"] = {"checked": rep.checked, "ungrounded": [m.text for m in rep.ungrounded]}
         self.grounding_log.append({"where": "ticket", "checked": rep.checked,
@@ -180,7 +199,7 @@ class DifferentialAgent:
     def _offline(self, text: str) -> str:
         low = text.lower()
         if re.search(r"\b(ticket|summary|wrap up|write (it )?up)\b", low):
-            return self.ticket()["markdown"]
+            return str(self.ticket()["markdown"])
         if re.search(r"\bwhy\b|explain|reason", low) and self.pending_key:
             return self._explain(self.pending_key)
         if self.pending_key == "discharge":
@@ -189,18 +208,20 @@ class DifferentialAgent:
                 res = self.tb.call("confirm_discharge", {"volts": float(m.group("num")) / (
                     1000.0 if (m.group("unit") or "").lower() == "mv" else 1.0)})
                 if not res.get("verified"):
-                    return res["message"]
+                    return str(res["message"])
                 self.pending_key = None
-                return res["message"] + "\n\n" + self._next_step()
+                return str(res["message"]) + "\n\n" + self._next_step()
         reading = self._parse_reading(text)
         if reading is not None:
             key, value = reading
             res = self.tb.call("record_measurement", {"key": key, "value": value})
             if "error" in res:
                 return f"I couldn't record that: {res['error']}"
+            self.snapshot(key)
             return self._after_reading(res)
         if self.tb.symptoms is None or len(text.split()) >= 4:
             res = self.tb.call("parse_symptoms", {"complaint": text})
+            self.snapshot("complaint")
             return self._after_symptoms(res)
         return ("Tell me the reading for the recommended measurement (for example "
                 f"'{self.pending_key or 'dc:TP1'} = 12.3 V'), ask 'why', or ask for the ticket.")
@@ -292,7 +313,7 @@ class DifferentialAgent:
     def _parse_reading(self, text: str) -> tuple[str, float] | None:
         c = self.circuit
         low = text.lower()
-        refs = [r for r in c.refs() if re.search(rf"\b{re.escape(r)}\b", text)]
+        refs = [r for r in c.refs if re.search(rf"\b{re.escape(r)}\b", text)]
         if refs and re.search(r"\b(bad|out of tolerance|open|short(ed)?|failed|leaky|good|fine|"
                               r"ok|within tolerance|in tolerance)\b", low):
             verdict = 0.0 if re.search(r"\b(good|fine|ok|within tolerance|in tolerance)\b",
@@ -347,7 +368,7 @@ class DifferentialAgent:
             self.grounding_log.append({"where": "live_first_draft", "checked": rep.checked,
                                        "ungrounded": [m.text for m in rep.ungrounded]})
             reply = self.llm.text_of(final)
-        return reply
+        return str(reply)
 
     def _guarded_tool(self, name: str, args: dict[str, Any]) -> Any:
         if name == "record_measurement":

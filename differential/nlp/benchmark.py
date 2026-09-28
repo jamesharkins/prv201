@@ -123,9 +123,11 @@ def render(
     rng: np.random.Generator,
     tp_stage: dict[str, str],
     bank: dict[str, dict[str, list[str]]] | None = None,
+    severity_tags: dict[str, dict[str, str]] | None = None,
 ) -> str:
     """Render a complaint for one persona; deterministic given ``rng``."""
     b = (bank or MAIN_BANK)[persona]
+    tags = severity_tags or SEVERITY_TAG
 
     def pick(key: str) -> str:
         opts = b[key]
@@ -148,7 +150,7 @@ def render(
         parts.append({"bench_tech": "Customer reports it just sounds wrong.",
                       "hobbyist": "Something just sounds off but I can't describe it.",
                       "studio_client": "It just doesn't sound right any more."}[persona])
-    parts[-1] = parts[-1] + SEVERITY_TAG[persona][facts.severity]
+    parts[-1] = parts[-1] + tags[persona][facts.severity]
     closer = pick("closer")
     if closer:
         parts.append(closer)

@@ -1,0 +1,377 @@
+{
+ "driver": {
+  "circuit": "driver",
+  "train_rows": 29600,
+  "val_rows": 7400,
+  "components_total": 82,
+  "groups": 68,
+  "symptom_eps": 0.005,
+  "symptom_lambda": 1.0,
+  "disc_temperature": 0.9489502934287033,
+  "unmodeled_calibration": {
+   "chosen": {
+    "offset": 2.5,
+    "fpr": 0.016666666666666666,
+    "tpr": 0.65
+   },
+   "grid": [
+    {
+     "offset": 0.0,
+     "fpr": 0.008333333333333333,
+     "tpr": 0.5
+    },
+    {
+     "offset": 0.5,
+     "fpr": 0.008333333333333333,
+     "tpr": 0.55
+    },
+    {
+     "offset": 1.0,
+     "fpr": 0.008333333333333333,
+     "tpr": 0.55
+    },
+    {
+     "offset": 1.5,
+     "fpr": 0.008333333333333333,
+     "tpr": 0.55
+    },
+    {
+     "offset": 2.0,
+     "fpr": 0.008333333333333333,
+     "tpr": 0.6
+    },
+    {
+     "offset": 2.5,
+     "fpr": 0.016666666666666666,
+     "tpr": 0.65
+    },
+    {
+     "offset": 3.0,
+     "fpr": 0.041666666666666664,
+     "tpr": 0.65
+    },
+    {
+     "offset": 3.5,
+     "fpr": 0.075,
+     "tpr": 0.65
+    },
+    {
+     "offset": 4.0,
+     "fpr": 0.08333333333333333,
+     "tpr": 0.75
+    },
+    {
+     "offset": 5.0,
+     "fpr": 0.525,
+     "tpr": 0.8
+    },
+    {
+     "offset": 6.0,
+     "fpr": 1.0,
+     "tpr": 1.0
+    }
+   ]
+  },
+  "seconds": 770.3465247154236
+ },
+ "opamp": {
+  "circuit": "opamp",
+  "train_rows": 22800,
+  "val_rows": 5700,
+  "components_total": 63,
+  "groups": 45,
+  "symptom_eps": 0.005,
+  "symptom_lambda": 1.0,
+  "disc_temperature": 0.9562142656510156,
+  "unmodeled_calibration": {
+   "chosen": {
+    "offset": 2.5,
+    "fpr": 0.0,
+    "tpr": 0.2
+   },
+   "grid": [
+    {
+     "offset": 0.0,
+     "fpr": 0.0,
+     "tpr": 0.15
+    },
+    {
+     "offset": 0.5,
+     "fpr": 0.0,
+     "tpr": 0.15
+    },
+    {
+     "offset": 1.0,
+     "fpr": 0.0,
+     "tpr": 0.2
+    },
+    {
+     "offset": 1.5,
+     "fpr": 0.0,
+     "tpr": 0.2
+    },
+    {
+     "offset": 2.0,
+     "fpr": 0.0,
+     "tpr": 0.15
+    },
+    {
+     "offset": 2.5,
+     "fpr": 0.0,
+     "tpr": 0.2
+    },
+    {
+     "offset": 3.0,
+     "fpr": 0.025,
+     "tpr": 0.2
+    },
+    {
+     "offset": 3.5,
+     "fpr": 0.025,
+     "tpr": 0.15
+    },
+    {
+     "offset": 4.0,
+     "fpr": 0.058333333333333334,
+     "tpr": 0.15
+    },
+    {
+     "offset": 5.0,
+     "fpr": 0.26666666666666666,
+     "tpr": 0.35
+    },
+    {
+     "offset": 6.0,
+     "fpr": 0.8666666666666667,
+     "tpr": 1.0
+    }
+   ]
+  },
+  "seconds": 120.64091730117798
+ },
+ "tone": {
+  "circuit": "tone",
+  "train_rows": 11200,
+  "val_rows": 2800,
+  "components_total": 30,
+  "groups": 23,
+  "symptom_eps": 0.005,
+  "symptom_lambda": 1.0,
+  "disc_temperature": 0.9680172581844553,
+  "unmodeled_calibration": {
+   "chosen": {
+    "offset": 1.5,
+    "fpr": 0.008333333333333333,
+    "tpr": 0.75
+   },
+   "grid": [
+    {
+     "offset": 0.0,
+     "fpr": 0.0,
+     "tpr": 0.5
+    },
+    {
+     "offset": 0.5,
+     "fpr": 0.0,
+     "tpr": 0.65
+    },
+    {
+     "offset": 1.0,
+     "fpr": 0.0,
+     "tpr": 0.65
+    },
+    {
+     "offset": 1.5,
+     "fpr": 0.008333333333333333,
+     "tpr": 0.75
+    },
+    {
+     "offset": 2.0,
+     "fpr": 0.025,
+     "tpr": 0.7
+    },
+    {
+     "offset": 2.5,
+     "fpr": 0.06666666666666667,
+     "tpr": 0.95
+    },
+    {
+     "offset": 3.0,
+     "fpr": 0.16666666666666666,
+     "tpr": 0.95
+    },
+    {
+     "offset": 3.5,
+     "fpr": 0.36666666666666664,
+     "tpr": 0.95
+    },
+    {
+     "offset": 4.0,
+     "fpr": 0.8166666666666667,
+     "tpr": 1.0
+    },
+    {
+     "offset": 5.0,
+     "fpr": 1.0,
+     "tpr": 1.0
+    },
+    {
+     "offset": 6.0,
+     "fpr": 1.0,
+     "tpr": 1.0
+    }
+   ]
+  },
+  "seconds": 18.265686511993408
+ },
+ "triode": {
+  "circuit": "triode",
+  "train_rows": 12800,
+  "val_rows": 3200,
+  "components_total": 38,
+  "groups": 27,
+  "symptom_eps": 0.005,
+  "symptom_lambda": 1.0,
+  "disc_temperature": 0.914213266135705,
+  "unmodeled_calibration": {
+   "chosen": {
+    "offset": 3.0,
+    "fpr": 0.016666666666666666,
+    "tpr": 0.5
+   },
+   "grid": [
+    {
+     "offset": 0.0,
+     "fpr": 0.0,
+     "tpr": 0.25
+    },
+    {
+     "offset": 0.5,
+     "fpr": 0.0,
+     "tpr": 0.25
+    },
+    {
+     "offset": 1.0,
+     "fpr": 0.0,
+     "tpr": 0.25
+    },
+    {
+     "offset": 1.5,
+     "fpr": 0.0,
+     "tpr": 0.3
+    },
+    {
+     "offset": 2.0,
+     "fpr": 0.0,
+     "tpr": 0.4
+    },
+    {
+     "offset": 2.5,
+     "fpr": 0.016666666666666666,
+     "tpr": 0.35
+    },
+    {
+     "offset": 3.0,
+     "fpr": 0.016666666666666666,
+     "tpr": 0.5
+    },
+    {
+     "offset": 3.5,
+     "fpr": 0.05,
+     "tpr": 0.45
+    },
+    {
+     "offset": 4.0,
+     "fpr": 0.19166666666666668,
+     "tpr": 0.65
+    },
+    {
+     "offset": 5.0,
+     "fpr": 0.8,
+     "tpr": 0.95
+    },
+    {
+     "offset": 6.0,
+     "fpr": 1.0,
+     "tpr": 1.0
+    }
+   ]
+  },
+  "seconds": 28.439900159835815
+ },
+ "psu": {
+  "circuit": "psu",
+  "train_rows": 25600,
+  "val_rows": 6400,
+  "components_total": 83,
+  "groups": 47,
+  "symptom_eps": 0.005,
+  "symptom_lambda": 1.0,
+  "disc_temperature": 0.9619229523746556,
+  "unmodeled_calibration": {
+   "chosen": {
+    "offset": 2.0,
+    "fpr": 0.05,
+    "tpr": 0.3
+   },
+   "grid": [
+    {
+     "offset": 0.0,
+     "fpr": 0.008333333333333333,
+     "tpr": 0.2
+    },
+    {
+     "offset": 0.5,
+     "fpr": 0.008333333333333333,
+     "tpr": 0.25
+    },
+    {
+     "offset": 1.0,
+     "fpr": 0.008333333333333333,
+     "tpr": 0.25
+    },
+    {
+     "offset": 1.5,
+     "fpr": 0.03333333333333333,
+     "tpr": 0.25
+    },
+    {
+     "offset": 2.0,
+     "fpr": 0.05,
+     "tpr": 0.3
+    },
+    {
+     "offset": 2.5,
+     "fpr": 0.075,
+     "tpr": 0.3
+    },
+    {
+     "offset": 3.0,
+     "fpr": 0.08333333333333333,
+     "tpr": 0.45
+    },
+    {
+     "offset": 3.5,
+     "fpr": 0.19166666666666668,
+     "tpr": 0.6
+    },
+    {
+     "offset": 4.0,
+     "fpr": 0.43333333333333335,
+     "tpr": 0.7
+    },
+    {
+     "offset": 5.0,
+     "fpr": 0.9583333333333334,
+     "tpr": 1.0
+    },
+    {
+     "offset": 6.0,
+     "fpr": 1.0,
+     "tpr": 1.0
+    }
+   ]
+  },
+  "seconds": 77.85150623321533
+ }
+}

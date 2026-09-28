@@ -49,6 +49,7 @@ SPLIT_INDEX = {
     "demo": 5,
     "test_wide": 6,
     "pilot_wide": 7,
+    "unmodeled_pilot": 8,
 }
 # Stress splits: every tolerance spread widened (target T18, sim-to-real proxy).
 TOL_SCALE = {"test_wide": 1.5, "pilot_wide": 1.5}

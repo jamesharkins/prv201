@@ -17,6 +17,7 @@ from differential.engine.generative import GenerativeModel
 from differential.sim.observables import ObservableSpec, all_observables
 
 DEFAULT_UNMODELED_PRIOR = 0.05
+DISC_FILE = "discriminative.txt.gz"
 
 
 def model_dir(circuit_id: str, root: Path | None = None) -> Path:
@@ -86,7 +87,7 @@ class EngineBundle:
         self.gen.save(d / "generative.npz")
         self.groups.save(d / "groups.json")
         if self.disc is not None:
-            self.disc.save(d / "discriminative.txt")
+            self.disc.save(d / DISC_FILE)
         meta = dict(self.meta)
         meta["unmodeled_prior"] = self.unmodeled_prior
         (d / "meta.json").write_text(json.dumps(meta, indent=2, sort_keys=True))
@@ -99,8 +100,8 @@ def load_bundle(circuit_id: str, root: Path | None = None, with_disc: bool = Tru
     gpath = d / "groups.json"
     groups = AmbiguityGroups.load(gpath) if gpath.exists() else singleton_groups(gen.hypotheses)
     disc = None
-    dpath = d / "discriminative.txt"
-    if with_disc and dpath.exists():
+    dpath = next((p for p in (d / DISC_FILE, d / "discriminative.txt") if p.exists()), None)
+    if with_disc and dpath is not None:
         disc = DiscriminativeModel.load(dpath)
     meta_path = d / "meta.json"
     meta = json.loads(meta_path.read_text()) if meta_path.exists() else {}

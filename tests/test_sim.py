@@ -90,7 +90,7 @@ def test_healthy_draw_within_tolerance_and_deterministic() -> None:
             v = d1.alters[comp.main_element]
             assert abs(v / comp.nominal - 1) <= comp.tolerance + 1e-12
     assert 0.95 <= d1.severity["mains_factor"] <= 1.05
-    assert d1.alters["VCRES_LV"] if "VCRES_LV" in d1.alters else True
+    assert d1.alters.get("VCRES_LV", True)
 
 
 @pytest.mark.parametrize(

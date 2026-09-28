@@ -1,0 +1,310 @@
+{
+  "circuit": "channel_strip",
+  "components_total": 257,
+  "disc_temperature": 0.975566152712402,
+  "groups": 216,
+  "nontrivial_groups": [
+    [
+      "C101:cap_loss_50",
+      "C101:high_esr"
+    ],
+    [
+      "D101:short",
+      "C102:short"
+    ],
+    [
+      "Q101:ce_short",
+      "D102:short"
+    ],
+    [
+      "C103:open",
+      "C103:cap_loss_50",
+      "C103:cap_loss_90"
+    ],
+    [
+      "C103:short",
+      "R103:short",
+      "C405:short"
+    ],
+    [
+      "R103:open",
+      "R103:drift_x2",
+      "R103:drift_x10"
+    ],
+    [
+      "C104:short",
+      "R104:short"
+    ],
+    [
+      "C104:cap_loss_50",
+      "R104:drift_x0.5"
+    ],
+    [
+      "C104:cap_loss_90",
+      "C104:high_esr"
+    ],
+    [
+      "R104:open",
+      "R104:drift_x10"
+    ],
+    [
+      "C105:cap_loss_90",
+      "C105:high_esr"
+    ],
+    [
+      "C201:short",
+      "R201:drift_x0.5"
+    ],
+    [
+      "R204:short",
+      "C202:short"
+    ],
+    [
+      "VR301:track_open",
+      "R303:drift_x10"
+    ],
+    [
+      "R303:drift_x2",
+      "C404:cap_loss_90",
+      "C501:cap_loss_90",
+      "C502:cap_loss_90"
+    ],
+    [
+      "C303:open",
+      "VR302:track_open",
+      "C304:open"
+    ],
+    [
+      "R401:open",
+      "R401:drift_x10"
+    ],
+    [
+      "R402:drift_x0.5",
+      "R403:drift_x2"
+    ],
+    [
+      "R402:drift_x2",
+      "R403:drift_x0.5"
+    ],
+    [
+      "R403:short",
+      "C402:short"
+    ],
+    [
+      "R404:short",
+      "R405:open",
+      "C403:open"
+    ],
+    [
+      "R404:drift_x0.5",
+      "R405:drift_x2"
+    ],
+    [
+      "R404:drift_x2",
+      "R405:drift_x0.5"
+    ],
+    [
+      "R406:drift_x10",
+      "C404:high_esr"
+    ],
+    [
+      "R501:drift_x0.5",
+      "R502:drift_x2"
+    ],
+    [
+      "R501:drift_x2",
+      "R502:drift_x0.5"
+    ],
+    [
+      "R504:short",
+      "C502:short"
+    ],
+    [
+      "C504:cap_loss_50",
+      "C504:high_esr"
+    ]
+  ],
+  "seconds": 4107.7913517951965,
+  "symptom_eps": 0.005,
+  "symptom_lambda": 1.0,
+  "train_rows": 100400,
+  "unmodeled_calibration": {
+    "fpr_budget": 0.05,
+    "n_single": 200,
+    "n_unmodeled": 60,
+    "offsets": {
+      "unmod_offset": 3.8,
+      "unmod_offset_nocomplaint": 3.1
+    },
+    "protocol": "eval/recalibrate_unmodeled.py; negatives: symptomatic single-fault validation units, draws 0-49; positives: unmodeled_val split",
+    "regimes": {
+      "complaint": {
+        "chosen": {
+          "fpr": 0.025,
+          "offset": 3.8,
+          "tpr": 0.4166666666666667
+        },
+        "grid": [
+          {
+            "fpr": 0.0,
+            "offset": 0.0,
+            "tpr": 0.11666666666666667
+          },
+          {
+            "fpr": 0.0,
+            "offset": 1.0,
+            "tpr": 0.18333333333333332
+          },
+          {
+            "fpr": 0.0,
+            "offset": 2.0,
+            "tpr": 0.18333333333333332
+          },
+          {
+            "fpr": 0.0,
+            "offset": 3.0,
+            "tpr": 0.25
+          },
+          {
+            "fpr": 0.005,
+            "offset": 3.5,
+            "tpr": 0.2833333333333333
+          },
+          {
+            "fpr": 0.025,
+            "offset": 3.8,
+            "tpr": 0.4166666666666667
+          },
+          {
+            "fpr": 0.045,
+            "offset": 3.9,
+            "tpr": 0.4
+          },
+          {
+            "fpr": 0.055,
+            "offset": 4.0,
+            "tpr": 0.4166666666666667
+          }
+        ],
+        "system": "hybrid"
+      },
+      "no_complaint": {
+        "chosen": {
+          "fpr": 0.04,
+          "offset": 3.1,
+          "tpr": 0.31666666666666665
+        },
+        "grid": [
+          {
+            "fpr": 0.0,
+            "offset": 0.0,
+            "tpr": 0.16666666666666666
+          },
+          {
+            "fpr": 0.005,
+            "offset": 1.0,
+            "tpr": 0.15
+          },
+          {
+            "fpr": 0.005,
+            "offset": 2.0,
+            "tpr": 0.2
+          },
+          {
+            "fpr": 0.05,
+            "offset": 3.0,
+            "tpr": 0.3
+          },
+          {
+            "fpr": 0.04,
+            "offset": 3.1,
+            "tpr": 0.31666666666666665
+          },
+          {
+            "fpr": 0.055,
+            "offset": 3.2,
+            "tpr": 0.31666666666666665
+          },
+          {
+            "fpr": 0.08,
+            "offset": 3.5,
+            "tpr": 0.38333333333333336
+          },
+          {
+            "fpr": 0.21,
+            "offset": 4.0,
+            "tpr": 0.5
+          }
+        ],
+        "system": "engine_gen"
+      }
+    },
+    "seconds": 343.6
+  },
+  "unmodeled_calibration_v1": {
+    "chosen": {
+      "fpr": 0.041666666666666664,
+      "offset": 3.0,
+      "tpr": 0.35
+    },
+    "grid": [
+      {
+        "fpr": 0.0,
+        "offset": 0.0,
+        "tpr": 0.15
+      },
+      {
+        "fpr": 0.0,
+        "offset": 0.5,
+        "tpr": 0.18333333333333332
+      },
+      {
+        "fpr": 0.0,
+        "offset": 1.0,
+        "tpr": 0.2
+      },
+      {
+        "fpr": 0.008333333333333333,
+        "offset": 1.5,
+        "tpr": 0.23333333333333334
+      },
+      {
+        "fpr": 0.008333333333333333,
+        "offset": 2.0,
+        "tpr": 0.26666666666666666
+      },
+      {
+        "fpr": 0.03333333333333333,
+        "offset": 2.5,
+        "tpr": 0.2833333333333333
+      },
+      {
+        "fpr": 0.041666666666666664,
+        "offset": 3.0,
+        "tpr": 0.35
+      },
+      {
+        "fpr": 0.11666666666666667,
+        "offset": 3.5,
+        "tpr": 0.4166666666666667
+      },
+      {
+        "fpr": 0.19166666666666668,
+        "offset": 4.0,
+        "tpr": 0.5833333333333334
+      },
+      {
+        "fpr": 0.95,
+        "offset": 5.0,
+        "tpr": 0.95
+      },
+      {
+        "fpr": 1.0,
+        "offset": 6.0,
+        "tpr": 1.0
+      }
+    ]
+  },
+  "unmodeled_prior": 0.05,
+  "val_rows": 25100
+}

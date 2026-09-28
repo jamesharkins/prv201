@@ -17,13 +17,20 @@ from __future__ import annotations
 import math
 import time
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 import numpy as np
 from scipy.special import logsumexp
 
 from differential.engine.bundle import EngineBundle
-from differential.engine.selection import Candidate, eig_lift, eig_spice, entropy, rank
+from differential.engine.selection import (
+    Candidate,
+    UnmodeledTerm,
+    eig_lift,
+    eig_spice,
+    entropy,
+    rank,
+)
 from differential.sim.faults import UNMODELED
 from differential.sim.measurement import (
     LIFT_SENSITIVITY,
@@ -104,6 +111,8 @@ class DiagnosisSession:
         seed: int = 0,
         allow_lifts: bool = True,
         eig_min: float = 1e-3,
+        cost_scale: tuple[float, float] = (1.0, 1.0),
+        complaint_prior: bool | None = None,
     ) -> None:
         if likelihood not in LIKELIHOODS:
             raise ValueError(likelihood)
@@ -119,6 +128,8 @@ class DiagnosisSession:
         p = np.full(H, 1.0 / H) if prior is None else np.asarray(prior, dtype=float)
         p = p / p.sum()
         self.log_prior = np.log(np.maximum(p, 1e-300))
+        # Which calibrated level U uses: a prior read from a complaint, or not.
+        self.complaint_prior = (prior is not None) if complaint_prior is None else complaint_prior
         self.budget = budget
         self.stop_threshold = stop_threshold
         self.n_samples = n_samples
@@ -127,10 +138,29 @@ class DiagnosisSession:
         self.eig_min = eig_min
         self.readings: list[Reading] = []
         self._obs = bundle.observables
+        if cost_scale != (1.0, 1.0):
+            # Sensitivity analysis: scale the scope and lift effort weights (DC stays 1).
+            scope_scale, lift_scale = cost_scale
+            self._obs = {
+                k: replace(o, cost=o.cost * (lift_scale if o.is_lift else
+                                             1.0 if o.kind == "dc" else scope_scale))
+                for k, o in self._obs.items()}
         self._order = bundle.order()
         self._hyp_refs = [h.split(":")[0] if ":" in h else "" for h in self.gen.hypotheses]
         self._post: np.ndarray | None = None
         self._last_rec: Recommendation | None = None
+
+    def set_prior(self, prior: np.ndarray | None, from_complaint: bool) -> None:
+        """Replace the prior (e.g. once the complaint has been read)."""
+        H = self.gen.n_hyp
+        p = np.full(H, 1.0 / H) if prior is None else np.asarray(prior, dtype=float)
+        self.log_prior = np.log(np.maximum(p / p.sum(), 1e-300))
+        self.complaint_prior = from_complaint
+        self._post = None
+
+    @property
+    def unmod_offset(self) -> float:
+        return self.gen.offset_for(self.complaint_prior)
 
     # ------------------------------------------------------------ evidence
     @property
@@ -161,10 +191,15 @@ class DiagnosisSession:
             ll += np.log(p_def if r.value >= 0.5 else 1.0 - p_def)
         return ll
 
+    @property
+    def _p_def_unmodeled(self) -> float:
+        """Under U a double fault makes a given part defective with probability
+        about 2 / (number of components)."""
+        return min(0.5, 2.0 / max(len(self.bundle.circuit.components), 1))
+
     def _unmodeled_lift_ll(self) -> float:
-        """Lift verdicts under U: a double fault makes a given part defective with
-        probability about 2 / (number of components)."""
-        p_def = min(0.5, 2.0 / max(len(self.bundle.circuit.components), 1))
+        """Log-likelihood of the lift verdicts so far under U."""
+        p_def = self._p_def_unmodeled
         ll = 0.0
         for r in self.readings:
             if r.kind == "lift":
@@ -184,13 +219,13 @@ class DiagnosisSession:
     def _modeled_log_post(self, cl: np.ndarray, x: np.ndarray, idx: np.ndarray) -> np.ndarray:
         lift = self._lift_ll()
         if self.likelihood == "generative":
-            return self.gen.loglik_fast(cl) + self.log_prior + lift
+            return np.asarray(self.gen.loglik_fast(cl) + self.log_prior + lift)
         disc = self.bundle.disc
         assert disc is not None
         row = np.full(len(self.gen.keys), np.nan)
         row[idx] = x
         lp = disc.log_proba(row[None, :])[0]
-        return lp + math.log(self.gen.n_hyp) + self.log_prior + lift
+        return np.asarray(lp + math.log(self.gen.n_hyp) + self.log_prior + lift)
 
     def posterior(self) -> np.ndarray:
         """Posterior over [catalog hypotheses..., U]."""
@@ -201,7 +236,8 @@ class DiagnosisSession:
         hyp_lp = self._modeled_log_post(cl, x, idx)
         gen_marg = logsumexp(self.gen.loglik_fast(cl) + self.log_prior + self._lift_ll())
         pu = self.bundle.unmodeled_prior
-        log_u = math.log(pu) + self.gen.unmodeled_loglik(idx) + self._unmodeled_lift_ll()
+        log_u = (math.log(pu) + self.gen.unmodeled_loglik_at(idx, self.unmod_offset)
+                 + self._unmodeled_lift_ll())
         log_m = math.log(1.0 - pu) + gen_marg
         p_u = 1.0 / (1.0 + math.exp(min(700.0, log_m - log_u))) if np.isfinite(log_m) else 1.0
         modeled = np.exp(hyp_lp - logsumexp(hyp_lp)) * (1.0 - p_u)
@@ -304,14 +340,25 @@ class DiagnosisSession:
                 within = cl - hyp_ll[comp_h]
                 comp_lp = np.log(np.maximum(modeled[comp_h], 1e-300)) + within
                 post_fn = self._disc_posterior_fn(x, idx, cidx)
+            # U enters on the posterior's scale: modeled components share 1 - p_U.
+            p_u = float(post[-1])
+            comp_lp = comp_lp - logsumexp(comp_lp) + math.log(max(1.0 - p_u, 1e-300))
+            u_term = UnmodeledTerm(
+                log_mass=math.log(max(p_u, 1e-300)),
+                loglik=np.array([self.gen.unmodeled_loglik_at(np.array([j]), self.unmod_offset)
+                                 for j in cidx]),
+                center=self.gen.unmod_center[cidx],
+                width=self.gen.unmod_width[cidx],
+            )
             eig = eig_spice(comp_lp, groups.group_of[comp_h], G, mean, var, self.n_samples,
-                            self.rng, posterior_fn=post_fn)
+                            self.rng, posterior_fn=post_fn, unmodeled=u_term)
             for c, e in zip(spice, eig, strict=True):
                 out.append(Candidate(c, float(e), self._score_value(float(e), c.cost)))
         for c in cands:
             if c.is_lift:
                 assert c.ref is not None
-                e = eig_lift(modeled, self._hyp_refs, groups.group_of, G, c.ref)
+                e = eig_lift(modeled, self._hyp_refs, groups.group_of, G, c.ref,
+                             p_unmodeled=float(post[-1]), p_def_unmodeled=self._p_def_unmodeled)
                 out.append(Candidate(c, e, self._score_value(e, c.cost)))
         return out
 

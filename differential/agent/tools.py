@@ -180,7 +180,7 @@ class ToolBox:
             raise ValueError(f"unknown tool {name}")
         t0 = time.perf_counter()
         try:
-            result = getattr(self, f"t_{name}")(**args)
+            result = dict(getattr(self, f"t_{name}")(**args))
             err = ""
         except (KeyError, ValueError, InstrumentError) as exc:
             result = {"error": str(exc)}
@@ -230,9 +230,7 @@ class ToolBox:
         sm = self.bundle.symptom_model
         features = report.features()
         if sm is not None and any(features.values()):
-            prior = np.asarray(sm.prior(features))
-            self.engine.log_prior = np.log(np.maximum(prior / prior.sum(), 1e-300))
-            self.engine._post = None
+            self.engine.set_prior(np.asarray(sm.prior(features)), from_complaint=True)
         top = self.engine.top_hypotheses(5)
         return {
             "symptom_classes": report.classes,
@@ -290,7 +288,7 @@ class ToolBox:
 
     def _expected(self, key: str, k: int = 3) -> list[dict[str, Any]]:
         o = self._obs(key)
-        out = []
+        out: list[dict[str, Any]] = []
         for h, p in self.engine.top_hypotheses(k + 1):
             if h == "unmodeled" or len(out) >= k:
                 continue
@@ -424,7 +422,7 @@ class ToolBox:
                     "normal_max_volts": hz.normal_max_v, "worst_case_volts": hz.worst_case_v,
                     "lines": hv_warning(nominal, f"{tp.id} ({tp.name})", caps,
                                         worst_case=hz.worst_case_v, example_fault=example)}
-        if target in c.refs():
+        if target in c.refs:
             hv = circuit_has_hv(c.id)
             lines = ([f"Before lifting {target}: switch off, unplug, discharge "
                       f"{', '.join(caps) or 'the filter capacitors'} through a resistor tool and "
@@ -450,9 +448,13 @@ class ToolBox:
     def t_read_meter_photo(self, photo_id: str) -> dict[str, Any]:
         if photo_id not in self.photos:
             raise KeyError(f"unknown photo '{photo_id}'")
-        from differential.vision import read_meter
+        from differential import vision
 
-        proposal = read_meter(self.photos[photo_id], client=self.llm if self.use_llm else None)
+        reader = getattr(vision, "read_meter", None)
+        if reader is None:
+            raise ValueError("meter-photo reading is not available in this build")
+        proposal: dict[str, Any] = dict(reader(self.photos[photo_id],
+                                               client=self.llm if self.use_llm else None))
         proposal["requires_confirmation"] = True
         self.photo_proposals[photo_id] = proposal
         return proposal

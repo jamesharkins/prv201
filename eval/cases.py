@@ -6,6 +6,8 @@
 * ``unmodeled_val``   double faults + out-of-catalog modifications for calibrating
                       the unmodeled threshold.
 * ``unmodeled_test``  the held-out unmodeled set used for AUROC.
+* ``unmodeled_pilot`` a third unmodeled set, used only to set the T13 bar before
+                      the targets are locked (disjoint from calibration and test).
 Outputs: data/eval/cases__<split>.parquet (observables + provenance) and
 data/eval/cases__<split>.jsonl (facts, complaint texts). These are committed.
 """
@@ -29,6 +31,7 @@ from differential.sim.montecarlo import BASE_SEED, SPLIT_INDEX, Job, load_datase
 N_TEST = {COMPOSITE_ID: 500, **dict.fromkeys(BLOCK_IDS, 100)}
 N_UNMOD_TEST = {COMPOSITE_ID: 50, **dict.fromkeys(BLOCK_IDS, 10)}
 N_UNMOD_VAL = {COMPOSITE_ID: 60, **dict.fromkeys(BLOCK_IDS, 20)}
+N_UNMOD_PILOT = {COMPOSITE_ID: 60, **dict.fromkeys(BLOCK_IDS, 20)}
 # Stress sets (channel strip only): tolerances 1.5x wider than the models assume.
 N_WIDE = {"test_wide": 300, "pilot_wide": 150}
 MAX_REDRAWS = 20
@@ -103,6 +106,8 @@ def build_split(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, obje
         hyps = unmodeled_hypotheses(cid, N_UNMOD_TEST[cid], rng, sm)
     elif split == "unmodeled_val":
         hyps = unmodeled_hypotheses(cid, N_UNMOD_VAL[cid], rng, sm)
+    elif split == "unmodeled_pilot":
+        hyps = unmodeled_hypotheses(cid, N_UNMOD_PILOT[cid], rng, sm)
     else:
         raise ValueError(split)
     assert sm.reference is not None

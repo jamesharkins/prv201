@@ -77,17 +77,11 @@ def calibrate_unmodeled(bundle: EngineBundle, val: pd.DataFrame, unmod: pd.DataF
     return {"chosen": best, "grid": results}
 
 
-def train_circuit(cid: str, skip_disc: bool = False) -> dict[str, object]:
-    t0 = time.time()
+def fit_symptom_model(cid: str, tr_df: pd.DataFrame, va_df: pd.DataFrame) -> SymptomModel:
+    """P(feature | fault) from training draws; eps/lambda calibrated on validation
+    complaints rendered from the main bank and read by the offline extractor."""
     circ = get_circuit(cid)
-    tr_df = load_dataset(cid, "train")
-    va_df = load_dataset(cid, "val")
-    tr = build_engine_data(cid, tr_df)
-    va = build_engine_data(cid, va_df)
-    gen = GenerativeModel.fit(tr, workers=n_workers())
-    groups = build_groups(gen, va, per_hyp=40)
     sm = SymptomModel.fit(cid, tr_df)
-    # Calibrate the symptom likelihood on validation complaints parsed offline.
     rng = np.random.default_rng([BASE_SEED, 5, len(cid)])
     tp_stage = {tp.id: tp.stage for tp in circ.test_points}
     vs = va_df[va_df.ok & (va_df.hypothesis != "healthy")]
@@ -103,6 +97,32 @@ def train_circuit(cid: str, skip_disc: bool = False) -> dict[str, object]:
         reports.append(extract_rules(text).features())
         truths.append(sm.hypotheses.index(r.hypothesis))
     sm.calibrate(reports, truths)
+    return sm
+
+
+def refit_symptoms(cid: str) -> dict[str, float]:
+    """Re-fit only the symptom model (after an extractor change) and update meta.json."""
+    from differential.config import MODELS_DIR as MD
+
+    sm = fit_symptom_model(cid, load_dataset(cid, "train"), load_dataset(cid, "val"))
+    sm.save(MD / cid / "symptom_model.json")
+    meta_path = MD / cid / "meta.json"
+    meta = json.loads(meta_path.read_text())
+    meta["symptom_eps"], meta["symptom_lambda"] = sm.eps, sm.lam
+    meta_path.write_text(json.dumps(meta, indent=2, sort_keys=True))
+    return {"eps": sm.eps, "lambda": sm.lam}
+
+
+def train_circuit(cid: str, skip_disc: bool = False) -> dict[str, object]:
+    t0 = time.time()
+    circ = get_circuit(cid)
+    tr_df = load_dataset(cid, "train")
+    va_df = load_dataset(cid, "val")
+    tr = build_engine_data(cid, tr_df)
+    va = build_engine_data(cid, va_df)
+    gen = GenerativeModel.fit(tr, workers=n_workers())
+    groups = build_groups(gen, va, per_hyp=40)
+    sm = fit_symptom_model(cid, tr_df, va_df)
     disc = None
     if not skip_disc:
         disc = DiscriminativeModel.fit(tr, va, n_masks=3, num_threads=n_workers())
@@ -137,8 +157,14 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--circuits", default="all")
     ap.add_argument("--skip-disc", action="store_true")
+    ap.add_argument("--symptoms-only", action="store_true",
+                    help="re-fit only the symptom models of already trained circuits")
     args = ap.parse_args()
     cids = [COMPOSITE_ID, *BLOCK_IDS] if args.circuits == "all" else args.circuits.split(",")
+    if args.symptoms_only:
+        for cid in cids:
+            print(cid, refit_symptoms(cid), flush=True)
+        return
     summary = {}
     for cid in cids:
         meta = train_circuit(cid, skip_disc=args.skip_disc)

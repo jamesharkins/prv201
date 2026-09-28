@@ -136,10 +136,10 @@ def compose_sidecar(blocks: list[CircuitSpec]) -> dict[str, Any]:
         for tp in raw["test_points"]:
             tp_lookup.setdefault(tp["id"], tp)
     tps = []
-    for tp_id, name, meas, hint in COMPOSITE_TPS:
+    for tp_id, tp_name, meas, hint in COMPOSITE_TPS:
         base = dict(tp_lookup[tp_id])
-        if name:
-            base["name"] = name
+        if tp_name:
+            base["name"] = tp_name
         if hint:
             base["hint"] = hint
         base["measurements"] = meas

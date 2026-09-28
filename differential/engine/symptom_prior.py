@@ -240,7 +240,7 @@ class SymptomModel:
             return np.full(len(self.hypotheses), 1.0 / len(self.hypotheses))
         ll = self.log_likelihood(reported)
         p = np.exp(ll - ll.max())
-        return p / p.sum()
+        return np.asarray(p / p.sum())
 
     def calibrate(self, reports: list[dict[str, bool]], truths: list[int]) -> None:
         best = (math.inf, self.eps, self.lam)

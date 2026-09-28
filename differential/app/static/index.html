@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Differential: simulation-grounded fault diagnosis for analog audio equipment">
+  <title>Differential</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23256abf'/%3E%3Cpath d='M5 18c3 0 3-8 6-8s3 12 6 12 3-8 6-8h4' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <script>
+    // Apply the theme before the first paint: stored choice, else the OS preference.
+    (function () {
+      var t = null;
+      try { t = window.localStorage.getItem("differential.theme"); } catch (e) { t = null; }
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#side">Skip to the diagnosis panels</a>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect width="32" height="32" rx="7"></rect>
+          <path d="M5 18c3 0 3-8 6-8s3 12 6 12 3-8 6-8h4"></path>
+        </svg>
+        <span class="brand-name">Differential</span>
+      </div>
+
+      <div class="field-inline circuit-field">
+        <label for="circuit-select">Circuit</label>
+        <select id="circuit-select" disabled>
+          <option>Loading circuits&hellip;</option>
+        </select>
+      </div>
+
+      <span class="mode-badge" id="mode-badge" data-mode="unknown" title="Agent mode">
+        <span class="mode-dot" aria-hidden="true"></span><span class="mode-text">&hellip;</span>
+      </span>
+
+      <div class="topbar-spacer"></div>
+
+      <div class="topbar-actions">
+        <button type="button" class="btn btn-secondary" id="new-unit-btn" disabled>
+          <span class="icon" data-icon="plus"></span><span class="btn-text">New unit</span>
+        </button>
+        <button type="button" class="btn btn-secondary" id="ticket-btn" disabled>
+          <span class="icon" data-icon="ticket"></span><span class="btn-text">Ticket</span>
+        </button>
+        <button type="button" class="btn btn-ghost" id="reveal-btn" disabled
+                title="Demo only: show the hidden fault of the simulated unit">
+          <span class="icon" data-icon="eye"></span><span class="btn-text">Reveal hidden fault</span>
+          <span class="demo-tag">demo</span>
+        </button>
+        <button type="button" class="btn btn-icon" id="theme-btn" aria-label="Switch to dark theme">
+          <span class="icon" data-icon="moon"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="layout" id="layout">
+      <section class="panel schematic-panel" id="schematic" aria-labelledby="sch-title"></section>
+      <aside class="side" id="side" aria-label="Diagnosis" tabindex="-1">
+        <div class="start" id="start-view"></div>
+        <div class="session" id="session-view" hidden>
+          <div id="banner-slot"></div>
+          <section class="panel next-card" id="next-card" aria-labelledby="next-title"></section>
+          <section class="panel belief" id="belief" aria-labelledby="belief-title"></section>
+          <section class="panel chat" id="chat" aria-labelledby="chat-title"></section>
+          <section class="panel readings" id="readings" aria-labelledby="readings-title"></section>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="loading-overlay" id="loading-overlay" hidden>
+    <div class="loading-card" role="status" aria-live="polite">
+      <span class="spinner spinner-lg" aria-hidden="true"></span>
+      <div>
+        <p class="loading-title" id="loading-title">Preparing a simulated unit&hellip;</p>
+        <p class="loading-sub" id="loading-sub">A hidden fault is drawn and the unit is simulated with ngspice.</p>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="ticket-dialog" id="ticket-dialog" aria-labelledby="ticket-title"></dialog>
+
+  <div class="toasts" id="toasts" role="alert" aria-live="assertive"></div>
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+
+  <noscript>
+    <p class="noscript">Differential needs JavaScript to run. Everything is served locally; no external requests are made.</p>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,11 @@
+services:
+  demo:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Offline by default. To run live, export DIFFERENTIAL_API_KEY in your shell
+      # and set DIFFERENTIAL_MODE=live; the key is read only from this variable.
+      DIFFERENTIAL_MODE: ${DIFFERENTIAL_MODE:-offline}
+      DIFFERENTIAL_API_KEY: ${DIFFERENTIAL_API_KEY:-}
+      DIFFERENTIAL_MODEL: ${DIFFERENTIAL_MODEL:-claude-sonnet-5-5}

@@ -32,6 +32,8 @@ SYSTEM_ORDER = [
     "fixed_order",
     "random",
     "llm_only",
+    "half_split",
+    "llm_sim",
 ]
 SYSTEM_LABEL = {
     "hybrid": "Hybrid (symptom prior + engine)",
@@ -40,6 +42,8 @@ SYSTEM_LABEL = {
     "fixed_order": "Fixed-order procedure",
     "random": "Random probing",
     "llm_only": "LLM only",
+    "half_split": "Half-split tracing",
+    "llm_sim": "LLM with simulator",
 }
 SYSTEM_COLOR = {s: CATEGORICAL[i] for i, s in enumerate(SYSTEM_ORDER)}
 

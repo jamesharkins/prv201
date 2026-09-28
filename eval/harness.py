@@ -39,6 +39,7 @@ class SystemSpec:
     prior: str = "uniform"  # uniform | symptoms_rules | symptoms_oracle | recap_folklore
     model_variant: str = ""  # "" or e.g. "n50" for the sample-size ablation
     text_field: str = "complaint"  # which complaint text feeds the extractor
+    cost_scale: tuple[float, float] = (1.0, 1.0)  # (scope, lift) effort-weight sensitivity
 
 
 SYSTEMS: dict[str, SystemSpec] = {
@@ -57,6 +58,17 @@ SYSTEMS: dict[str, SystemSpec] = {
     "engine_n50": SystemSpec("engine_n50", model_variant="n50"),
     "engine_n100": SystemSpec("engine_n100", model_variant="n100"),
     "engine_n200": SystemSpec("engine_n200", model_variant="n200"),
+    # effort-weight sensitivity (scope and lift weights halved / doubled)
+    "engine_w_half": SystemSpec("engine_w_half", cost_scale=(0.5, 0.5)),
+    "engine_w_double": SystemSpec("engine_w_double", cost_scale=(2.0, 2.0)),
+    "fixed_order_w_half": SystemSpec("fixed_order_w_half", policy="fixed_order",
+                                     cost_scale=(0.5, 0.5)),
+    "fixed_order_w_double": SystemSpec("fixed_order_w_double", policy="fixed_order",
+                                       cost_scale=(2.0, 2.0)),
+    "half_split_w_half": SystemSpec("half_split_w_half", policy="half_split",
+                                    cost_scale=(0.5, 0.5)),
+    "half_split_w_double": SystemSpec("half_split_w_double", policy="half_split",
+                                      cost_scale=(2.0, 2.0)),
 }
 
 
@@ -65,8 +77,10 @@ def bundle_for(cid: str, variant: str = "") -> EngineBundle:
     b = load_bundle(cid)
     if variant:
         b.gen = GenerativeModel.load(MODELS_DIR / cid / f"generative_{variant}.npz")
-        # keep the calibrated unmodeled offset of the full model
-        b.gen.unmod_offset = load_bundle(cid, with_disc=False).gen.unmod_offset
+        # keep the calibrated unmodeled offsets of the full model
+        full = load_bundle(cid, with_disc=False).gen
+        b.gen.unmod_offset = full.unmod_offset
+        b.gen.unmod_offset_nocomplaint = full.unmod_offset_nocomplaint
     return b
 
 
@@ -79,18 +93,24 @@ def recap_prior(bundle: EngineBundle, capacitor_share: float = 0.6) -> np.ndarra
     return p / p.sum()
 
 
-def make_prior(spec: SystemSpec, bundle: EngineBundle, meta: dict[str, Any]) -> np.ndarray | None:
+def make_prior(spec: SystemSpec, bundle: EngineBundle,
+               meta: dict[str, Any]) -> tuple[np.ndarray | None, bool]:
+    """(prior, whether it carries complaint information). A complaint in which the
+    reader found no symptom gives the uniform prior and counts as no complaint."""
     sm = bundle.symptom_model
     if spec.prior == "uniform" or sm is None:
-        return None
-    if spec.prior == "symptoms_rules":
-        text = str(meta.get(spec.text_field) or meta.get("complaint") or "")
-        return np.asarray(sm.prior(extract_rules(text).features()))
-    if spec.prior == "symptoms_oracle":
-        facts = meta.get("facts") or {}
-        return np.asarray(sm.prior(facts.get("features", {})))
+        return None, False
+    if spec.prior in ("symptoms_rules", "symptoms_oracle"):
+        if spec.prior == "symptoms_rules":
+            text = str(meta.get(spec.text_field) or meta.get("complaint") or "")
+            feats = extract_rules(text).features()
+        else:
+            feats = (meta.get("facts") or {}).get("features", {})
+        if not any(feats.values()):
+            return None, False
+        return np.asarray(sm.prior(feats)), True
     if spec.prior == "recap_folklore":
-        return recap_prior(bundle)
+        return recap_prior(bundle), False
     raise ValueError(spec.prior)
 
 
@@ -108,10 +128,11 @@ def run_one(args: tuple[SystemSpec, str, dict[str, Any], dict[str, Any]]) -> dic
             return float(simulate_lift(o.ref in truth_refs, rng))
         return simulate_reading(o.kind, float(row[o.key]), rng, float(row["fundamental"]))
 
-    prior = make_prior(spec, bundle, meta)
+    prior, from_complaint = make_prior(spec, bundle, meta)
     t0 = time.perf_counter()
     s = DiagnosisSession(bundle, policy=spec.policy, likelihood=spec.likelihood, prior=prior,
-                         seed=noise_seed(case_id, "policy") % (2**31))
+                         seed=noise_seed(case_id, "policy") % (2**31),
+                         cost_scale=spec.cost_scale, complaint_prior=from_complaint)
     res = s.run(measure)
     groups = bundle.groups
     truth_group = int(groups.group_of[bundle.hypotheses.index(truth)]) if single else -1
@@ -141,7 +162,21 @@ def run_one(args: tuple[SystemSpec, str, dict[str, Any], dict[str, Any]]) -> dic
         "trace_mass": json.dumps([round(t.top_mass, 4) for t in res.trace]),
         "trace_cost": json.dumps([t.cost_spent for t in res.trace]),
         "trace_correct": json.dumps([t.top_group == truth_group for t in res.trace]),
+        "persona": str(meta.get("persona", "")),
     }
+
+
+def unmodeled_outcome(bundle: EngineBundle, truth: str, top_group: int) -> str:
+    """Outcome on a unit outside the single-fault catalog (double fault, modified
+    value or solder bridge): "flagged" (no single fault fits), "faulty_part" (the
+    named group contains a fault on one of the altered parts) or "misleading"
+    (points only at healthy parts). A bridge alters no part, so for it only a
+    flag counts."""
+    if top_group == -1:
+        return "flagged"
+    refs = {parse_fault_id(f).ref for f in truth.split("+")}
+    named = {parse_fault_id(h).ref for h in bundle.groups.members(top_group) if h != "healthy"}
+    return "faulty_part" if refs & named else "misleading"
 
 
 def load_split(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, Any]]]:

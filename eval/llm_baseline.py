@@ -203,3 +203,36 @@ def run(system: str = "llm_only", client: LLMClient | None = None) -> pd.DataFra
     except LLMUnavailable:
         return None
     return pd.DataFrame(rows)
+
+
+def main() -> None:
+    """Run both LLM baselines and compare with the full system on the same units."""
+    from eval import metrics_io
+    from eval.harness import SYSTEMS, run_system
+    from eval.stats import mcnemar, paired_diff
+
+    for system in ("llm_only", "llm_sim"):
+        df = run(system)
+        if df is None:
+            metrics_io.update(system, {"status": "pending: requires DIFFERENTIAL_API_KEY"})
+            print(system, "pending: no API key and no cached responses")
+            continue
+        hyb = pd.concat([run_system(SYSTEMS["hybrid"], cid, "test") for cid in SUBSET],
+                        ignore_index=True)
+        m = df.merge(hyb[["case_id", "correct", "cost", "pred_kind", "truth_kind"]],
+                     on="case_id", suffixes=("_llm", "_hybrid"))
+        d = paired_diff(m["correct_hybrid"].to_numpy(float), m["correct_llm"].to_numpy(float))
+        out = {"status": "measured", "n": len(m), "top1_llm": float(m["correct_llm"].mean()),
+               "top1_hybrid": float(m["correct_hybrid"].mean()),
+               "margin": d.as_dict(), "mcnemar": mcnemar(m["correct_hybrid"].to_numpy(),
+                                                         m["correct_llm"].to_numpy()),
+               "mean_cost_llm": float(m["cost_llm"].mean()),
+               "mean_cost_hybrid": float(m["cost_hybrid"].mean()),
+               "capacitor_share_llm": float(m["top_kind"].isin(("film_cap", "electrolytic")).mean()),
+               "capacitor_share_true": float(m["truth_kind"].isin(("film_cap", "electrolytic")).mean())}
+        metrics_io.update(system, out)
+        print(system, json.dumps(out, indent=1))
+
+
+if __name__ == "__main__":
+    main()

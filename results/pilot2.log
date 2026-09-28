@@ -1,0 +1,106 @@
+{
+ "protocol": "symptomatic validation units (pilot split), models fit on training draws; never test data",
+ "n_cases": {
+  "channel_strip": 200,
+  "psu": 60,
+  "triode": 60,
+  "tone": 60,
+  "opamp": 60,
+  "driver": 60
+ },
+ "pooled": {
+  "engine_gen": {
+   "top1": 0.934,
+   "top3": 0.996,
+   "mean_cost": 5.892
+  },
+  "hybrid": {
+   "top1": 0.95,
+   "top3": 0.998,
+   "mean_cost": 4.158
+  },
+  "fixed_order": {
+   "top1": 0.866,
+   "top3": 0.968,
+   "mean_cost": 16.414
+  },
+  "half_split": {
+   "top1": 0.87,
+   "top3": 0.972,
+   "mean_cost": 14.21
+  },
+  "random": {
+   "top1": 0.84,
+   "top3": 0.964,
+   "mean_cost": 17.114
+  },
+  "recap_prior": {
+   "top1": 0.926,
+   "top3": 0.994,
+   "mean_cost": 6.136
+  }
+ },
+ "n_total": 500,
+ "hybrid_misses": 25,
+ "hybrid_false_flags": 24,
+ "channel_strip": {
+  "engine_gen": {
+   "top1": 0.93,
+   "mean_cost": 6.59
+  },
+  "hybrid": {
+   "top1": 0.955,
+   "mean_cost": 4.235
+  },
+  "fixed_order": {
+   "top1": 0.785,
+   "mean_cost": 22.79
+  },
+  "half_split": {
+   "top1": 0.83,
+   "mean_cost": 19.735
+  },
+  "random": {
+   "top1": 0.795,
+   "mean_cost": 23.535
+  },
+  "recap_prior": {
+   "top1": 0.915,
+   "mean_cost": 6.515
+  }
+ },
+ "effort_ratio_vs_fixed_order": 0.3589618618252711,
+ "effort_ratio_vs_half_split": 0.41463757916959887,
+ "effort_ratio_vs_random": 0.3442795372209887,
+ "hybrid_vs_engine_effort_ratio": 0.7057026476578412,
+ "cs_margin_vs_fixed_order": 0.16999999999999993,
+ "cs_margin_vs_random": 0.15999999999999992,
+ "cs_margin_vs_half_split": 0.125,
+ "hybrid_step_ece": 0.01689928797468358,
+ "hybrid_stop_ece": 0.004747688149199835,
+ "recap_prior_top1_delta": -0.008000000000000007,
+ "cs_step_seconds_p95": 0.137562,
+ "wide_top1": 0.9,
+ "wide_top1_drop": 0.05499999999999994,
+ "wide_n": 150,
+ "hybrid_unmodeled_auroc": 0.66099375,
+ "hybrid_unmodeled_flag_rate": 0.44375,
+ "hybrid_unmodeled_faulty_part_rate": 0.40625,
+ "hybrid_unmodeled_misleading_rate": 0.15,
+ "hybrid_unmodeled_n": 160,
+ "hybrid_single_false_flag_rate": 0.048,
+ "engine_gen_unmodeled_auroc": 0.6592625,
+ "engine_gen_unmodeled_flag_rate": 0.41875,
+ "engine_gen_unmodeled_faulty_part_rate": 0.4375,
+ "engine_gen_unmodeled_misleading_rate": 0.14375,
+ "engine_gen_unmodeled_n": 160,
+ "engine_gen_single_false_flag_rate": 0.064,
+ "population_check": {
+  "n": 200,
+  "engine_top1_no_symptom_faults": 0.57,
+  "engine_mean_cost_no_symptom_faults": 29.045,
+  "no_symptom_faults": 120,
+  "faults": 250
+ },
+ "seconds": 70.03736233711243
+}

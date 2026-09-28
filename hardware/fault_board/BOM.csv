@@ -1,0 +1,41 @@
+ref,value,tolerance,part type,example manufacturer part number,quantity,notes
+Q501,2N3904,hFE 100-300 at 10 mA (datasheet),NPN small-signal transistor TO-92,onsemi 2N3904BU,1,"Voltage amplifier. Model card Q2N3904 (circuits/lib/devices.lib). Pinout E-B-C from the left, flat face towards you; confirm on the datasheet of the part you buy."
+Q502,2N3904,hFE 100-300 at 10 mA (datasheet),NPN small-signal transistor TO-92,onsemi 2N3904BU,1,Emitter follower. Same model card as Q501.
+R501,39 kΩ,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-39K,1,Upper base-bias resistor (vcc_d to TP18)
+R502,13 kΩ,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-13K,1,Lower base-bias resistor (TP18 to GND)
+R503,2.2 kΩ,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-2K2,1,Unbypassed emitter resistor (TP19 to JF4 pin 1)
+R504,470 Ω,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-470R,1,Bypassed emitter resistor (q1e2 to GND)
+R505,4.7 kΩ,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-4K7,1,Collector load (vcc_d to JF6 pin 1)
+R506,1 kΩ,±1 %,metal-film resistor 0.6 W,Vishay MRS25 series (e.g. MRS25000C1001FCT00),1,"Value identical to the model; rating raised from the 0.25 W in driver.yaml because fault states JF8 and JF2 dissipate 204 mW and 179 mW in it (expected_readings.md section 7). Mount 2-3 mm off the board."
+R507,47 Ω,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-47R,1,Series output resistor (out_c to TP22)
+R508,100 kΩ,±5 %,carbon-film resistor 0.25 W,Yageo CFR-25JB-52-100K,1,Output DC-restoring resistor (TP22 to GND)
+R509,47 Ω,±1 %,metal-film resistor 0.5 W,Yageo MFR-50 series (47R),1,Supply decoupling resistor (VREG to JF10 pin 1)
+C501,10 µF 50 V,±20 %,aluminium electrolytic radial general purpose,Panasonic ECA-1HM100,1,"+ to TP18 (q1b), - to JF1 pin 1. Model ESR 13.3 ohm = tan-delta 0.10 at 120 Hz: pick a general-purpose (not low-ESR-only) series."
+C502,100 µF 25 V,±20 %,aluminium electrolytic radial general purpose,Panasonic ECA-1EM101,1,"Emitter bypass. + to JF5 pin 1, - to GND. Model ESR 1.86 ohm = tan-delta 0.14 at 120 Hz."
+C503,100 µF 25 V,±20 %,aluminium electrolytic radial general purpose,Panasonic ECA-1EM101,1,"Output coupling. + to TP21 (q2e), - to JF9 pin 1. Model ESR 1.86 ohm."
+C504,220 µF 25 V,±20 %,aluminium electrolytic radial general purpose,Panasonic ECA-1EM221,1,"Supply decoupling. + to TP23 (vcc_d), - to GND. Model ESR 0.84 ohm = tan-delta 0.14 at 120 Hz."
+RSRC_D,100 Ω,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-100R,1,Fixture: input coupling source resistor from GEN (drv_src) to TP17. Gains are read relative to GEN so the generator's own output impedance cancels.
+RLOAD_EXT,10 kΩ,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-10K,1,Fixture: 10k load from TP22 to GND. Permanently fitted; the model always has it.
+VREG_BENCH,15.33 V,set with the DMM at the VREG post,bench power supply 0-30 V with adjustable current limit,any laboratory supply,1,Fixture: current limit 50 mA. Never above 24 V. Highest simulated board current 15.65 mA (JF8).
+VIN_D,sine 20 Hz / 1 kHz / 20 kHz; DC 0 V,amplitude set with the scope at GEN,function / signal generator,any laboratory generator,1,Fixture: 0.20 Vpp for gain readings; 1.38 Vpp for THD; DC 0 V (output on) for DC readings.
+LEADS_SUPPLY,4 mm banana to 4 mm banana (red + black),-,test lead pair,generic,1,Bench supply to J1
+LEADS_GEN,BNC male to minigrabber,-,test lead 50 ohm coax,generic,1,Generator to GEN post and GND post
+PROBES,x10 scope probe,-,passive oscilloscope probe,generic (usually supplied with the scope),2,CH1 on the test point; CH2 on GEN
+J1,2-way screw terminal 5.08 mm,-,PCB terminal block,Phoenix Contact 1935161,1,Supply input VREG / GND (perfboard build)
+D1,1N4001,-,rectifier diode DO-41,generic 1N4001,1,"Reverse-polarity clamp across the supply input, cathode (band) to VREG. Outside the model; it does not change any reading because the supply fixes VREG."
+JF1-JF10,3-pin male header 2.54 mm,-,breakaway pin header 1x40 (cut into ten 3-pin pieces),Sullins PRPC040SAAN-RC,1,"One strip gives the ten fault headers (30 pins) plus single pins for breadboard test points. Pin 1 = H side, pin 2 = circuit node, pin 3 = F side."
+SHUNT,2-position jumper shunt 2.54 mm,-,jumper shunt,Sullins SPC02SYAN,12,Ten in use (all on H = healthy) plus two spares. A missing shunt on JF4 / JF5 / JF10 is itself a fault.
+RF3,100 kΩ,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-100K,1,Fault part JF3: Q501 collector-base leakage (Q501:cb_leak). From TP20 (q1c) to JF3 pin 3. 33rd percentile of the engine's 47k-470k severity range.
+RF4,2.2 kΩ,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-2K2,1,Fault part JF4: second R503 placed in series (R503:drift_x2). Between JF4 pin 1 and pin 3.
+RF8,22 Ω,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-22R,1,Fault part JF8: series safety resistor for the Q502 collector-emitter short (Q502:ce_short). From TP23 (vcc_d) to JF8 pin 3. Inside the engine's 1-50 ohm severity range (79th percentile).
+RF10,470 Ω,±1 %,metal-film resistor 0.25 W,Yageo MFR-25FBF52-470R,1,Fault part JF10: R509 drifted x10 (R509:drift_x10). From VREG to JF10 pin 3. Dissipates 29 mW in its fault state.
+CF5,10 µF 25 V,±20 %,aluminium electrolytic radial general purpose,Panasonic ECA-1EM100,1,"Degraded spare for C502 (C502:cap_loss_90 = 10 % of 100 uF). + to JF5 pin 3, - to GND. Same series as C502 so its tan-delta (ESR up to 18.6 ohm) matches; effect on the 1 kHz gain is under 1 %."
+SPARE_Q,2N3904,hFE 100-300 at 10 mA (datasheet),NPN small-signal transistor TO-92,onsemi 2N3904BU,2,Spares in case a transistor is damaged during the build
+TP17-TP23,test post,-,PCB test point (yellow) or single header pin (breadboard),Keystone 5004,7,"Labelled TP17 drv_in, TP18 q1b, TP19 q1e, TP20 q1c, TP21 q2e, TP22 out, TP23 vcc_d"
+TP_GEN,test post,-,PCB test point (white),Keystone 5002,1,Generator input and scope CH2 reference (drv_src)
+TP_VREG,test post,-,PCB test point (red),Keystone 5000,1,Supply input; set 15.33 V here with the DMM
+TP_GND,test post,-,PCB test point (black),Keystone 5001,2,Probe and generator ground clips (input end and output end)
+BOARD,perfboard 0.1 inch pitch approx. 100 x 80 mm or 830-point solderless breadboard,-,prototyping board,generic,1,See README section 5
+WIRE,22 AWG solid hook-up wire + tinned copper wire for buses,-,wire,generic,1,Header links under 5 cm; twist the pairs of series headers
+COVER,card or 3D-printed lid over the header row,-,mechanical,team-made,1,Hides which shunt is on F during the demo
+LABELS,printed label strip,-,labels,generic,1,TP ids with node names; H / F marks on the header row

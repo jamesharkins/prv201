@@ -105,3 +105,14 @@ def test_manual_entry_requires_value() -> None:
         m.measure(dc)
     m.provide(dc.key, 3.3)
     assert m.measure(dc).value == 3.3
+
+
+def test_fault_board_reading_rules() -> None:
+    obs = observable_map(get_circuit("driver"))
+    tp22 = obs["dc:TP22"]
+    dmm = ScpiInstrument("F", resource=FakeVisa({"*IDN?": "x", "MEAS:VOLT:DC?": "0.042"}))
+    assert dmm.measure(tp22).value == 0.0
+    ac = next(o for o in obs.values() if o.kind == "ac" and not o.hv)
+    noise = FakeVisa({"*IDN?": "x", ":MEASure:ITEM? VRMS,CHANnel1": "0.001",
+                      ":MEASure:ITEM? VRMS,CHANnel2": "0.07"})
+    assert ScpiInstrument("F", role="scope", resource=noise).measure(ac).value == 0.0

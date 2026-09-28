@@ -11,6 +11,7 @@ so a symptom prior is applied by multiplying and renormalising.
 
 from __future__ import annotations
 
+import gzip
 import json
 import math
 from dataclasses import dataclass
@@ -124,7 +125,7 @@ class DiscriminativeModel:
         return model
 
     def _raw_logits(self, X: np.ndarray) -> np.ndarray:
-        return np.asarray(self.booster.predict(X, raw_score=True))  # type: ignore[attr-defined]
+        return np.asarray(self.booster.predict(X, raw_score=True))
 
     def log_proba(self, X: np.ndarray) -> np.ndarray:
         """Calibrated log p(h | observed features); NaN marks unmeasured features."""
@@ -146,11 +147,16 @@ class DiscriminativeModel:
             "keys": self.keys,
             "temperature": self.temperature,
         }
-        path.write_text(json.dumps(meta) + "\n" + self.booster_text)
+        text = json.dumps(meta) + "\n" + self.booster_text
+        if path.suffix == ".gz":  # the trained trees compress about tenfold
+            path.write_bytes(gzip.compress(text.encode(), mtime=0))
+        else:
+            path.write_text(text)
 
     @classmethod
     def load(cls, path: Path) -> DiscriminativeModel:
-        text = path.read_text()
+        text = gzip.decompress(path.read_bytes()).decode() if path.suffix == ".gz" \
+            else path.read_text()
         head, body = text.split("\n", 1)
         meta = json.loads(head)
         return cls(meta["circuit_id"], meta["hypotheses"], meta["keys"], body,

@@ -1,4 +1,123 @@
 {
+ "bars": {
+  "k": 1.5,
+  "targets": {
+   "T1": {
+    "bar": 0.93,
+    "direction": ">=",
+    "estimate": 0.950833,
+    "k": 1.5,
+    "se": 0.010953,
+    "step": 0.01
+   },
+   "T10": {
+    "bar": 0.35,
+    "direction": "<=",
+    "estimate": 0.330416,
+    "k": 1.5,
+    "se": 0.011996,
+    "step": 0.05
+   },
+   "T11": {
+    "bar": 0.75,
+    "direction": "<=",
+    "estimate": 0.694175,
+    "k": 1.5,
+    "se": 0.020999,
+    "step": 0.05
+   },
+   "T12": {
+    "bar": 0.03,
+    "direction": "<=",
+    "estimate": 0.016899,
+    "k": 1.5,
+    "se": 0.008221,
+    "step": 0.01
+   },
+   "T13": {
+    "bar": 0.62,
+    "direction": ">=",
+    "estimate": 0.660994,
+    "flagged_bar": 0.38,
+    "flagged_estimate": 0.438333,
+    "flagged_se": 0.037817,
+    "k": 1.5,
+    "misleading_bar": 0.21,
+    "misleading_estimate": 0.16,
+    "misleading_se": 0.03119,
+    "n_unmodeled": 160.0,
+    "se": 0.030393,
+    "step": 0.01
+   },
+   "T14": {
+    "bar": -0.02,
+    "direction": ">=",
+    "estimate": -0.009167,
+    "k": 1.5,
+    "se": 0.006629,
+    "step": 0.01
+   },
+   "T2": {
+    "bar": 0.93,
+    "direction": ">=",
+    "estimate": 0.955,
+    "k": 1.5,
+    "se": 0.015814,
+    "step": 0.01
+   },
+   "T3": {
+    "bar": 0.99,
+    "direction": ">=",
+    "estimate": 0.9975,
+    "k": 1.5,
+    "se": 0.006435,
+    "step": 0.01
+   },
+   "T4": {
+    "bar": 0.12,
+    "bar_vs_fixed_order": 0.12,
+    "bar_vs_random": 0.12,
+    "direction": ">=",
+    "estimate_vs_fixed_order": 0.17,
+    "estimate_vs_random": 0.16,
+    "k": 1.5,
+    "rule": "the smaller of the two margin bars",
+    "step": 0.01
+   },
+   "T6": {
+    "bar": 0.1,
+    "direction": "<=",
+    "estimate": 0.055,
+    "k": 1.5,
+    "se": 0.029795,
+    "step": 0.01
+   },
+   "T8": {
+    "bar": 0.35,
+    "direction": "<=",
+    "estimate": 0.343792,
+    "k": 1.5,
+    "se": 0.01212,
+    "step": 0.05
+   },
+   "T9": {
+    "bar": 0.4,
+    "direction": "<=",
+    "estimate": 0.397092,
+    "k": 1.5,
+    "se": 0.014064,
+    "step": 0.05
+   }
+  },
+  "weights": {
+   "channel_strip": 0.5,
+   "driver": 0.1,
+   "opamp": 0.1,
+   "psu": 0.1,
+   "tone": 0.1,
+   "triode": 0.1
+  }
+ },
  "hand_calcs": {
   "hum_model_overstatement_max_pct": 5.40924,
   "hum_model_overstatement_min_pct": 2.408484,
@@ -922,7 +1041,162 @@
    "retried_draws": 1,
    "total_draws": 253000
   },
+  "symptoms": {
+   "channel_strip": {
+    "faults": 250,
+    "faults_per_symptom": {
+     "bass_loss": 12,
+     "bias_drift": 41,
+     "dc_at_output": 1,
+     "distortion": 15,
+     "hum": 25,
+     "low_gain": 21,
+     "no_output": 53,
+     "treble_loss": 6
+    },
+    "latent_faults": 120,
+    "max_faults_sharing_a_symptom": 53,
+    "symptomatic_faults": 130
+   },
+   "driver": {
+    "faults": 73,
+    "faults_per_symptom": {
+     "bass_loss": 1,
+     "bias_drift": 20,
+     "dc_at_output": 1,
+     "distortion": 9,
+     "hum": 0,
+     "low_gain": 8,
+     "no_output": 19,
+     "treble_loss": 0
+    },
+    "latent_faults": 33,
+    "max_faults_sharing_a_symptom": 20,
+    "symptomatic_faults": 40
+   },
+   "opamp": {
+    "faults": 56,
+    "faults_per_symptom": {
+     "bass_loss": 1,
+     "bias_drift": 4,
+     "dc_at_output": 1,
+     "distortion": 3,
+     "hum": 0,
+     "low_gain": 6,
+     "no_output": 15,
+     "treble_loss": 3
+    },
+    "latent_faults": 26,
+    "max_faults_sharing_a_symptom": 15,
+    "symptomatic_faults": 30
+   },
+   "psu": {
+    "faults": 63,
+    "faults_per_symptom": {
+     "bass_loss": 0,
+     "bias_drift": 10,
+     "dc_at_output": 0,
+     "distortion": 0,
+     "hum": 14,
+     "low_gain": 0,
+     "no_output": 13,
+     "treble_loss": 0
+    },
+    "latent_faults": 35,
+    "max_faults_sharing_a_symptom": 14,
+    "symptomatic_faults": 28
+   },
+   "tone": {
+    "faults": 27,
+    "faults_per_symptom": {
+     "bass_loss": 8,
+     "bias_drift": 0,
+     "dc_at_output": 0,
+     "distortion": 0,
+     "hum": 0,
+     "low_gain": 4,
+     "no_output": 0,
+     "treble_loss": 3
+    },
+    "latent_faults": 14,
+    "max_faults_sharing_a_symptom": 8,
+    "symptomatic_faults": 13
+   },
+   "triode": {
+    "faults": 31,
+    "faults_per_symptom": {
+     "bass_loss": 1,
+     "bias_drift": 10,
+     "dc_at_output": 1,
+     "distortion": 1,
+     "hum": 0,
+     "low_gain": 2,
+     "no_output": 8,
+     "treble_loss": 0
+    },
+    "latent_faults": 11,
+    "max_faults_sharing_a_symptom": 10,
+    "symptomatic_faults": 20
+   }
+  },
   "total_hypotheses": 506
+ },
+ "nlp_first_run_before_rule_update": {
+  "claude": "pending: requires DIFFERENTIAL_API_KEY",
+  "development_rules": {
+   "micro_f1": 0.7507,
+   "n": 1000,
+   "precision": 0.968675,
+   "recall": 0.612805
+  },
+  "development_rules_by_persona": {
+   "bench_tech": {
+    "micro_f1": 0.806971,
+    "n": 327,
+    "precision": 1.0,
+    "recall": 0.676404
+   },
+   "hobbyist": {
+    "micro_f1": 0.86423,
+    "n": 343,
+    "precision": 1.0,
+    "recall": 0.76092
+   },
+   "studio_client": {
+    "micro_f1": 0.546032,
+    "n": 330,
+    "precision": 0.868687,
+    "recall": 0.398148
+   }
+  },
+  "held_out_rules": {
+   "micro_f1": 0.57019,
+   "n": 1000,
+   "precision": 0.986867,
+   "recall": 0.400915
+  },
+  "held_out_rules_by_persona": {
+   "bench_tech": {
+    "micro_f1": 0.53958,
+    "n": 327,
+    "precision": 0.95977,
+    "recall": 0.375281
+   },
+   "hobbyist": {
+    "micro_f1": 0.594507,
+    "n": 343,
+    "precision": 1.0,
+    "recall": 0.422989
+   },
+   "studio_client": {
+    "micro_f1": 0.576606,
+    "n": 330,
+    "precision": 1.0,
+    "recall": 0.405093
+   }
+  },
+  "held_out_texts_with_leakage": 0,
+  "note": "First scoring of the held-out paraphrase bank, run on the test units at 20:3x UTC on 2026-09-28 before the targets were locked and before the extraction rules were extended from the development templates. The T18 bar (>= 0.80 offline) had been drafted before this run and was not changed. Only aggregate scores were viewed; no held-out text or failure was inspected."
  },
  "pilot": {
   "circuits": {
@@ -1167,6 +1441,11 @@
     "symptomatic_faults": 20
    }
   },
+  "n_cases": {
+   "channel_strip": 200,
+   "per_block": 100,
+   "total": 700
+  },
   "pooled": {
    "eig_per_cost": {
     "mean_cost": 4.86,
@@ -1188,5 +1467,373 @@
   "pooled_accuracy_when_confident": 0.994161,
   "pooled_confident_fraction": 0.978571,
   "protocol": "fit on training draws 0-299; evaluate on held-out training draws 300-399"
+ },
+ "pilot2": {
+  "channel_strip": {
+   "engine_gen": {
+    "mean_cost": 6.59,
+    "top1": 0.93
+   },
+   "fixed_order": {
+    "mean_cost": 22.79,
+    "top1": 0.785
+   },
+   "half_split": {
+    "mean_cost": 19.735,
+    "top1": 0.83
+   },
+   "hybrid": {
+    "mean_cost": 4.235,
+    "top1": 0.955
+   },
+   "random": {
+    "mean_cost": 23.535,
+    "top1": 0.795
+   },
+   "recap_prior": {
+    "mean_cost": 6.515,
+    "top1": 0.915
+   }
+  },
+  "cs_margin_vs_fixed_order": 0.17,
+  "cs_margin_vs_half_split": 0.125,
+  "cs_margin_vs_random": 0.16,
+  "cs_step_seconds_p95": 0.137562,
+  "effort_ratio_vs_fixed_order": 0.358962,
+  "effort_ratio_vs_half_split": 0.414638,
+  "effort_ratio_vs_random": 0.34428,
+  "engine_gen_single_false_flag_rate": 0.064,
+  "engine_gen_unmodeled_auroc": 0.659262,
+  "engine_gen_unmodeled_faulty_part_rate": 0.4375,
+  "engine_gen_unmodeled_flag_rate": 0.41875,
+  "engine_gen_unmodeled_misleading_rate": 0.14375,
+  "engine_gen_unmodeled_n": 160,
+  "hybrid_false_flags": 24,
+  "hybrid_misses": 25,
+  "hybrid_single_false_flag_rate": 0.048,
+  "hybrid_step_ece": 0.016899,
+  "hybrid_stop_ece": 0.004748,
+  "hybrid_unmodeled_auroc": 0.660994,
+  "hybrid_unmodeled_faulty_part_rate": 0.40625,
+  "hybrid_unmodeled_flag_rate": 0.44375,
+  "hybrid_unmodeled_misleading_rate": 0.15,
+  "hybrid_unmodeled_n": 160,
+  "hybrid_vs_engine_effort_ratio": 0.705703,
+  "n_cases": {
+   "channel_strip": 200,
+   "driver": 60,
+   "opamp": 60,
+   "psu": 60,
+   "tone": 60,
+   "triode": 60
+  },
+  "n_total": 500,
+  "pooled": {
+   "engine_gen": {
+    "mean_cost": 5.892,
+    "top1": 0.934,
+    "top3": 0.996
+   },
+   "fixed_order": {
+    "mean_cost": 16.414,
+    "top1": 0.866,
+    "top3": 0.968
+   },
+   "half_split": {
+    "mean_cost": 14.21,
+    "top1": 0.87,
+    "top3": 0.972
+   },
+   "hybrid": {
+    "mean_cost": 4.158,
+    "top1": 0.95,
+    "top3": 0.998
+   },
+   "random": {
+    "mean_cost": 17.114,
+    "top1": 0.84,
+    "top3": 0.964
+   },
+   "recap_prior": {
+    "mean_cost": 6.136,
+    "top1": 0.926,
+    "top3": 0.994
+   }
+  },
+  "population_check": {
+   "engine_mean_cost_no_symptom_faults": 29.045,
+   "engine_top1_no_symptom_faults": 0.57,
+   "faults": 250,
+   "n": 200,
+   "no_symptom_faults": 120
+  },
+  "protocol": "symptomatic validation units (pilot split), models fit on training draws; never test data",
+  "recap_prior_top1_delta": -0.008,
+  "seconds": 70.037362,
+  "wide_n": 150,
+  "wide_top1": 0.9,
+  "wide_top1_drop": 0.055
+ },
+ "vision": {
+  "protocol": "exact match = normalised display text, unit and mode all correct; no answer counts as wrong; 95 % CI from 2000 bootstrap resamples. The offline reader was developed on synthetic sets with seeds [20260928, 7, 20260929]; the held-out set uses a seed not seen during development. Every reading is confirmed by the technician before it is recorded.",
+  "real": {
+   "status": "no labelled real photos (data/meter_photos/real/labels.jsonl not present)"
+  },
+  "synthetic": {
+   "claude": {
+    "status": "pending (requires DIFFERENTIAL_API_KEY)"
+   },
+   "dataset": {
+    "difficulty": {
+     "easy": 120,
+     "hard": 60,
+     "medium": 120
+    },
+    "labels_sha256": "f00d528794d032e8b51fe107c1cc694b027972bf72e209ceff154c3d7e8c8b1d",
+    "n": 300,
+    "path": "data/meter_photos/synthetic",
+    "seed": 20260928
+   },
+   "offline": {
+    "accuracy_when_answered": 0.996656,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.99,
+     "mean_when_correct": 0.985954,
+     "mean_when_wrong": 0.516212
+    },
+    "confusion": {
+     "characters": {
+      "5->1": 1
+     },
+     "error_parts": {
+      "no_answer": 1,
+      "value_text": 1
+     },
+     "examples": [
+      {
+       "confidence": null,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0061.jpg",
+       "read": null,
+       "truth": "26.6 mV AC"
+      },
+      {
+       "confidence": 0.516,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0131.jpg",
+       "read": "215.0 V DC",
+       "truth": "255.0 V DC"
+      }
+     ],
+     "modes": {},
+     "units": {}
+    },
+    "correct": 298,
+    "exact_match": 0.993333,
+    "exact_match_ci95": [
+     0.983333,
+     1.0
+    ],
+    "n": 300,
+    "no_answer_rate": 0.003333,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 20
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 0.966667,
+      "n": 60,
+      "no_answer_rate": 0.016667
+     },
+     "medium": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 1.0,
+      "n": 21
+     },
+     "AC mV": {
+      "exact_match": 0.973684,
+      "n": 38
+     },
+     "DC V": {
+      "exact_match": 0.993671,
+      "n": 158
+     },
+     "DC mV": {
+      "exact_match": 1.0,
+      "n": 33
+     },
+     "resistance M\u03a9": {
+      "exact_match": 1.0,
+      "n": 17
+     },
+     "resistance k\u03a9": {
+      "exact_match": 1.0,
+      "n": 24
+     },
+     "resistance \u03a9": {
+      "exact_match": 1.0,
+      "n": 9
+     }
+    },
+    "seconds_per_image": {
+     "mean": 0.089612,
+     "p95": 0.111628
+    },
+    "wrong_answer_rate": 0.003333
+   }
+  },
+  "synthetic_holdout": {
+   "claude": {
+    "status": "pending (requires DIFFERENTIAL_API_KEY)"
+   },
+   "dataset": {
+    "difficulty": {
+     "easy": 120,
+     "hard": 60,
+     "medium": 120
+    },
+    "labels_sha256": "129aae75699562d2e70ef5a5426435f87511aa80bb9c4d69cbb71416b8af9bf9",
+    "n": 300,
+    "path": "(rendered, not saved)",
+    "seed": 20261001
+   },
+   "offline": {
+    "accuracy_when_answered": 1.0,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.976667,
+     "mean_when_correct": 0.985108,
+     "mean_when_wrong": null
+    },
+    "confusion": {
+     "characters": {},
+     "error_parts": {
+      "no_answer": 4
+     },
+     "examples": [
+      {
+       "confidence": null,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0043.jpg",
+       "read": null,
+       "truth": "0.739 V DC"
+      },
+      {
+       "confidence": null,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0092.jpg",
+       "read": null,
+       "truth": "9.36 V DC"
+      },
+      {
+       "confidence": null,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0172.jpg",
+       "read": null,
+       "truth": "0.707 V DC"
+      },
+      {
+       "confidence": null,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0224.jpg",
+       "read": null,
+       "truth": "22.58 k\u03a9 resistance"
+      }
+     ],
+     "modes": {},
+     "units": {}
+    },
+    "correct": 296,
+    "exact_match": 0.986667,
+    "exact_match_ci95": [
+     0.973333,
+     0.996667
+    ],
+    "n": 300,
+    "no_answer_rate": 0.013333,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 19
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 0.933333,
+      "n": 60,
+      "no_answer_rate": 0.066667
+     },
+     "medium": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 1.0,
+      "n": 15
+     },
+     "AC mV": {
+      "exact_match": 1.0,
+      "n": 39
+     },
+     "DC V": {
+      "exact_match": 0.980519,
+      "n": 154
+     },
+     "DC mV": {
+      "exact_match": 1.0,
+      "n": 34
+     },
+     "resistance M\u03a9": {
+      "exact_match": 1.0,
+      "n": 19
+     },
+     "resistance k\u03a9": {
+      "exact_match": 0.970588,
+      "n": 34
+     },
+     "resistance \u03a9": {
+      "exact_match": 1.0,
+      "n": 5
+     }
+    },
+    "seconds_per_image": {
+     "mean": 0.088283,
+     "p95": 0.108849
+    },
+    "wrong_answer_rate": 0.0
+   }
+  },
+  "target": {
+   "claude": 0.95,
+   "claude_met": null,
+   "id": "T12",
+   "offline": 0.9,
+   "offline_met": true
+  }
  }
 }

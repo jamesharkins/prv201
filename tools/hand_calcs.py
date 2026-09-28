@@ -184,7 +184,7 @@ def tone() -> list[dict[str, object]]:
         n = ["tin", "ba", "bt", "bw", "bb", "ta", "tt", "tb", "out"]
         idx = {k: i for i, k in enumerate(n)}
         Y = np.zeros((9, 9), dtype=complex)
-        I = np.zeros(9, dtype=complex)
+        I = np.zeros(9, dtype=complex)  # noqa: E741 - nodal current vector, circuit notation
 
         def br(a: str, b: str | None, y: complex) -> None:
             ia = idx[a]

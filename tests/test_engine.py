@@ -15,6 +15,7 @@ from differential.engine.data import EngineData, build_engine_data, transform_co
 from differential.engine.generative import GenerativeModel
 from differential.engine.selection import (
     Candidate,
+    UnmodeledTerm,
     eig_lift,
     eig_spice,
     entropy,
@@ -114,6 +115,27 @@ def test_selection_primitives() -> None:
     assert rank([]) == []
 
 
+def test_eig_counts_the_unmodeled_hypothesis() -> None:
+    """All catalogued mass in one group but U unresolved: a reading that separates
+    U from that group must still be informative (regression: sessions used to stop
+    as "uninformative" with U at 0.6)."""
+    rng = np.random.default_rng(1)
+    comp_lp = np.log(np.array([0.4]))  # one modeled component holding 0.4
+    mean, var = np.array([[0.0]]), np.array([[0.01]])
+    u = UnmodeledTerm(log_mass=math.log(0.6), loglik=np.array([-math.log(100.0)]),
+                      center=np.array([0.0]), width=np.array([100.0]))
+    without_u = eig_spice(comp_lp, np.array([0]), 1, mean, var, 256, rng)
+    with_u = eig_spice(comp_lp, np.array([0]), 1, mean, var, 256, rng, unmodeled=u)
+    assert without_u[0] == 0.0
+    h0 = entropy(np.array([0.4, 0.6]))
+    assert 0.8 * h0 < with_u[0] <= h0 + 1e-9
+    # Lift test: U makes the part defective rarely, the modeled fault almost always.
+    e = eig_lift(np.array([1.0]), ["R1"], np.array([0]), 1, "R1", p_unmodeled=0.6,
+                 p_def_unmodeled=0.05)
+    assert e > 0.3
+    assert eig_lift(np.array([1.0]), ["R1"], np.array([0]), 1, "R1") == 0.0
+
+
 def test_fixed_order_is_rails_first() -> None:
     order = fixed_order(get_circuit("channel_strip"))
     assert order[0] == "dc:TP1" and order.index("ac:TP22") < order.index("ac:TP7")
@@ -169,6 +191,30 @@ def test_sessions_end_to_end(tone_bundle: EngineBundle, tone_val: pd.DataFrame) 
         results["eig_per_cost"][0] >= results["fixed_order"][0]
 
 
+def test_unmodeled_level_depends_on_complaint(tone_bundle: EngineBundle) -> None:
+    """Sessions with a complaint prior use the complaint-calibrated level of U,
+    all others the no-complaint level; set_prior switches between them."""
+    gen = tone_bundle.gen
+    saved = (gen.unmod_offset, gen.unmod_offset_nocomplaint)
+    try:
+        gen.unmod_offset, gen.unmod_offset_nocomplaint = 5.0, 1.0
+        s = DiagnosisSession(tone_bundle)
+        assert not s.complaint_prior and s.unmod_offset == 1.0
+        key = s.recommend().key  # type: ignore[union-attr]
+        s.record(key, s.expected_reading(key, "healthy")[0])  # type: ignore[index]
+        u_without = s.posterior()[-1]
+        s.set_prior(np.full(gen.n_hyp, 1.0 / gen.n_hyp), from_complaint=True)
+        assert s.complaint_prior and s.unmod_offset == 5.0
+        assert s.posterior()[-1] > u_without  # a higher level gives U more mass
+        assert DiagnosisSession(tone_bundle, prior=np.ones(gen.n_hyp)).unmod_offset == 5.0
+        assert DiagnosisSession(tone_bundle, prior=np.ones(gen.n_hyp),
+                                complaint_prior=False).unmod_offset == 1.0
+        gen.unmod_offset_nocomplaint = float("nan")  # not calibrated: one level for both
+        assert DiagnosisSession(tone_bundle).unmod_offset == 5.0
+    finally:
+        gen.unmod_offset, gen.unmod_offset_nocomplaint = saved
+
+
 def test_session_api_details(tone_bundle: EngineBundle) -> None:
     s = DiagnosisSession(tone_bundle, budget=12.0)
     post = s.posterior()
@@ -221,5 +267,5 @@ def test_discriminative_model(tone_train: pd.DataFrame, tone_val: pd.DataFrame,
     assert np.isnan(x[1]) and x[0] == 0.1
     bundle = EngineBundle(tone_bundle.circuit, tone_bundle.gen, tone_bundle.groups, disc=d)
     row = tone_val[tone_val.hypothesis == "R303:open"].iloc[0]
-    ok, cost = _run_case(bundle, row, "eig_per_cost", likelihood="discriminative")
+    _ok, cost = _run_case(bundle, row, "eig_per_cost", likelihood="discriminative")
     assert cost > 0

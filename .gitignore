@@ -25,3 +25,6 @@ data/sim/*.log
 
 # Uncompressed legacy classifier files (the bundle stores discriminative.txt.gz)
 data/models/*/discriminative.txt
+
+# Smoke-test run cache (pilot splits, 8 units)
+data/eval/runs/*__8.parquet

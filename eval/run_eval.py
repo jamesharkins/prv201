@@ -47,6 +47,10 @@ ABLATIONS = ["hybrid_oracle", "hybrid_paraphrase", "recap_prior", "engine_eig_no
              "half_split_w_double"]
 SMOKE_SYSTEMS = ["random", "fixed_order", "half_split", "engine_gen", "hybrid"]
 SMOKE_LIMIT = 8
+# The smoke test checks the pipeline, not the system: it runs on the pilot splits so
+# that no check before the targets-locked tag ever touches a test unit.
+SPLITS = {"test": "test", "unmodeled_test": "unmodeled_test", "test_wide": "test_wide"}
+SMOKE_SPLITS = {"test": "pilot", "unmodeled_test": "unmodeled_pilot", "test_wide": "pilot_wide"}
 CAP_KINDS = ("film_cap", "electrolytic")
 
 
@@ -54,21 +58,22 @@ CAP_KINDS = ("film_cap", "electrolytic")
 def run_everything(smoke: bool) -> dict[str, dict[str, pd.DataFrame]]:
     limit = SMOKE_LIMIT if smoke else None
     systems = SMOKE_SYSTEMS if smoke else MAIN + ABLATIONS
+    sp = SMOKE_SPLITS if smoke else SPLITS
     out: dict[str, dict[str, pd.DataFrame]] = {}
     t0 = time.time()
     for s in systems:
         out[s] = {}
         for cid in CIRCUITS:
-            out[s][cid] = run_system(SYSTEMS[s], cid, "test", limit=limit)
+            out[s][cid] = run_system(SYSTEMS[s], cid, sp["test"], limit=limit)
         print(f"{s:22s} done  {time.time() - t0:7.0f} s", flush=True)
     # T13 is measured on the full system (its operating point is the calibrated one);
     # the engine alone is kept for the analysis of what the complaint changes.
-    out["unmodeled_hybrid"] = {cid: run_system(SYSTEMS["hybrid"], cid, "unmodeled_test",
+    out["unmodeled_hybrid"] = {cid: run_system(SYSTEMS["hybrid"], cid, sp["unmodeled_test"],
                                                limit=limit) for cid in CIRCUITS}
-    out["unmodeled_engine"] = {cid: run_system(SYSTEMS["engine_gen"], cid, "unmodeled_test",
+    out["unmodeled_engine"] = {cid: run_system(SYSTEMS["engine_gen"], cid, sp["unmodeled_test"],
                                                limit=limit) for cid in CIRCUITS}
-    out["wide_hybrid"] = {COMPOSITE_ID: run_system(SYSTEMS["hybrid"], COMPOSITE_ID, "test_wide",
-                                                   limit=limit)}
+    out["wide_hybrid"] = {COMPOSITE_ID: run_system(SYSTEMS["hybrid"], COMPOSITE_ID,
+                                                   sp["test_wide"], limit=limit)}
     return out
 
 

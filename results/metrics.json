@@ -1574,6 +1574,29 @@
   "wide_top1": 0.9,
   "wide_top1_drop": 0.055
  },
+ "smoke": {
+  "engine_gen": {
+   "mean_cost": 6.145833,
+   "top1": 0.979167
+  },
+  "fixed_order": {
+   "mean_cost": 14.020833,
+   "top1": 0.895833
+  },
+  "half_split": {
+   "mean_cost": 11.854167,
+   "top1": 0.875
+  },
+  "hybrid": {
+   "mean_cost": 3.729167,
+   "top1": 0.979167
+  },
+  "random": {
+   "mean_cost": 15.270833,
+   "top1": 0.791667
+  },
+  "seconds": 17.052242
+ },
  "vision": {
   "protocol": "exact match = normalised display text, unit and mode all correct; no answer counts as wrong; 95 % CI from 2000 bootstrap resamples. The offline reader was developed on synthetic sets with seeds [20260928, 7, 20260929]; the held-out set uses a seed not seen during development. Every reading is confirmed by the technician before it is recorded.",
   "real": {

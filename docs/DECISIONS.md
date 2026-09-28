@@ -419,3 +419,8 @@ deleted.
   AUROC 0.62 / 38% flagged / at most 21% misleading; `targets.json` keeps each
   drafted value and a derivation sentence next to the bar. The first pilot's
   numbers stay in `metrics.json` (`pilot`) as a record but set no bar.
+- **Disclosure.** Until commit f410b1d the CI smoke test (`eval.run_eval
+  --smoke`) ran on the first 8 test units per circuit; that commit was the
+  first with trained models, so its CI run may have diagnosed those units once
+  before the lock. Its output was not read and nothing was tuned on it. The
+  smoke test now runs on the pilot splits.

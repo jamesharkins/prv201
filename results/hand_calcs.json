@@ -1,0 +1,318 @@
+{
+  "rows": [
+    {
+      "block": "psu",
+      "quantity": "Unregulated LV rail (TP1)",
+      "unit": "V",
+      "hand": 23.957780672306615,
+      "sim": 23.9587,
+      "rel_tol": 0.02,
+      "abs_tol": null,
+      "error": 0.0009193276933849859,
+      "ok": true,
+      "method": "Vpk - I (Rw + 1/(4 f C101)), quasi-static rectifier"
+    },
+    {
+      "block": "psu",
+      "quantity": "Zener reference (TP2)",
+      "unit": "V",
+      "hand": 15.912158961718205,
+      "sim": 15.9128,
+      "rel_tol": 0.02,
+      "abs_tol": null,
+      "error": 0.000641038281795403,
+      "ok": true,
+      "method": "Diodes Inc. 1N4745A: 14.6 V + 1.8 Vt ln(Iz/IS) + RS Iz"
+    },
+    {
+      "block": "psu",
+      "quantity": "Regulated rail (TP3)",
+      "unit": "V",
+      "hand": 15.174893976145967,
+      "sim": 15.1486,
+      "rel_tol": 0.02,
+      "abs_tol": null,
+      "error": -0.026293976145966624,
+      "ok": true,
+      "method": "Vz - Vbe(Q101, 22 mA) - RB Ib"
+    },
+    {
+      "block": "psu",
+      "quantity": "HV reservoir (TP4)",
+      "unit": "V",
+      "hand": 281.49229576959084,
+      "sim": 281.492,
+      "rel_tol": 0.01,
+      "abs_tol": null,
+      "error": -0.00029576959082078247,
+      "ok": true,
+      "method": "Vpk - I (Rw + 1/(4 f C104))"
+    },
+    {
+      "block": "psu",
+      "quantity": "HV filter node (TP5)",
+      "unit": "V",
+      "hand": 273.01361216207306,
+      "sim": 273.014,
+      "rel_tol": 0.01,
+      "abs_tol": null,
+      "error": 0.0003878379269508514,
+      "ok": true,
+      "method": "TP4 - I R105"
+    },
+    {
+      "block": "psu",
+      "quantity": "B+ (TP6)",
+      "unit": "V",
+      "hand": 254.36050822553392,
+      "sim": 254.361,
+      "rel_tol": 0.01,
+      "abs_tol": null,
+      "error": 0.0004917744660701828,
+      "ok": true,
+      "method": "TP5 - I R106"
+    },
+    {
+      "block": "psu",
+      "quantity": "LV ripple fundamental at TP1 (hand only)",
+      "unit": "V",
+      "hand": 0.03657215753990029,
+      "sim": null,
+      "rel_tol": null,
+      "abs_tol": null,
+      "error": null,
+      "ok": null,
+      "method": "2 Idc |ESR + 1/(j w C101)| = sawtooth fundamental I/(120 pi C)"
+    },
+    {
+      "block": "triode",
+      "quantity": "Plate current",
+      "unit": "mA",
+      "hand": 0.8030915565727582,
+      "sim": 0.799331,
+      "rel_tol": 0.01,
+      "abs_tol": null,
+      "error": -0.0037605565727582,
+      "ok": true,
+      "method": "solve Ip = Koren(Vp = B+ - Ra Ip, Vgk = -Rk Ip)"
+    },
+    {
+      "block": "triode",
+      "quantity": "Cathode voltage (TP8)",
+      "unit": "V",
+      "hand": 1.2046373348591373,
+      "sim": 1.19899,
+      "rel_tol": 0.01,
+      "abs_tol": null,
+      "error": -0.005647334859137265,
+      "ok": true,
+      "method": "Rk Ip"
+    },
+    {
+      "block": "triode",
+      "quantity": "Plate voltage (TP9)",
+      "unit": "V",
+      "hand": 169.69084434272418,
+      "sim": 170.067,
+      "rel_tol": 0.01,
+      "abs_tol": null,
+      "error": 0.3761556572758309,
+      "ok": true,
+      "method": "B+ - Ra Ip"
+    },
+    {
+      "block": "triode",
+      "quantity": "Mid-band gain into 100k (TP10)",
+      "unit": "V/V",
+      "hand": 45.089666872557565,
+      "sim": 44.6444,
+      "rel_tol": 0.03,
+      "abs_tol": null,
+      "error": -0.4452668725575677,
+      "ok": true,
+      "method": "mu (Ra||RL) / (rp + Ra||RL), gm and rp from the Koren equations"
+    },
+    {
+      "block": "triode",
+      "quantity": "Koren Ip at Va=250 V, Vg=-2 V (datasheet 1.2 mA)",
+      "unit": "mA",
+      "hand": 0.9518032098915913,
+      "sim": null,
+      "rel_tol": null,
+      "abs_tol": null,
+      "error": null,
+      "ok": null,
+      "method": "model vs Philips ECC83 typical characteristics"
+    },
+    {
+      "block": "tone",
+      "quantity": "Response at 20 Hz",
+      "unit": "dB",
+      "hand": -25.76463759177994,
+      "sim": -25.764631280862464,
+      "rel_tol": null,
+      "abs_tol": 0.1,
+      "error": 6.310917477492239e-06,
+      "ok": true,
+      "method": "nodal analysis (numpy), tone controls centred"
+    },
+    {
+      "block": "tone",
+      "quantity": "Response at 1000 Hz",
+      "unit": "dB",
+      "hand": -27.041396079893683,
+      "sim": -27.041392324453547,
+      "rel_tol": null,
+      "abs_tol": 0.1,
+      "error": 3.7554401366435286e-06,
+      "ok": true,
+      "method": "nodal analysis (numpy), tone controls centred"
+    },
+    {
+      "block": "tone",
+      "quantity": "Response at 20000 Hz",
+      "unit": "dB",
+      "hand": -27.86151655085061,
+      "sim": -27.861522115942023,
+      "rel_tol": null,
+      "abs_tol": 0.1,
+      "error": -5.565091413473056e-06,
+      "ok": true,
+      "method": "nodal analysis (numpy), tone controls centred"
+    },
+    {
+      "block": "opamp",
+      "quantity": "Half-supply bias (TP16)",
+      "unit": "V",
+      "hand": 7.665,
+      "sim": 7.665,
+      "rel_tol": 0.005,
+      "abs_tol": null,
+      "error": 0.0,
+      "ok": true,
+      "method": "Vcc R403/(R402+R403)"
+    },
+    {
+      "block": "opamp",
+      "quantity": "Output DC (TP15)",
+      "unit": "V",
+      "hand": 7.665,
+      "sim": 7.665,
+      "rel_tol": 0.005,
+      "abs_tol": null,
+      "error": 0.0,
+      "ok": true,
+      "method": "unity DC gain (C403)"
+    },
+    {
+      "block": "opamp",
+      "quantity": "Gain at 1 kHz from a 20k source (TP15)",
+      "unit": "V/V",
+      "hand": 9.166666666666666,
+      "sim": 9.15914,
+      "rel_tol": 0.01,
+      "abs_tol": null,
+      "error": -0.007526666666665349,
+      "ok": true,
+      "method": "(1 + R404/R405) R401/(R401 + Rsrc)"
+    },
+    {
+      "block": "opamp",
+      "quantity": "Gain at 20 kHz (TP15)",
+      "unit": "V/V",
+      "hand": 9.1421174892795,
+      "sim": 9.13443,
+      "rel_tol": 0.01,
+      "abs_tol": null,
+      "error": -0.00768748927949936,
+      "ok": true,
+      "method": "single pole at GBW/11"
+    },
+    {
+      "block": "driver",
+      "quantity": "Q501 base (TP18)",
+      "unit": "V",
+      "hand": 3.623612000074349,
+      "sim": 3.6236,
+      "rel_tol": 0.03,
+      "abs_tol": null,
+      "error": -1.2000074348872403e-05,
+      "ok": true,
+      "method": "Thevenin divider, Ie loop"
+    },
+    {
+      "block": "driver",
+      "quantity": "Q501 emitter (TP19)",
+      "unit": "V",
+      "hand": 3.003150274479839,
+      "sim": 2.99907,
+      "rel_tol": 0.03,
+      "abs_tol": null,
+      "error": -0.004080274479838941,
+      "ok": true,
+      "method": "Ie (R503 + R504)"
+    },
+    {
+      "block": "driver",
+      "quantity": "Q501 collector (TP20)",
+      "unit": "V",
+      "hand": 9.246931512976865,
+      "sim": 9.3013,
+      "rel_tol": 0.03,
+      "abs_tol": null,
+      "error": 0.054368487023134904,
+      "ok": true,
+      "method": "Vcc_d - (Ic1 + Ib2) R505"
+    },
+    {
+      "block": "driver",
+      "quantity": "Q502 emitter (TP21)",
+      "unit": "V",
+      "hand": 8.547824380147611,
+      "sim": 8.58748,
+      "rel_tol": 0.03,
+      "abs_tol": null,
+      "error": 0.03965561985238786,
+      "ok": true,
+      "method": "TP20 - Vbe(Q502)"
+    },
+    {
+      "block": "driver",
+      "quantity": "Gain at 1 kHz (TP22)",
+      "unit": "V/V",
+      "hand": 2.025374497330931,
+      "sim": 1.94011,
+      "rel_tol": 0.05,
+      "abs_tol": null,
+      "error": -0.08526449733093089,
+      "ok": true,
+      "method": "(R505 || beta R506) / (NF re + R503)"
+    }
+  ],
+  "hum_validation": [
+    {
+      "condition": "nominal",
+      "transient_V": 0.035568,
+      "small_signal_V": 0.03642863507232555,
+      "ratio": 1.0241968924967821
+    },
+    {
+      "condition": "-50 %",
+      "transient_V": 0.0707676,
+      "small_signal_V": 0.07247202641661588,
+      "ratio": 1.0240848413202635
+    },
+    {
+      "condition": "-90 %",
+      "transient_V": 0.352614,
+      "small_signal_V": 0.36174157588431377,
+      "ratio": 1.025885460827743
+    },
+    {
+      "condition": "ESR x 50",
+      "transient_V": 0.207769,
+      "small_signal_V": 0.2190077237296271,
+      "ratio": 1.0540923993936877
+    }
+  ]
+}

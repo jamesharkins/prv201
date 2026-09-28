@@ -1,0 +1,57 @@
+# M1 - Problem statement: submission sheet
+
+**Submit:** `M1.pdf` (5 body pages + references and appendices).
+
+| File | What it is |
+|---|---|
+| `M1.pdf` | The deliverable |
+| `M1.typ`, `base.typ` | Typst source generated from `templates/M1/M1.typ.j2` and `templates/base.typ` |
+| `M1.parts.json` | Evidence use per signed part (read by `tools/check_balance.py`) |
+| `M1.cites.json` | Cited source keys in reference order (read by `tools/check_citations.py`) |
+| `M1.sanitized.txt` | What an anonymising pre-reader sees (names and emails stripped) |
+
+## Signed parts
+
+| Part | Title | Section lead (from `team.yaml`) |
+|---|---|---|
+| 1 | Problem, stakeholders and industry context | MEMBER_1 |
+| 2 | How diagnosis is done today, and the data landscape | MEMBER_2 |
+| 3 | Objectives and measurable success criteria | MEMBER_3 |
+| 4 | Preliminary AI approach, risks and ethics | MEMBER_4 |
+
+Each part has its own design decision, figure or table, and result-derived
+numbers. Prep notes for each lead are in `docs/briefings/member_N.md`.
+
+## Regenerate
+
+```bash
+python tools/render_docs.py M1          # Jinja -> Typst -> PDF
+python tools/check_pages.py M1           # page limit
+python tools/check_balance.py submissions/M1/M1.typ
+python tools/check_claims.py "$PWD/submissions/M1/M1.pdf"
+python tools/sanitize_preview.py "$PWD/submissions/M1/M1.pdf"
+python tools/check_citations.py --used-only submissions/M1/M1.typ
+```
+
+Every number in the text comes from `results/metrics.json`,
+`results/targets.json`, a cited source's recorded claim
+(`docs/research/sources_*.yaml`) or a circuit design file. `check_claims.py`
+fails the build otherwise.
+
+## Before you submit (human actions)
+
+1. Put your real names in `team.yaml` (replace `MEMBER_1`...`MEMBER_4`), then
+   re-render. Nothing else changes.
+2. Each section lead reads their part and briefing, and should be able to
+   explain every number in it without notes.
+3. Re-run `python tools/check_citations.py --used-only submissions/M1/M1.typ`
+   on an unrestricted network. The build sandbox could not reach most publisher
+   sites, and 30 of the 38 cited sources were confirmed from search-result
+   snippets rather than the full page (`results/citation_check_M1.json`,
+   `snippet_only`). Open each of those and confirm the sentence that cites it.
+4. If the course publishes an official rubric, put it in `course/` and re-run
+   the grading round (see `docs/GRADING_LOG.md`).
+
+The success criteria in Table 3 were locked at git tag `targets-locked`, before
+the full evaluation. Do not edit them afterwards. Report them as met or
+missed.

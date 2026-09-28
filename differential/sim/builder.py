@@ -78,7 +78,7 @@ def fault_netlist(circuit: CircuitSpec, fault: Fault | Sequence[Fault], retry: i
     cards = model_cards()
     elements: list[Element] = []
     clone_lines: list[str] = []
-    per_device = {c.main_element: c for c in circuit.components if c.kind in ("bjt", "zener")}
+    per_device = {c.main_element: c for c in circuit.components if c.kind == "bjt"}
     edits = [e for f in faults for e in structural_edits(circuit, f)]
     removed = {e.remove_element for e in edits if e.remove_element}
     rewires = {e.rewire[0]: e.rewire for e in edits if e.rewire}

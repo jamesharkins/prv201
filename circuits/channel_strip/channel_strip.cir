@@ -25,10 +25,11 @@ VHUMREF humref 0 DC 0 AC 0
 C101 vunreg c101_esr 2200u
 RESR_C101 c101_esr 0 0.072
 R102 vunreg vz 1k
-D101 0 vz DZ1N4745A
+XD101 0 vz pvz_d101 ZENER_1N4745A
+VPVZ_D101 pvz_d101 0 DC 14.6
 C102 vz c102_esr 47u
 RESR_C102 c102_esr 0 3.95
-Q101 vunreg vz vreg QBD139
+Q101 vunreg vz vreg Q2N3904
 D102 vreg vunreg D1N4148
 C103 vreg c103_esr 220u
 RESR_C103 c103_esr 0 0.84

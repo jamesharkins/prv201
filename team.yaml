@@ -1,0 +1,29 @@
+# Team roster. Replace the placeholder names, then re-render every milestone
+# (`make docs`). Names are rendered as "Section lead: <name>" at the top of each
+# signed part. Team size is configurable: add or remove members and the
+# renderer splits every milestone into that many parts (see tools/render_docs.py).
+course: "PRV 201 - Frontiers of Technology (AI)"
+institution: "Stevens Institute of Technology"
+project: "Differential"
+track: "A - Build"
+members:
+  - id: MEMBER_1
+    name: "MEMBER_1"
+    email: ""
+    role: "Problem, stakeholders, industry, regulation, ethics and governance lead"
+    area: problem
+  - id: MEMBER_2
+    name: "MEMBER_2"
+    email: ""
+    role: "Circuits, simulation and data lead"
+    area: simulation
+  - id: MEMBER_3
+    name: "MEMBER_3"
+    email: ""
+    role: "Diagnosis engine and evaluation lead"
+    area: engine
+  - id: MEMBER_4
+    name: "MEMBER_4"
+    email: ""
+    role: "Agent, NLP/vision, safety/security and demo app lead"
+    area: agent

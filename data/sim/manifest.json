@@ -1,0 +1,138 @@
+{
+  "base_seed": 20260928,
+  "datasets": {
+    "channel_strip__train": {
+      "draws_per_hypothesis": 400,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 251,
+      "path": "channel_strip__train.parquet",
+      "retried_draws": 1,
+      "rows": 100400
+    },
+    "channel_strip__val": {
+      "draws_per_hypothesis": 100,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 251,
+      "path": "channel_strip__val.parquet",
+      "retried_draws": 0,
+      "rows": 25100
+    },
+    "driver__train": {
+      "draws_per_hypothesis": 400,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 74,
+      "path": "driver__train.parquet",
+      "retried_draws": 0,
+      "rows": 29600
+    },
+    "driver__val": {
+      "draws_per_hypothesis": 100,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 74,
+      "path": "driver__val.parquet",
+      "retried_draws": 0,
+      "rows": 7400
+    },
+    "opamp__train": {
+      "draws_per_hypothesis": 400,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 57,
+      "path": "opamp__train.parquet",
+      "retried_draws": 0,
+      "rows": 22800
+    },
+    "opamp__val": {
+      "draws_per_hypothesis": 100,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 57,
+      "path": "opamp__val.parquet",
+      "retried_draws": 0,
+      "rows": 5700
+    },
+    "psu__train": {
+      "draws_per_hypothesis": 400,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 64,
+      "path": "psu__train.parquet",
+      "retried_draws": 0,
+      "rows": 25600
+    },
+    "psu__val": {
+      "draws_per_hypothesis": 100,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 64,
+      "path": "psu__val.parquet",
+      "retried_draws": 0,
+      "rows": 6400
+    },
+    "tone__train": {
+      "draws_per_hypothesis": 400,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 28,
+      "path": "tone__train.parquet",
+      "retried_draws": 0,
+      "rows": 11200
+    },
+    "tone__val": {
+      "draws_per_hypothesis": 100,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 28,
+      "path": "tone__val.parquet",
+      "retried_draws": 0,
+      "rows": 2800
+    },
+    "triode__train": {
+      "draws_per_hypothesis": 400,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 32,
+      "path": "triode__train.parquet",
+      "retried_draws": 0,
+      "rows": 12800
+    },
+    "triode__val": {
+      "draws_per_hypothesis": 100,
+      "failed_draws": 0,
+      "failures_logged": 0,
+      "hypotheses": 32,
+      "path": "triode__val.parquet",
+      "retried_draws": 0,
+      "rows": 3200
+    }
+  },
+  "git_commit": "b0f71a206bbd497160b528769aba600e2e7e4466",
+  "host_cpus": 4,
+  "netlist_sha256": {
+    "channel_strip": "636043e20f217f202940381513e8ca574fe3a93fafa7003aaa70f63864c1f836",
+    "devices.lib": "493ae1afa63ec69213759ba3e62a23d5ae97a7a1a5e2db6dd13c01020e57c9e5",
+    "driver": "edd45bc992bee367e45c597360e92abcfeebcd0c70ff63ca5c3bf1ac1cca96a5",
+    "opamp": "f1ddb57cfee9a2b7795f3871a660b2c5d11c21a2da00d8d1458c775ea94197da",
+    "psu": "5b3aa412dca8b90484aad71ce2d177f45715b59802d4e784c4de95a773b33023",
+    "tone": "30644de8013e6d8e2b6e9e23648b0d02aceb542c88f37371e1c528263b539fe7",
+    "triode": "7aff76cfe1d8800a38d2be9029d1001b6b8910a36dd53752a15d9776e01ba3be"
+  },
+  "ngspice_version": "ngspice-42",
+  "numpy": "2.4.6",
+  "python": "3.11.15",
+  "seed_scheme": "SeedSequence([base_seed, circuit_index, split_index, hypothesis_index, draw_index])",
+  "split_index": {
+    "demo": 5,
+    "test": 2,
+    "train": 0,
+    "unmodeled_test": 4,
+    "unmodeled_val": 3,
+    "val": 1
+  },
+  "tolerance_spec_sha256": "8850062cddaabcc1b2e7cc54b1f275f2f5ee4ff29f8beda0ae681c8fb85c15ee",
+  "workers": 4
+}

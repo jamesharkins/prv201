@@ -3,8 +3,8 @@ name: "Block 1 - Power supply (LV regulator + HV B+ chain)"
 netlist: psu.cir
 description: >
   Low-voltage rail: rectified 18 Vrms secondary into a 2200 uF reservoir, then a
-  discrete series regulator (16 V zener reference, BD139-class pass transistor)
-  giving +15.3 V. High-voltage rail: rectified ~200 Vrms secondary into a 47 uF
+  discrete series regulator (16 V zener reference, 2N3904 pass transistor)
+  giving about +15.2 V. High-voltage rail: rectified ~200 Vrms secondary into a 47 uF
   reservoir with a 220k bleeder, then a two-section RC filter chain giving about
   254 V B+. Mains wiring, transformer, rectifier diodes and fuse are out of scope.
 stages:
@@ -17,7 +17,7 @@ hum:
     - {id: lv, pk_source: VPK_LV, cres_source: VCRES_LV, reservoir: C101, pk_nominal: 24.06}
     - {id: hv, pk_source: VPK_HV, cres_source: VCRES_HV, reservoir: C104, pk_nominal: 282.0}
 fixtures: [RLOAD_LV, RLOAD_HV]
-infrastructure: [VPK_LV, VCRES_LV, BRECT_LV, LRECT_LV, VSENS_LV, BRIP_LV, VHUMREF,
+infrastructure: [VPVZ_D101, VPK_LV, VCRES_LV, BRECT_LV, LRECT_LV, VSENS_LV, BRIP_LV, VHUMREF,
                  VPK_HV, VCRES_HV, BRECT_HV, LRECT_HV, VSENS_HV, BRIP_HV]
 components:
   - {ref: C101, kind: electrolytic, value: 2200u, tolerance: 0.20, family: alu_elec, stage: psu_lv,
@@ -26,15 +26,15 @@ components:
   - {ref: R102, kind: resistor, value: 1k, tolerance: 0.01, family: metal_film_1pct, stage: psu_lv,
      rating: "0.5 W", elements: {main: R102},
      hint: "Zener feed resistor between the unregulated rail and the D101 cathode"}
-  - {ref: D101, kind: zener, value: "16 V", tolerance: 0.05, family: zener_5pct, stage: psu_lv,
-     model: DZ1N4745A, elements: {main: D101},
+  - {ref: D101, kind: zener, value: "16 V", tolerance: 0.05, family: zener_1n4745a, stage: psu_lv,
+     model: DI_1N4745A, elements: {main: XD101}, params: {vz: VPVZ_D101},
      hint: "16 V zener reference; banded (cathode) end joins R102 and the base of Q101"}
   - {ref: C102, kind: electrolytic, value: 47u, tolerance: 0.20, family: alu_elec, stage: psu_lv,
      rating: "25 V", elements: {main: C102, esr: RESR_C102},
      hint: "Reference filter capacitor across D101"}
-  - {ref: Q101, kind: bjt, value: "BD139", family: bd139, stage: psu_lv, model: QBD139,
+  - {ref: Q101, kind: bjt, value: "2N3904", family: bjt_2n3904, stage: psu_lv, model: Q2N3904,
      elements: {main: Q101},
-     hint: "Series pass transistor (TO-126, pins E-C-B from the left, printed face towards you)"}
+     hint: "Series pass transistor (TO-92, flat face towards you: E-B-C from the left)"}
   - {ref: D102, kind: diode, value: "1N4148", family: diode_1n4148, stage: psu_lv, model: D1N4148,
      elements: {main: D102},
      hint: "Reverse-protection diode from the regulated rail (anode) to the unregulated rail (cathode)"}

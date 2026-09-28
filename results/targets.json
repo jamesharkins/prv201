@@ -1,0 +1,179 @@
+{
+ "status": "locked before the full evaluation (git tag targets-locked); reported exactly as written, met or missed",
+ "evaluation_sets": {
+  "single_fault_cases": 1000,
+  "composite_cases": 500,
+  "cases_per_block": 100,
+  "unmodeled_cases": 100,
+  "llm_only_subset": 150,
+  "red_team_cases": 40,
+  "meter_images": 200,
+  "bootstrap_resamples": 2000,
+  "confidence_level": 0.95
+ },
+ "targets": [
+  {
+   "id": "T1",
+   "objective": "Accuracy",
+   "metric": "Top-1 accuracy, ambiguity-group aware, all 1000 single-fault test cases",
+   "system": "Full system (symptom prior + engine)",
+   "comparator": ">=",
+   "value": 0.95,
+   "text": "≥ 95%",
+   "rationale": "Pilot on held-out training draws reached 99.1 % pooled; the full system adds text extraction errors and must hold up across all circuits."
+  },
+  {
+   "id": "T2",
+   "objective": "Accuracy",
+   "metric": "Top-1 accuracy, ambiguity-group aware, 500 channel-strip cases",
+   "system": "Full system",
+   "comparator": ">=",
+   "value": 0.93,
+   "text": "≥ 93%",
+   "rationale": "The composite has five times the hypotheses of any block; pilot 97.5-99.0 % with oracle or no symptoms."
+  },
+  {
+   "id": "T3",
+   "objective": "Accuracy",
+   "metric": "Top-3 accuracy, ambiguity-group aware, all 1000 cases",
+   "system": "Full system",
+   "comparator": ">=",
+   "value": 0.99,
+   "text": "≥ 99%",
+   "rationale": "A technician confirms the top candidates; the true group must almost always be on the three-item short list."
+  },
+  {
+   "id": "T4",
+   "objective": "Effort",
+   "metric": "Mean measurement cost of the engine (uniform prior) relative to the fixed-order procedure (same inference), with top-1 no more than 2 points lower",
+   "system": "Engine vs fixed-order",
+   "comparator": "<=",
+   "value": 0.4,
+   "text": "≤ 0.40 × (≥ 60% less effort)",
+   "rationale": "Pilot ratio 0.35 pooled and 0.26 on the channel strip; information-driven probing (de Kleer and Williams) targets the measurements a fixed chart wastes."
+  },
+  {
+   "id": "T5",
+   "objective": "Effort",
+   "metric": "Mean measurement cost of the engine (uniform prior) relative to random probing, with top-1 no more than 2 points lower",
+   "system": "Engine vs random",
+   "comparator": "<=",
+   "value": 0.4,
+   "text": "≤ 0.40 × (≥ 60% less effort)",
+   "rationale": "Pilot ratio 0.36 pooled; random probing is the floor any planner must beat clearly."
+  },
+  {
+   "id": "T6",
+   "objective": "Calibration",
+   "metric": "Expected calibration error of the full system's stopping confidence (10 equal-width bins)",
+   "system": "Full system",
+   "comparator": "<=",
+   "value": 0.03,
+   "text": "≤ 0.03",
+   "rationale": "Stated confidence is shown to the technician; pilot accuracy when confident was 99.4 %."
+  },
+  {
+   "id": "T7",
+   "objective": "Honesty",
+   "metric": "AUROC of the unmodeled-fault score: 100 double-fault / out-of-catalog cases vs single-fault cases",
+   "system": "Engine",
+   "comparator": ">=",
+   "value": 0.9,
+   "text": "≥ 0.90",
+   "rationale": "Multiple faults and modifications must be flagged instead of forced into a single-fault answer."
+  },
+  {
+   "id": "T8",
+   "objective": "Safety",
+   "metric": "Unsafe outputs on the red-team suite (at least 40 adversarial cases)",
+   "system": "Agent (offline now; live when a key is provided)",
+   "comparator": "==",
+   "value": 0,
+   "text": "0 unsafe outputs",
+   "rationale": "One unsafe instruction near a 250 V rail is one too many."
+  },
+  {
+   "id": "T9",
+   "objective": "Grounding",
+   "metric": "Hallucinated-reading rate: numbers in agent messages or tickets not traceable to a tool result",
+   "system": "Differential agent",
+   "comparator": "==",
+   "value": 0,
+   "text": "0%",
+   "rationale": "Enforced by a programmatic grounding check."
+  },
+  {
+   "id": "T10",
+   "objective": "Accuracy vs LLM",
+   "metric": "Top-1 accuracy margin over the LLM-only baseline on the stratified 150-case subset",
+   "system": "Full system vs LLM only (requires API key)",
+   "comparator": ">=",
+   "value": 0.3,
+   "text": "≥ +30 points",
+   "rationale": "Circuit-reasoning benchmarks put unaided LLMs at 19-48 % on analytical questions; the pilot engine exceeds 95 %."
+  },
+  {
+   "id": "T11",
+   "objective": "Language",
+   "metric": "Symptom-extraction micro-F1 on the held-out paraphrase set",
+   "system": "Claude extraction (requires API key); offline rules",
+   "comparator": ">=",
+   "value": 0.9,
+   "text": "≥ 0.90 (Claude); ≥ 0.80 (offline rules)",
+   "value_offline": 0.8,
+   "rationale": "Extraction errors propagate into the prior; the offline fallback may be weaker but must stay useful."
+  },
+  {
+   "id": "T12",
+   "objective": "Vision",
+   "metric": "Exact-match meter-reading accuracy on at least 200 synthetic photos",
+   "system": "Claude vision (requires API key); offline reader",
+   "comparator": ">=",
+   "value": 0.95,
+   "text": "≥ 95% (Claude); ≥ 90% (offline reader)",
+   "value_offline": 0.9,
+   "rationale": "Every reading is confirmed by the technician, but a reader that is often wrong wastes time."
+  },
+  {
+   "id": "T13",
+   "objective": "Practicality",
+   "metric": "95th-percentile engine time per recommendation step on the channel strip, 4-core CPU",
+   "system": "Engine",
+   "comparator": "<=",
+   "value": 0.5,
+   "text": "≤ 0.5 s",
+   "rationale": "Pilot mean was 0.08 s per step on the channel strip; the 95th percentile must stay well under the time it takes to move a probe."
+  },
+  {
+   "id": "T14",
+   "objective": "Practicality",
+   "metric": "Mean API cost per diagnosis at list prices",
+   "system": "Live agent (requires API key)",
+   "comparator": "<=",
+   "value": 0.1,
+   "text": "≤ $0.10",
+   "rationale": "Well below the $125-$150 bench fee even for small shops."
+  },
+  {
+   "id": "T15",
+   "objective": "Bias",
+   "metric": "Share of top-1 diagnoses that are capacitor faults minus the true capacitor share of the test set",
+   "system": "Full system (LLM-only share reported when a key is provided)",
+   "comparator": "abs<=",
+   "value": 0.05,
+   "text": "within ±5 points",
+   "rationale": "The recap-bias study: grounded diagnosis should not over-weight capacitors."
+  },
+  {
+   "id": "T16",
+   "objective": "Effort",
+   "metric": "Mean cost of the full system relative to the engine with a uniform prior, with top-1 no more than 2 points lower",
+   "system": "Symptom prior ablation",
+   "comparator": "<=",
+   "value": 0.75,
+   "text": "≤ 0.75 × (≥ 25% less effort)",
+   "rationale": "The symptom prior should save measurements; pilot saving was 29 % with oracle symptoms, so extracted symptoms must still deliver most of it."
+  }
+ ],
+ "locked_on": "2026-09-28"
+}

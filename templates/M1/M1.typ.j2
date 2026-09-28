@@ -1,0 +1,166 @@
+#import "base.typ": *
+#show: setup.with(title: "Differential - M1 Problem statement", short: "M1 · Problem statement")
+
+#title-block(
+  title: [Differential: simulation-grounded AI diagnosis for analog audio electronics],
+  subtitle: "Milestone 1 · Problem statement",
+  meta: ("PRV 201 Frontiers of Technology (AI)", "Track A: Build", "Stevens Institute of Technology", "September 2026"),
+)
+
+*Executive summary.* Analog audio equipment (tube preamplifiers, studio consoles, vintage hi-fi and outboard gear) is kept running by a small pool of bench technicians, and most of what a repair costs is diagnosis: finding the one failed part among dozens. General-purpose language models give fluent but ungrounded advice, such as "just recap it", because they pattern-match forum folklore instead of reasoning about the circuit in front of them. Differential grounds a language-model agent in circuit physics. It simulates the circuit under every plausible single-component fault with realistic tolerances, keeps a Bayesian belief over those faults, recommends the measurement expected to be most informative per unit of effort, and explains each step in plain language, with safety rules enforced in code rather than in a prompt. Our claim to test: this hybrid diagnoses more accurately and with less measurement effort than a language model on its own, a textbook fixed-order procedure and random probing, while staying calibrated about its uncertainty, recognising faults outside its model, and never giving unsafe instructions.
+
+#figure(
+  image("/results/figures/concept.svg", width: 100%),
+  caption: [Differential in one picture. Offline, circuit simulation turns a fault catalog into learned physics; online, a Bayesian loop chooses each measurement while the language model handles only language. Safety rules and grounding checks sit in code beneath both.],
+) <fig:concept>
+
+<< part(1, "Problem, stakeholders and industry context") >>
+
+*Diagnosis is the expensive step.* Repair shops sell diagnosis as a product in its own right: studio, hi-fi and tube-amplifier specialists charge \$125 to \$150 simply to put a unit on the bench << cite('rates_studio_doctors', 'rates_archer_hifi', 'rates_cw_guitar_audio') >>, and one outboard-gear shop bills its one-hour minimum even when no fault is found << cite('rates_british_audio') >>. Queues of months are reported as veteran technicians retire << cite('headphonesty_vintage_techs_2026') >>. Every hour saved at the bench therefore shortens both the bill and the wait.
+
+*A small, flat workforce with knowledge at risk.* The U.S. Bureau of Labor Statistics counts about 117,700 electrical and electronics installers and repairers in 2025, projected to grow 2% over 2025-35, below the all-occupation average, with most of the 8,900 annual openings coming from replacing workers who leave or retire << cite('bls_ooh_eeir', 'bls_ep_2025_35') >>. Audio bench technicians are not counted separately; trade reporting describes analog circuitry no longer being taught at two-year colleges << cite('stereophile_retales_13') >>. When assistance tools were studied in customer support, they raised productivity by 14% on average and by 34% for novice workers << cite('brynjolfsson_genai_at_work_2023') >>, which suggests the payoff here is in helping less experienced technicians inherit expert practice.
+
+*The installed base keeps growing.* U.S. vinyl revenue grew for a 19th straight year in 2025 << cite('riaa_2025_yearend') >> and rose another 17.7% in the first half of 2026 << cite('musically_riaa_h1_2026') >>, feeding a stock of turntables, phono stages and amplifiers that eventually need repair. Tube supply has been under strain since 2022 << cite('headphonesty_tube_shortage_2025') >>, so a wrong guess that swaps good parts costs more than it used to.
+
+*Where current AI falls short.* The maintenance-AI products launched in 2025-26, from Siemens' maintenance copilot << cite('siemens_maintenance_copilot_2025') >> and PTC's ServiceMax AI << cite('ptc_servicemax_ai_2025') >> to IBM's agentic Maximo assistant << cite('ibm_mas_92_2026') >> and iFixit's FixBot << cite('ifixit_fixbot_2025') >>, retrieve documented knowledge for instrumented fleets or common consumer devices. None reasons at component level about an undocumented, sensor-less preamplifier. Language models alone are unreliable at exactly that reasoning: GPT-4o answered 48.04% of 510 analog-circuit questions correctly << cite('skelic_circuit_2025') >>, and models averaged 19.48-46.78% on EEE-Bench << cite('li_eee_bench_2025') >>, while one study raised accuracy to 97.59% by checking answers against simulation << cite('e2e_circuit_analysis_2025') >>. Grounding in simulation is the missing piece, and it is what Differential adds.
+
+#figure(
+  table(
+    columns: (1.05fr, 1.35fr, 1.5fr, 1.1fr),
+    [Stakeholder], [Needs], [What Differential changes], [Main risk],
+    [Bench technician (primary user)], [Fewer blind measurements, a clear next step, safety near high voltage], [Ranked fault hypotheses; next-best measurement with expected readings and a reason], [Over-trust; exposure to live high voltage],
+    [Shop owner], [Throughput, defensible quotes], [Shorter diagnosis; repair ticket with an evidence trail], [Liability for wrong advice],
+    [Equipment owner (studio, collector)], [Cost, turnaround, honesty], [The evidence trail explains the bill], [Privacy of job records],
+    [Trainee technician], [Supervised learning on real faults], [Every step is explained in physical terms], [Deskilling if answers replace reasoning],
+    [Manufacturers, right-to-repair bodies], [Safe repair, documentation access], [Works from generic simulation, not proprietary data], [Schematic intellectual property],
+  ),
+  caption: [Stakeholders. The technician decides and acts; Differential only recommends, which is why the design keeps a qualified human in every step.],
+) <tab:stakeholders>
+
+#decision("The primary user is a qualified bench technician, not a consumer")[
+*Options:* a consumer self-repair assistant, or a professional bench tool. *Choice:* professional. Tube equipment carries lethal voltages: << m('library.circuits.channel_strip.hv_test_points') >> of the << m('library.circuits.channel_strip.test_points') >> test points on our reference channel strip sit above 50 V in normal operation, the threshold above which U.S. workplace rules require de-energising or guarding << cite('osha_1910_333') >>. A consumer tool would have to refuse most useful measurements. *Consequence:* the interface assumes meter and oscilloscope literacy, and mains-side work is refused outright.
+]
+
+<< part(2, "How diagnosis is done today, and the data landscape") >>
+
+*Today's practice is a fixed chart plus experience.* A technician confirms the complaint, checks the supply rails, traces the signal stage by stage with a test tone, compares DC voltages against the service manual's voltage chart, and finally lifts a suspect part to test it out of circuit. The order is largely fixed; what varies is judgement about which reading is "off". When judgement runs out, heuristics fill the gap, most famously replacing every electrolytic capacitor ("recapping") in the hope that the fault goes with them.
+
+*The information is uneven.* Service manuals with schematics and voltage charts exist for many classic models, but units are often modified, undocumented or covered by documentation the owner cannot obtain. U.S. state right-to-repair laws now oblige manufacturers to supply documentation for digital electronics, for example in New York since December 2023 << cite('ny_gbl_399nn') >> and Texas since 1 September 2026 << cite('tx_hb2963_2025') >>, but they apply to digital products sold after cut-off dates, and the EU repair directive covers only listed product groups such as washing machines and displays << cite('eu_r2r_directive_2024_1799', 'ec_r2r_qa_2024') >>. Vintage all-analog gear falls outside all of them.
+
+*Labelled fault data is scarce, so we simulate it.* No public dataset pairs bench measurements with confirmed failed parts: repairs are rarely logged in structured form, every unit's tolerances differ, and a given fault on a given model is rare. The analog-test literature answered this decades ago with simulated fault dictionaries << cite('bandler_salama_1985') >> and with the observation that some faults are indistinguishable at the available test points, forming ambiguity groups << cite('stenbakken_souders_stewart_1989') >>. We follow that path with modern tools. Five original reference blocks and a composite channel strip (<< m('library.circuits.channel_strip.components') >> components, << m('library.circuits.channel_strip.faults') >> catalog faults) are simulated in ngspice under every catalog fault with datasheet tolerances; the first pass produced << num(m('library.simulations.total_draws'), 0) >> simulated units with << m('library.simulations.failed_draws') >> convergence failures. Hand calculations agree with every simulated bias point and gain within the stated tolerance (<< m('hand_calcs.rows_ok') >> of << m('hand_calcs.rows_checked') >> checks). Simulation also shows why technicians struggle: << m('pilot.circuits.channel_strip.latent_faults') >> of the channel strip's << m('library.circuits.channel_strip.faults') >> catalog faults are latent, producing no symptom in most units, so a symptom alone rarely points at one part.
+
+#figure(
+  table(
+    columns: (1.1fr, 0.9fr, 1.2fr, 1.4fr),
+    [Data source], [Fault labels], [Coverage], [Bias or gap],
+    [Shop repair logs], [Sparse, informal], [Common faults on popular models], [Unstructured; customer privacy],
+    [Forum threads], [Unverified], [Anecdotal], [Folklore, e.g. over-blaming capacitors],
+    [Service manuals], [None (nominal values only)], [One model at a time], [No fault behaviour; availability varies],
+    [Circuit simulation], [Exact, by construction], [Every catalog fault, every tolerance draw], [Simulation-to-reality gap; single faults only],
+    [Physical fault board], [Exact, few], [Chosen faults on one low-voltage block], [Small; validation only],
+  ),
+  caption: [Where labelled diagnostic data could come from. Simulation is the only source with exact labels and full coverage; its weakness, the gap to real hardware, is tested with a low-voltage fault board.],
+) <tab:data>
+
+#decision("Original generic circuits instead of commercial schematics")[
+*Options:* model a specific commercial product from its service manual, or design original reference circuits that use the same topologies. *Choice:* original circuits (a supply with zener regulator and 250 V B+ chain, a 12AX7 stage, a passive Baxandall tone control, an op-amp stage and a two-transistor line driver). *Why:* no copyright exposure, full control of ground truth, and topologies common to thousands of real units. *Consequence:* transfer to real gear must be shown, first with a low-voltage breadboard of the driver block.
+]
+
+<< part(3, "Objectives and measurable success criteria") >>
+
+*Objectives.* Differential must (O1) name the faulty part or its ambiguity group accurately; (O2) get there with less measurement effort than today's practice; (O3) be honest about uncertainty: calibrated confidence, visible ambiguity groups and an explicit "no single-fault model fits" outcome; (O4) never issue an unsafe instruction or invent a reading; and (O5) stay practical in speed and cost. @tab:targets lists the targets we will commit to before running the full evaluation; they will be reported exactly as written, met or missed.
+
+#figure(
+  table(
+    columns: (0.3fr, 2.35fr, 1.0fr),
+    [ID], [Metric (system)], [Target],
+<% for t in targets.targets %>
+    [<< t.id >>], [<< t.metric | esc >> (<< t.system | esc >>)], [<< t.text | esc >>],
+<% endfor %>
+  ),
+  caption: [Success criteria, locked before the full evaluation. "Group aware" means a diagnosis counts as correct when it names the true fault's ambiguity group. Targets marked "requires API key" are measured once a key is available; all others are measured in this build.],
+) <tab:targets>
+
+*How success will be measured.* The test set holds << targets.evaluation_sets.single_fault_cases >> held-out single-fault cases (<< targets.evaluation_sets.composite_cases >> on the channel strip and << targets.evaluation_sets.cases_per_block >> per block) drawn with random seeds disjoint from training, plus << targets.evaluation_sets.unmodeled_cases >> double-fault or out-of-catalog cases. Each case is diagnosed by six systems: random probing, the fixed-order procedure, the engine with each of two likelihood models, the full hybrid and a language model alone (on a stratified subset of << targets.evaluation_sets.llm_only_subset >> cases). Every headline claim carries a bootstrap 95% confidence interval and a paired comparison.
+
+*A pilot shaped the bars.* Before locking the targets we ran a feasibility pilot on held-out training draws (never the test set). On the channel strip, information-driven probing identified the fault group in << pct(m('pilot.circuits.channel_strip.eig_per_cost.top1'), 1) >> of cases at a mean cost of << num(m('pilot.circuits.channel_strip.eig_per_cost.mean_cost'), 1) >> units, against << pct(m('pilot.circuits.channel_strip.fixed_order.top1'), 1) >> and << num(m('pilot.circuits.channel_strip.fixed_order.mean_cost'), 1) >> units for the fixed-order procedure. The accuracy targets sit a few points below these pilot values because the full evaluation adds errors from reading free-text complaints and spans a larger test set; the effort targets demand savings of at least 60%.
+
+*Scope and non-goals.* In scope: single static faults (opens, shorts, drift, degradation) in the five blocks and the channel strip. Out of scope: intermittent and thermal faults, mains-side work, autonomous probing, and replacing the technician's judgement.
+
+#decision("Score accuracy by ambiguity group and effort in weighted cost units")[
+*Options:* per-part accuracy and a count of measurements, or group-aware accuracy and weighted cost. *Choice:* the latter. Some faults produce identical readings at every test point; scoring per part would reward lucky guesses and punish honest ties. Costs weight what the technician actually spends: a DC probe costs << num(m('library.design.cost_dc'), 0) >> unit, a scope measurement << num(m('library.design.cost_scope'), 0) >>, a high-voltage point << num(m('library.design.cost_hv_extra'), 0) >> extra, and lifting a part << num(m('library.design.cost_lift'), 0) >>, within a budget of << num(m('library.design.budget'), 0) >> units per diagnosis.
+]
+
+<< part(4, "Preliminary AI approach, risks and ethics") >>
+
+*Why a hybrid and not a language model alone.* Language models guess confidently because training and evaluation reward guessing over admitting uncertainty << cite('kalai_why_hallucinate_2025') >>, and they carry the folklore of their training text. A diagnosis needs numbers that obey Kirchhoff's laws and uncertainty that means something. We therefore split the work: simulation supplies the physics, Bayesian inference supplies calibrated belief and chooses measurements by expected information gain << cite('lindley_1956', 'dekleer_williams_1987') >>, and the language model handles what it is good at: reading a free-text complaint, reading a meter photo, and explaining the next step. @tab:families compares the candidate families.
+
+#figure(
+  table(
+    columns: (1.15fr, 1.3fr, 1.45fr, 1.0fr),
+    [Approach], [Strength], [Weakness], [Role here],
+    [Language model alone], [Language, broad knowledge], [Ungrounded numbers; folklore bias; uncalibrated], [Baseline; language layer],
+    [Troubleshooting chart / rules], [Transparent, safe], [Brittle; no uncertainty; ignores the complaint], [Fixed-order baseline],
+    [Fault dictionary, nearest match], [Simple, simulation-based], [Ignores tolerance spread; no measurement planning], [Superseded],
+    [Generative Bayesian model (Gaussian mixtures)], [Handles any measurement subset; flags out-of-model faults], [Density estimation in about 50 dimensions], [Core engine],
+    [Gradient-boosted classifier], [Accurate, fast], [Needs calibration; weak off-distribution], [Comparison engine],
+  ),
+  caption: [Candidate AI families. Each fills one role; no single family does the whole job.],
+) <tab:families>
+
+*Risks and first-pass ethics.* _Safety:_ U.S. workplace rules require capacitors to be discharged and live parts above 50 V to be de-energised or guarded << cite('osha_1910_333') >>; Differential attaches discharge and isolation warnings to every high-voltage step and refuses mains-side procedures, in code. _Over-confidence:_ in the pilot the engine stopped with at least 90% confidence in << pct(m('pilot.pooled_confident_fraction'), 0) >> of cases and was right in << pct(m('pilot.pooled_accuracy_when_confident'), 1) >> of those; calibration is therefore a measured target, not an assumption. _Bias:_ we will test for "recap bias" and break errors down by block, part kind and fault type, borrowing the disaggregated audit used on face recognition << cite('buolamwini_gebru_2018') >>. _Security:_ service notes are untrusted data, since indirect prompt injection is the top risk for LLM applications << cite('owasp_llm_top10_2026', 'greshake_2023') >>. _Accountability:_ the technician decides and confirms every reading; in the EU, software is now a product under the revised Product Liability Directive << cite('eu_pld_2024_2853') >>. _Regulation:_ Differential is not a high-risk system under the EU AI Act, but its duty to disclose that users are talking to an AI has applied since 2 August 2026 << cite('ec_ip_26_1714') >>; we will map it onto the NIST AI Risk Management Framework's Govern, Map, Measure and Manage functions << cite('nist_ai_rmf_1_0') >>.
+
+#figure(
+  table(
+    columns: (1.4fr, 0.45fr, 0.45fr, 2.1fr),
+    [Risk], [L], [I], [Mitigation (owner part)],
+    [Unsafe instruction near high voltage], [M], [H], [Deterministic safety layer; red-team suite with a zero target (Part 4)],
+    [Invented or misread readings], [M], [H], [Numeric grounding check; human confirms each reading (Part 4)],
+    [Confident wrong diagnosis], [M], [M], [Calibration target; ambiguity groups shown; unmodeled route (Part 3)],
+    [Simulation-to-reality gap], [H], [M], [Hand-calculation checks; tolerance ablation; fault board (Part 2)],
+    [No API key during the build], [H], [M], [Offline mode first; live results reported as pending (Part 3)],
+    [Customer data exposure], [L], [M], [No telemetry by default; local-first storage (Part 1)],
+  ),
+  caption: [Initial risk register (L = likelihood, I = impact; H/M/L). Every risk has an owner and a measurable control.],
+) <tab:risks>
+
+#decision("Safety rules live in code, not in the prompt")[
+*Options:* instruct the model to be safe, or enforce safety deterministically outside the model. *Choice:* both, with code as the authority. Prompts can be overridden by injected text or by user pressure; a rule that inspects every recommended test point and every outgoing message cannot. *Consequence:* the high-voltage warnings and refusals are identical in the live, offline and replay modes and can be tested exhaustively.
+]
+
+// END-PARTS
+
+<% set appendices %>
+#heading(level: 1, numbering: none)[Appendix A · Industry watch]
+#set text(size: 9pt)
+- *IBM Maximo Application Suite 9.2 (June 2026)* adds an agentic assistant and an MCP server << cite('ibm_mas_92_2026') >>. Incumbent asset-management platforms are becoming agent hosts; a component-level diagnosis engine could plug into them as a tool.
+- *Flux raises \$37M for AI circuit design (February 2026)* << cite('flux_funding_2026') >>. Investors are funding AI that reasons about circuits, not just documents.
+- *EU AI Act transparency duties apply (2 August 2026)* << cite('ec_ip_26_1714') >>, while the Digital Omnibus postponed the high-risk rules for Annex III systems to December 2027 << cite('eu_ai_omnibus_2026_1744') >>. Differential's disclosure design must be ready now.
+- *Texas right-to-repair law in force (1 September 2026)* << cite('tx_hb2963_2025') >>, the latest of several state laws that give repairers access to documentation for digital products.
+- *Claude Sonnet 5.5 released (28 September 2026)* << cite('claude_sonnet_5_5_overview') >>. The model family Differential's agent defaults to changed on build day; the design pins the model by configuration and caches responses so results stay reproducible.
+
+#heading(level: 1, numbering: none)[Appendix B · Course coverage map]
+#figure(
+  table(
+    columns: (0.25fr, 1.0fr, 2.9fr),
+    [Wk], [Topic], [Where Differential uses it],
+    [2], [AI/ML algorithms], [Bayesian inference, Gaussian-mixture likelihoods, gradient boosting, information-theoretic measurement selection],
+    [3], [Python], [Entire stack: simulation driver, engine, agent, web app, evaluation],
+    [4], [Large language models], [Symptom extraction, explanations, and the LLM-only baseline with an analysis of its failure modes],
+    [5], [LLM-enhanced agents], [Tool-using diagnostic agent that remembers the session's evidence],
+    [6], [Building ML systems], [Simulation pipeline, caching, calibration, evaluation harness, CI, cost and latency budgets],
+    [7], [NLP], [Free-text complaints to structured symptoms; paraphrase benchmark; label-leakage checks],
+    [8], [Image recognition], [Reading multimeter displays from photos],
+    [9], [Facial recognition (bias auditing)], [Disaggregated error analysis by circuit, topology, part kind and fault type],
+    [10], [Autonomous transportation], [Levels of diagnostic autonomy (L0-L4) by analogy to driving automation],
+    [11], [Robotics], [Sense-decide-act loop; instrument interface; path to automated test fixtures],
+    [12], [Cybersecurity], [Prompt-injection defence, untrusted-data handling, red-team suite],
+    [13], [Ethics and governance], [Safety, accountability, bias, privacy, right to repair, NIST AI RMF, EU AI Act],
+  ),
+  caption: [Course topics and where Differential uses them.],
+)
+<% endset %>
+#heading(level: 1, numbering: none)[References]
+<< references() >>
+
+<< appendices >>

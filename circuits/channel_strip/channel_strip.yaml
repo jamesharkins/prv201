@@ -48,6 +48,7 @@ fixtures:
 - RSRC
 - VIN
 infrastructure:
+- VPVZ_D101
 - VPK_LV
 - VCRES_LV
 - BRECT_LV
@@ -73,13 +74,13 @@ components:
     beside the rectifier leads'}
 - {ref: R102, kind: resistor, value: 1k, tolerance: 0.01, family: metal_film_1pct, stage: psu_lv, rating: 0.5
     W, elements: {main: R102}, hint: Zener feed resistor between the unregulated rail and the D101 cathode}
-- {ref: D101, kind: zener, value: 16 V, tolerance: 0.05, family: zener_5pct, stage: psu_lv, model: DZ1N4745A,
-  elements: {main: D101}, hint: 16 V zener reference; banded (cathode) end joins R102 and the base of
-    Q101}
+- {ref: D101, kind: zener, value: 16 V, tolerance: 0.05, family: zener_1n4745a, stage: psu_lv, model: DI_1N4745A,
+  elements: {main: XD101}, params: {vz: VPVZ_D101}, hint: 16 V zener reference; banded (cathode) end joins
+    R102 and the base of Q101}
 - {ref: C102, kind: electrolytic, value: 47u, tolerance: 0.2, family: alu_elec, stage: psu_lv, rating: 25
     V, elements: {main: C102, esr: RESR_C102}, hint: Reference filter capacitor across D101}
-- {ref: Q101, kind: bjt, value: BD139, family: bd139, stage: psu_lv, model: QBD139, elements: {main: Q101},
-  hint: 'Series pass transistor (TO-126, pins E-C-B from the left, printed face towards you)'}
+- {ref: Q101, kind: bjt, value: 2N3904, family: bjt_2n3904, stage: psu_lv, model: Q2N3904, elements: {
+    main: Q101}, hint: 'Series pass transistor (TO-92, flat face towards you: E-B-C from the left)'}
 - {ref: D102, kind: diode, value: 1N4148, family: diode_1n4148, stage: psu_lv, model: D1N4148, elements: {
     main: D102}, hint: Reverse-protection diode from the regulated rail (anode) to the unregulated rail
     (cathode)}

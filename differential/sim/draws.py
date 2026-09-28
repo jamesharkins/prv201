@@ -12,7 +12,7 @@ Tolerance distributions (documented in docs/DECISIONS.md, ADR-006):
   * passive values: truncated normal, sigma = tol/2, truncated at +-tol
   * electrolytic ESR: nominal (tan-delta limit) x U(0.4, 1.0)
   * potentiometer: track total +-20 %, rotation setting +-0.02 of track
-  * BJT beta: model BF x log-uniform over the datasheet hFE range
+  * BJT beta: model BF x log-uniform(0.82, 3.2) -> hFE 100-300 at 10 mA (datasheet)
   * zener voltage: truncated normal, sigma = 2.5 %, +-5 %
   * triode: MU x U(0.9, 1.1); KG1 x log-uniform(0.8, 1.25)
   * op-amp gain-bandwidth: 3 MHz x U(0.7, 1.3)
@@ -33,15 +33,17 @@ R_OPEN = 1e9
 C_OPEN = 1e-15
 BRIDGE = "BRIDGE"  # pseudo-ref for out-of-catalog solder-bridge modifications
 
-# BF scale ranges chosen so the simulated hFE at the operating current spans the
-# datasheet hFE range (2N3904: 100-300 at 10 mA -> model hFE 169 there;
-# BD139 -10/-16 groups: 63-250 at 150 mA -> model hFE ~150 at 22 mA).
+# BF scale range chosen so the simulated hFE at 10 mA, VCE = 1 V spans the onsemi
+# datasheet window of 100-300 (the unscaled onsemi model gives 119 there; BF x 0.82
+# gives 100 and BF x 3.2 gives 300, measured with ngspice).
 BETA_SCALE_RANGE = {
-    "bjt_2n3904": (100 / 169, 300 / 169),
-    "bd139": (63 / 150, 250 / 150),
+    "bjt_2n3904": (0.82, 3.2),
 }
-MODEL_BF = {"Q2N3904": 416.4, "QBD139": 150.0}
-ZENER_BV = {"DZ1N4745A": 16.0}
+MODEL_BF = {"Q2N3904": 206.302}
+# 1N4745A (Diodes Inc. subcircuit): Vz = VZ source (14.6 V) + reverse-diode drop,
+# 16 V at the 15.5 mA test current; +-5 % tolerance applies to the 16 V total.
+ZENER_VZ_SOURCE = 14.6
+ZENER_VZ_NOMINAL = 16.0
 
 TRIODE_MU = 100.0
 TRIODE_KG1 = 1060.0
@@ -107,10 +109,9 @@ def healthy_draw(circuit: CircuitSpec, rng: np.random.Generator) -> Draw:
             d.altermods[(device_model_name(comp), "bf")] = MODEL_BF[comp.model] * scale
             d.lift[comp.ref] = scale  # relative hFE as read on a transistor tester
         elif kind == "zener":
-            assert comp.model is not None
-            bv = ZENER_BV[comp.model] * (1.0 + _trunc_normal(rng, 0.025, 0.05))
-            d.altermods[(device_model_name(comp), "bv")] = bv
-            d.lift[comp.ref] = bv
+            dv = ZENER_VZ_NOMINAL * _trunc_normal(rng, 0.025, 0.05)
+            d.alters[comp.params["vz"]] = ZENER_VZ_SOURCE + dv
+            d.lift[comp.ref] = ZENER_VZ_NOMINAL + dv
         elif kind == "diode":
             d.lift[comp.ref] = 1.0  # forward drop reads normal on a diode test
         elif kind == "triode":
@@ -291,7 +292,7 @@ def structural_edits(circuit: CircuitSpec, fault: Fault) -> list[StructuralEdit]
             a, b = net.element(comp.main_element).nodes
         return [StructuralEdit(name, a, b, 1.0)]
     if comp.kind in ("diode", "zener"):
-        anode, cathode = net.element(comp.main_element).nodes
+        anode, cathode = net.element(comp.main_element).nodes[:2]
         if mode == "open":
             return [StructuralEdit(name, anode, cathode, R_OPEN, remove_element=comp.main_element)]
         return [StructuralEdit(name, anode, cathode, 1.0)]

@@ -1,0 +1,634 @@
+{
+ "hand_calcs": {
+  "hum_model_overstatement_max_pct": 5.40924,
+  "hum_model_overstatement_min_pct": 2.408484,
+  "rows": {
+   "B+ (TP6)": {
+    "hand": 254.360508,
+    "sim": 254.361,
+    "unit": "V"
+   },
+   "Cathode voltage (TP8)": {
+    "hand": 1.204637,
+    "sim": 1.19899,
+    "unit": "V"
+   },
+   "Gain at 1 kHz (TP22)": {
+    "hand": 2.025374,
+    "sim": 1.94011,
+    "unit": "V/V"
+   },
+   "Gain at 1 kHz from a 20k source (TP15)": {
+    "hand": 9.166667,
+    "sim": 9.15914,
+    "unit": "V/V"
+   },
+   "Gain at 20 kHz (TP15)": {
+    "hand": 9.142117,
+    "sim": 9.13443,
+    "unit": "V/V"
+   },
+   "HV filter node (TP5)": {
+    "hand": 273.013612,
+    "sim": 273.014,
+    "unit": "V"
+   },
+   "HV reservoir (TP4)": {
+    "hand": 281.492296,
+    "sim": 281.492,
+    "unit": "V"
+   },
+   "Half-supply bias (TP16)": {
+    "hand": 7.665,
+    "sim": 7.665,
+    "unit": "V"
+   },
+   "Koren Ip at Va=250 V, Vg=-2 V (datasheet 1.2 mA)": {
+    "hand": 0.951803,
+    "sim": null,
+    "unit": "mA"
+   },
+   "LV ripple fundamental at TP1 (hand only)": {
+    "hand": 0.036572,
+    "sim": null,
+    "unit": "V"
+   },
+   "Mid-band gain into 100k (TP10)": {
+    "hand": 45.089667,
+    "sim": 44.6444,
+    "unit": "V/V"
+   },
+   "Output DC (TP15)": {
+    "hand": 7.665,
+    "sim": 7.665,
+    "unit": "V"
+   },
+   "Plate current": {
+    "hand": 0.803092,
+    "sim": 0.799331,
+    "unit": "mA"
+   },
+   "Plate voltage (TP9)": {
+    "hand": 169.690844,
+    "sim": 170.067,
+    "unit": "V"
+   },
+   "Q501 base (TP18)": {
+    "hand": 3.623612,
+    "sim": 3.6236,
+    "unit": "V"
+   },
+   "Q501 collector (TP20)": {
+    "hand": 9.246932,
+    "sim": 9.3013,
+    "unit": "V"
+   },
+   "Q501 emitter (TP19)": {
+    "hand": 3.00315,
+    "sim": 2.99907,
+    "unit": "V"
+   },
+   "Q502 emitter (TP21)": {
+    "hand": 8.547824,
+    "sim": 8.58748,
+    "unit": "V"
+   },
+   "Regulated rail (TP3)": {
+    "hand": 15.174894,
+    "sim": 15.1486,
+    "unit": "V"
+   },
+   "Response at 1000 Hz": {
+    "hand": -27.041396,
+    "sim": -27.041392,
+    "unit": "dB"
+   },
+   "Response at 20 Hz": {
+    "hand": -25.764638,
+    "sim": -25.764631,
+    "unit": "dB"
+   },
+   "Response at 20000 Hz": {
+    "hand": -27.861517,
+    "sim": -27.861522,
+    "unit": "dB"
+   },
+   "Unregulated LV rail (TP1)": {
+    "hand": 23.957781,
+    "sim": 23.9587,
+    "unit": "V"
+   },
+   "Zener reference (TP2)": {
+    "hand": 15.912159,
+    "sim": 15.9128,
+    "unit": "V"
+   }
+  },
+  "rows_checked": 22,
+  "rows_ok": 22
+ },
+ "library": {
+  "blocks": 5,
+  "circuits": {
+   "channel_strip": {
+    "components": 59,
+    "faults": 250,
+    "hv_test_points": 4,
+    "hypotheses": 251,
+    "kinds": {
+     "bjt": 3,
+     "diode": 1,
+     "electrolytic": 14,
+     "film_cap": 8,
+     "opamp": 1,
+     "potentiometer": 2,
+     "resistor": 28,
+     "triode": 1,
+     "zener": 1
+    },
+    "lift_tests": 59,
+    "spice_observables": 51,
+    "test_points": 23
+   },
+   "driver": {
+    "components": 15,
+    "faults": 73,
+    "hv_test_points": 0,
+    "hypotheses": 74,
+    "kinds": {
+     "bjt": 2,
+     "electrolytic": 4,
+     "resistor": 9
+    },
+    "lift_tests": 15,
+    "spice_observables": 16,
+    "test_points": 7
+   },
+   "opamp": {
+    "components": 13,
+    "faults": 56,
+    "hv_test_points": 0,
+    "hypotheses": 57,
+    "kinds": {
+     "electrolytic": 3,
+     "film_cap": 2,
+     "opamp": 1,
+     "resistor": 7
+    },
+    "lift_tests": 13,
+    "spice_observables": 14,
+    "test_points": 6
+   },
+   "psu": {
+    "components": 14,
+    "faults": 63,
+    "hv_test_points": 3,
+    "hypotheses": 64,
+    "kinds": {
+     "bjt": 1,
+     "diode": 1,
+     "electrolytic": 6,
+     "resistor": 5,
+     "zener": 1
+    },
+    "lift_tests": 14,
+    "spice_observables": 12,
+    "test_points": 6
+   },
+   "tone": {
+    "components": 9,
+    "faults": 27,
+    "hv_test_points": 0,
+    "hypotheses": 28,
+    "kinds": {
+     "film_cap": 4,
+     "potentiometer": 2,
+     "resistor": 3
+    },
+    "lift_tests": 9,
+    "spice_observables": 8,
+    "test_points": 3
+   },
+   "triode": {
+    "components": 8,
+    "faults": 31,
+    "hv_test_points": 1,
+    "hypotheses": 32,
+    "kinds": {
+     "electrolytic": 1,
+     "film_cap": 2,
+     "resistor": 4,
+     "triode": 1
+    },
+    "lift_tests": 8,
+    "spice_observables": 11,
+    "test_points": 4
+   }
+  },
+  "design": {
+   "budget": 40.0,
+   "cost_dc": 1.0,
+   "cost_hv_extra": 2.0,
+   "cost_lift": 10.0,
+   "cost_scope": 3.0,
+   "stop_threshold": 0.9,
+   "train_draws": 400,
+   "unmodeled_prior": 0.05,
+   "val_draws": 100
+  },
+  "fault_mode_count": 18,
+  "fault_modes_per_kind": {
+   "bjt": 4,
+   "diode": 2,
+   "electrolytic": 5,
+   "film_cap": 2,
+   "opamp": 2,
+   "potentiometer": 2,
+   "resistor": 5,
+   "triode": 2,
+   "zener": 2
+  },
+  "simulations": {
+   "datasets": {
+    "channel_strip__train": {
+     "draws_per_hypothesis": 400,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 251,
+     "path": "channel_strip__train.parquet",
+     "retried_draws": 1,
+     "rows": 100400
+    },
+    "channel_strip__val": {
+     "draws_per_hypothesis": 100,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 251,
+     "path": "channel_strip__val.parquet",
+     "retried_draws": 0,
+     "rows": 25100
+    },
+    "driver__train": {
+     "draws_per_hypothesis": 400,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 74,
+     "path": "driver__train.parquet",
+     "retried_draws": 0,
+     "rows": 29600
+    },
+    "driver__val": {
+     "draws_per_hypothesis": 100,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 74,
+     "path": "driver__val.parquet",
+     "retried_draws": 0,
+     "rows": 7400
+    },
+    "opamp__train": {
+     "draws_per_hypothesis": 400,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 57,
+     "path": "opamp__train.parquet",
+     "retried_draws": 0,
+     "rows": 22800
+    },
+    "opamp__val": {
+     "draws_per_hypothesis": 100,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 57,
+     "path": "opamp__val.parquet",
+     "retried_draws": 0,
+     "rows": 5700
+    },
+    "psu__train": {
+     "draws_per_hypothesis": 400,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 64,
+     "path": "psu__train.parquet",
+     "retried_draws": 0,
+     "rows": 25600
+    },
+    "psu__val": {
+     "draws_per_hypothesis": 100,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 64,
+     "path": "psu__val.parquet",
+     "retried_draws": 0,
+     "rows": 6400
+    },
+    "tone__train": {
+     "draws_per_hypothesis": 400,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 28,
+     "path": "tone__train.parquet",
+     "retried_draws": 0,
+     "rows": 11200
+    },
+    "tone__val": {
+     "draws_per_hypothesis": 100,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 28,
+     "path": "tone__val.parquet",
+     "retried_draws": 0,
+     "rows": 2800
+    },
+    "triode__train": {
+     "draws_per_hypothesis": 400,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 32,
+     "path": "triode__train.parquet",
+     "retried_draws": 0,
+     "rows": 12800
+    },
+    "triode__val": {
+     "draws_per_hypothesis": 100,
+     "failed_draws": 0,
+     "failures_logged": 0,
+     "hypotheses": 32,
+     "path": "triode__val.parquet",
+     "retried_draws": 0,
+     "rows": 3200
+    }
+   },
+   "failed_draws": 0,
+   "ngspice": "ngspice-42",
+   "retried_draws": 1,
+   "total_draws": 253000
+  },
+  "total_hypotheses": 506
+ },
+ "pilot": {
+  "circuits": {
+   "channel_strip": {
+    "ambiguity_groups": 216,
+    "cases": 200,
+    "eig_per_cost": {
+     "accuracy_when_confident": 0.989744,
+     "confident_fraction": 0.975,
+     "mean_cost": 6.4,
+     "median_cost": 6.0,
+     "seconds_per_step": 0.08004,
+     "top1": 0.99
+    },
+    "eig_per_cost_symptom_prior": {
+     "accuracy_when_confident": 0.975,
+     "confident_fraction": 1.0,
+     "mean_cost": 4.22,
+     "median_cost": 3.0,
+     "seconds_per_step": 0.088758,
+     "top1": 0.975
+    },
+    "fit_seconds": 16.362432,
+    "fixed_order": {
+     "accuracy_when_confident": 0.954198,
+     "confident_fraction": 0.655,
+     "mean_cost": 24.98,
+     "median_cost": 23.0,
+     "seconds_per_step": 0.001541,
+     "top1": 0.77
+    },
+    "hypotheses": 251,
+    "latent_faults": 120,
+    "random": {
+     "accuracy_when_confident": 0.974522,
+     "confident_fraction": 0.785,
+     "mean_cost": 22.985,
+     "median_cost": 21.0,
+     "seconds_per_step": 0.001464,
+     "top1": 0.84
+    },
+    "symptomatic_faults": 130
+   },
+   "driver": {
+    "ambiguity_groups": 69,
+    "cases": 100,
+    "eig_per_cost": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 0.97,
+     "mean_cost": 2.44,
+     "median_cost": 2.0,
+     "seconds_per_step": 0.012014,
+     "top1": 0.99
+    },
+    "eig_per_cost_symptom_prior": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 1.0,
+     "mean_cost": 1.99,
+     "median_cost": 1.0,
+     "seconds_per_step": 0.012959,
+     "top1": 1.0
+    },
+    "fit_seconds": 3.351729,
+    "fixed_order": {
+     "accuracy_when_confident": 0.99,
+     "confident_fraction": 1.0,
+     "mean_cost": 13.87,
+     "median_cost": 16.0,
+     "seconds_per_step": 0.000786,
+     "top1": 0.99
+    },
+    "hypotheses": 74,
+    "latent_faults": 33,
+    "random": {
+     "accuracy_when_confident": 0.98,
+     "confident_fraction": 1.0,
+     "mean_cost": 8.69,
+     "median_cost": 7.0,
+     "seconds_per_step": 0.000805,
+     "top1": 0.98
+    },
+    "symptomatic_faults": 40
+   },
+   "opamp": {
+    "ambiguity_groups": 46,
+    "cases": 100,
+    "eig_per_cost": {
+     "accuracy_when_confident": 0.99,
+     "confident_fraction": 1.0,
+     "mean_cost": 3.64,
+     "median_cost": 4.0,
+     "seconds_per_step": 0.008394,
+     "top1": 0.99
+    },
+    "eig_per_cost_symptom_prior": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 1.0,
+     "mean_cost": 3.05,
+     "median_cost": 3.0,
+     "seconds_per_step": 0.008576,
+     "top1": 1.0
+    },
+    "fit_seconds": 3.411715,
+    "fixed_order": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 1.0,
+     "mean_cost": 5.65,
+     "median_cost": 4.0,
+     "seconds_per_step": 0.000776,
+     "top1": 1.0
+    },
+    "hypotheses": 57,
+    "latent_faults": 26,
+    "random": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 1.0,
+     "mean_cost": 8.71,
+     "median_cost": 8.0,
+     "seconds_per_step": 0.000722,
+     "top1": 1.0
+    },
+    "symptomatic_faults": 30
+   },
+   "psu": {
+    "ambiguity_groups": 46,
+    "cases": 100,
+    "eig_per_cost": {
+     "accuracy_when_confident": 0.989583,
+     "confident_fraction": 0.96,
+     "mean_cost": 6.54,
+     "median_cost": 6.0,
+     "seconds_per_step": 0.007335,
+     "top1": 0.99
+    },
+    "eig_per_cost_symptom_prior": {
+     "accuracy_when_confident": 0.989691,
+     "confident_fraction": 0.97,
+     "mean_cost": 4.75,
+     "median_cost": 4.0,
+     "seconds_per_step": 0.008439,
+     "top1": 0.99
+    },
+    "fit_seconds": 4.596217,
+    "fixed_order": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 1.0,
+     "mean_cost": 8.7,
+     "median_cost": 6.0,
+     "seconds_per_step": 0.000805,
+     "top1": 1.0
+    },
+    "hypotheses": 64,
+    "latent_faults": 35,
+    "random": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 1.0,
+     "mean_cost": 13.86,
+     "median_cost": 12.0,
+     "seconds_per_step": 0.000852,
+     "top1": 1.0
+    },
+    "symptomatic_faults": 28
+   },
+   "tone": {
+    "ambiguity_groups": 23,
+    "cases": 100,
+    "eig_per_cost": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 0.99,
+     "mean_cost": 5.37,
+     "median_cost": 6.0,
+     "seconds_per_step": 0.003932,
+     "top1": 1.0
+    },
+    "eig_per_cost_symptom_prior": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 1.0,
+     "mean_cost": 4.01,
+     "median_cost": 3.0,
+     "seconds_per_step": 0.004129,
+     "top1": 1.0
+    },
+    "fit_seconds": 1.286638,
+    "fixed_order": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 0.96,
+     "mean_cost": 7.44,
+     "median_cost": 6.0,
+     "seconds_per_step": 0.000735,
+     "top1": 1.0
+    },
+    "hypotheses": 28,
+    "latent_faults": 13,
+    "random": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 0.99,
+     "mean_cost": 8.23,
+     "median_cost": 7.5,
+     "seconds_per_step": 0.000755,
+     "top1": 1.0
+    },
+    "symptomatic_faults": 14
+   },
+   "triode": {
+    "ambiguity_groups": 27,
+    "cases": 100,
+    "eig_per_cost": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 0.98,
+     "mean_cost": 3.23,
+     "median_cost": 4.0,
+     "seconds_per_step": 0.004535,
+     "top1": 0.99
+    },
+    "eig_per_cost_symptom_prior": {
+     "accuracy_when_confident": 1.0,
+     "confident_fraction": 0.99,
+     "mean_cost": 2.02,
+     "median_cost": 1.0,
+     "seconds_per_step": 0.004484,
+     "top1": 1.0
+    },
+    "fit_seconds": 4.090163,
+    "fixed_order": {
+     "accuracy_when_confident": 0.98,
+     "confident_fraction": 1.0,
+     "mean_cost": 10.49,
+     "median_cost": 9.0,
+     "seconds_per_step": 0.000683,
+     "top1": 0.98
+    },
+    "hypotheses": 32,
+    "latent_faults": 11,
+    "random": {
+     "accuracy_when_confident": 0.99,
+     "confident_fraction": 1.0,
+     "mean_cost": 8.51,
+     "median_cost": 7.0,
+     "seconds_per_step": 0.000696,
+     "top1": 0.99
+    },
+    "symptomatic_faults": 20
+   }
+  },
+  "pooled": {
+   "eig_per_cost": {
+    "mean_cost": 4.86,
+    "top1": 0.991429
+   },
+   "eig_per_cost_symptom_prior": {
+    "mean_cost": 3.465714,
+    "top1": 0.991429
+   },
+   "fixed_order": {
+    "mean_cost": 13.73,
+    "top1": 0.93
+   },
+   "random": {
+    "mean_cost": 13.424286,
+    "top1": 0.95
+   }
+  },
+  "pooled_accuracy_when_confident": 0.994161,
+  "pooled_confident_fraction": 0.978571,
+  "protocol": "fit on training draws 0-299; evaluate on held-out training draws 300-399"
+ }
+}

@@ -1,0 +1,1186 @@
+# Differential (PRV 201) — industry, workforce and market evidence base
+# Compiled 2026-09-28. Companion synthesis: docs/research/industry_notes.md
+#
+# Conventions
+# - verified: fetched             -> the `url` itself was opened on 2026-09-28 and the quote was read on the page.
+# - verified: search_snippet_only -> the `url` was blocked by the sandbox egress proxy (e.g. bls.gov, riaa.com,
+#                                    arxiv.org, doi.org, company newsrooms); the quote is taken verbatim from the
+#                                    web-search result text for that page. Search summaries sometimes merge several
+#                                    outlets; where attribution to one page is uncertain, `notes` says so.
+#                                    Re-check these quotes on the live page before final publication.
+# - date: "n.d."                  -> no publication/update date was visible to us; nothing was guessed.
+# - notes (optional field)        -> verification caveats, related URLs, or reasons to treat a claim with care.
+# - Rate cards (type: web, key prefix rates_) are ILLUSTRATIVE single-shop examples, not market averages.
+
+# =====================================================================
+# A. WORKFORCE
+# =====================================================================
+
+- key: bls_ooh_eeir
+  type: web
+  authors: ["U.S. Bureau of Labor Statistics"]
+  title: "Electrical and Electronics Installers and Repairers"
+  container: "Occupational Outlook Handbook"
+  publisher: "U.S. Bureau of Labor Statistics"
+  date: "2026-08-27"
+  url: "https://www.bls.gov/ooh/installation-maintenance-and-repair/electrical-and-electronics-installers-and-repairers.htm"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "BLS projects employment of electrical and electronics installers and repairers to grow 2 percent from 2025 to 2035, slower than the average for all occupations."
+      quote: "Overall employment of electrical and electronics installers and repairers is projected to grow 2 percent from 2025 to 2035, slower than the average for all occupations."
+    - claim: "About 8,900 openings per year are projected for these installers and repairers over 2025–35."
+      quote: "About 8,900 openings for electrical and electronics installers and repairers are projected each year, on average, over the decade."
+    - claim: "Most projected openings come from replacing workers who change occupations or leave the labor force, such as by retiring."
+      quote: "Most of those openings are expected to result from the need to replace workers who transfer to different occupations or exit the labor force, such as to retire."
+    - claim: "Electrical and electronics installers and repairers held about 117,700 jobs in 2025."
+      quote: "electrical and electronics installers and repairers held about 117,700 jobs in 2025"
+    - claim: "The median annual wage for electrical and electronics installers and repairers was $74,490 in May 2025."
+      quote: "the median annual wage for electrical and electronics installers and repairers was $74,490 in May 2025"
+    - claim: "The 10th-percentile wage was below $44,940 and the 90th-percentile wage above $114,240 (May 2025)."
+      quote: "the lowest 10 percent earned less than $44,940, and the highest 10 percent earned more than $114,240"
+  notes: "Date = release of the 2025-35 projections with which the OOH was updated (see bls_ep_2025_35); the page's own last-modified date was not visible. Search results also surfaced the superseded 2024-34 edition (118,800 jobs in 2024; 'little or no change' 2024-34; about 9,600 openings/yr; $71,270 median in May 2024). Do not mix editions."
+
+- key: bls_ooh_eeet
+  type: web
+  authors: ["U.S. Bureau of Labor Statistics"]
+  title: "Electrical and Electronic Engineering Technologists and Technicians"
+  container: "Occupational Outlook Handbook"
+  publisher: "U.S. Bureau of Labor Statistics"
+  date: "2026-08-27"
+  url: "https://www.bls.gov/ooh/architecture-and-engineering/electrical-and-electronics-engineering-technicians.htm"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Employment of electrical and electronic engineering technologists and technicians is projected to grow 2 percent from 2025 to 2035, slower than average."
+      quote: "Employment is projected to grow 2 percent from 2025 to 2035, slower than the average for all occupations."
+    - claim: "Their median annual wage was $78,190 in May 2025."
+      quote: "The median annual wage was $78,190 in May 2025."
+    - claim: "About 8,100 openings per year are projected for the occupation."
+      quote: "About 8,100 openings for electrical and electronic engineering technologists and technicians are projected each year, on average, over the decade."
+  notes: "Date = OOH update with the 2025-35 projections (page date not visible)."
+
+- key: bls_ooh_electromech
+  type: web
+  authors: ["U.S. Bureau of Labor Statistics"]
+  title: "Electro-mechanical and Mechatronics Technologists and Technicians"
+  container: "Occupational Outlook Handbook"
+  publisher: "U.S. Bureau of Labor Statistics"
+  date: "2026-08-27"
+  url: "https://www.bls.gov/ooh/architecture-and-engineering/electro-mechanical-technicians.htm"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The median annual wage for electro-mechanical and mechatronics technologists and technicians was $73,900 in May 2025."
+      quote: "The median annual wage for electro-mechanical and mechatronics technologists and technicians was $73,900 in May 2025."
+    - claim: "Employment in the occupation is projected to grow 3 percent from 2025 to 2035, about as fast as average."
+      quote: "Employment of electro-mechanical and mechatronics technologists and technicians is projected to grow 3 percent from 2025 to 2035, about as fast as the average for all occupations."
+    - claim: "About 1,400 openings per year are projected for the occupation."
+      quote: "About 1,400 openings for electro-mechanical and mechatronics technologists and technicians are projected each year, on average, over the decade."
+  notes: "Date = OOH update with the 2025-35 projections (page date not visible)."
+
+- key: bls_ep_2025_35
+  type: press_release
+  authors: ["U.S. Bureau of Labor Statistics"]
+  title: "Employment Projections: 2025-2035 Summary"
+  container: "Economic News Release"
+  publisher: "U.S. Bureau of Labor Statistics"
+  date: "2026-08-27"
+  url: "https://www.bls.gov/news.release/ecopro.nr0.htm"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "BLS projects the US economy to add 5.9 million jobs from 2025 to 2035 (release dated August 27, 2026)."
+      quote: "The U.S. economy is projected to add 5.9 million jobs from 2025 to 2035, the U.S. Bureau of Labor Statistics reported on August 27, 2026."
+    - claim: "Total US employment is projected to grow 3.5 percent over 2025-35, the benchmark 'average for all occupations' against which OOH growth is described."
+      quote: "Total employment is projected to increase from 170.3 million to 176.2 million and grow 3.5 percent, which is slower than the 10.9 percent growth recorded over the 2015-25 decade."
+  notes: "Archived copy of the release: https://www.bls.gov/news.release/archives/ecopro_08272026.htm"
+
+- key: bls_oews_492097_2023
+  type: web
+  authors: ["U.S. Bureau of Labor Statistics"]
+  title: "Occupational Employment and Wages, May 2023: 49-2097 Audiovisual Equipment Installers and Repairers"
+  container: "Occupational Employment and Wage Statistics (OEWS)"
+  publisher: "U.S. Bureau of Labor Statistics"
+  date: "2023-05"
+  url: "https://www.bls.gov/oes/2023/may/oes492097.htm"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "In May 2023 OEWS estimates, SOC 49-2097 (Audiovisual Equipment Installers and Repairers) had national employment of 24,720 and a median hourly wage of $23.26."
+      quote: "the occupation code 49-2097 (Audiovisual Equipment Installers and Repairers) had a median hourly wage of $23.26 and an employment level of 24,720"
+  notes: "Date is the survey reference period shown in the title (release date not visible). Figures come from a search-result summary and are two releases old; May 2024 and May 2025 values for 49-2097 could not be retrieved (bls.gov blocked) - re-verify before citing. SOC 49-2097 was titled 'Electronic Home Entertainment Equipment Installers and Repairers' on pre-2019 BLS pages (e.g. https://www.bls.gov/oes/2017/may/oes492097.htm)."
+
+- key: onet_492097_bright_outlook
+  type: web
+  authors: ["National Center for O*NET Development"]
+  title: "Bright Outlook Occupation: 49-2097.00 - Audiovisual Equipment Installers and Repairers"
+  container: "O*NET OnLine"
+  publisher: "U.S. Department of Labor, Employment and Training Administration"
+  date: "n.d."
+  url: "https://www.onetonline.org/help/bright/49-2097.00"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "O*NET flags 49-2097.00 as a Bright Outlook occupation because employment is projected to grow faster than average (5% or more) over 2024-2034."
+      quote: "projected to grow faster than average with an employment increase of 5% or more over the period 2024-2034"
+  notes: "Based on the 2024-34 projections. The SOC is dominated by installers (home theater, commercial AV); growth here does not imply growth in bench repair."
+
+- key: bls_cps_11b_2017
+  type: report
+  authors: ["U.S. Bureau of Labor Statistics"]
+  title: "Employed persons by detailed occupation and age, 2017 annual averages (CPS Table 11b)"
+  container: "Current Population Survey, Household Data Annual Averages"
+  publisher: "U.S. Bureau of Labor Statistics"
+  date: "2017"
+  url: "https://www.bls.gov/cps/aa2017/cpsaat11b.pdf"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "In 2017 CPS annual averages, the median age of electronic home entertainment equipment installers and repairers was 38.4 years."
+      quote: "in 2017 it was 38.4 years"
+  notes: "Date = annual-average reference year. The same search summary reported 37.8 years for 2012 (https://www.bls.gov/cps/aa2012/cpsaat11b.pdf) and 39.2 years for 2013 (https://www.bls.gov/cps/aa2013/cpsaat11b.pdf). The current table (https://www.bls.gov/cps/cpsaat11b.htm) could not be read. The occupation includes installers as well as bench repairers."
+
+- key: census_electronics_aging_2023
+  type: article
+  authors: ["U.S. Census Bureau"]
+  title: "Electronics Industry Facing an Aging Workforce"
+  container: "Census.gov Library - Stories"
+  publisher: "U.S. Census Bureau"
+  date: "2023-09"
+  url: "https://www.census.gov/library/stories/2023/09/one-chip-at-a-time.html"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Census Bureau reports that the semiconductor-related electronics workforce is aging at a time of potential labor shortage."
+      quote: "A potential shortage is happening at a time when the semiconductor-related workforce is aging."
+  notes: "Manufacturing, not repair; adjacent evidence only. Date from URL path."
+
+- key: headphonesty_vintage_techs_2026
+  type: article
+  authors: ["Headphonesty"]
+  title: "The Vintage Audio Revival Is Running Out of People Who Can Keep It Alive and a Spare Parts Problem Is Making It Worse"
+  container: "Headphonesty"
+  date: "2026-08"
+  url: "https://www.headphonesty.com/2026/08/vintage-audio-revival-running-out-people/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Vintage-audio upkeep depends on specialists trained at the bench rather than in formal programs, and many are reaching retirement age."
+      quote: "Keeping vintage audio alive depends on technicians, parts suppliers, and specialists who have spent decades learning equipment that formal training programs rarely cover. Many of those people are now reaching retirement age."
+    - claim: "Vintage-audio repair queues stretch to months or years and some replacement parts are hard to source or trust."
+      quote: "Repair queues are already stretching into months or years, and some replacement parts are getting harder to trust or even find."
+    - claim: "Example: a one-technician vintage shop (Red Bank Vintage Audio) closed to new work in March 2024 and had about 200 repairs queued by May 2025."
+      quote: "Red Bank Vintage Audio owner Scott Grammer first closed to new work in March 2024, telling customers he was swamped, and by May 2025 he reported about 200 repairs in the queue."
+    - claim: "A UK dealer (Soundgas) reported in 2018 that it could find no suitable apprenticeship pathway into audio-electronics repair."
+      quote: "In 2018, UK dealer Soundgas said it could find no suitable apprenticeship pathway for people wishing to specialize in audio electronics."
+  notes: "Consumer-audio trade publication; date from URL path. The Soundgas sentence appeared in a search summary that combined this article with a blog post (notanaudiophile.com); attribution to Headphonesty is probable but not certain."
+
+- key: stereophile_retales_13
+  type: article
+  authors: ["Stereophile"]
+  title: "Re-Tales #13: Getting your hi-fi fix(ed)"
+  container: "Stereophile"
+  date: "n.d."
+  url: "https://www.stereophile.com/content/re-tales-13-getting-your-hi-fi-fixed"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Stereophile's retail column reports that skilled, experienced hi-fi technicians are scarce and dwindling and that analog circuitry is not taught at two-year colleges."
+      quote: "Skilled, experienced technicians are scarce and their numbers are dwindling, with analog circuitry not being taught at 2-year colleges"
+    - claim: "The column reports that demand for electronics repair surged even before the pandemic, and lockdowns led audiophiles to revive stored components."
+      quote: "demand for electronics repair services surged even before the pandemic, and when lockdowns occurred, audiophiles pulled out old hi-fi components from storage, hoping to resurrect them"
+  notes: "Byline and date not visible in search results (content refers to pandemic lockdowns). Quotes are search-summary text; confirm exact wording on the page."
+
+- key: berklee_maintenance_engineer
+  type: web
+  authors: ["Berklee College of Music"]
+  title: "Studio Maintenance Engineer"
+  container: "Berklee Careers"
+  publisher: "Berklee College of Music"
+  date: "n.d."
+  url: "https://www.berklee.edu/careers/roles/maintenance-engineer"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Berklee's career guide describes studio maintenance engineers as senior, long-experienced professionals."
+      quote: "Studio maintenance engineers are senior professionals who have spent most of their lives working with music and recording equipment."
+
+# =====================================================================
+# B. COST OF DIAGNOSIS (illustrative rate cards + evidence on diagnostic effort)
+# =====================================================================
+
+- key: rates_british_audio
+  type: web
+  authors: ["British Audio"]
+  title: "Electronic Service Rates and Policies"
+  container: "British Audio (repair shop website)"
+  date: "n.d."
+  url: "https://britishaudio.com/pages/electronic-repair-rates"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "ILLUSTRATIVE: One shop bills $139/hour for synthesizers, mixers, studio monitors and studio outboard gear."
+      quote: "the $139/hr rate applies to most synthesizers, keyboards, digital pianos, studio monitors, mixers, studio outboard gear, SMD work, high-value equipment, and logistically complex items"
+    - claim: "ILLUSTRATIVE: The shop's one-hour minimum evaluation charge applies even when the repair is declined or no fault is found, i.e. diagnosis is billed as labor in its own right."
+      quote: "The one-hour minimum applies to all repairs, declined repairs, and no-fault-found cases."
+    - claim: "ILLUSTRATIVE: The bench fee buys an evaluation only, with no guarantee that repair is possible or economic."
+      quote: "bench fees cover evaluation only and do not guarantee that repair is possible or economically practical"
+  notes: "Single-shop example. Search summaries also mention $50 and $85 non-refundable 'Initial Evaluation & Bench Charge' tiers for some equipment categories; a separate 'Walk-In Repair Terms of Service' page is marked effective January 2026, so the rate structure may have changed recently."
+
+- key: rates_studio_doctors
+  type: web
+  authors: ["The Studio Doctors"]
+  title: "Audio Repair Los Angeles · Pro Studio Gear Service"
+  container: "The Studio Doctors (repair shop website, Los Angeles)"
+  date: "n.d."
+  url: "https://thestudiodoctors.com/audio-repair-los-angeles.html"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "ILLUSTRATIVE: A Los Angeles pro-studio repair shop charges a $125 bench fee per item."
+      quote: "The Studio Doctors charges a $125 bench fee per item"
+    - claim: "ILLUSTRATIVE: Work beyond the bench fee is billed at a $125 shop rate."
+      quote: "overage is billed at the $125 shop rate"
+
+- key: rates_archer_hifi
+  type: web
+  authors: ["Archer High Fidelity"]
+  title: "Expert Vintage Stereo Repair"
+  container: "Archer High Fidelity (repair shop website, Falls Church, VA)"
+  date: "n.d."
+  url: "https://archerhifi.com/repair-and-service/vintage-stereo-repair/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "ILLUSTRATIVE: A vintage hi-fi shop charges $150 for a complete diagnostics and evaluation."
+      quote: "Archer High Fidelity offers Complete Diagnostics & Evaluation for $150, where they perform a thorough evaluation to identify mechanical, electrical, and sound quality issues."
+    - claim: "ILLUSTRATIVE: The diagnostic fee is credited toward the repair if the customer proceeds."
+      quote: "This fee applies to the total cost of any repairs you choose to proceed with."
+
+- key: rates_cw_guitar_audio
+  type: web
+  authors: ["CW Guitar Audio"]
+  title: "Services & Rates — CW Guitar Audio - Amp Repair and Mods - Columbus Ohio"
+  container: "CW Guitar Audio (repair shop website, Columbus, OH)"
+  date: "n.d."
+  url: "https://www.cwguitaraudio.com/services"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "ILLUSTRATIVE: A tube-amp repair shop charges a $130 bench fee that covers diagnosis and the first hour."
+      quote: "$130 bench fee (includes diagnostic/first hour of repair)"
+    - claim: "ILLUSTRATIVE: Further labor is $130/hour billed in 15-minute increments."
+      quote: "$130/hr billed in 15 minute increments past the first hour"
+
+- key: conequip_electrical_diagnosis
+  type: article
+  authors: ["Construction Equipment"]
+  title: "The Psychology of Electrical-Problem Diagnosis and Repair"
+  container: "Construction Equipment"
+  date: "n.d."
+  url: "https://www.constructionequipment.com/equipment-maintenance-and-repair/article/10717900/the-psychology-of-electrical-problem-diagnosis-and-repair"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "A maintenance trade article states that diagnosing an electrical problem typically takes at least four hours, followed by a repair of about ten minutes."
+      quote: "diagnosing an electrical problem typically requires at least four hours, which is usually followed by approximately a 10-minute repair"
+  notes: "Heavy-equipment electrical systems, not audio; a practitioner's rule of thumb, not a measured study. Byline/date not visible."
+
+- key: qi_2008_nff
+  type: paper
+  authors: ["Qi", "Ganesan", "Pecht"]
+  title: "No-fault-found and intermittent failures in electronic products"
+  container: "Microelectronics Reliability, 48(5), 663-674"
+  publisher: "Elsevier"
+  date: "2008-05"
+  url: "https://www.sciencedirect.com/science/article/abs/pii/S0026271408000474"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "A peer-reviewed review catalogues the causes and effects of no-fault-found observations and intermittent failures in electronic products."
+      quote: "reviews the possible causes and effects for no-fault-found observations and intermittent failures in electronic products and summarizes them into cause and effect diagrams"
+  notes: "Author-hosted PDF: https://www.prognostics.umd.edu/calcepapers/08_Qi_No_Fault_Found_Intermittent_Failure.pdf (not fetched)."
+
+# =====================================================================
+# C. MARKET CONTEXT
+# =====================================================================
+
+- key: riaa_2024_yearend
+  type: report
+  authors: ["Recording Industry Association of America"]
+  title: "2024 Year-End Music Industry Revenue Report"
+  publisher: "RIAA"
+  date: "2025-03"
+  url: "https://www.riaa.com/reports/2024-year-end-music-industry-revenue-report-riaa/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "US vinyl revenue grew for the 18th straight year in 2024, to $1.4 billion (estimated retail value), the highest level since 1984."
+      quote: "Vinyl sales increased for the 18th straight year, reaching $1.4 billion, the highest level since 1984."
+    - claim: "In 2024 vinyl outsold CDs in units (44 million vs 33 million) for the third year in a row."
+      quote: "For the third year in a row, vinyl records (44 million units) outsold CDs (33 million units)."
+    - claim: "US recorded-music revenue reached a record $17.7 billion (retail value) in 2024, up 3%."
+      quote: "Recorded music revenue in the United States notched record-high revenues of $17.7 billion in 2024, marking a modest 3% increase from 2023"
+  notes: "2024 segment figures are retail-value; RIAA moved to wholesale reporting in 2025 (see billboard_riaa_2025), so do not compare 2024 retail with 2025 wholesale. The search summary drew on the RIAA report (PDF: https://www.riaa.com/wp-content/uploads/2025/03/RIAA-2024Year-End-Revenue-Report.pdf) and trade coverage (Billboard, Deadline, Music Week). Date from the PDF path."
+
+- key: riaa_2025_yearend
+  type: report
+  authors: ["Recording Industry Association of America"]
+  title: "2025 Year-End Music Industry Revenue Report"
+  publisher: "RIAA"
+  date: "2026-03-16"
+  url: "https://www.riaa.com/reports/2025-year-end-music-industry-revenue-report-riaa/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "US recorded-music revenue reached a record $11.5 billion at wholesale value in 2025."
+      quote: "US wholesale annual revenue achieved a record high of $11.5 billion"
+    - claim: "Vinyl grew 9.3% in 2025, its 19th consecutive year of growth, passing $1 billion in US sales, nearly half of the format's global total."
+      quote: "In 19th consecutive year of growth (+9.3% in 2025), vinyl surpassed $1B in the US sales – nearly 50% of the format's global total."
+    - claim: "In 2025 vinyl earned more than three times CD revenue and sold 46.8 million units versus 29.5 million CDs."
+      quote: "Vinyl continued to lead physical formats in 2025, adding more than 3x the revenue of CDs and selling 46.8M units versus 29.5M."
+  notes: "Release date per billboard_riaa_2025 ('released Monday (March 16)'). Press release title: 'RIAA Reports: US Recorded Music Annual Revenue Achieves New High of $11.5 Billion in 2025'."
+
+- key: billboard_riaa_2025
+  type: news
+  authors: ["Billboard"]
+  title: "U.S. Recorded Music Revenue Hit $11.5B in 2025 Amid Solid Growth in Paid Subscriptions, Vinyl: RIAA"
+  container: "Billboard"
+  date: "2026-03"
+  url: "https://www.billboard.com/pro/riaa-2025-music-report-revenue-streaming-vinyl/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The RIAA 2025 year-end report was released on Monday, March 16, 2026, and reports wholesale figures."
+      quote: "The report was released Monday (March 16) and reflects wholesale figures that the RIAA now uses for its reporting."
+    - claim: "2025 US recorded-music revenue was $11.54 billion, up 3.1% year over year."
+      quote: "U.S. recorded music saw record revenue of $11.54 billion in 2025, an increase of 3.1% year-over-year"
+    - claim: "US physical-format revenue rose 5% to $1.38 billion in 2025, driven by vinyl."
+      quote: "Overall physical revenue increased 5% year-over-year to $1.38 billion — up from $1.32 billion in 2024 — thanks to vinyl's continued growth."
+    - claim: "Trade coverage put 2025 vinyl revenue at $1.04 billion wholesale (46.8M units), up from $954.4 million (43.4M units) in 2024."
+      quote: "vinyl revenue grew 9.3% to $1.04 billion from sales of 46.8 million units, up from $954.4 million and 43.4 million units in 2024"
+  notes: "The last claim came from a search summary merging Billboard, Hollywood Reporter, Music Week and Music Business Worldwide coverage; confirm the $1.04B/$954.4M wholesale figures against the RIAA PDF before citing."
+
+- key: musically_riaa_h1_2026
+  type: news
+  authors: ["Music Ally"]
+  title: "US recorded-music revenues grew by 6.9% in the first half of 2026"
+  container: "Music Ally"
+  date: "2026-09-01"
+  url: "https://musically.com/2026/09/01/us-recorded-music-revenues-grew-by-6-9-in-the-first-half-of-2026/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The RIAA reported US recorded-music revenue of $6 billion in H1 2026, up 6.9% year over year."
+      quote: "U.S. recorded music revenues reached $6 billion during the first half of 2026, representing a 6.9% increase from the same period in 2025"
+    - claim: "H1 2026 vinyl revenue rose 17.7% to $554 million."
+      quote: "Vinyl sales are up 17.7% to $554 million"
+    - claim: "H1 2026 physical revenue rose 25.9%, with CDs up 58.6%."
+      quote: "Physical music revenue jumped 25.9%, driven by a 17.7% increase in vinyl and a 58.6% surge in CD revenue."
+  notes: "Search summary merged coverage of the RIAA 2026 Mid-Year report (Music Ally, Billboard, MusicRow, The Source); the RIAA page itself was blocked. Date from URL path."
+
+- key: musictrades_census_2025
+  type: report
+  authors: ["Music Trades"]
+  title: "Sales Statistics on All Music and Sound Equipment (Music Industry Census)"
+  container: "Music Trades"
+  publisher: "Music Trades Corp."
+  date: "n.d."
+  url: "https://musictrades.com/music-industry-census-report/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Music Trades estimates US retail sales of music products fell 0.8% to $8.2 billion in 2025, from $8.3 billion in 2024."
+      quote: "The estimated U.S. retail value of music products declined 0.8% to $8.2 billion in 2025, from the $8.3 billion level in 2024."
+  notes: "Search results also listed https://www.musictrades.com/census.html; the sentence may come from either page."
+
+- key: musictrades_global_2025
+  type: report
+  authors: ["Music Trades"]
+  title: "Global Music Market (Global 225 report)"
+  container: "Music Trades"
+  publisher: "Music Trades Corp."
+  date: "n.d."
+  url: "https://musictrades.com/top-225-global-report/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Music-products sales in the world's leading markets were flat at $17.7 billion in 2025."
+      quote: "In 2025, the aggregate volume of music products sold in the world's leading markets was essentially unchanged at $17.7 billion"
+    - claim: "Global music-products revenue has stabilized after falling from a COVID-era peak of $19.5 billion."
+      quote: "having trended down over the past five years from the COVID-era high-water mark of $19.5 billion, revenues appear to have stabilized"
+
+- key: musictrades_proaudio_census
+  type: report
+  authors: ["Music Trades"]
+  title: "Pro Audio Census Data"
+  container: "Music Trades"
+  publisher: "Music Trades Corp."
+  date: "n.d."
+  url: "https://www.musictrades.com/audio-and-sound-equipment.html"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Music Trades' pro-audio census product (microphones, loudspeakers, mixers, cables) describes the pro-audio market as worth about $1.6 billion."
+      quote: "Music Trades provides ten years of detailed unit and dollar sales data for microphones, loudspeakers, mixers, cables, and related pro audio products, with the pro audio market valued at $1.6 billion."
+  notes: "Product page for a paywalled dataset; the year of the $1.6B figure was not visible. Treat as order-of-magnitude for the US pro-audio segment."
+
+- key: installation_futuresource_loudspeakers
+  type: news
+  authors: ["Installation"]
+  title: "Pro loudspeaker market to surpass $4bn by 2029"
+  container: "Installation (installation-international.com)"
+  date: "n.d."
+  url: "https://www.installation-international.com/technology/audio/pro-loudspeaker-market-on-course-to-top-4bn-by-2029"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Futuresource Consulting values the global professional loudspeaker market at $3.3 billion in 2025 and forecasts more than $4 billion by 2029."
+      quote: "The global professional loudspeaker market was valued at $3.3 billion in 2025 and is forecast to surpass $4 billion by 2029, according to Futuresource Consulting's newly released report."
+    - claim: "Touring and rental is the fastest-growing pro-loudspeaker vertical."
+      quote: "Touring and rental remains the fastest-growing vertical, fuelled by record global touring schedules, major festivals and large-format live productions."
+  notes: "Trade-press report of Futuresource data; publication date not visible (content implies 2026)."
+
+- key: forbes_reverb_2025
+  type: article
+  authors: ["Mark Sparrow"]
+  title: "Reverb Could Be The Place To Find That Vintage Audio Gear You're After"
+  container: "Forbes"
+  date: "2025-02-11"
+  url: "https://www.forbes.com/sites/marksparrow/2025/02/11/reverb-could-be-the-place-to-find-that-vintage-audio-gear-youre-after/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Per Reverb marketplace data reported by Forbes, demand for lightly used microphones rose sharply and sales hit an all-time high in 2024."
+      quote: "Over the last three years, demand for brand-new mics has tailed off slightly but demand for 'gently used' mics has increased dramatically, resulting in sales hitting an all-time high during 2024."
+  notes: "Company-supplied data relayed by a Forbes contributor."
+
+- key: magnetic_reverb_2025
+  type: article
+  authors: ["Magnetic Magazine"]
+  title: "Reverb's Cyril Nigg Talks Tariffs, Independence, and Why the Used Market Is Thriving"
+  container: "Magnetic Magazine"
+  date: "2025-10"
+  url: "https://magneticmag.com/2025/10/reverbs-cyril-nigg-talks-tariffs-independence-and-why-the-used-market-is-thriving/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "According to Reverb's analytics lead, rising import costs and tariffs pushed more musicians toward used gear in 2025."
+      quote: "Rising import costs and shifting tariffs have pushed more players toward used gear, reshaping the way they think about value and sustainability."
+  notes: "Interview with Reverb's Senior Director of Analytics. Date from URL path."
+
+- key: headphonesty_tube_shortage_2025
+  type: article
+  authors: ["Headphonesty"]
+  title: "An Ongoing Tube Shortage Is Pushing High-End Audio to Its Breaking Point, Warns Industry Insider"
+  container: "Headphonesty"
+  date: "2025-09"
+  url: "https://www.headphonesty.com/2025/09/ongoing-tube-shortage-breaking-high-end-audio/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Factory closures, sanctions and material shortages have made vacuum tubes harder to produce and costlier to ship."
+      quote: "Factory closures, sanctions, and material shortages have made tubes harder to produce and more expensive to ship."
+    - claim: "Manley Labs' CEO reports that audio companies are stockpiling tubes and warns the market is close to collapse."
+      quote: "EveAnna Manley, CEO of Manley Labs, says companies are already stockpiling to survive and warns that the market is closer to collapse than most realize."
+    - claim: "The tube supply crisis began in early 2022 with Russia's invasion of Ukraine."
+      quote: "the vacuum tube market hit a crisis point in early 2022 when Russia invaded Ukraine"
+  notes: "Date from URL path."
+
+- key: headphonesty_vintage_prices_2025
+  type: article
+  authors: ["Headphonesty"]
+  title: "Vintage Audio Prices Are Going out of Control and Collectors Are to Blame, Says Industry Insider"
+  container: "Headphonesty"
+  date: "2025-07"
+  url: "https://www.headphonesty.com/2025/07/collectors-driving-vintage-audio-prices-crash/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Headphonesty reported an industry insider's view that collector demand is driving vintage audio prices sharply higher."
+      quote: "Vintage Audio Prices Are Going out of Control and Collectors Are to Blame, Says Industry Insider"
+  notes: "Quote is the article headline as shown in search results; qualitative evidence only. Date from URL path."
+
+# =====================================================================
+# D. AI-FOR-MAINTENANCE LANDSCAPE: market estimates and dated developments
+# =====================================================================
+
+- key: iota_pdm
+  type: article
+  authors: ["IoT Analytics"]
+  title: "Predictive maintenance market: 5 highlights for 2024 and beyond"
+  container: "IoT Analytics"
+  date: "n.d."
+  url: "https://iot-analytics.com/predictive-maintenance-market/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "IoT Analytics sized the global predictive-maintenance market at $5.5 billion in 2022 with an estimated 17% CAGR to 2028."
+      quote: "The global predictive maintenance market grew to $5.5 billion in 2022 with an estimated CAGR of 17% until 2028"
+  notes: "Page date not visible; the title indicates a 2024 publication. The quote appeared in a multi-publisher search summary; attribution by the 2022 base year and 2028 horizon, which only this publisher uses."
+
+- key: mnm_pdm_2026
+  type: press_release
+  authors: ["MarketsandMarkets"]
+  title: "Predictive Maintenance Market worth $23.79 billion by 2031"
+  publisher: "MarketsandMarkets"
+  date: "n.d."
+  url: "https://www.marketsandmarkets.com/PressReleases/operational-predictive-maintenance.asp"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "MarketsandMarkets forecasts the predictive-maintenance market to grow from $13.89 billion in 2026 to $23.79 billion by 2031 (11.4% CAGR)."
+      quote: "the Predictive Maintenance market is expected to grow from USD 13.89 billion in 2026 to USD 23.79 billion by 2031, reflecting a CAGR of 11.4% during the forecast period"
+  notes: "Release date not visible; forecast period 2026-2031 (report page: https://www.marketsandmarkets.com/Market-Reports/operational-predictive-maintenance-market-8656856.html)."
+
+- key: gvr_pdm
+  type: press_release
+  authors: ["Grand View Research"]
+  title: "Predictive Maintenance Market To Reach $98.16Bn By 2033"
+  publisher: "Grand View Research"
+  date: "n.d."
+  url: "https://www.grandviewresearch.com/press-release/global-predictive-maintenance-market"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Grand View Research sizes the predictive-maintenance market at $14.2 billion in 2025, reaching $98.1 billion by 2033 (27.9% CAGR)."
+      quote: "The predictive maintenance market size was $14.2 billion in 2025 and is projected to grow from $17.5 billion in 2026 to $98.1 billion by 2033, at a CAGR of 27.9%."
+
+- key: fbi_pdm
+  type: report
+  authors: ["Fortune Business Insights"]
+  title: "Predictive Maintenance Market Size, Share | Report, 2034"
+  publisher: "Fortune Business Insights"
+  date: "n.d."
+  url: "https://www.fortunebusinessinsights.com/predictive-maintenance-market-102104"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Fortune Business Insights values the predictive-maintenance market at $13.65 billion in 2025, reaching $97.37 billion by 2034 (24.3% CAGR)."
+      quote: "The global predictive maintenance market size was valued at USD 13.65 billion in 2025 and is projected to grow from USD 17.11 billion in 2026 to USD 97.37 billion by 2034, exhibiting a CAGR of 24.30%."
+
+- key: rnm_ai_pdm_2025
+  type: press_release
+  authors: ["ResearchAndMarkets.com"]
+  title: "AI-Based Predictive Maintenance Market Report 2025-2030: A Projected US$1.69 Billion Landscape - Businesses Must Invest in Cloud and Edge Technologies for Future Success"
+  container: "GlobeNewswire"
+  date: "2025-04-02"
+  url: "https://www.globenewswire.com/news-release/2025/04/02/3054012/28124/en/AI-Based-Predictive-Maintenance-Market-Report-2025-2030-A-Projected-US-1-69-Billion-Landscape-Businesses-Must-Invest-in-Cloud-and-Edge-Technologies-for-Future-Success.html"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "ResearchAndMarkets projects a much narrower 'AI-based predictive maintenance' market of about US$1.69 billion over its 2025-2030 horizon."
+      quote: "AI-Based Predictive Maintenance Market Report 2025-2030: A Projected US$1.69 Billion Landscape"
+  notes: "Quote is the press-release headline; the year to which US$1.69B applies is not stated in it. Date from URL path."
+
+- key: ptc_servicemax_ai_2025
+  type: press_release
+  authors: ["PTC Inc."]
+  title: "PTC Launches ServiceMax AI, a Generative AI-Powered Field Service Assistant"
+  publisher: "PTC Inc."
+  date: "2025-02-12"
+  url: "https://www.ptc.com/en/news/2025/ptc-launches-servicemax-ai"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "PTC released ServiceMax AI, a generative-AI field-service assistant, on February 12, 2025."
+      quote: "PTC announced the release of ServiceMax AI on February 12, 2025. ServiceMax AI is a field service management assistant powered by generative artificial intelligence (GenAI)."
+    - claim: "ServiceMax AI grounds its answers in each asset's documented history, including service history and known resolutions."
+      quote: "It leverages the full documented history of a field asset stored in the ServiceMax platform, including equipment data, service history, and known service resolutions"
+    - claim: "Technicians can query ServiceMax AI about a job or asset, automate documentation and receive predictive-maintenance recommendations."
+      quote: "Technicians can use ServiceMax AI Chat to answer questions about a specific job or asset, automate manual documentation and scheduling tasks, and review proactive recommendations for predictive maintenance."
+  notes: "Also distributed via PR Newswire (https://www.prnewswire.com/news-releases/ptc-launches-servicemax-ai-a-generative-ai-powered-field-service-assistant-302374226.html)."
+
+- key: augury_series_f_2025
+  type: news
+  authors: ["SiliconANGLE"]
+  title: "Augury raises $75M for AI-driven industrial equipment health and repair process optimization"
+  container: "SiliconANGLE"
+  date: "2025-02-19"
+  url: "https://siliconangle.com/2025/02/19/augury-raises-75m-ai-driven-industrial-equipment-health-repair-process-optimization/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Augury, an AI machine-health company, raised a $75 million Series F led by Lightrock in February 2025 while keeping a $1 billion valuation."
+      quote: "On February 19, AI-based industrial software provider Augury announced it had raised $75 million in Series F funding, spearheaded by Lightrock, while retaining its $1 billion valuation."
+    - claim: "Augury reports five-fold revenue growth since its 2021 round (company claim)."
+      quote: "Since its last $180 million funding round in 2021, Augury has witnessed a five-fold increase in revenues and tripled its customer base of Fortune 500 firms"
+  notes: "Company release: https://www.augury.com/media-center/press/augury-announces-75-million-of-funding-and-maintains-1b-valuation-as-it-accelerates-leadership-in-industrial-ai-solutions/"
+
+- key: siemens_maintenance_copilot_2025
+  type: press_release
+  authors: ["Siemens AG"]
+  title: "Siemens expands Industrial Copilot with New generative AI-powered Maintenance Offering"
+  publisher: "Siemens AG"
+  date: "2025-03-24"
+  url: "https://press.siemens.com/global/en/pressrelease/siemens-expands-industrial-copilot-new-generative-ai-powered-maintenance-offering"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Siemens announced a generative-AI maintenance offering for its Industrial Copilot on March 24, 2025."
+      quote: "On March 24, 2025, Siemens announced that the Industrial Copilot is revolutionizing industry by enabling customers to leverage generative AI across the entire value chain"
+    - claim: "The entry package combines AI-powered repair guidance with basic predictive maintenance (Senseye)."
+      quote: "an Entry Package that provides an accessible and cost-effective introduction to predictive maintenance, combining AI-powered repair guidance with basic predictive capabilities"
+    - claim: "Siemens reports that pilot users of the maintenance copilot saved on average 25% of reactive maintenance time (vendor-reported)."
+      quote: "First pilot use cases showed that the Industrial Copilot for maintenance helps save on average 25% reactive maintenance time."
+
+- key: maintainx_series_d_2025
+  type: press_release
+  authors: ["MaintainX"]
+  title: "MaintainX Secures $150M to Lead AI in Asset Management"
+  publisher: "MaintainX"
+  date: "2025-07-09"
+  url: "https://www.getmaintainx.com/newsroom/maintainx-raises-150m"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "MaintainX announced a $150 million Series D on July 9, 2025."
+      quote: "On July 9, MaintainX announced a $150 million Series D funding round"
+    - claim: "The round valued MaintainX at $2.5 billion, with $254 million raised in total."
+      quote: "This investment brings the total raised to $254M while reaching a new valuation of $2.5B."
+  notes: "Year corroborated by coverage dated 2025-07-10 (https://investclub.sv/2025/07/10/maintainx-raises-150-million-at-a-2-5-billion-valuation/) and Facilities Dive."
+
+- key: ifixit_fixbot_2025
+  type: news
+  authors: ["9to5Mac"]
+  title: "iFixit launches FixBot AI repair helper, with free and paid versions"
+  container: "9to5Mac"
+  date: "2025-12-09"
+  url: "https://9to5mac.com/2025/12/09/ifixit-launches-fixbot-ai-repair-helper-with-free-and-paid-versions/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "iFixit launched FixBot, a consumer AI repair assistant meant to help users work out what is wrong and how to fix it (December 2025)."
+      quote: "iFixit has launched a new AI repair assistant known as FixBot, which the company says will make it faster and easier than ever before to figure out what's wrong and how to fix it."
+    - claim: "FixBot draws on iFixit's 125,000 repair guides, community forums and PDF manuals."
+      quote: "FixBot is trained on iFixit's 125,000 repair guides, community forums, and a huge repository of PDF manuals."
+    - claim: "Visual and voice diagnostics are reserved for FixBot's paid tier."
+      quote: "You'll need the paid tier to access step-by-step voice guides alongside both visual and voice diagnostics."
+  notes: "iFixit's own announcement: https://www.ifixit.com/News/114700/introducing-fixbot ('Introducing FixBot: We Built an AI That Actually Knows How to Fix Things'). Quotes come from a summary that merged 9to5Mac, Gizmodo and iFixit coverage."
+
+- key: keysight_ads_ai_2025
+  type: press_release
+  authors: ["Keysight Technologies"]
+  title: "Keysight Accelerates Electronic Design Productivity with Secure AI-Powered Assistants"
+  publisher: "Keysight Technologies"
+  date: "2025-12-16"
+  url: "https://www.keysight.com/us/en/about/newsroom/news-releases/2025/1216_pr26-017-keysight-accelerates-electronic-design-productivity-with-secure-ai-powered-assistants.html"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Keysight added AI chat and copilot assistants to its Advanced Design System (ADS) electronic-design software."
+      quote: "Keysight announced AI-powered Chat and Copilot assistants for its Advanced Design System (ADS), delivering natural language capabilities that accelerate design workflows while maintaining enterprise-grade security."
+    - claim: "The assistants ship with ADS 2026 Update 1; further copilot features are in early access."
+      quote: "The EDA AI Learning Assistants are available with ADS 2026 Update 1, with additional Copilot features available through an early access program."
+  notes: "Date from URL path."
+
+- key: flux_funding_2026
+  type: news
+  authors: ["SiliconANGLE"]
+  title: "Flux nabs $37M to automate printed circuit board development with AI"
+  container: "SiliconANGLE"
+  date: "2026-02-27"
+  url: "https://siliconangle.com/2026/02/27/flux-nabs-37m-automate-printed-circuit-board-development-ai/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Flux, an AI hardware-design (PCB) platform, announced $37 million of new investment in February 2026, including a $27 million Series B led by 8VC."
+      quote: "Flux announced $37M of new investment in February 2026, including a $27M Series B led by 8VC, with participation from existing investors including Bain Capital Ventures, Liquid 2 Ventures, and Outsiders Fund."
+    - claim: "Flux's AI copilot automates PCB design from schematic to layout and sourcing (company claim)."
+      quote: "The platform's AI Copilot automates PCB design from idea to manufacturing, including schematics, layout, and supply chain integration."
+  notes: "Company post: https://www.flux.ai/p/blog/we-raised-37m-to-take-the-hard-out-of-hardware. Summary merged SiliconANGLE, Yahoo Finance and Flux sources."
+
+- key: msft_d365_wave1_2026
+  type: web
+  authors: ["Ryan Martin (Microsoft)"]
+  title: "2026 release wave 1 plans for Microsoft Dynamics 365, Microsoft Power Platform, and Copilot Studio offerings"
+  container: "Microsoft Dynamics 365 Blog"
+  publisher: "Microsoft"
+  date: "2026-03-18"
+  url: "https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/03/18/2026-release-wave-1-plans-for-microsoft-dynamics-365-microsoft-power-platform-and-copilot-studio-offerings/"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "Microsoft's 2026 wave 1 plans for Dynamics 365 Field Service target technician productivity, scheduling and work-order management."
+      quote: "Dynamics 365 Field Service strengthens service execution across technician productivity, resource scheduling, and work order management."
+    - claim: "The 2026 wave 1 Field Service investments include agent-based scheduling through the Scheduling Operations Agent."
+      quote: "Investments focus on mobile usability and reliability, intelligent scheduling through the Scheduling Operations Agent, and end‑to‑end execution across assets, projects, and financial operations in this release wave."
+
+- key: siemens_eigen_agent_2026
+  type: news
+  authors: ["Tech Jacks Solutions"]
+  title: "Siemens Launches Eigen Engineering Agent at Hannover Messe, Industrial AI Shifts to Autonomous Execution"
+  container: "Tech Jacks Solutions AI Brief"
+  date: "2026-04"
+  url: "https://techjacksolutions.com/ai-brief/siemens-launches-eigen-engineering-agent-at-hannover-messe-i/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Siemens launched its Eigen Engineering Agent at Hannover Messe on April 20, 2026."
+      quote: "Siemens launched the Eigen Engineering Agent at Hannover Messe on April 20, 2026, positioning it as a move beyond AI-assisted engineering toward what the company calls autonomous task completion."
+    - claim: "The agent is embedded in Siemens TIA Portal and covers troubleshooting as well as PLC, HMI, drive, hardware, network and documentation workflows."
+      quote: "The Eigen Engineering Agent is a workflow-native industrial AI capability embedded within TIA Portal, supporting PLC, HMI, drive, hardware, network, documentation, and troubleshooting workflows."
+  notes: "Secondary AI-news brief (lower reliability); Siemens press pages were blocked. Siemens event page (Hannover Messe, April 20-24, 2026): https://press.siemens.com/global/en/event/siemens-hannover-messe-2026. An Everest Group review of the announcements exists (https://www.everestgrp.com/report/egr-2026-75-r-8159/) but was not read."
+
+- key: servicenow_knowledge_2026
+  type: press_release
+  authors: ["ServiceNow"]
+  title: "ServiceNow brings Autonomous Workforce to every major business function"
+  publisher: "ServiceNow"
+  date: "2026-05"
+  url: "https://newsroom.servicenow.com/press-releases/details/2026/ServiceNow-brings-Autonomous-Workforce-to-every-major-business-function/default.aspx"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "At Knowledge 2026 (May 2026) ServiceNow expanded its 'Autonomous Workforce' of AI specialists across IT, CRM, employee service and security."
+      quote: "At Knowledge 2026 in May 2026, ServiceNow announced a major expansion of its Autonomous Workforce, launching new AI specialists for IT, customer relationship management (CRM), employee service teams, and security and risk."
+  notes: "Not field-service-specific. Coverage dated 2026-05-05: https://fortune.com/2026/05/05/servicenow-knowledge-2026-autonomous-workforce-microsoft-nvidia-ai-announcements/"
+
+- key: ibm_mas_92_2026
+  type: press_release
+  authors: ["IBM"]
+  title: "Introducing Maximo Application Suite 9.2: AI built for asset management that keeps operations running"
+  publisher: "IBM"
+  date: "2026-06-25"
+  url: "https://www.ibm.com/new/announcements/introducing-maximo-application-suite-9-2"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "IBM announced Maximo Application Suite 9.2 on June 25, 2026."
+      quote: "IBM announced Maximo Application Suite 9.2 on June 25, 2026."
+    - claim: "MAS 9.2 turns the Maximo Assistant into an agentic 'digital coworker' that can plan and complete multi-step maintenance tasks."
+      quote: "Maximo Application Suite 9.2 introduces the most significant evolution of the Maximo Assistant since its launch: agentic workflows, allowing it to act as a conversational digital coworker that can plan and complete complex tasks on behalf of users."
+    - claim: "MAS 9.2 adds an MCP server so customers can connect their own AI agents to Maximo Manage APIs."
+      quote: "With capabilities such as the MCP Server, organizations can bring their own agents and integrate them directly with Maximo Manage APIs"
+  notes: "The earlier Maximo 9.1 release introduced the watsonx/Granite-based Maximo Assistant (search results suggest mid-2025; date not confirmed)."
+
+- key: msft_d365_field_service_page
+  type: web
+  authors: ["Microsoft"]
+  title: "Field Service Management Software | Microsoft Dynamics 365"
+  publisher: "Microsoft"
+  date: "n.d."
+  url: "https://www.microsoft.com/en-us/dynamics-365/products/field-service"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "Microsoft markets Copilot in Dynamics 365 Field Service as able to search lengthy product manuals to help resolve issues faster."
+      quote: "Ask Copilot in Dynamics 365 Field Service to search lengthy product manuals and find relevant answers to resolve issues faster."
+    - claim: "Microsoft offers a Scheduling Operations Agent that re-optimizes technician schedules during the day."
+      quote: "Scheduling Operations Agent - Equip dispatchers with an agent to optimize technician schedules as conditions change throughout the day."
+
+- key: msft_copilot_field_service_2023
+  type: web
+  authors: ["Lili Cheng (Microsoft)"]
+  title: "Introducing Copilot in Dynamics 365 Field Service, helping your frontline deliver exceptional service with next-generation AI"
+  container: "Microsoft Dynamics 365 Blog"
+  publisher: "Microsoft"
+  date: "2023-08-09"
+  url: "https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2023/08/09/introducing-copilot-in-dynamics-365-field-service-helping-your-frontline-deliver-exceptional-service-with-next-generation-ai/"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "Microsoft introduced Copilot in Dynamics 365 Field Service in August 2023 (background: field-service copilots predate the 2025-26 agent wave)."
+      quote: "Today, we're introducing Copilot in Dynamics 365 Field Service, bringing the power of next-generation AI to service professionals on the frontline to speed time to resolution."
+
+- key: forbes_tractian_2024
+  type: article
+  authors: ["Jim Vinoski"]
+  title: "'Industrial Copilot' Tractian Raises Another $120 Million"
+  container: "Forbes"
+  date: "2024-12-05"
+  url: "https://www.forbes.com/sites/jimvinoski/2024/12/05/industrial-copilot-tractian-raises-another-120-million/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Tractian raised a $120 million Series C led by Sapphire Ventures in December 2024, bringing total funding to $200 million."
+      quote: "Led by Sapphire Ventures, the $120 million Series C raise brings the company's total funding to $200 million from investors including General Catalyst, Next47, NGP Capital and Y Combinator."
+  notes: "Background (2024). No 2025-26 Tractian funding round appeared in our searches. Company post: https://tractian.com/en/blog/tractian-raises-series-c-to-eliminate-industrial-downtime-worldwide"
+
+- key: tsia_field_services_2026
+  type: article
+  authors: ["Technology & Services Industry Association (TSIA)"]
+  title: "The State of Field Services 2026: How AI Restores Humanity"
+  container: "TSIA Blog"
+  publisher: "TSIA"
+  date: "2026"
+  url: "https://www.tsia.com/blog/state-of-field-services-2026-ai"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "TSIA reports that 71.4% of field-services organizations are investing in AI-guided troubleshooting and 67.9% in AI chatbots/virtual assistants."
+      quote: "71.4% of field services organizations are investing in AI-guided troubleshooting, and 67.9% are implementing AI-powered chatbots and virtual assistants."
+  notes: "Year from title; month not visible. Sample and methodology not visible in snippet."
+
+# =====================================================================
+# E. LLMs IN ELECTRONICS / CIRCUIT REASONING, AND HALLUCINATION
+# =====================================================================
+
+- key: skelic_circuit_2025
+  type: paper
+  authors: ["Lejla Skelic and co-authors (full list on the arXiv record)"]
+  title: "CIRCUIT: A Benchmark for Circuit Interpretation and Reasoning Capabilities of LLMs"
+  container: "arXiv:2502.07980"
+  date: "2025-02"
+  url: "https://arxiv.org/abs/2502.07980"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The CIRCUIT benchmark contains 510 question-answer pairs on analog-circuit topics."
+      quote: "The CIRCUIT dataset consists of 510 question-answer pairs spanning various levels of analog-circuit-related subjects."
+    - claim: "The best model tested, GPT-4o, reached only 48.04% accuracy on final numerical answers."
+      quote: "The best-performing model on the dataset, GPT-4o, achieves 48.04% accuracy when evaluated on the final numerical answer."
+    - claim: "Under stricter unit-test grading GPT-4o passed only 27.45%, showing difficulty with circuit topology reasoning."
+      quote: "GPT-4o can only pass 27.45% of the unit tests, highlighting that the most advanced LLMs still struggle with understanding circuits"
+  notes: "Also on OpenReview (https://openreview.net/forum?id=5iUUorHeM3) and as an MIT M.Eng. thesis (https://dspace.mit.edu/bitstream/handle/1721.1/159084/skelic-lejla-meng-eecs-2025-thesis.pdf). Date from arXiv identifier."
+
+- key: li_eee_bench_2025
+  type: paper
+  authors: ["Ming Li", "Jike Zhong", "Tianle Chen", "Yuxiang Lai", "Konstantinos Psounis"]
+  title: "EEE-Bench: A Comprehensive Multimodal Electrical And Electronics Engineering Benchmark"
+  container: "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR 2025); arXiv:2411.01492"
+  publisher: "IEEE/CVF"
+  date: "2025"
+  url: "https://openaccess.thecvf.com/content/CVPR2025/html/Li_EEE-Bench_A_Comprehensive_Multimodal_Electrical_And_Electronics_Engineering_Benchmark_CVPR_2025_paper.html"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "EEE-Bench has 2,860 curated problems across 10 electrical/electronics subdomains including analog circuits."
+      quote: "The benchmark consists of 2860 hand-picked and carefully curated multiple-choice and free-form problems spanning 10 essential subdomains such as analog circuits, control systems, etc."
+    - claim: "Multimodal foundation models averaged only 19.48%-46.78% and tended to ignore essential diagram content ('laziness')."
+      quote: "The results reveal notable deficiencies in current foundation models for EEE, including an average performance ranging from 19.48% to 46.78% and a tendency toward \"laziness\" in overlooking essential visual context."
+  notes: "The authors' repo (https://github.com/Jike338/EEE-Bench, fetched) confirms title and CVPR 2025 venue only."
+
+- key: zhao_mmcircuiteval_2025
+  type: paper
+  authors: ["Chenchen Zhao", "Zhengyuan Shi", "Xiangyu Wen", "Chengjie Liu", "others (see arXiv record)"]
+  title: "MMCircuitEval: A Comprehensive Multimodal Circuit-Focused Benchmark for Evaluating LLMs"
+  container: "arXiv:2507.19525 (https://arxiv.org/abs/2507.19525); also IEEE Xplore document 11240653"
+  date: "2025-07"
+  url: "https://github.com/cure-lab/MMCircuitEval"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "MMCircuitEval contains 3,614 expert-reviewed circuit QA pairs spanning digital and analog circuits across EDA stages."
+      quote: "MMCircuitEval comprises 3614 meticulously curated question-answer (QA) pairs spanning digital and analog circuits across critical EDA stages—ranging from general knowledge and specifications to front-end and back-end design."
+    - claim: "Evaluated LLMs show significant performance gaps, especially on back-end design and complex computations."
+      quote: "Extensive evaluations reveal significant performance gaps among existing LLMs, particularly in back-end design and complex computations"
+  notes: "url is the authors' official repository, whose README reproduces the paper abstract verbatim (fetched). Date from arXiv identifier."
+
+- key: shi_amsbench_2025
+  type: paper
+  authors: ["Yichen Shi", "Ze Zhang", "Hongyang Wang", "Zhuofu Tao", "Zhongyi Li", "Bingyu Chen", "Yaxin Wang", "Zhiping Yu", "Ting-Jung Lin", "Lei He"]
+  title: "AMSbench: A Comprehensive Benchmark for Evaluating MLLM Capabilities in AMS Circuits"
+  container: "arXiv:2505.24138 (https://arxiv.org/abs/2505.24138)"
+  date: "2025-05"
+  url: "https://github.com/Why0912/AMSBench"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "AMSbench has about 8,000 analog/mixed-signal questions and evaluated eight models including GPT-4o and Gemini 2.5 Pro."
+      quote: "Our benchmark comprises approximately 8,000 test questions spanning multiple difficulty levels and assesses eight prominent models, including both open-source and proprietary solutions like GPT-4o and Gemini-2.5 Pro."
+    - claim: "Models identify components reasonably well but struggle to extract complete, accurate netlists from schematics."
+      quote: "Most models can perform basic component identification tasks reasonably well, but struggle with extracting complete and accurate netlists."
+    - claim: "Performance drops sharply on analysis and design tasks; models cannot generate valid testbenches."
+      quote: "Performance drops significantly in analysis and design tasks that require deep reasoning. Models find it difficult to fully comprehend performance trade-offs and are unable to generate valid testbenches."
+  notes: "url is the authors' repository README (fetched); arXiv page blocked. Date from arXiv identifier."
+
+- key: akbari_circuitsense_2025
+  type: paper
+  authors: ["Akbari (first author) and co-authors (full list on the arXiv record)"]
+  title: "CircuitSense: A Hierarchical MLLM Benchmark Bridging Visual Comprehension and Symbolic Reasoning in Engineering Design Process"
+  container: "arXiv:2509.22339; ICLR 2026"
+  date: "2025-09"
+  url: "https://arxiv.org/abs/2509.22339"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "CircuitSense evaluates circuit understanding on 8,006+ problems, from component schematics to system block diagrams."
+      quote: "CircuitSense is a comprehensive benchmark evaluating circuit understanding across a hierarchy through 8,006+ problems spanning component-level schematics to system-level block diagrams."
+    - claim: "Closed-source models exceed 85% on perception (component/topology recognition) but fall below 19% on symbolic derivation and analytical reasoning."
+      quote: "Closed-source models achieve over 85% accuracy on perception tasks involving component recognition and topology identification, yet their performance on symbolic derivation and analytical reasoning falls below 19%"
+  notes: "ICLR 2026 listing: https://mlanthology.org/iclr/2026/akbari2026iclr-circuitsense/. Date from arXiv identifier."
+
+- key: e2e_circuit_analysis_2025
+  type: paper
+  authors: ["Authors as listed on arXiv:2512.10159 (not captured)"]
+  title: "Enhancing Large Language Model-Based Systems for End-to-End Circuit Analysis Problem Solving"
+  container: "arXiv:2512.10159"
+  date: "2025-12"
+  url: "https://arxiv.org/abs/2512.10159"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Even Gemini 2.5 Pro struggles to solve circuit problems consistently when given text plus a circuit diagram."
+      quote: "Although Gemini 2.5 Pro shows improved capabilities in diagram interpretation and analog-circuit reasoning, it still struggles to consistently produce correct solutions when given both textual problem descriptions and circuit diagrams."
+    - claim: "Adding a vision detector plus a simulation loop that flags mismatches and makes the model revise corrects most errors."
+      quote: "The errors can be largely corrected by inserting a vision detector that isolates and correctly labels sources, followed by a simulation loop that flags mismatches and prompts the model to revise its work."
+    - claim: "The simulation-verified system reaches 97.59% accuracy on standard undergraduate problems and above 93% on hand-drawn variants."
+      quote: "The resulting system reaches 97.59 percent accuracy on standard undergraduate problems and stays above 93 percent on hand-drawn variants."
+  notes: "Closest published analogue to Differential's simulation-grounding. The second and third quotes may come from a secondary summary (Pith/Lacuna) rather than the abstract; confirm on arXiv. Date from arXiv identifier."
+
+- key: razavi_ai_analog_part1_2025
+  type: article
+  authors: ["Behzad Razavi"]
+  title: "Analog Design Experiments With AI—Part 1 [The Analog Mind]"
+  container: "IEEE Solid-State Circuits Magazine, vol. 17, no. 4, pp. 11-15 (Fall 2025)"
+  publisher: "IEEE"
+  date: "2025"
+  url: "http://www.seas.ucla.edu/brweb/papers/Journals/BR_SSCM_4_2025.pdf"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Razavi tested ChatGPT with 30 analysis questions on one- and two-transistor circuits."
+      quote: "The article evaluates ChatGPT's present abilities for analyzing analog circuits by posing 30 questions on one- and two-transistor circuits and examining its responses."
+    - claim: "ChatGPT answered about 60% of the questions incorrectly."
+      quote: "ChatGPT answers about 60% of the questions incorrectly."
+  notes: "Author-hosted PDF (blocked). Bibliographic details confirmed on the fetched razavi-bench README, which also cites Part 2: IEEE SSC Magazine vol. 18, no. 2, pp. 8-13, Spring 2026."
+
+- key: razavi_bench_2026
+  type: web
+  authors: ["Zhishuai Zhang"]
+  title: "Razavi-Bench: An Expert-Curated Benchmark for Analog-Design Reasoning"
+  container: "GitHub repository Arcadia-1/razavi-bench"
+  date: "2026-09"
+  url: "https://github.com/Arcadia-1/razavi-bench"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "Razavi-bench turns the 50 questions from Razavi's two IEEE SSC Magazine 'Analog Design Experiments With AI' articles into a reusable benchmark."
+      quote: "Razavi-bench packages the question-answer assessments from Behzad Razavi's Analog Design Experiments With AI Part 1 and Part 2 into a clean one-task-per-directory benchmark."
+    - claim: "The September 2026 leaderboard snapshot covers 54 model configurations and 8,100 answers."
+      quote: "The current active leaderboard is the September 29 snapshot covering 54 model configurations and 8,100 answers."
+    - claim: "The top-ranked model in the September 2026 snapshot (GPT-6 Astra) scores 95.50% overall: 100% on Part 1 and 88.75% on the harder Part 2."
+      quote: "| 1 | GPT-6 Astra | max | 95.50% | 100.00% | 88.75% |"
+    - claim: "The highest Part 2 score among the top ten entries is 92.08% (Claude Opus 5, xhigh effort)."
+      quote: "| 4 | Claude Opus 5 | xhigh | 94.00% | 95.28% | 92.08% |"
+    - claim: "The lowest Part 2 score among the top ten entries is 80.42% (GPT-6 Sol)."
+      quote: "| 10 | GPT-6 Sol | max | 90.33% | 96.94% | 80.42% |"
+    - claim: "Scores are assigned by LLM judges and the maintainers caution they do not replace expert review."
+      quote: "Automated judge scores, when present, are experiment metadata for transparency and re-grading. They are not a substitute for independent expert review."
+    - claim: "The benchmark includes an experimental simulator-assisted (ngspice) agentic evaluation mode."
+      quote: "direct multimodal QA, agentic multimodal QA, and an experimental agentic-ngspice-sky130 mode"
+  notes: "Community benchmark (not peer-reviewed); tests textbook analysis questions, not diagnosis of physical equipment. Contrast with razavi_ai_analog_part1_2025 (ChatGPT about 60% wrong on Part 1 in 2025)."
+
+- key: vungarala_spicepilot_2024
+  type: paper
+  authors: ["Deepak Vungarala", "Sakila Alam", "Arnob Ghosh", "Shaahin Angizi"]
+  title: "SPICEPilot: Navigating SPICE Code Generation and Simulation with AI Guidance"
+  container: "arXiv:2410.20553 (https://arxiv.org/abs/2410.20553)"
+  date: "2024-10"
+  url: "https://github.com/ACADLab/SPICEPilot"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "Generating SPICE code for analog circuits with LLMs remains challenging because of limited domain knowledge."
+      quote: "applying these models to SPICE code for analog circuits remains challenging due to limited domain-specific knowledge"
+    - claim: "The authors list hardware-specific LLM reasoning as an open limitation."
+      quote: "Additional work is required to improve LLM logical reasoning within hardware-specific contexts."
+  notes: "url is the authors' repository README (fetched). Date from arXiv identifier."
+
+- key: huang_hallucination_survey_2025
+  type: paper
+  authors: ["Lei Huang", "Weijiang Yu", "Weitao Ma", "Weihong Zhong", "Zhangyin Feng", "Haotian Wang", "Qianglong Chen", "Weihua Peng", "Xiaocheng Feng", "Bing Qin", "Ting Liu"]
+  title: "A Survey on Hallucination in Large Language Models: Principles, Taxonomy, Challenges, and Open Questions"
+  container: "ACM Transactions on Information Systems 43(2) (doi:10.1145/3703155); arXiv:2311.05232"
+  publisher: "ACM"
+  date: "2025-01"
+  url: "https://github.com/LuckyyySTA/Awesome-LLM-hallucination"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "The survey divides LLM hallucination into two primary types: factuality hallucination and faithfulness hallucination."
+      quote: "Two primary types of hallucination: factuality hallucination and faithfulness hallucination."
+  notes: "url is the first author's companion repository (fetched). The ACM TOIS publication details (Jan 2025, doi:10.1145/3703155) come from search results; the DOI page was blocked."
+
+- key: ji_hallucination_survey_2023
+  type: paper
+  authors: ["Ziwei Ji", "Nayeon Lee", "Rita Frieske", "Tiezheng Yu", "Dan Su", "Yan Xu", "Etsuko Ishii", "Ye Jin Bang", "Andrea Madotto", "Pascale Fung"]
+  title: "Survey of Hallucination in Natural Language Generation"
+  container: "ACM Computing Surveys 55(12), Article 248"
+  publisher: "ACM"
+  date: "2023-03"
+  url: "https://doi.org/10.1145/3571730"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Ji et al. survey hallucination across natural-language-generation tasks, including summarization, dialogue, generative QA, data-to-text and translation."
+      quote: "The survey covers Natural Language Generation (NLG), which is used in many downstream tasks such as summarization, dialogue generation, Generative Question Answering (GQA), data-to-text generation, and Machine Translation (MT)."
+
+- key: kalai_why_hallucinate_2025
+  type: paper
+  authors: ["Kalai", "Nachum", "Vempala", "Zhang"]
+  title: "Why Language Models Hallucinate"
+  container: "arXiv:2509.04664 (OpenAI)"
+  date: "2025-09"
+  url: "https://arxiv.org/abs/2509.04664"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "LLMs, like students on hard exams, tend to guess when uncertain, producing plausible but incorrect statements rather than admitting uncertainty."
+      quote: "Like students facing hard exam questions, large language models sometimes guess when uncertain, producing plausible yet incorrect statements instead of admitting uncertainty."
+    - claim: "The authors argue hallucinations persist because training and evaluation reward guessing over acknowledging uncertainty."
+      quote: "language models hallucinate because the training and evaluation procedures reward guessing over acknowledging uncertainty"
+  notes: "OpenAI summary page: https://openai.com/index/why-language-models-hallucinate/ (blocked). Date from arXiv identifier."
+
+# =====================================================================
+# F. STRATEGIC IMPLICATIONS: AI and workers, training, knowledge preservation
+# =====================================================================
+
+- key: brynjolfsson_genai_at_work_2023
+  type: paper
+  authors: ["Erik Brynjolfsson", "Danielle Li", "Lindsey R. Raymond"]
+  title: "Generative AI at Work"
+  container: "NBER Working Paper 31161; published in The Quarterly Journal of Economics 140(2): 889-942 (2025)"
+  publisher: "National Bureau of Economic Research"
+  date: "2023"
+  url: "https://www.nber.org/papers/w31161"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "In a field study of 5,179 customer-support agents, access to a generative-AI assistant was introduced in staggered fashion."
+      quote: "The research examined the staggered introduction of a generative AI-based conversational assistant using data from 5,179 customer support agents."
+    - claim: "The AI tool raised productivity 14% on average and 34% for novice and low-skilled workers, with minimal impact on experienced, highly skilled workers."
+      quote: "access to a generative AI-based tool increases productivity, as measured by issues resolved per hour, by 14% on average, including a 34% improvement for novice and low-skilled workers but with minimal impact on experienced and highly skilled workers"
+    - claim: "The authors interpret the tool as spreading top workers' best practices and speeding newer workers along the experience curve."
+      quote: "The evidence suggests that the AI model disseminates the best practices of more able workers and helps newer workers move down the experience curve."
+  notes: "Quoted figures match the NBER working-paper abstract. The published QJE version (https://academic.oup.com/qje/article/140/2/889/7990658) may report slightly different point estimates; check it before attaching these numbers to the QJE citation."
+
+- key: dellacqua_jagged_frontier_2023
+  type: paper
+  authors: ["Fabrizio Dell'Acqua", "Edward McFowland III", "Ethan R. Mollick", "Hila Lifshitz-Assaf", "Katherine Kellogg", "Saran Rajendran", "Lisa Krayer", "François Candelon", "Karim R. Lakhani"]
+  title: "Navigating the Jagged Technological Frontier: Field Experimental Evidence of the Effects of AI on Knowledge Worker Productivity and Quality"
+  container: "Harvard Business School working paper (SSRN 4573321); later published in Organization Science (doi:10.1287/orsc.2025.21838)"
+  date: "2023"
+  url: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4573321"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The preregistered experiment with Boston Consulting Group involved 758 knowledge workers."
+      quote: "examined the human performance implications of using AI to perform complex and knowledge-intensive work in a preregistered experiment involving 758 knowledge workers"
+    - claim: "On tasks inside the AI frontier, consultants using AI completed 12.2% more tasks, 25.1% faster, at higher quality."
+      quote: "subjects using AI outperformed those not using AI, completing 12.2% more tasks and completing them 25.1% more quickly on average while also delivering solutions of significantly improved quality"
+    - claim: "On a task outside the frontier, AI users were 19 percentage points less likely to reach a correct solution."
+      quote: "However, for a task outside the frontier, subjects using AI were 19 percentage points less likely to produce correct solutions."
+  notes: "2023 date supported by contemporaneous coverage (Harvard Crimson, 2023-10-13). Organization Science DOI appeared in search results; its publication date was not captured."
+
+- key: bastani_genai_learning_2025
+  type: paper
+  authors: ["Hamsa Bastani", "Osbert Bastani", "Alp Sungu", "Haosen Ge", "Özge Kabakcı", "Rei Mariman"]
+  title: "Generative AI without guardrails can harm learning: Evidence from high school mathematics"
+  container: "Proceedings of the National Academy of Sciences 122(26)"
+  publisher: "National Academy of Sciences"
+  date: "2025"
+  url: "https://doi.org/10.1073/pnas.2422633122"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "With GPT-4 access during practice, grades rose 48% (plain chat interface) and 127% (tutor with safeguards)."
+      quote: "having GPT-4 access while solving problems significantly improves performance, with 48% improvement in grades for GPT Base and 127% for GPT Tutor"
+    - claim: "When access was removed, students who had used the plain chat interface scored 17% worse than students who never had access."
+      quote: "when access is subsequently taken away, students actually perform worse than those who never had access, with a 17% reduction in grades for GPT Base"
+    - claim: "Safeguards such as giving teacher-designed hints instead of answers largely mitigated the learning harm."
+      quote: "carefully designed safeguards, especially asking the AI tutor to provide teacher-designed hints instead of giving away answers, can mitigate these negative effects"
+  notes: "A correction was published (doi:10.1073/pnas.2518204122); check it before quoting numbers."
+
+- key: lee_critical_thinking_2025
+  type: paper
+  authors: ["Hao-Ping (Hank) Lee", "Advait Sarkar", "Lev Tankelevitch", "Ian Drosos", "Sean Rintel", "Richard Banks", "Nicholas Wilson"]
+  title: "The Impact of Generative AI on Critical Thinking: Self-Reported Reductions in Cognitive Effort and Confidence Effects From a Survey of Knowledge Workers"
+  container: "CHI 2025"
+  publisher: "Microsoft Research / ACM"
+  date: "2025-04"
+  url: "https://www.microsoft.com/en-us/research/publication/the-impact-of-generative-ai-on-critical-thinking-self-reported-reductions-in-cognitive-effort-and-confidence-effects-from-a-survey-of-knowledge-workers/"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "The study surveyed 319 knowledge workers."
+      quote: "We survey 319 knowledge workers"
+    - claim: "Participants supplied 936 first-hand examples of using GenAI in work tasks."
+      quote: "Participants shared 936 first-hand examples of using GenAI in work tasks."
+    - claim: "Higher confidence in GenAI was associated with less critical thinking; higher self-confidence with more."
+      quote: "Higher confidence in GenAI is associated with less critical thinking, while higher self-confidence is associated with more critical thinking."
+
+- key: tomlinson_working_with_ai_2025
+  type: paper
+  authors: ["Kiran Tomlinson", "Sonia Jaffe", "Will Wang", "Scott Counts", "Siddharth Suri"]
+  title: "Working with AI: Measuring the Applicability of Generative AI to Occupations"
+  container: "Microsoft Research"
+  publisher: "Microsoft Research"
+  date: "2025-07"
+  url: "https://www.microsoft.com/en-us/research/publication/working-with-ai-measuring-the-occupational-implications-of-generative-ai/"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "The study analyses 200,000 anonymized Bing Copilot conversations to measure AI applicability by occupation."
+      quote: "We analyze a dataset of 200k anonymized and privacy-scrubbed conversations between users and Microsoft Bing Copilot."
+    - claim: "AI applicability scores are highest for knowledge-work occupation groups (computer/mathematical, office/administrative) and sales."
+      quote: "The highest AI applicability scores for knowledge work occupation groups such as computer and mathematical, and office and administrative support, as well as occupations such as sales."
+
+- key: anthropic_economic_index_2025
+  type: report
+  authors: ["Anthropic"]
+  title: "The Anthropic Economic Index"
+  publisher: "Anthropic"
+  date: "2025-02-10"
+  url: "https://www.anthropic.com/news/the-anthropic-economic-index"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "37.2% of Claude queries mapped to computer and mathematical occupations, including code debugging and network troubleshooting."
+      quote: "37.2% of queries sent to Claude were in this category, covering tasks like software modification, code debugging, and network troubleshooting."
+    - claim: "Occupations with heavy physical labor were least represented in Claude usage."
+      quote: "Unsurprisingly, occupations involving a high degree of physical labor, such as those in the “farming, fishing, and forestry” category (0.1% of queries), were least represented."
+    - claim: "Observed AI use leaned toward augmentation (57%) over automation (43%)."
+      quote: "AI use leans more toward augmentation (57%), where AI collaborates with and enhances human capabilities, compared to automation (43%), where AI directly performs tasks."
+
+- key: anthropic_labor_market_2026
+  type: report
+  authors: ["Maxim Massenkoff", "Peter McCrory"]
+  title: "Labor market impacts of AI: A new measure and early evidence"
+  publisher: "Anthropic"
+  date: "2026-03-05"
+  url: "https://www.anthropic.com/research/labor-market-impacts"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "Anthropic introduced 'observed exposure', combining theoretical LLM capability with real-world usage data."
+      quote: "We introduce a new measure of AI displacement risk, observed exposure, that combines theoretical LLM capability and real-world usage data, weighting automated (rather than augmentative) and work-related uses more heavily"
+    - claim: "Actual AI coverage of job tasks is still a fraction of theoretical capability."
+      quote: "AI is far from reaching its theoretical capability: actual coverage remains a fraction of what's feasible"
+    - claim: "No systematic unemployment increase is found for exposed workers since late 2022, but hiring of younger workers into exposed occupations appears to have slowed."
+      quote: "We find no systematic increase in unemployment for highly exposed workers since late 2022, though we find suggestive evidence that hiring of younger workers has slowed in exposed occupations"
+  notes: "Occupational-group values (e.g. installation and repair) appear only in the page's Figure 2 chart; see euronews_anthropic_exposure_2026."
+
+- key: euronews_anthropic_exposure_2026
+  type: news
+  authors: ["Euronews"]
+  title: "How AI will reshape work: Anthropic identifies the most exposed jobs"
+  container: "Euronews"
+  date: "2026-03-14"
+  url: "https://www.euronews.com/business/2026/03/14/how-ai-will-reshape-work-anthropic-identifies-the-most-exposed-jobs"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Reporting on Anthropic's March 2026 study, installation and repair occupations have a theoretical LLM task coverage of 18.4%, among the lowest groups."
+      quote: "Installation and repair has a theoretical AI coverage of 18.4%"
+  notes: "Figure 2 of anthropic_labor_market_2026 is the underlying source (value not present in that page's text). Also covered by Repairer Driven News (2026-03-16): https://www.repairerdrivennews.com/2026/03/16/anthropic-research-finds-skilled-trades-least-affected-by-job-loss-to-ai/"
+
+- key: bcg_field_service_ai_2026
+  type: report
+  authors: ["Boston Consulting Group"]
+  title: "Executive Perspectives June 2026: Field Service Operations (The Future of Field Service with Applied AI)"
+  publisher: "Boston Consulting Group"
+  date: "2026-06"
+  url: "https://www.bcg.com/assets/2026/executive-perspectives-future-of-field-service-with-applied-ai.pdf"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "BCG says technician-talent shortages are intensifying pain points in field service across industries."
+      quote: "Pain points continue to intensify due to a shortage of technician talent across multiple industries."
+    - claim: "BCG argues GenAI technician copilots raise productivity and capture knowledge across technology generations."
+      quote: "GenAI technician copilots are unleashing productivity and creating knowledge bases across technology generations"
+    - claim: "BCG estimates applied AI and agents could deliver 15%+ revenue and 5+ point gross-margin impact in field service."
+      quote: "There is an opportunity to drive 15%+ revenue impact and 5pp+ gross margin impact through applied AI and AI agents in field service."
+  notes: "Consultancy estimate (not independently verified). Earlier edition (March 2025): https://media-publications.bcg.com/BCG-Executive-Perspectives-Future-of-Field-Service-with-AI-2025-EP13-18Mar2025.pdf"

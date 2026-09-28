@@ -1,0 +1,238 @@
+# Canonical citation fields used when rendering reference lists.
+#
+# The sources_*.yaml files record HOW each claim was verified during the build
+# (often through a GitHub mirror, because the sandbox blocked official hosts).
+# This overlay supplies the canonical bibliographic form for the reference list:
+# official URLs, DOIs, journal names and clean author lists. Keys not listed here
+# render from the source entry as-is. Verification provenance stays in the
+# source files and in results/citation_check.json.
+
+# ---- people-authored papers -------------------------------------------------
+bandler_salama_1985:
+  container: "Proceedings of the IEEE"
+  volume: "vol. 73, no. 8, pp. 1279-1325"
+stenbakken_souders_stewart_1989:
+  authors: ["G. N. Stenbakken", "T. M. Souders", "G. W. Stewart"]
+  container: "IEEE Transactions on Instrumentation and Measurement"
+  volume: "vol. 38, no. 5, pp. 941-947"
+pattipati_alexandridis_1990:
+  container: "IEEE Transactions on Systems, Man, and Cybernetics"
+  volume: "vol. 20, no. 4, pp. 872-887"
+dekleer_williams_1987:
+  authors: ["J. de Kleer", "B. C. Williams"]
+  container: "Artificial Intelligence"
+  volume: "vol. 32, no. 1, pp. 97-130"
+lindley_1956:
+  container: "The Annals of Mathematical Statistics"
+  volume: "vol. 27, no. 4, pp. 986-1005"
+guo_2017_calibration:
+  container: "Proceedings of the 34th International Conference on Machine Learning (PMLR 70)"
+  volume: "pp. 1321-1330"
+  url: "https://proceedings.mlr.press/v70/guo17a.html"
+naeini_cooper_hauskrecht_2015:
+  container: "Proceedings of the AAAI Conference on Artificial Intelligence"
+  volume: "vol. 29, no. 1"
+zadrozny_elkan_2002:
+  container: "Proceedings of the 8th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining"
+ke_2017_lightgbm:
+  container: "Advances in Neural Information Processing Systems 30 (NIPS 2017)"
+  url: ""
+friedman_2001_gbm:
+  container: "The Annals of Statistics"
+  volume: "vol. 29, no. 5, pp. 1189-1232"
+dempster_laird_rubin_1977:
+  container: "Journal of the Royal Statistical Society: Series B"
+  volume: "vol. 39, no. 1, pp. 1-38"
+schwarz_1978_bic:
+  container: "The Annals of Statistics"
+  volume: "vol. 6, no. 2, pp. 461-464"
+mackay_1992_active_data_selection:
+  container: "Neural Computation"
+  volume: "vol. 4, no. 4, pp. 590-604"
+efron_1979_bootstrap:
+  container: "The Annals of Statistics"
+  volume: "vol. 7, no. 1, pp. 1-26"
+hanley_mcneil_1982_auc:
+  container: "Radiology"
+  volume: "vol. 143, no. 1, pp. 29-36"
+hendrycks_gimpel_2017_ood:
+  container: "International Conference on Learning Representations (ICLR)"
+  url: "https://arxiv.org/abs/1610.02136"
+buolamwini_gebru_2018:
+  container: "Proceedings of the 1st Conference on Fairness, Accountability and Transparency (PMLR 81)"
+  volume: "pp. 77-91"
+  url: "https://proceedings.mlr.press/v81/buolamwini18a.html"
+greshake_2023:
+  container: "Proceedings of the 16th ACM Workshop on Artificial Intelligence and Security (AISec '23)"
+  doi: "10.1145/3605764.3623985"
+brynjolfsson_genai_at_work_2023:
+  container: "National Bureau of Economic Research, Working Paper 31161"
+  note: "Published in The Quarterly Journal of Economics, vol. 140, no. 2, 2025."
+dellacqua_jagged_frontier_2023:
+  container: "Harvard Business School Working Paper (SSRN 4573321)"
+bastani_genai_learning_2025:
+  container: "Proceedings of the National Academy of Sciences"
+  volume: "vol. 122, no. 26"
+kalai_why_hallucinate_2025:
+  authors: ["A. T. Kalai", "O. Nachum", "S. S. Vempala", "E. Zhang"]
+  container: "arXiv preprint arXiv:2509.04664"
+skelic_circuit_2025:
+  authors: ["L. Skelic et al."]
+  container: "arXiv preprint arXiv:2502.07980"
+e2e_circuit_analysis_2025:
+  authors: []
+  container: "arXiv preprint arXiv:2512.10159"
+akbari_circuitsense_2025:
+  authors: []
+  container: "arXiv preprint arXiv:2509.22339 (ICLR 2026)"
+li_eee_bench_2025:
+  container: "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)"
+razavi_ai_analog_part1_2025:
+  container: "IEEE Solid-State Circuits Magazine"
+  volume: "vol. 17, no. 4, pp. 11-15"
+horowitz_hill_2015_aoe3:
+  type: book
+  title: "The Art of Electronics, 3rd ed."
+  publisher: "Cambridge University Press"
+  url: ""
+baxandall_1952_bibliographic:
+  type: article
+  container: "Wireless World"
+  volume: "pp. 402-405"
+  url: ""
+
+# ---- organisations, statutes, standards --------------------------------------
+osha_1910_333:
+  authors: ["U.S. Occupational Safety and Health Administration"]
+  title: "29 CFR 1910.333, Selection and use of work practices"
+  container: "Code of Federal Regulations"
+  url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.333"
+osha_1910_334:
+  authors: ["U.S. Occupational Safety and Health Administration"]
+  title: "29 CFR 1910.334, Use of equipment"
+  container: "Code of Federal Regulations"
+  url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.334"
+osha_1910_303:
+  authors: ["U.S. Occupational Safety and Health Administration"]
+  title: "29 CFR 1910.303, General (electrical)"
+  container: "Code of Federal Regulations"
+  url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.303"
+osha_1910_269:
+  authors: ["U.S. Occupational Safety and Health Administration"]
+  title: "29 CFR 1910.269, Electric power generation, transmission, and distribution"
+  container: "Code of Federal Regulations"
+  url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.269"
+osha_1910_331_399:
+  authors: ["U.S. Occupational Safety and Health Administration"]
+  title: "29 CFR Part 1910 Subpart S, Electrical (1910.331-1910.399)"
+  container: "Code of Federal Regulations"
+  url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.331"
+gdpr:
+  title: "Regulation (EU) 2016/679 (General Data Protection Regulation)"
+  container: "Official Journal of the European Union, L 119"
+  date: "2016-04-27"
+  url: "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+eu_ai_act_text_mirror:
+  title: "Regulation (EU) 2024/1689 (Artificial Intelligence Act)"
+  container: "Official Journal of the European Union"
+  date: "2024-06-13"
+  url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+eu_r2r_directive_2024_1799:
+  title: "Directive (EU) 2024/1799 on common rules promoting the repair of goods"
+  container: "Official Journal of the European Union"
+  date: "2024-06-13"
+  url: "https://eur-lex.europa.eu/eli/dir/2024/1799/oj"
+nist_ai_rmf_1_0:
+  title: "Artificial Intelligence Risk Management Framework (AI RMF 1.0)"
+  container: "NIST AI 100-1"
+nist_ai_600_1:
+  title: "Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile"
+  container: "NIST AI 600-1"
+owasp_llm_top10_2025:
+  authors: ["OWASP GenAI Security Project"]
+  title: "OWASP Top 10 for LLM Applications 2025"
+  container: "OWASP Foundation (official project repository)"
+  url_is_canonical: true
+owasp_llm_top10_2026:
+  authors: ["OWASP GenAI Security Project"]
+  title: "OWASP Top 10 for LLM Applications 2026"
+  container: "OWASP Foundation (official project repository)"
+  url_is_canonical: true
+kulicki_trypuz_j3016_ontology:
+  authors: ["P. Kulicki", "R. Trypuz"]
+  title: "Ontology of driving automation systems for on-road motor vehicles (encoding the SAE J3016 levels of driving automation)"
+  container: "GitHub repository kul-ai/ontology-autonomous-driving"
+  url_is_canonical: true
+tx_hb2963_2025:
+  authors: ["Texas Legislature"]
+us_hr_5388:
+  authors: ["U.S. House of Representatives"]
+us_ai_lead_act_s2937:
+  authors: ["U.S. Senate"]
+us_rise_act_s2081:
+  authors: ["U.S. Senate"]
+nist_caisi_agent_hijacking_2025:
+  authors: ["NIST Center for AI Standards and Innovation"]
+fr_caisi_rfi_ai_agents_2026:
+  authors: ["NIST Center for AI Standards and Innovation"]
+nist_ai_agent_standards_2026:
+  authors: ["NIST Center for AI Standards and Innovation"]
+msft_d365_wave1_2026:
+  authors: ["Microsoft"]
+msft_copilot_field_service_2023:
+  authors: ["Microsoft"]
+tsia_field_services_2026:
+  authors: ["Technology & Services Industry Association"]
+lee_critical_thinking_2025:
+  authors: ["H.-P. Lee et al."]
+
+# ---- vendor documents ----------------------------------------------------------
+rates_studio_doctors:
+  container: "The Studio Doctors"
+rates_archer_hifi:
+  container: "Archer High Fidelity"
+rates_cw_guitar_audio:
+  container: "CW Guitar Audio"
+rates_british_audio:
+  container: "British Audio"
+koren_tube_lib_1996_mirror:
+  title: "Improved vacuum-tube models for SPICE simulations (12AX7 model listing)"
+  container: "Glass Audio, vol. 8, no. 5"
+  date: "1996"
+  url: "https://www.normankoren.com/Audio/Tubemodspice_article.html"
+philips_ecc83_datasheet_1954:
+  title: "ECC83 double triode data sheets"
+  container: "Philips Electron Tubes data handbook"
+onsemi_2n3903_2n3904_datasheet:
+  authors: ["onsemi"]
+  title: "2N3903, 2N3904 General Purpose Transistors, NPN Silicon (2N3903/D, Rev. 9)"
+  container: "onsemi data sheet"
+  url: "https://www.onsemi.com/pdf/datasheet/2n3903-d.pdf"
+onsemi_spice_models_volta:
+  authors: ["onsemi"]
+  title: "SPICE model library (2N3904 and BD139 cards)"
+  container: "redistributed with permission of ON Semiconductor in the Volta circuit simulator"
+diodes_inc_zener_spice:
+  title: "Zener diode SPICE models (DI_1N4745A)"
+  container: "Diodes Incorporated SPICE model library"
+diodes_inc_switching_diode_spice:
+  title: "Switching diode SPICE models (DI_1N4148)"
+  container: "Diodes Incorporated SPICE model library"
+fluke_11x_manual_dcv_accuracy:
+  title: "Fluke 110/113/114/115/117 True-rms Multimeter Users Manual, Table 6 (DC voltage accuracy)"
+  container: "Fluke Corporation"
+fluke_117_dcv_accuracy:
+  title: "Fluke 110/113/114/115/117 True-rms Multimeter Users Manual, Table 6 (Fluke 117)"
+  container: "Fluke Corporation"
+rigol_ds1000z_user_guide_2014:
+  title: "MSO1000Z/DS1000Z Series Digital Oscilloscope User's Guide (UGA19103-1110), Chapter 18"
+  container: "RIGOL Technologies"
+siegen_pedc_lecture08_capacitors:
+  authors: ["University of Siegen, Institute of Automatic Control"]
+  title: "Power Electronics Devices and Components, Lecture 08: Capacitors (course slides)"
+  container: "University of Siegen"
+ngspice_manual_v47:
+  container: "ngspice project"
+schemdraw_docs:
+  title: "Schemdraw documentation"
+  container: "Schemdraw project"

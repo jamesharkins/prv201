@@ -96,7 +96,7 @@ def parse_output(
     block: list[str] = []
 
     def close_block() -> None:
-        if current is None:
+        if current is None or current[0] not in results:
             return
         did, tag = current
         body = "\n".join(block)
@@ -133,6 +133,8 @@ def parse_output(
         if line.startswith("@@P "):
             parts = line.split()
             did, tag = int(parts[1]), parts[2]
+            if did not in results:
+                continue
             plot = parts[3] if len(parts) > 3 else ""
             if not plot.startswith(PLOT_PREFIX[tag]):
                 problems[did].append(f"{tag}: wrong plot {plot or '(none)'}")
@@ -141,6 +143,8 @@ def parse_output(
         if line.startswith("@@V "):
             parts = line.split()
             did = int(parts[1])
+            if did not in results:
+                continue
             for item in parts[3:]:
                 if "=" not in item:
                     continue

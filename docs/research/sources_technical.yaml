@@ -1,0 +1,1498 @@
+# Technical evidence base for the 'Differential' analog-fault-diagnosis project.
+# Generated 2026-09-28. Schema: see task spec. verified=fetched means the URL (or the labelled
+# mirror named in `container`) was downloaded and the quote was copied from it; quotes marked in the
+# claim text as 'transcribed from scanned page image' were read from rendered PDF pages.
+# verified=search_snippet_only means only a search-engine snippet was seen (domain blocked).
+- key: koren_tube_lib_1996_mirror
+  type: web
+  authors:
+  - Norman L. Koren
+  title: TUBE LIBRARY (Tube.lib) accompanying 'Improved Vacuum-Tube Models for SPICE simulations' - 12AX7 'NEW MODEL' PSpice
+    subcircuit
+  container: GitHub mirror of Koren's tubemods library file (ajmwagar/pedalkernel, pedalkernel/models/tubemods_tmp/Tube.lib);
+    original distributed from normankoren.com (blocked in sandbox)
+  publisher: Norman Koren
+  date: '1996'
+  url: https://raw.githubusercontent.com/ajmwagar/pedalkernel/0278b397c861b5ebef2e8e38d15ab281b8e669dc/pedalkernel/models/tubemods_tmp/Tube.lib
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: The library states it was developed by Norman Koren and cites the Glass Audio article (Vol. 8, No. 5, 1996).
+    quote: This library was developed by Norman Koren.
+  - claim: Glass Audio citation as printed in the library header.
+    quote: for SPICE simulations," Glass Audio, Vol. 8, No. 5, 1996,
+  - claim: 12AX7 'NEW MODEL' subcircuit node order is plate, grid, cathode.
+    quote: .SUBCKT 12AX7 1 2 3  ; P G C;  NEW MODEL
+  - claim: 'Published 12AX7 parameters (new model): MU=100, EX=1.4, KG1=1060, KP=600, KVB=300, RGI=2000 ohm; no VCT parameter
+      in the original.'
+    quote: '+ PARAMS: MU=100 EX=1.4 KG1=1060 KP=600 KVB=300 RGI=2000'
+  - claim: 'Published 12AX7 inter-electrode capacitances: CCG=2.3 pF, CGP=2.4 pF, CCP=0.9 pF (comment: add 0.7 pF to adjacent
+      pins, 0.5 pF to others).'
+    quote: + CCG=2.3P  CGP=2.4P CCP=.9P  ; ADD .7PF TO ADJACENT PINS; .5 TO OTHERS.
+  - claim: 'E1 behavioural source (SPICE form of the Koren equation): E1 = V(P,K)/KP * ln(1 + exp(KP*(1/MU + V(G,K)/sqrt(KVB
+      + V(P,K)^2)))).'
+    quote: +{V(1,3)/KP*LOG(1+EXP(KP*(1/MU+V(2,3)/SQRT(KVB+V(1,3)*V(1,3)))))}
+  - claim: 'Plate current source: Ip = (PWR(E1,EX) + PWRS(E1,EX))/KG1, i.e. 2*E1^EX/KG1 for E1>0 and 0 for E1<0 (PSpice PWR=|x|^y,
+      PWRS=sgn(x)|x|^y).'
+    quote: G1 1 3 VALUE={(PWR(V(7),EX)+PWRS(V(7),EX))/KG1}
+  - claim: Grid current is modelled by a diode DX from an internal node to the cathode in series with RGI from the grid.
+    quote: D3 5 3 DX     ; FOR GRID CURRENT
+  - claim: Series grid-current resistor RGI.
+    quote: R1 2 5 {RGI}  ; FOR GRID CURRENT
+  - claim: Grid-current diode model card.
+    quote: .MODEL DX D(IS=1N RS=1 CJO=10PF TT=1N)
+  - claim: A 1 Gohm plate-cathode resistor is included to avoid floating nodes (mu-follower).
+    quote: RCP 1 3 1G    ; TO AVOID FLOATING NODES IN MU-FOLLOWER
+  - claim: The superseded 'OLD MODEL' 12AX7 parameters (commented out) were MU=93, EX=1.5, KG1=1360, KP=10000, KVB=0.
+    quote: '* + PARAMS: MU=93 EX=1.5 KG1=1360 KP=10000 KVB=0 RGI=2000'
+- key: koren_tubes_lib_ltspice_2008
+  type: web
+  authors:
+  - Norman L. Koren
+  - Suusi Malcolm-Brown
+  title: Tubes_Koren.lib - LTspice adaptation of Koren's tube library with VCT (contact potential) and re-fitted models (May-June
+    2008)
+  container: KiCad-Spice-Library (GitHub), Models/uncategorized/Bordodynovs Electronics Lib/sub/Tubes_Koren.lib
+  date: '2008'
+  url: https://raw.githubusercontent.com/kicad-spice-library/KiCad-Spice-Library/a8688952bcaab19f567bc4db237b60bde03ef310/Models/uncategorized/Bordodynovs%20Electronics%20Lib/sub/Tubes_Koren.lib
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: The 2008 adaptation added a VCT (grid contact potential) parameter to Koren's triode model.
+    quote: '* 3. updated the triode model to include the VCT variable (contact potential)'
+  - claim: Generic TRIODE subcircuit with VCT added to the grid voltage inside E1.
+    quote: E1  7 0 VALUE={V(1,3)/KP*LOG(1+EXP(KP*(1/MU+(V(2,3)+VCT)/SQRT(KVB+V(1,3)*V(1,3)))))}
+  - claim: Koren's original 12AX7 parameters are retained with VCT=0.00.
+    quote: X1 1 2 3 TRIODE MU=100 EX=1.4 KG1=1060 KP=600 KVB=300 VCT=0.00 RGI=2000 CCG=2.3P CGP=2.4P CCP=.9P
+  - claim: 'Re-fit to the RCA 12AX7A data sheet gives quite different KP/KVB (illustrates datasheet-to-datasheet spread):
+      MU=100.26, EX=1.394, KG1=1651.8, KP=17950.75, KVB=524.4, VCT=0.50.'
+    quote: X1 1 2 3 TRIODE MU=100.26 EX=1.394 KG1=1651.8 KP=17950.75 KVB=524.4 VCT=0.50 RGI=2000 CCG=2.3p CGP=2.4p CCP=0.9p
+  - claim: 'Re-fit to the Sylvania 1955 technical manual 12AX7: MU=105.78, EX=1.474, KG1=1618.2, KP=432.76, KVB=35.6, VCT=0.50.'
+    quote: X1 1 2 3 TRIODE MU=105.78 EX=1.474 KG1=1618.2 KP=432.76 KVB=35.6 VCT=0.50 RGI=2000 CCG=2.3p CGP=2.4p CCP=0.9p
+  - claim: Newer models were generated with a modified version of Koren's Matlab fitter.
+    quote: '* All the newer models are generated via a modified version of Norman Koren''s'
+- key: koren_article_web_part1
+  type: article
+  authors:
+  - Norman L. Koren
+  title: 'Improved vacuum tube models for SPICE simulations, Part 1: Models and example'
+  container: normankoren.com (web version of Glass Audio Vol. 8 No. 5, 1996)
+  date: '1996'
+  url: https://www.normankoren.com/Audio/Tubemodspice_article.html
+  accessed: '2026-09-28'
+  verified: search_snippet_only
+  claims:
+  - claim: Search-engine snippet (query on Koren's article; results headed by normankoren.com Part 1) gives the model as E1=(Vpk/Kp)*ln(1+exp(Kp(1/mu+Vgk/sqrt(Kvb+Vpk^2))))
+      and Ip=(E1^Ex/Kg1)*(1+sgn(E1)). Domain blocked; snippet text only (parentheses as returned).
+    quote: E1=(Vpk/Kp)*Log(1+exp(Kp((1/m)+Vgk/(sqrt(Kvb+Vpk^2))) and Ip=((E1^Ex)/Kg1)*(1+sgn(E1)), where the sign function
+      prevents current flow when E1 < 0.
+  - claim: Variable definitions as given in the snippet.
+    quote: IP is plate current, EG is control grid voltage, EP is plate voltage (all voltages with respect to the cathode),
+      μ is the amplification factor, and kG1 is a factor used to fit the equation to data
+- key: koren_model_instructions_web
+  type: web
+  authors:
+  - Norman L. Koren
+  title: Norman Koren Vacuum tube audio page - instructions for SPICE tube model files
+  container: normankoren.com (undated web page; date field = year the snippet was seen)
+  date: '2026'
+  url: https://www.normankoren.com/Audio/Tubemodelinstr.HTM
+  accessed: '2026-09-28'
+  verified: search_snippet_only
+  claims:
+  - claim: Koren notes his parameters come from published data sheets and that real tubes vary unit-to-unit and batch-to-batch
+      (qualitative statement of parameter spread).
+    quote: the parameters in Koren's tube models are based on published data sheets, and are far from perfect for all cases,
+      as tubes vary from unit-to-unit and batch-to-batch
+- key: philips_ecc83_datasheet_1954
+  type: datasheet
+  authors:
+  - Philips
+  title: ECC83 double high-mu triode (data sheets dated 1953-06-06 to 1955-02-02)
+  container: Scanned Philips data sheet mirrored in GitHub repo holla2040/valvestudio (experiments/02-modeling/triode/data/ecc83-philips-1954.pdf)
+  publisher: Philips
+  date: '1954'
+  url: https://raw.githubusercontent.com/holla2040/valvestudio/ee4031613390cea26cd00e121cfc63218f0eacd2/experiments/02-modeling/triode/data/ecc83-philips-1954.pdf
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'Page index of the scan: sheet 1 and 2 dated 1954.11.11 (text layer).'
+    quote: 1 1 1954.11.11 2 2 1954.11.11
+  - claim: 'Heater: 6.3 V at 300 mA (parallel) or 12.6 V at 150 mA (series); transcribed from scanned page 1.'
+    quote: Vf = 6,3 V = 12,6 V; If = 300 mA = 150 mA
+  - claim: 'Typical characteristics per section: Va=250 V, Vg=-2.0 V, Ia=1.2 mA, S=1.6 mA/V, mu=100, Ri=62.5 kohm; and Va=100
+      V, Vg=-1.0 V, Ia=0.5 mA, S=1.25 mA/V, mu=100, Ri=80 kohm (transcribed from scanned page 2).'
+    quote: Va = 100 250 V; Vg = -1,0 -2,0 V; Ia = 0,5 1,2 mA; S = 1,25 1,6 mA/V; µ = 100 100; Ri = 80 62,5 kΩ
+  - claim: 'Limiting values (each section): Va max 300 V (Va0 max 550 V cold), Wa max 1 W, Ik max 8 mA, -Vg max 50 V, Vkf
+      max 180 V, Rg max 2 Mohm with automatic bias (transcribed from scanned page 4).'
+    quote: Vao = max. 550 V; Va = max. 300 V; Wa = max. 1 W; Ik = max. 8 mA; -Vg = max. 50 V; Rg = max. 2 MΩ; Vkf = max. 180
+      V
+- key: onsemi_2n3903_2n3904_datasheet
+  type: datasheet
+  authors:
+  - onsemi (Semiconductor Components Industries, LLC)
+  title: 2N3903, 2N3904 General Purpose Transistors NPN Silicon (Publication Order Number 2N3903/D, Rev. 9, August 2021)
+  container: GitHub mirror gloveboxes/Z80ROMlessSBC (datasheets/2N3903-D.pdf); original at www.onsemi.com
+  publisher: onsemi
+  date: 2021-08
+  url: https://raw.githubusercontent.com/gloveboxes/Z80ROMlessSBC/26658cef8c46189ec46c9f47612ddaf65822fe33/datasheets/2N3903-D.pdf
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Document identity and revision.
+    quote: August, 2021 − Rev. 9
+  - claim: 2N3904 hFE min 40 at IC=0.1 mA, VCE=1 V.
+    quote: (IC = 0.1 mAdc, VCE = 1.0 Vdc) 2N3903 20 − 2N3904 40 −
+  - claim: 2N3904 hFE min 70 at IC=1 mA, VCE=1 V.
+    quote: (IC = 1.0 mAdc, VCE = 1.0 Vdc) 2N3903 35 − 2N3904 70 −
+  - claim: 2N3904 hFE 100 (min) to 300 (max) at IC=10 mA, VCE=1 V.
+    quote: (IC = 10 mAdc, VCE = 1.0 Vdc) 2N3903 50 150 2N3904 100 300
+  - claim: 2N3904 hFE min 60 at IC=50 mA and min 30 at IC=100 mA (VCE=1 V).
+    quote: (IC = 50 mAdc, VCE = 1.0 Vdc) 2N3903 30 − 2N3904 60 − (IC = 100 mAdc, VCE = 1.0 Vdc) 2N3903 15 − 2N3904 30 −
+  - claim: 'Ratings: VCEO 40 V, IC 200 mA continuous.'
+    quote: Collector −Emitter Voltage VCEO 40 Vdc
+- key: onsemi_2n3906_datasheet
+  type: datasheet
+  authors:
+  - onsemi (Semiconductor Components Industries, LLC)
+  title: 2N3906 General Purpose Transistor PNP Silicon (Publication Order Number 2N3906/D, Rev. 4, February 2010)
+  container: GitHub mirror nicholaschiang/digikey-transistors (data/pdf/2N3906-D.PDF, Fonduer hardware dataset); original
+    at www.onsemi.com
+  publisher: onsemi
+  date: 2010-02
+  url: https://raw.githubusercontent.com/nicholaschiang/digikey-transistors/97aed5179256e78c282d2bdeac6332efff901f20/data/pdf/2N3906-D.PDF
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Document identity and revision.
+    quote: February, 2010 − Rev. 4
+  - claim: 2N3906 hFE min 60 at IC=0.1 mA and min 80 at IC=1 mA (VCE=1 V; PNP polarities).
+    quote: DC Current Gain (IC = 0.1 mAdc, VCE = 1.0 Vdc) hFE 60 − − (IC = 1.0 mAdc, VCE = 1.0 Vdc) 80 −
+  - claim: 2N3906 hFE 100 (min) to 300 (max) at IC=10 mA, VCE=1 V.
+    quote: (IC = 10 mAdc, VCE = 1.0 Vdc) 100 300
+  - claim: 2N3906 hFE min 60 at IC=50 mA and min 30 at IC=100 mA.
+    quote: (IC = 50 mAdc, VCE = 1.0 Vdc) 60 − (IC = 100 mAdc, VCE = 1.0 Vdc) 30 −
+  - claim: 'Ratings: VCEO 40 V, IC 200 mA continuous, PD 625 mW at TA=25 C.'
+    quote: Collector − Emitter Voltage VCEO 40 Vdc
+- key: st_bd135_bd139_datasheet
+  type: datasheet
+  authors:
+  - STMicroelectronics
+  title: BD135 - BD136 - BD139 - BD140 Complementary low voltage transistor (Rev 5, May 2008)
+  container: GitHub mirror Vitorbnc/electronics-datasheets ('bd139 datasheet st.pdf'); original at www.st.com
+  publisher: STMicroelectronics
+  date: 2008-05
+  url: https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Transistors,%20FETs,%20Thyristors/bd139%20datasheet%20st.pdf
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Revision identity.
+    quote: May 2008 Rev 5 1/9
+  - claim: 'BD139 DC current gain: hFE 40 (min) to 250 (max) at IC=150 mA, VCE=2 V (pulsed).'
+    quote: NPN IC = 150 mA, VCE = 2 V 40 250
+  - claim: BD139 hFE min 25 at IC=5 mA and at IC=0.5 A (VCE=2 V).
+    quote: IC = 5 mA, VCE = 2 V 25
+  - claim: 'Gain groups at IC=150 mA, VCE=2 V: BD139-10 63-160; BD139-16 100-250.'
+    quote: NPN BD139-10 63 160 BD135-16/BD139-16 100 250
+  - claim: 'Absolute maximum ratings: VCEO 80 V (BD139), IC 1.5 A, Ptot 12.5 W at Tc<=25 C.'
+    quote: IC Collector current 1.5 -1.5 A
+- key: mospec_tip31_datasheet
+  type: datasheet
+  authors:
+  - MOSPEC Semiconductor
+  title: TIP31/TIP31A/TIP31B/TIP31C NPN, TIP32 series PNP - Complementary silicon plastic power transistors
+  container: GitHub mirror Vitorbnc/electronics-datasheets (datasheetcatalog.com-sourced scan; original undated, date field
+    = PDF copy creation year)
+  publisher: MOSPEC
+  date: '2005'
+  url: https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Transistors,%20FETs,%20Thyristors/TIP31%20NPN%20,%20TIP32%20PNP%20100V%203A.pdf
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'TIP31C DC current gain: hFE min 25 at IC=1.0 A, VCE=4.0 V; hFE 10 (min) to 50 (max) at IC=3.0 A, VCE=4.0 V (transcribed
+      from scanned page 2).'
+    quote: DC Current Gain (IC=1.0 A, VCE = 4.0 V) (IC= 3.0 A, VCE = 4.0 V) hFE 25 10 50
+  - claim: 'TIP31C ratings: VCEO 100 V, IC 3.0 A continuous, PD 40 W at TC=25 C (transcribed from scanned page 1).'
+    quote: 3 AMPERE COMPLEMENTARY SILICON POWER TRANSISTORS 40 -100 VOLTS 40 WATTS
+- key: onsemi_spice_models_volta
+  type: web
+  authors:
+  - ON Semiconductor
+  - Symmetry Design Systems (MODPEX)
+  title: Models_OnSemi.lib - ON Semiconductor SPICE models (2N3904, BD139, ...) distributed with the Volta simulator
+  container: GitHub robo-fish/Volta (app/resources/Models_OnSemi.lib)
+  date: '2001'
+  url: https://raw.githubusercontent.com/robo-fish/Volta/2d2c372826096380f0e4f0226469b4fd7f31e20d/app/resources/Models_OnSemi.lib
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Provenance statement in the file header.
+    quote: '* Distributed as part of the Volta software (kulfx.com/volta) with permission of ON Semiconductor (onsemi.com).'
+  - claim: onsemi 2N3904 Gummel-Poon model (MODPEX, generated Aug 07, 2001), verbatim.
+    quote: |-
+      .MODEL ON.Semiconductor.2n3904 npn
+      +IS=1.26532e-10 BF=206.302 NF=1.5 VAF=1000
+      +IKF=0.0272221 ISE=2.30771e-09 NE=3.31052 BR=20.6302
+      +NR=2.89609 VAR=9.39809 IKR=0.272221 ISC=2.30771e-09
+      +NC=1.9876 RB=5.8376 IRB=50.3624 RBM=0.634251
+      +RE=0.0001 RC=2.65711 XTB=0.1 XTI=1
+      +EG=1.05 CJE=4.64214e-12 VJE=0.4 MJE=0.256227
+      +TF=4.19578e-10 XTF=0.906167 VTF=8.75418 ITF=0.0105823
+      +CJC=3.76961e-12 VJC=0.4 MJC=0.238109 XCJC=0.8
+      +FC=0.512134 CJS=0 VJS=0.75 MJS=0.5
+      +TR=6.82023e-08 PTF=0 KF=0 AF=1
+  - claim: onsemi BD139 model (generated Feb 14, 2004), verbatim.
+    quote: |-
+      .MODEL ON.Semiconductor.bd139 npn
+      +IS=1e-09 BF=222.664 NF=0.85 VAF=36.4079
+      +IKF=0.166126 ISE=5.03418e-09 NE=1.45313 BR=1.35467
+      +NR=1.33751 VAR=142.931 IKR=1.66126 ISC=5.02557e-09
+      +NC=3.10227 RB=26.9143 IRB=0.1 RBM=0.1
+      +RE=0.000472454 RC=1.04109 XTB=0.727762 XTI=1.04311
+      +EG=1.05 CJE=1e-11 VJE=0.75 MJE=0.33
+      +TF=1e-09 XTF=1 VTF=10 ITF=0.01
+      +CJC=1e-11 VJC=0.75 MJC=0.33 XCJC=0.9
+      +FC=0.5 CJS=0 VJS=0.75 MJS=0.5
+      +TR=1e-07 PTF=0 KF=0 AF=1
+- key: onsemi_2n3906_modpex_model_mirror
+  type: web
+  authors:
+  - ON Semiconductor
+  - Symmetry Design Systems (MODPEX)
+  title: 2N3906.LIB - MODPEX-generated PSpice model of the 2N3906 (generated Aug 7, 2001)
+  container: GitHub mirror hanhha/SPICELIB (2N3906.LIB); file carries no vendor name - onsemi provenance corroborated by identical
+    parameters in onsemi.lib (espice_onsemi_lib_mirror)
+  date: '2001'
+  url: https://raw.githubusercontent.com/hanhha/SPICELIB/30137cb80078ea40e7c4cbf66f05f9bd496fea24/2N3906.LIB
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 2N3906 Gummel-Poon model, verbatim.
+    quote: |-
+      .MODEL q2n3906 pnp
+      +IS=7.75521e-12 BF=194.093 NF=1.35509 VAF=156.436
+      +IKF=0.0660057 ISE=1.88546e-12 NE=1.81673 BR=3.41317
+      +NR=1.5 VAR=5.86061 IKR=1.70599 ISC=7.64281e-10
+      +NC=1.92376 RB=6.48961 IRB=0.1 RBM=0.1
+      +RE=0.0001 RC=2.45044 XTB=0.1 XTI=1
+      +EG=1.05 CJE=6.11928e-12 VJE=0.4 MJE=0.248812
+      +TF=5.21843e-10 XTF=0.932702 VTF=9.1046 ITF=0.0106472
+      +CJC=6.85007e-12 VJC=0.4 MJC=0.279018 XCJC=0.9
+      +FC=0.478887 CJS=0 VJS=0.75 MJS=0.5
+      +TR=4.30605e-07 PTF=0 KF=0 AF=1
+  - claim: Header identifies the generator and date.
+    quote: '* Model generated on Aug 7, 01'
+- key: espice_onsemi_lib_mirror
+  type: web
+  authors:
+  - ON Semiconductor
+  title: onsemi.lib - ON Semiconductor model collection (eSpice / University of Granada collection, '_ON' suffixed names)
+  container: KiCad-Spice-Library (GitHub), Models/uncategorized/spice_complete/onsemi.lib
+  date: '2000'
+  url: https://raw.githubusercontent.com/kicad-spice-library/KiCad-Spice-Library/a8688952bcaab19f567bc4db237b60bde03ef310/Models/uncategorized/spice_complete/onsemi.lib
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: onsemi's MMBT3906 (SOT-23 2N3906 die) model uses the same parameter set as the 2N3906 MODPEX model (corroborates
+      provenance).
+    quote: .MODEL mmbt3906tt1_ON pnp +IS=7.75521e-12 BF=194.093 NF=1.35509 VAF=156.436
+  - claim: onsemi's MMBT3904 model uses the same parameter set as the onsemi 2N3904 model.
+    quote: .MODEL mmbt3904tt1_ON npn +IS=1.26532e-10 BF=206.302 NF=1.5 VAF=1000
+- key: diodes_inc_switching_diode_spice
+  type: web
+  authors:
+  - Diodes Incorporated
+  title: spicemodels_switching_diodes.txt - Diodes Inc. switching diode SPICE models (DI_1N4148 etc.)
+  container: GitHub mirror AndrejTica/School (LTspice/extras/DIODES.COM/OTHER/); undated vendor file, date field = mirror
+    snapshot (commit 2021-04-28)
+  date: '2021'
+  url: https://raw.githubusercontent.com/AndrejTica/School/65cb5a6dd0395eb53b8f16ed4cafa47b25959b41/LTspice/extras/DIODES.COM/OTHER/spicemodels_switching_diodes.txt
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Diodes Inc. 1N4148 model (75 V, 0.3 A, 4 ns), verbatim.
+    quote: |-
+      *SRC=1N4148;DI_1N4148;Diodes;Si;  75.0V  0.300A  4.00ns   Diodes Inc. -
+      .MODEL DI_1N4148 D  ( IS=222p RS=68.6m BV=75.0 IBV=1.00u
+      + CJO=4.00p  M=0.333 N=1.65 TT=5.76n )
+- key: diodes_inc_zener_spice
+  type: web
+  authors:
+  - Diodes Incorporated
+  title: spicemodels_zener_diodes.txt - Diodes Inc. zener SPICE subcircuits (DI_1N4744A, DI_1N4745A, ...)
+  container: GitHub mirror AndrejTica/School (LTspice/extras/DIODES.COM/ZENER/LIB/); undated vendor file, date field = mirror
+    snapshot (commit 2021-04-28)
+  date: '2021'
+  url: https://raw.githubusercontent.com/AndrejTica/School/65cb5a6dd0395eb53b8f16ed4cafa47b25959b41/LTspice/extras/DIODES.COM/ZENER/LIB/spicemodels_zener_diodes.txt
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Diodes Inc. 1N4745A (16 V, 1 W) zener subcircuit, verbatim (VZ source 14.6 V + DR diode).
+    quote: |-
+      *SRC=1N4745A;DI_1N4745A;Diodes;Zener 10V-50V; 16.0V  1.00W   Diodes Inc.
+      Zener
+      *SYM=HZEN
+      .SUBCKT DI_1N4745A  1 2
+      *        Terminals    A   K
+      D1 1 2 DF
+      DZ 3 1 DR
+      VZ 2 3 14.6
+      .MODEL DF D ( IS=25.7p RS=0.620 N=1.10
+      + CJO=74.4p VJ=1.00 M=0.330 TT=50.1n )
+      .MODEL DR D ( IS=5.15f RS=0.897 N=1.80 )
+      .ENDS
+  - claim: Diodes Inc. 1N4744A (15 V, 1 W) zener subcircuit, verbatim.
+    quote: |-
+      .SUBCKT DI_1N4744A  1 2
+      *        Terminals    A   K
+      D1 1 2 DF
+      DZ 3 1 DR
+      VZ 2 3 13.7
+      .MODEL DF D ( IS=27.5p RS=0.620 N=1.10
+      + CJO=78.3p VJ=1.00 M=0.330 TT=50.1n )
+      .MODEL DR D ( IS=5.49f RS=0.804 N=1.77 )
+      .ENDS
+- key: ltspice_standard_dio_mirror
+  type: web
+  authors:
+  - Analog Devices, Inc.
+  title: LTspice standard.dio component library (Copyright 2000-2019 Analog Devices) - 1N4148 entry
+  container: GitHub mirror vgreff/LTSpiceLibraries (LTSpice/vglib/cmp/Original/standard.dio)
+  date: '2019'
+  url: https://raw.githubusercontent.com/vgreff/LTSpiceLibraries/8913bcc7bd392af5bc4ad8df433bb4477ff6b8e6/LTSpice/vglib/cmp/Original/standard.dio
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: LTspice's 1N4148 model (attributed mfg=OnSemi), verbatim.
+    quote: .model 1N4148 D(Is=2.52n Rs=.568 N=1.752 Cjo=4p M=.4 tt=20n Iave=200m Vpk=75 mfg=OnSemi type=silicon)
+- key: ltspice_standard_bjt_mirror
+  type: web
+  authors:
+  - Analog Devices, Inc.
+  title: LTspice standard.bjt component library (Copyright 2000-2019 Analog Devices) - 2N3904/2N3906 entries
+  container: GitHub mirror vgreff/LTSpiceLibraries (LTSpice/vglib/cmp/Original/standard.bjt, UTF-16)
+  date: '2019'
+  url: https://raw.githubusercontent.com/vgreff/LTSpiceLibraries/8913bcc7bd392af5bc4ad8df433bb4477ff6b8e6/LTSpice/vglib/cmp/Original/standard.bjt
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: LTspice's simplified 2N3904 model (mfg=NXP), verbatim.
+    quote: .model 2N3904 NPN(IS=1E-14 VAF=100 Bf=300 IKF=0.4 XTB=1.5 BR=4 CJC=4E-12 CJE=8E-12 RB=20 RC=0.1 RE=0.1 TR=250E-9
+      TF=350E-12 ITF=1 VTF=2 XTF=3 Vceo=40 Icrating=200m mfg=NXP)
+  - claim: LTspice's simplified 2N3906 model (mfg=NXP), verbatim.
+    quote: .model 2N3906 PNP(IS=1E-14 VAF=100 BF=200 IKF=0.4 XTB=1.5 BR=4 CJC=4.5E-12 CJE=10E-12 RB=20 RC=0.1 RE=0.1 TR=250E-9
+      TF=350E-12 ITF=1 VTF=2 XTF=3 Vceo=40 Icrating=200m mfg=NXP)
+- key: rohm_1n4148_datasheet
+  type: datasheet
+  authors:
+  - ROHM
+  title: Switching diode 1N4148 / 1N4150 / 1N4448 / 1N914B
+  container: GitHub mirror Vitorbnc/electronics-datasheets (Diodes/1n4148.pdf); original undated, date field = PDF copy creation
+    year
+  publisher: ROHM
+  date: '2004'
+  url: https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Diodes/1n4148.pdf
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'Absolute maximum ratings row for 1N4148: VRM 100 V, VR 75 V, IFM 450 mA, IO 150 mA, IF 200 mA, IFSM(1 us) 2 A,
+      P 500 mW, Tj 200 C.'
+    quote: 1N4148 100 75 450 150 200 2 500 200
+  - claim: 'Electrical characteristics for 1N4148 (transcribed from table image): VF max 1.0 V at 10 mA; BV min 75 V at 5
+      uA and 100 V at 100 uA; IR max 0.025 uA at 20 V and 5.0 uA at 75 V (25 C); Cr 4 pF; trr 4 ns.'
+    quote: 1N4148 | VF @10mA 1.0 | BV 75 (@5µA) 100 (@100µA) | IR 0.025 (VR 20) 5.0 (VR 75) | Cr 4 | trr 4
+- key: philips_1n4728a_1n4749a_datasheet
+  type: datasheet
+  authors:
+  - Philips Semiconductors
+  title: 1N4728A to 1N4749A Voltage regulator diodes - Product specification (1996 Apr 26)
+  container: GitHub mirror Vitorbnc/electronics-datasheets (Diodes/1N4728 - 1N4747 zeners 1w.pdf)
+  publisher: Philips Semiconductors
+  date: '1996-04-26'
+  url: https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Diodes/1N4728%20-%201N4747%20zeners%201w.pdf
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: The A-suffix series has a +/-5% zener-voltage tolerance.
+    quote: '• Tolerance series: ±5%'
+  - claim: '1N4745A: VZ nom 16 V at IZtest 15.5 mA; rdif max 16 ohm at IZtest, 700 ohm at IZ=0.25 mA; IR max 5 uA at VR=12.2
+      V; IZM 57 mA; IZSM 285 mA.'
+    quote: 1N4745A 16 15.5 16 700 0.25 5 12.2 57 285
+  - claim: '1N4744A: VZ nom 15 V at IZtest 17 mA; rdif max 14 ohm.'
+    quote: 1N4744A 15 17 14 700 0.25 5 11.4 61 304
+  - claim: VZ measurement condition.
+    quote: VZ is measured with device at thermal equilibrium while held in clips at 10 mm from body in still air at 25 °C.
+  - claim: Total power dissipation 1000 mW max at Tamb = 50 C.
+    quote: Ptot total power dissipation Tamb = 50 °C − 1000 mW
+- key: goodark_1n4728_1n4764_datasheet
+  type: datasheet
+  authors:
+  - Good-Ark Electronics
+  title: 1N4728 thru 1N4764 Silicon planar power zener diodes
+  container: GitHub mirror Vitorbnc/electronics-datasheets (Diodes/1N4728 - 1N4764.pdf; datasheetcatalog.com copy); original
+    undated, date field = PDF copy creation year
+  publisher: Good-Ark
+  date: '2005'
+  url: https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Diodes/1N4728%20-%201N4764.pdf
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Without suffix the zener voltage tolerance is +/-10%; the 'A' suffix denotes +/-5% (read from rendered page 1;
+      the text layer drops the +/- glyph).
+    quote: Standard Zener voltage tolerance is ± 10%. Add suffix "A" for ± 5% tolerance.
+  - claim: '1N4745 row: 16 V nominal at 15.5 mA test current.'
+    quote: 1N4745 16 15.5 16 700 0.25 5 12.2 285 57
+- key: wikipedia_film_capacitor_mirror
+  type: web
+  authors:
+  - Wikipedia contributors
+  title: Film capacitor (Wikipedia article, archived HTML copy)
+  container: GitHub mirror ajb2969/MLInformationRetrieval (html_documents/Film_capacitor.html; snapshot <= 2019-12-18); secondary
+    source
+  date: '2019'
+  url: https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Film_capacitor.html
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'IEC/EN 60062 tolerance letter codes for film capacitors: F +/-1%, G +/-2%, J +/-5%, K +/-10%, M +/-20%.'
+    quote: rated capacitance, series E24, tolerance ±5%, letter code "J“ rated capacitance, series E12, tolerance ±10%, letter
+      code "K“ rated capacitance, series E6, tolerance ±20%, letter code "M“
+  - claim: Polyester (PET) film capacitance varies about +/-5% over the whole temperature range.
+    quote: The capacitance temperature dependence of polyester film capacitors is relatively high compared to other film capacitors,
+      ±5% over the entire temperature range.
+- key: wikipedia_al_electrolytic_mirror
+  type: web
+  authors:
+  - Wikipedia contributors
+  title: Aluminum electrolytic capacitor (Wikipedia article, archived HTML copy)
+  container: GitHub mirror ajb2969/MLInformationRetrieval (html_documents/Aluminum_electrolytic_capacitor.html; snapshot <=
+    2019-12-18); secondary source
+  date: '2019'
+  url: https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Aluminum_electrolytic_capacitor.html
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Common electrolytic tolerance is +/-20% (letter code M) for E3/E6 series.
+    quote: rated capacitance, series E6, tolerance ±20%, letter code "M“
+  - claim: 'Endurance-test degradation-failure limits: capacitance reduction over 30% or ESR/impedance/loss factor increase
+      by more than a factor of 3 versus initial.'
+    quote: a reduction of capacitance over 30% and an increase of the ESR, impedance or loss factor by more than a factor
+      of 3 compared to the initial value.
+  - claim: Electrolyte evaporation (drying out) causes parameter drift and limits service life.
+    quote: it can evaporate through a temperature-dependent drying-out process, which causes electrical parameters to drift,
+      limiting the service life time of the capacitors.
+  - claim: Capacitance decreases and ESR increases as electrolyte is lost; 'end of life' is reached at specified maximum changes.
+    quote: The capacitance decreases and impedance and ESR increases with decreasing amounts of electrolyte.
+- key: wikipedia_resistor_mirror
+  type: web
+  authors:
+  - Wikipedia contributors
+  title: Resistor (Wikipedia article, archived HTML copy)
+  container: GitHub mirror ajb2969/MLInformationRetrieval (html_documents/Resistor.html; snapshot <= 2019-12-18); secondary
+    source
+  date: '2019'
+  url: https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Resistor.html
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'Metal-film resistors: tolerance typically 0.5%, 1% or 2%, tempco 50-100 ppm/K.'
+    quote: The result is a reasonable tolerance (0.5%, 1%, or 2%) and a temperature coefficient that is generally between
+      50 and 100 ppm/K.
+- key: wikipedia_zener_mirror
+  type: web
+  authors:
+  - Wikipedia contributors
+  title: Zener diode (Wikipedia article, archived HTML copy)
+  container: GitHub mirror ajb2969/MLInformationRetrieval (html_documents/Zener_diode.html; snapshot <= 2019-12-18); secondary
+    source
+  date: '2019'
+  url: https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Zener_diode.html
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Most widely used zener tolerances are 5% and 10%.
+    quote: While tolerances within 0.07% are available, the most widely used tolerances are 5% and 10%.
+- key: fluke_11x_manual_dcv_accuracy
+  type: docs
+  authors:
+  - Fluke Corporation
+  title: 110/113/114/115/117 True-rms Multimeter Users Manual (March 2020), Table 6 - Fluke 115 DC voltage accuracy (verbatim
+    excerpts)
+  container: 'Structured excerpt dataset bouldinnathan/calibration-atlas (GitHub): data/gold_standards/digital_multimeter/fluke-115/tables/accuracy_specifications.yaml;
+    manual itself not in repo'
+  publisher: Fluke Corporation
+  date: 2020-03
+  url: https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/digital_multimeter/fluke-115/tables/accuracy_specifications.yaml
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Accuracy is expressed as +/-([% of reading] + [counts]).
+    quote: 'excerpt: ± ([% of Reading] + [Counts])'
+  - claim: Fluke 115 DC V ranges 600.0 mV, 6.000 V, 60.00 V, 600.0 V are all specified +/-(0.5% + 2 counts) (Table 6, p. 20).
+    quote: 'locator: Table 6, measure_dc_voltage, 6.000 V excerpt: 0.5 % + 2'
+  - claim: 6 V range resolution is 1 mV.
+    quote: 'locator: Table 6, measure_dc_voltage, 6.000 V excerpt: 0.001 V'
+- key: fluke_11x_manual_general_specs
+  type: docs
+  authors:
+  - Fluke Corporation
+  title: 110/113/114/115/117 True-rms Multimeter Users Manual (March 2020) - general specifications for Fluke 115 (verbatim
+    excerpts)
+  container: 'bouldinnathan/calibration-atlas (GitHub): data/gold_standards/digital_multimeter/fluke-115/tables/general_environmental.yaml'
+  publisher: Fluke Corporation
+  date: 2020-03
+  url: https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/digital_multimeter/fluke-115/tables/general_environmental.yaml
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Display is 6000 counts.
+    quote: 'excerpt: Digital 6000 counts'
+  - claim: Temperature coefficient outside the reference band is 0.1 x specified accuracy per C.
+    quote: 'excerpt: Temperature Coefficient 0.1 x (specified accuracy)/°C'
+- key: fluke_117_dcv_accuracy
+  type: docs
+  authors:
+  - Fluke Corporation
+  title: 110/113/114/115/117 Users Manual (March 2020), Table 6 - Fluke 117 DC voltage accuracy and reference conditions (verbatim
+    excerpts)
+  container: 'bouldinnathan/calibration-atlas (GitHub): data/gold_standards/digital_multimeter/fluke-117/model.yaml'
+  publisher: Fluke Corporation
+  date: 2020-03
+  url: https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/digital_multimeter/fluke-117/model.yaml
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Fluke 117 has the same +/-(0.5% + 2) DC voltage specification on the 6.000 V range.
+    quote: 'locator: Table 6, measure_dc_voltage, 6.000 V excerpt: 0.5 % + 2'
+  - claim: Accuracy applies for 1 year after calibration at 18-28 C and 0-90% RH.
+    quote: 'excerpt: Accuracy is specified for 1 year after calibration at 18 °C to 28 °C and 0 % to 90 % relative humidity.'
+- key: rigol_ds1000z_user_guide_2014
+  type: docs
+  authors:
+  - RIGOL Technologies
+  title: MSO1000Z/DS1000Z Series Digital Oscilloscope User's Guide (UGA19103-1110, May 2014), Chapter 18 Specifications (verbatim
+    excerpts)
+  container: 'bouldinnathan/calibration-atlas (GitHub): data/gold_standards/oscilloscope/rigol-ds1074z/tables/published_horizontal_vertical.yaml'
+  publisher: RIGOL Technologies
+  date: 2014-05
+  url: https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/oscilloscope/rigol-ds1074z/tables/published_horizontal_vertical.yaml
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DC gain accuracy is +/-3% of full scale at >=10 mV/div (p. 250).
+    quote: 'locator: Chapter 18, DC Gain Accuracy[3] excerpt: ''≥10 mV: ±3% full scale'''
+  - claim: DC gain accuracy is +/-4% of full scale below 10 mV/div (p. 250).
+    quote: 'locator: Chapter 18, DC Gain Accuracy[3] excerpt: ''<10 mV: ±4% full scale'''
+- key: rigol_ds1000ze_manual_de_2021
+  type: docs
+  authors:
+  - RIGOL Technologies
+  title: Benutzerhandbuch Serie DS1000Z-E (DS1102Z-E / DS1202Z-E), Juni 2021 - text copy
+  container: GitHub ProfessorQuantumUniverse/RigolManual (DS1102ZE_deutsche_Anleitung.txt)
+  publisher: RIGOL Technologies
+  date: 2021-06
+  url: https://raw.githubusercontent.com/ProfessorQuantumUniverse/RigolManual/d9e0b867fe03b93ff6dfbad171260e7f8bf218f3/DS1102ZE_deutsche_Anleitung.txt
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'Same DC gain accuracy specification in the DS1000Z-E family: +/-4% FS below 10 mV/div, +/-3% FS at >=10 mV/div.'
+    quote: 'DC Gain Accuracy <10 mV: ±4% full scale ≥10 mV: ±3% full scale'
+  - claim: DC offset accuracy.
+    quote: DC Offset Accuracy ±0.1 div ± 2 mV ± 1% offset value
+- key: siglent_sds1000xe_extracted_specs
+  type: web
+  authors:
+  - OpenMeasurement project (J. Carron)
+  title: Siglent SDS1104X-E capabilities.yaml (LLM-assisted extraction from Siglent SDS1000X-E datasheet) - LOW CONFIDENCE
+    secondary
+  container: GitHub JamesCarron/OpenMeasurement (MarketResearch/coverage/datasheets/oscilloscope/siglent/sds1000x_e/capabilities.yaml)
+  date: '2026-07-03'
+  url: https://raw.githubusercontent.com/JamesCarron/OpenMeasurement/cc1d46e85c6b3300bd01214e01b461e5c1dd6eb6/MarketResearch/coverage/datasheets/oscilloscope/siglent/sds1000x_e/capabilities.yaml
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Secondary extraction reports SDS1000X-E DC gain accuracy +/-3.0% (5 mV/div-10 V/div) and +/-4.0% (<=2 mV/div);
+      not checked against the Siglent PDF (siglentna.com blocked).
+    quote: 'DC Gain accuracy: ±3.0% for 5-10 V/div; ±4.0% for ≤2 mV/div ranges (lines 461-462)'
+  - claim: The structured accuracy block gives the +/-3.0% range as 5 mV/div to 10 V/div (source page 9 of the Siglent datasheet).
+    quote: 'range: "5 mV/div to 10 V/div" spec: pct: 3.0'
+- key: siegen_pedc_lecture08_capacitors
+  type: web
+  authors:
+  - Institute of Automatic Control (IAS), University of Siegen
+  title: 'Power Electronics Devices (and Components) course - Lecture 08: Passive components - Capacitors (LaTeX slides, CC
+    BY 4.0)'
+  container: University course repository IAS-Uni-Siegen/PEDC_course (GitHub), lecture/tex/Lecture08.tex
+  publisher: University of Siegen
+  date: '2026'
+  url: https://raw.githubusercontent.com/IAS-Uni-Siegen/PEDC_course/84a4cded9f01a601e7052748080dad12965fc355/lecture/tex/Lecture08.tex
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'End-of-life criterion used in ripple-life testing: C < 80% of initial, or ESR > 200% of initial, or leakage above
+      initial, or mechanical damage/leakage.'
+    quote: $C < 80\%\,C_0 \quad \text{or}  \quad ESR > 200\%\,ESR_0  \quad \text{or}  \quad DCL > DCL_0$ or mechanical damage
+      / electrolyte leakage is observed.
+  - claim: 'Ageing of aluminium electrolytics: electrolyte evaporates or degrades; capacitance decreases, ESR increases, open-circuit
+      wear-out becomes likely.'
+    quote: Aluminum electrolytic capacitors are often lifetime-critical because their electrolyte gradually evaporates or
+      degrades during operation.
+  - claim: Lifetime model L_op = M_v * L_b * 2^((T_m - T_a)/10); life roughly doubles per 10 C reduction of internal temperature.
+    quote: For many aluminum electrolytic capacitors, operating life approximately doubles for every \(10^\circ\mathrm{C}\)
+      reduction in internal temperature.
+  - claim: 'Failure modes listed: open circuit (electrolyte loss, terminal failure, venting) and short circuit (oxide dielectric
+      breakdown, severe overvoltage or thermal stress).'
+    quote: 'Aluminum electrolytic capacitors can fail by early-life, random, or wear-out mechanisms.Important failure modes
+      include:'
+- key: wikipedia_vacuum_tube_mirror
+  type: web
+  authors:
+  - Wikipedia contributors
+  title: Vacuum tube (Wikipedia article, archived HTML copy) - failure modes section
+  container: GitHub mirror ajb2969/MLInformationRetrieval (html_documents/Vacuum_tube.html; snapshot <= 2019-12-18); secondary
+    source
+  date: '2019'
+  url: https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Vacuum_tube.html
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'Tube wear-out: cathode depletion is loss of emission after thousands of hours of normal use.'
+    quote: Cathode depletion is the loss of emission after thousands of hours of normal use.
+  - claim: Heater failures are typically sudden (catastrophic) rather than gradual.
+    quote: Tube heaters may also fail without warning, especially if exposed to over voltage or as a result of manufacturing
+      defects.
+- key: cirdc_ieee_metadata_dataset
+  type: report
+  authors:
+  - Y. Zhang
+  - Y. Li
+  - S. Makonin
+  - R. Kumar
+  title: Comprehensive IEEE Research Data Collections (CIRDC) - IEEE Xplore article metadata (DOI, authors, abstract) up to
+    April 2025
+  container: GitHub NicolasV15/CIRDC-Pro (README)
+  date: '2024'
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/README.md
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: The dataset mirrors IEEE Xplore article metadata; it is the verification route for the IEEE DOIs below (ieeexplore.ieee.org
+      and doi.org were blocked).
+    quote: This repository provides detailed information on all articles available through IEEE Xplore up to April 2025
+- key: bandler_salama_1985
+  type: paper
+  authors:
+  - J. W. Bandler
+  - A. E. Salama
+  title: Fault diagnosis of analog circuits
+  container: Proceedings of the IEEE, vol. 73, no. 8, pp. 1279-1325
+  publisher: IEEE
+  date: 1985-08
+  doi: 10.1109/PROC.1985.13281
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/5/1985.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI of Bandler & Salama (Proc. IEEE 73(8):1279-1325, Aug. 1985) per the IEEE metadata record.
+    quote: '"doi": "10.1109/PROC.1985.13281"'
+  - claim: 'Review covers four approaches: fault dictionary, parameter identification, fault verification and approximation.'
+    quote: we consider the fault dictionary approach, the parameter identification approach, the fault verification approach,
+      and the approximation approach.
+  - claim: Fault-dictionary topics include construction, optimum measurement selection, isolation criteria, efficient fault
+      simulation.
+    quote: Associated with the fault dictionary approach we consider fault dictionary construction techniques, methods of
+      optimum measurement selection, different fault isolation criteria, and efficient fault simulation techniques.
+- key: stenbakken_souders_stewart_1989
+  type: paper
+  authors:
+  - G. N. Stenbakken
+  - T. M. Souders
+  - G. W. Stewart
+  title: Ambiguity groups and testability
+  container: IEEE Transactions on Instrumentation and Measurement, vol. 38, no. 5, pp. 941-947
+  publisher: IEEE
+  date: 1989-10
+  doi: 10.1109/19.39034
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/1989.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI and pages of Stenbakken, Souders & Stewart (IEEE TIM 38(5):941-947, Oct. 1989).
+    quote: '"doi": "10.1109/19.39034"'
+  - claim: Ambiguity groups are found from the circuit sensitivity model and depend on the chosen test points and measurement
+      accuracy.
+    quote: The ambiguity groupings are shown to depend on the test points selected and the measurement accuracy and are therefore
+      a useful tool for determining where to add or delete test points.
+- key: pattipati_alexandridis_1990
+  type: paper
+  authors:
+  - K. R. Pattipati
+  - M. G. Alexandridis
+  title: Application of heuristic search and information theory to sequential fault diagnosis
+  container: IEEE Transactions on Systems, Man, and Cybernetics, vol. 20, no. 4, pp. 872-887
+  publisher: IEEE
+  date: 1990-07
+  doi: 10.1109/21.105086
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/21/1990.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI and pages (IEEE SMC 20(4):872-887, July-Aug. 1990).
+    quote: '"doi": "10.1109/21.105086"'
+  - claim: Test sequencing is posed as optimal AND/OR decision-tree construction (NP-complete) and solved with information-theoretic
+      (Huffman/entropy) lower bounds in heuristic search.
+    quote: Lower bounds on the optimal cost-to-go from the information-theoretic concepts of Huffman coding and entropy are
+      derived.
+- key: hochwald_bastian_1979
+  type: paper
+  authors:
+  - W. Hochwald
+  - J. Bastian
+  title: A dc approach for analog fault dictionary determination
+  container: IEEE Transactions on Circuits and Systems, vol. 26, no. 7, pp. 523-529
+  publisher: IEEE
+  date: 1979-07
+  doi: 10.1109/TCS.1979.1084665
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/31/1979.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI and pages (IEEE TCAS 26(7):523-529, July 1979).
+    quote: '"doi": "10.1109/TCS.1979.1084665"'
+  - claim: DC-node-voltage fault dictionaries; the paper examines actual field failure statistics to judge which failures
+      can be pre-modelled.
+    quote: In this paper we examine actual field failure statistics and identify which of these field failures could realistically
+      have been predetermined and modeled by the dc approach.
+- key: schreiber_1979
+  type: paper
+  authors:
+  - H. Schreiber
+  title: Fault dictionary based upon stimulus design
+  container: IEEE Transactions on Circuits and Systems, vol. 26, no. 7, pp. 529-537
+  publisher: IEEE
+  date: 1979-07
+  doi: 10.1109/TCS.1979.1084666
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/31/1979.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI and pages (IEEE TCAS 26(7):529-537, July 1979).
+    quote: '"doi": "10.1109/TCS.1979.1084666"'
+  - claim: Fault dictionary built from decision regions around single-element drift fault-signature trajectories.
+    quote: the fault dictionary is constructed by defining disjoint decision regions (hypervolumes) around each fault signature
+      trajectory in the signal space.
+- key: he_he_li_2020_gan_tim
+  type: paper
+  authors:
+  - Wei He
+  - Yigang He
+  - Bing Li
+  title: Generative Adversarial Networks With Comprehensive Wavelet Feature for Fault Diagnosis of Analog Circuits
+  container: IEEE Transactions on Instrumentation and Measurement, vol. 69, no. 9, pp. 6640-6650
+  publisher: IEEE
+  date: 2020-09
+  doi: 10.1109/TIM.2020.2969008
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/2020.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI (IEEE TIM 69(9):6640-6650, Sept. 2020).
+    quote: '"doi": "10.1109/TIM.2020.2969008"'
+  - claim: Deep-learning (cross-wavelet + GAN) analog-circuit fault diagnosis addressing limited training samples.
+    quote: a novel deep learning strategy based on the cross-wavelet transform (XWT) and generative adversarial networks (GANs)
+      is proposed for analog-circuit fault diagnosis.
+- key: shi_deng_wang_he_2020_dmic_tim
+  type: paper
+  authors:
+  - Junyou Shi
+  - Yi Deng
+  - Zili Wang
+  - Qingjie He
+  title: A Combined Method for Analog Circuit Fault Diagnosis Based on Dependence Matrices and Intelligent Classifiers
+  container: IEEE Transactions on Instrumentation and Measurement, vol. 69, no. 3, pp. 782-793
+  publisher: IEEE
+  date: 2020-03
+  doi: 10.1109/TIM.2019.2905307
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/2020.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI (IEEE TIM 69(3):782-793, March 2020).
+    quote: '"doi": "10.1109/TIM.2019.2905307"'
+  - claim: Dependence matrices give preliminary ambiguity groups; separate classifiers then resolve separable groups.
+    quote: The main purpose of this method is to obtain preliminary ambiguity groups by constructing a dependence matrix,
+      to achieve a more accurate diagnostic result by using several simple intelligent classifiers.
+- key: gao_yang_jiang_2021_incipient_tim
+  type: paper
+  authors:
+  - Tianyu Gao
+  - Jingli Yang
+  - Shouda Jiang
+  title: A Novel Incipient Fault Diagnosis Method for Analog Circuits Based on GMKL-SVM and Wavelet Fusion Features
+  container: IEEE Transactions on Instrumentation and Measurement, vol. 70, art. 9198907
+  publisher: IEEE
+  date: '2021'
+  doi: 10.1109/TIM.2020.3024337
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/2021.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI (IEEE TIM vol. 70, 2021).
+    quote: '"doi": "10.1109/TIM.2020.3024337"'
+  - claim: Evaluated on Sallen-Key band-pass, four-op-amp biquad high-pass and leapfrog filter benchmark circuits.
+    quote: The method is fully evaluated with the Sallen-Key bandpass filter circuit, the four-op-amp biquad high-pass filter
+      circuit, and the leapfrog filter circuit.
+- key: vassios_2025_selftrained_tim
+  type: paper
+  authors:
+  - Vassilis D. Vassios
+  - Argyrios T. Hatzopoulos
+  - Ioannis G. Intzes
+  - D. Kyriakos Tsiakmakis
+  - Dimitrios K. Papakostas
+  title: A Self-Trained, Low-Complexity Method for Detecting Faults in Analog Circuits
+  container: IEEE Transactions on Instrumentation and Measurement, vol. 74, art. 10887108
+  publisher: IEEE
+  date: '2025'
+  doi: 10.1109/TIM.2025.3542098
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/2025.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI (IEEE TIM vol. 74, 2025).
+    quote: '"doi": "10.1109/TIM.2025.3542098"'
+  - claim: Supply-current transient signatures with recursively updated mean/SD detection regions; tested in simulation and
+      on real circuits with a microcontroller ATE.
+    quote: The algorithm was tested in simulations and in real circuits with the use of microcontroller-based automated test
+      equipment (ATE) to demonstrate the simplicity and speed of the method.
+- key: shi_he_wang_2019_gmm_dt_access
+  type: paper
+  authors:
+  - Junyou Shi
+  - Qingjie He
+  - Zili Wang
+  title: GMM Clustering-Based Decision Trees Considering Fault Rate and Cluster Validity for Analog Circuit Fault Diagnosis
+  container: IEEE Access, vol. 7, pp. 140637-140650
+  publisher: IEEE
+  date: '2019'
+  doi: 10.1109/ACCESS.2019.2943380
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/6287639/2019.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI (IEEE Access 7:140637-140650, 2019).
+    quote: '"doi": "10.1109/ACCESS.2019.2943380"'
+  - claim: Fault-rate-aware decision trees prioritise isolating faults with higher fault rates (prior-weighted test ordering).
+    quote: This algorithm not only considers the partitioning ability of each attribute, but also considers the isolation
+      priority of faults with higher fault rates.
+- key: cloete_stander_wilke_2022_access
+  type: paper
+  authors:
+  - Jacob B. Cloete
+  - Tinus Stander
+  - Daniel N. Wilke
+  title: 'Parametric Circuit Fault Diagnosis Through Oscillation-Based Testing in Analogue Circuits: Statistical and Deep
+    Learning Approaches'
+  container: IEEE Access, vol. 10, pp. 15671-15680
+  publisher: IEEE
+  date: '2022'
+  doi: 10.1109/ACCESS.2022.3149324
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/6287639/2022.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI (IEEE Access 10:15671-15680, 2022).
+    quote: '"doi": "10.1109/ACCESS.2022.3149324"'
+  - claim: Parametric faults are hard to detect in the presence of normal component tolerance variation; deep learning beat
+      harmonic analysis on simulated data.
+    quote: Parametric faults in the presence of normal component tolerance variation are challenging to detect and diagnose.
+- key: miao_2024_attention_fcn_access
+  type: paper
+  authors:
+  - Yufeng Miao
+  - Ying Zhang
+  - Fuyang Chen
+  - Zijian Wang
+  title: Analog Circuit Incipient Fault Detection Based on Attention Mechanism and Fully Convolutional Network
+  container: IEEE Access (2024; early-access record in the metadata snapshot)
+  publisher: IEEE
+  date: '2024'
+  doi: 10.1109/ACCESS.2024.3403908
+  url: https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/6287639/2024.json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI (IEEE Access, 2024).
+    quote: '"doi": "10.1109/ACCESS.2024.3403908"'
+  - claim: Component tolerance causes feature overlap between fault classes, especially for incipient faults.
+    quote: Owing to the tolerance of circuit components in analogue circuits, feature overlap occurs between different component
+      faults, especially in the case of early-stage faults.
+- key: dekleer_williams_1987
+  type: paper
+  authors:
+  - J. de Kleer
+  - B. C. Williams
+  title: Diagnosing multiple faults
+  container: Artificial Intelligence, vol. 32, no. 1, pp. 97-130
+  publisher: Elsevier
+  date: 1987-04
+  doi: 10.1016/0004-3702(87)90063-4
+  url: https://raw.githubusercontent.com/vintageplayer/SciBase-ACMTemp/ffc9cb3f5cb7cbf0a9d9c91d485b1a63bc421db4/Journals/TODS/Volumes/Volume%2013%20Issue%202%2C%20June%201988/Pages%3A%20167-196/references.txt
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Bibliographic record with DOI (ACM Digital Library reference list mirrored on GitHub; secondary). The paper's minimum-entropy
+      probe selection could NOT be verified from a fetched source (paper not reachable).
+    quote: J de Kleer , B C Williams, Diagnosing multiple faults, Artificial Intelligence, v.32 n.1, p.97-130, April 1987[doi>10.1016/0004-3702(87)90063-4]
+- key: guo_2017_calibration
+  type: paper
+  authors:
+  - Chuan Guo
+  - Geoff Pleiss
+  - Yu Sun
+  - Kilian Q. Weinberger
+  title: On Calibration of Modern Neural Networks
+  container: ICML 2017 (PMLR 70); arXiv:1706.04599
+  date: '2017'
+  url: https://raw.githubusercontent.com/BrendonPedro/cloud_slm-router/92945dfaa6c2260643e83571f16ad0da17e6886a/research/raw/landscape/abs_1706.04599.html
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: arXiv identifier and venue (saved copy of the arXiv abstract page; arxiv.org blocked).
+    quote: content="1706.04599"
+  - claim: Comments field states ICML 2017.
+    quote: ICML 2017
+  - claim: Temperature scaling (single-parameter Platt scaling variant) is effective on most datasets.
+    quote: temperature scaling -- a single-parameter variant of Platt Scaling -- is surprisingly effective at calibrating
+      predictions.
+- key: sklearn_calibration_user_guide
+  type: docs
+  authors:
+  - scikit-learn developers
+  title: 'scikit-learn User Guide 1.16: Probability calibration (doc/modules/calibration.rst)'
+  container: scikit-learn GitHub repository (main branch)
+  date: '2026'
+  url: https://raw.githubusercontent.com/scikit-learn/scikit-learn/857849927da6e988d7d026b17aef214d43e5f26e/doc/modules/calibration.rst
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: CalibratedClassifierCV supports 'sigmoid', 'isotonic' and 'temperature' methods.
+    quote: 'calibration via the `method` parameter: `"sigmoid"`, `"isotonic"` and `"temperature"`.'
+  - claim: Isotonic calibration needs enough data (> ~1000 samples) to avoid overfitting.
+    quote: Overall, `'isotonic'` will perform as well as or better than `'sigmoid'` when there is enough data (greater than
+      ~ 1000 samples) to avoid overfitting [3]_.
+  - claim: Temperature T is fitted by minimising log loss on a hold-out set and does not change accuracy.
+    quote: The parameter :math:`T` is learned by minimizing :func:`~sklearn.metrics.log_loss`, i.e. cross-entropy loss, on
+      a hold-out (calibration) set.
+- key: zadrozny_elkan_2002
+  type: paper
+  authors:
+  - Bianca Zadrozny
+  - Charles Elkan
+  title: Transforming Classifier Scores into Accurate Multiclass Probability Estimates
+  container: Proceedings of KDD 2002
+  publisher: ACM
+  date: '2002'
+  doi: 10.1145/775047.775151
+  url: https://raw.githubusercontent.com/scikit-learn/scikit-learn/857849927da6e988d7d026b17aef214d43e5f26e/doc/modules/calibration.rst
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Reference and DOI as cited by scikit-learn's calibration guide (secondary; dl.acm.org blocked).
+    quote: <https://dl.acm.org/doi/pdf/10.1145/775047.775151>`_ B. Zadrozny & C. Elkan, (KDD 2002)
+- key: naeini_cooper_hauskrecht_2015
+  type: paper
+  authors:
+  - Mahdi Pakdaman Naeini
+  - Gregory F. Cooper
+  - Milos Hauskrecht
+  title: Obtaining Well Calibrated Probabilities Using Bayesian Binning
+  container: Proceedings of the Twenty-Ninth AAAI Conference on Artificial Intelligence (AAAI-15)
+  publisher: AAAI Press
+  date: '2015'
+  doi: 10.1609/aaai.v29i1.9602
+  url: https://raw.githubusercontent.com/scikit-learn-contrib/MAPIE/7e888f5249bf942912207d398525d3259a5f07c0/mapie/metrics/calibration.py
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: MAPIE attributes the standard (confidence) ECE to Naeini et al. 2015 and gives the DOI (secondary; ojs.aaai.org
+      blocked).
+    quote: Naeini, Mahdi Pakdaman, Gregory Cooper, and Milos Hauskrecht. "Obtaining well calibrated probabilities using bayesian
+      binning." Twenty-Ninth AAAI Conference on Artificial Intelligence. 2015. https://doi.org/10.1609/aaai.v29i1.9602
+  - claim: ECE = bin-size-weighted average of |accuracy - confidence| over confidence bins.
+    quote: samples are binned by their top predicted probability and the weighted average of |accuracy - confidence| is returned.
+- key: ke_2017_lightgbm
+  type: paper
+  authors:
+  - Guolin Ke
+  - Qi Meng
+  - Thomas Finley
+  - Taifeng Wang
+  - Wei Chen
+  - Weidong Ma
+  - Qiwei Ye
+  - Tie-Yan Liu
+  title: 'LightGBM: A Highly Efficient Gradient Boosting Decision Tree'
+  container: Advances in Neural Information Processing Systems 30 (NIPS 2017)
+  date: '2017'
+  url: https://raw.githubusercontent.com/microsoft/LightGBM/f4777388bd0c580719feb03469e80f767dc9b09f/README.md
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'Official LightGBM README reference: NIPS 2017, pp. 3149-3157 (other citations give 3146-3154; no DOI in NeurIPS
+      proceedings).'
+    quote: Advances in Neural Information Processing Systems 30 (NIPS 2017), pp. 3149-3157.
+- key: friedman_2001_gbm
+  type: paper
+  authors:
+  - Jerome H. Friedman
+  title: 'Greedy function approximation: A gradient boosting machine'
+  container: The Annals of Statistics, vol. 29, no. 5
+  publisher: Institute of Mathematical Statistics
+  date: '2001'
+  doi: 10.1214/aos/1013203451
+  url: https://raw.githubusercontent.com/rust-ml/linfa/3b411a4c985cdf6b83430d9c44f11e338d300c50/src/composing/residual_chain.rs
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI as cited in the linfa (Rust ML) source (secondary; projecteuclid/doi.org blocked).
+    quote: '//! - J. H. Friedman (2001). "Greedy function approximation: A gradient boosting machine." //! <https://doi.org/10.1214/aos/1013203451>'
+- key: dempster_laird_rubin_1977
+  type: paper
+  authors:
+  - A. P. Dempster
+  - N. M. Laird
+  - D. B. Rubin
+  title: Maximum likelihood from incomplete data via the EM algorithm
+  container: Journal of the Royal Statistical Society, Series B, vol. 39, no. 1
+  publisher: Royal Statistical Society / Wiley
+  date: '1977'
+  doi: 10.1111/j.2517-6161.1977.tb01600.x
+  url: https://raw.githubusercontent.com/dmetivie/ExpectationMaximization.jl/c1589dbc5ea7a5e5a33345d8f2afc3f9e7d2f527/docs/src/biblio.md
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: DOI as cited by ExpectationMaximization.jl docs (secondary; a second bib record gives vol. 39 no. 1 pp. 1-22).
+    quote: https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.2517-6161.1977.tb01600.x
+- key: schwarz_1978_bic
+  type: paper
+  authors:
+  - Gideon Schwarz
+  title: Estimating the Dimension of a Model
+  container: The Annals of Statistics, vol. 6, no. 2, pp. 461-464
+  publisher: Institute of Mathematical Statistics
+  date: '1978'
+  doi: 10.1214/aos/1176344136
+  url: https://raw.githubusercontent.com/jkriege2/QuickFit3/d5253eaa37fd55b208c7b709ce6f03fb1f5fe585/doc/bayesian_fit/bayesian_fit.bib
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Volume, pages and DOI from a BibTeX record (secondary).
+    quote: volume = {6}, number = {2}, pages = {461--464}, doi = {10.1214/aos/1176344136},
+- key: lindley_1956
+  type: paper
+  authors:
+  - Dennis V. Lindley
+  title: On a measure of the information provided by an experiment
+  container: The Annals of Mathematical Statistics, vol. 27, no. 4, pp. 986-1005
+  publisher: Institute of Mathematical Statistics
+  date: '1956'
+  doi: 10.1214/aoms/1177728069
+  url: https://raw.githubusercontent.com/ActiveInferenceInstitute/cognitive/59fdc8275d41d9d3dc3126695083e27e0bd1f6ae/docs/manuscript/references.bib
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Volume, pages and DOI from a BibTeX record (secondary).
+    quote: title = {On a measure of the information provided by an experiment}, journal = {The Annals of Mathematical Statistics},
+      volume = {27}, number = {4}, pages = {986--1005}, year = {1956}, doi = {10.1214/aoms/1177728069}
+- key: mackay_1992_active_data_selection
+  type: paper
+  authors:
+  - David J. C. MacKay
+  title: Information-based objective functions for active data selection
+  container: Neural Computation, vol. 4, no. 4, pp. 590-604
+  publisher: MIT Press
+  date: '1992'
+  doi: 10.1162/neco.1992.4.4.590
+  url: https://raw.githubusercontent.com/chengsoonong/crowdastro/ce14432c36de0574b73d813304365b74446a61f8/tex/papers.bib
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Title, pages and DOI from a BibTeX record (secondary).
+    quote: title = {Information-based objective functions for active data selection}, journal = {Neural Computation}, volume
+      = {4}, pages = {590-604}, ISSN = {0899-7667}, DOI = {10.1162/neco.1992.4.4.590},
+  - claim: Issue number 4 confirmed by a second BibTeX record (secondmind-labs/trieste docs/refs.bib).
+    quote: journal = {Neural Computation}, number = {4}, pages = {590--604}, volume = {4}, year = {1992}
+- key: efron_1979_bootstrap
+  type: paper
+  authors:
+  - Bradley Efron
+  title: 'Bootstrap Methods: Another Look at the Jackknife'
+  container: The Annals of Statistics, vol. 7, no. 1, pp. 1-26
+  publisher: Institute of Mathematical Statistics
+  date: '1979'
+  doi: 10.1214/aos/1176344552
+  url: https://raw.githubusercontent.com/rasbt/pattern_classification/3f96361bc78db6b5eb1840fa80409bad491e8ece/evaluation/model-evaluation/model-evaluation-selection-part2.md
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Reference with DOI (secondary).
+    quote: '- Efron, Bradley. 1979. "Bootstrap Methods: Another Look at the Jackknife." *The Annals of Statistics* 7 (1).
+      Institute of Mathematical Statistics: 1–26. doi:10.1214/aos/1176344552.'
+- key: hanley_mcneil_1982_auc
+  type: paper
+  authors:
+  - James A. Hanley
+  - Barbara J. McNeil
+  title: The meaning and use of the area under a receiver operating characteristic (ROC) curve
+  container: Radiology, vol. 143, no. 1, pp. 29-36
+  publisher: Radiological Society of North America
+  date: '1982'
+  doi: 10.1148/radiology.143.1.7063747
+  url: https://raw.githubusercontent.com/rasbt/python-machine-learning-book/7d916874374ae94d84bd43b9745ac9789e5b2a18/docs/references.md
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Reference with DOI (secondary; pubs.rsna.org blocked).
+    quote: http://pubs.rsna.org/doi/abs/10.1148/radiology.143.1.7063747). Radiology, 143(1):29–36, 1982.
+- key: hendrycks_gimpel_2017_ood
+  type: paper
+  authors:
+  - Dan Hendrycks
+  - Kevin Gimpel
+  title: A Baseline for Detecting Misclassified and Out-of-Distribution Examples in Neural Networks
+  container: ICLR 2017; arXiv:1610.02136
+  date: '2017'
+  url: https://raw.githubusercontent.com/Jingkang50/OODSurvey/68d19f70b429e989007aa9a59d9bd5b2abb8d301/5_OOD.md
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Venue (ICLR 2017) and arXiv id per the OOD-survey companion repository (secondary; arxiv.org blocked). No DOI.
+    quote: '**[ICLR-2017]** [A Baseline for Detecting Misclassified and Out-of-Distribution Examples in Neural Networks](https://arxiv.org/abs/1610.02136).'
+- key: baxandall_1952_bibliographic
+  type: article
+  authors:
+  - P. J. Baxandall
+  title: Negative-feedback tone control
+  container: Wireless World, October 1952, pp. 402-405
+  date: 1952-10
+  url: https://raw.githubusercontent.com/bedwards/hex-index/c1a5a6ee3ffa8fc0e85da1d81460819af5382553/library/wikipedia/tone-control-circuit.raw.html
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Bibliographic record as cited by the Wikipedia 'Tone control circuit' article (mirrored HTML; the article PDF itself
+      was not reachable).
+    quote: 'Baxandall, P. J. (October 1952). "Negative-feedback tone control". Wireless World: 402–405.'
+- key: horowitz_hill_2015_aoe3
+  type: book
+  authors:
+  - Paul Horowitz
+  - Winfield Hill
+  title: The Art of Electronics, Third edition
+  container: Cambridge University Press
+  publisher: Cambridge University Press
+  date: '2015'
+  url: https://raw.githubusercontent.com/Lippitz-Lab/advanced-experimental-physics/3e7eb497c50bc54b0775b15db75d13bff15200e3/literature.bib
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Bibliographic record (ISBN 9780521809269). The ripple formula itself could not be checked against the book text.
+    quote: title={The art of electronics}, address={New York, NY}, publisher={Cambridge University Press}, year={2015}, edition={Third
+      edition}, ISBN={9780521809269},
+- key: wikipedia_ripple_mirror
+  type: web
+  authors:
+  - Wikipedia contributors
+  title: Ripple (electrical) (Wikipedia article, archived HTML copy) - capacitor-input filter ripple
+  container: GitHub mirror ajb2969/MLInformationRetrieval (html_documents/Ripple_(electrical).html; snapshot <= 2019-12-18);
+    cites Millman & Halkias, Integrated Electronics (1972), pp. 112-114
+  date: '2019'
+  url: https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Ripple_(electrical).html
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'Peak-to-peak ripple of a capacitor-input filter: Vpp = I/(2fC) for full-wave, I/(fC) for half-wave rectification
+      (f = mains frequency).'
+    quote: V_{\mathrm{pp}}=\frac{I}{2fC}
+  - claim: 'Assumptions: CR much larger than the period and small ripple, so the capacitor discharges approximately linearly
+      from peak to peak.'
+    quote: If the time constant, CR, is large in comparison to the period of the ac waveform, then a reasonably accurate approximation
+      can be made by assuming that the capacitor voltage falls linearly.
+  - claim: The formula is referenced to Millman & Halkias, Integrated Electronics.
+    quote: Millman-Halkias, Integrated Electronics, McGraw-Hill Kogakusha, 1972.
+- key: ngspice_manual_v47
+  type: docs
+  authors:
+  - Holger Vogt
+  - Giles Atkinson
+  - Dietmar Warning
+  - Paolo Nenzi
+  title: Ngspice User's Manual, Version 47 (ngspice release version)
+  container: ngspice project (SourceForge file release ng-spice-rework/47)
+  publisher: ngspice project
+  date: '2026-08-11'
+  url: https://sourceforge.net/projects/ngspice/files/ng-spice-rework/47/ngspice-47-manual.pdf/download
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Manual version and date.
+    quote: Version 47 (ngspice release version) Holger Vogt, Giles Atkinson, Dietmar Warning, Paolo Nenzi August 11th, 2026
+  - claim: B-source (Ch. 5.1, p. 105) general form.
+    quote: BXXXXXXX n+ n- <i=expr> <v=expr> <tc1=value> <tc2=value>
+  - claim: B-source exp() argument is limited to 14 (linear continuation beyond) - affects Koren's EXP(KP*...) term at large
+      positive arguments.
+    quote: For convergence reasons the ‘exp’ function has a limit of 14 for its argument, beyond that value it will increase
+      linearily.
+  - claim: log/ln are natural logarithms in B-sources (matches PSpice LOG in Koren's model).
+    quote: 'Exponential and logarithmic: exp, ln, log, log10 (ln, log with base e, log10 with base 10)'
+  - claim: 'B-source pow/**/^ use |x1|: y = pow(fabs(x1), x2).'
+    quote: y = pow(fabs(x1), x2)
+  - claim: Native B-source pwr() is sign-preserving (differs from PSpice PWR).
+    quote: if (x1 < 0.0) y = (-pow(-x1, x2)); else y = (pow(x1, x2));
+  - claim: E-source VALUE syntax (Ch. 5.2.2) accepts PSpice-style behavioural expressions.
+    quote: EXXXXXXX n+ n- value={expr}
+  - claim: PSPICE compatibility mode (Ch. 12.11.5) is enabled with ngbehavior=ps (libraries) or psa (whole netlist) in spinit/.spiceinit.
+    quote: set ngbehavior=ps
+  - claim: 'LTSPICE compatibility mode (Ch. 12.11.6): ngbehavior=lt translates .include''d LTspice libraries; ltps/ltpsa combine
+      LTspice and PSPICE translation (useful for LTspice-derived models such as standard.dio/.bjt).'
+    quote: in spinit or .spiceinit, ngspice will translate all files that have been read into ngspice netlist by the .include
+      command (lt) or the complete netlist (lta) from LTSPICE syntax to ngspice.
+  - claim: alter command (Ch. 13.5.3, p. 398) changes device or model parameters between runs.
+    quote: Alter changes the value for a device or a specified parameter of a device or model.
+  - claim: alter can address a device inside a subcircuit.
+    quote: alter m.xm1.msub1 w = 20u
+  - claim: .four syntax (Ch. 11.6.4, p. 353).
+    quote: .four freq ov1 <ov2 ov3 ...>
+  - claim: .four works only in batch mode without rawfile; in .control use fourier/spec/fft.
+    quote: As .four is available only when ngspice is executed in batch mode (12.4.1), and no rawfile selected, you may consider
+      the spec (13.5.88), fourier (13.5.35) or fft (13.5.33) commands,
+  - claim: fourier command returns DC and first 9 harmonics by default over the last period(s); TMAX should be <= period*numperiod/100.
+    quote: For maximum accuracy, TMAX (see the .tran line) should be set to period*numperiod/100.0 (or less for very high-Q
+      circuits).
+  - claim: 'DC convergence aids, in order: gmin stepping then source stepping (then optional transient OP).'
+    quote: 1. gmin stepping (gminsteps option). Inserts small conductances across active devices.
+  - claim: Default gmin stepping mode.
+    quote: 'gminsteps = 1: Two gmin stepping processes in series (default)'
+  - claim: Default source stepping mode is Gillespie source stepping.
+    quote: 'srcsteps = 1: Gillespie source stepping (default)'
+  - claim: GMIN default 1e-12 S.
+    quote: GMIN=x resets the value of GMIN, the minimum conductance allowed by the program. The default value is 1.0e-12.
+  - claim: RELTOL default 1e-3 (Newton-Raphson convergence, Ch. 1.4).
+    quote: The RELTOL (RELative TOLerance) parameter, which default value is 10−3
+  - claim: 'Monte Carlo helper: agauss(nom, avar, sigma) adds Gaussian variation with SD avar/sigma.'
+    quote: agauss(nom, avar, sigma) nominal value plus variation drawn from Gaussian distribution with mean 0 and standard
+      deviation avar (absolute), divided by sigma
+  - claim: A random function placed in a device card draws a new random number per instance.
+    quote: random function appears in a device card (e.g. v11 11 0 ’agauss(1,2,3)’), a new random number is generated.
+- key: ngspice_release_notes_47
+  type: docs
+  authors:
+  - ngspice developers
+  title: Ngspice-47 ReleaseNotes.txt
+  container: SourceForge ngspice files, ng-spice-rework/47
+  publisher: ngspice project
+  date: '2026-08-11'
+  url: https://sourceforge.net/projects/ngspice/files/ng-spice-rework/47/ReleaseNotes.txt/download
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: ngspice-47 is the current release (release folder dated 2026-08-11 on SourceForge).
+    quote: Ngspice-47, August 11th, 2026
+- key: ngspice_inpcompat_source
+  type: web
+  authors:
+  - ngspice developers
+  title: ngspice source file src/frontend/inpcompat.c (PSPICE-compatibility translation)
+  container: ngspice git repository on SourceForge (master branch)
+  date: '2026'
+  url: https://sourceforge.net/p/ngspice/ngspice/ci/master/tree/src/frontend/inpcompat.c?format=raw
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: In PSPICE-compatibility mode ngspice defines pwr(x,a)=pow(x,a) (evaluated as |x|^a) - matches PSpice PWR.
+    quote: .func pwr(x, a) { pow(x, a) }
+  - claim: pwrs(x,a)=sgn(x)*pow(x,a) - matches PSpice PWRS, so Koren's G1 evaluates to 2*E1^EX/KG1 for E1>0 and 0 otherwise.
+    quote: .func pwrs(x, a) { sgn(x) * pow(x, a) }
+- key: schemdraw_docs
+  type: docs
+  authors:
+  - Collin J. Delker
+  title: Schemdraw documentation (docs/ sources) and CHANGES.txt
+  container: GitHub cdelker/schemdraw (rendered at schemdraw.readthedocs.io, blocked in sandbox)
+  date: '2026-05-29'
+  url: https://raw.githubusercontent.com/cdelker/schemdraw/e140437dac9b681e9f7eb1accdd462fef2433864/docs/elements/electrical.rst
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Schemdraw provides Triode/Tetrode/Pentode/DualVacuumTube elements (added in v0.22).
+    quote: Common vacuum tubes are defined from the base `VacuumTube` element.
+  - claim: Triode anchors include a functional 'control' grid anchor.
+    quote: 'The triode, tetrode, and pentode include anchors named for function: `control`, `screen`, and `suppressor`.'
+- key: schemdraw_pypi
+  type: web
+  authors:
+  - Collin J. Delker
+  title: schemdraw on PyPI (JSON API)
+  container: Python Package Index
+  date: '2026-05-29'
+  url: https://pypi.org/pypi/schemdraw/json
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Latest release 0.23, MIT licence, requires Python >=3.9; documentation at schemdraw.readthedocs.io.
+    quote: '"version":"0.23"'
+- key: claude_models_overview
+  type: docs
+  authors:
+  - Anthropic
+  title: Models overview
+  container: Claude Developer Platform documentation
+  publisher: Anthropic
+  date: '2026-09-28'
+  url: https://platform.claude.com/docs/en/about-claude/models/overview
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Current lineup lists Claude Fable 5.1, Opus 5.5, Sonnet 5.5 and Haiku 4.5; Claude API IDs as shown.
+    quote: '| Claude API ID | `claude-fable-5-1` | `claude-opus-5-5` | `claude-sonnet-5-5` | `claude-haiku-4-5-20251001` |'
+  - claim: 'Base prices per MTok (input/output): Opus 5.5 $4/$20; Sonnet 5.5 $2/$10; Haiku 4.5 $1/$5; Fable 5.1 $10/$50.'
+    quote: '| $10 / input MTok, $50 / output MTok | $4 / input MTok, $20 / output MTok | $2 / input MTok, $10 / output MTok
+      | $1 / input MTok, $5 / output MTok |'
+  - claim: Batch API is 50% off; cache reads 10% of base input (2.5% Fable 5.1/Mythos 5.1, 5% Opus 5.5).
+    quote: Batch API requests are 50% off; prompt cache reads cost 10% of the base input price (2.5% on Claude Fable 5.1 and
+      Claude Mythos 5.1, 5% on Claude Opus 5.5).
+- key: claude_pricing
+  type: docs
+  authors:
+  - Anthropic
+  title: Pricing
+  container: Claude Developer Platform documentation
+  publisher: Anthropic
+  date: '2026-09-28'
+  url: https://platform.claude.com/docs/en/about-claude/pricing
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: 'Claude Sonnet 5.5 pricing row: $2 input, $2.50 5m cache write, $4 1h cache write, $0.20 cache hit, $10 output
+      per MTok.'
+    quote: '| Claude Sonnet 5.5 | $2 / MTok | $2.50 / MTok | $4 / MTok | $0.20 / MTok | $10 / MTok |'
+  - claim: 'Claude Opus 5.5 pricing row: $4 input, $20 output per MTok (cache hit $0.20).'
+    quote: '| Claude Opus 5.5 | $4 / MTok | $5 / MTok | $8 / MTok | $0.20 / MTok<sup>2</sup> | $20 / MTok |'
+- key: claude_sonnet_5_5_overview
+  type: docs
+  authors:
+  - Anthropic
+  title: Claude Sonnet 5.5 (model page)
+  container: Claude Developer Platform documentation
+  publisher: Anthropic
+  date: '2026-09-28'
+  url: https://platform.claude.com/docs/en/models/sonnet-5-5/overview
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Sonnet 5.5 released 2026-09-28 (today).
+    quote: '**Latest.** Released September 28, 2026.'
+  - claim: Model ID claude-sonnet-5-5.
+    quote: 'Model ID: `claude-sonnet-5-5`'
+  - claim: 1M context, 128K max output, $2/$10 per MTok.
+    quote: 'Context window: 1M tokens · Max output: 128K tokens · Input pricing: $2 / MTok · Output pricing: $10 / MTok'
+- key: claude_sonnet_5_5_whats_new
+  type: docs
+  authors:
+  - Anthropic
+  title: What's new in Claude Sonnet 5.5
+  container: Claude Developer Platform documentation
+  publisher: Anthropic
+  date: '2026-09-28'
+  url: https://platform.claude.com/docs/en/models/sonnet-5-5/whats-new-sonnet-5-5
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Sonnet 5.5 rejects forced tool use (tool_choice any/tool -> 400 invalid_request_error); use tool_choice auto with
+      strict tools, or JSON outputs.
+    quote: Claude Sonnet 5.5 doesn't support forced tool use.
+- key: claude_opus_5_5_overview
+  type: docs
+  authors:
+  - Anthropic
+  title: Claude Opus 5.5 (model page)
+  container: Claude Developer Platform documentation
+  publisher: Anthropic
+  date: '2026-09-22'
+  url: https://platform.claude.com/docs/en/models/opus-5-5/overview
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Opus 5.5 released 2026-09-22.
+    quote: '**Latest.** Released September 22, 2026.'
+  - claim: Model ID claude-opus-5-5; $4/$20 per MTok.
+    quote: 'Context window: 1M tokens · Max output: 128K tokens · Input pricing: $4 / MTok · Output pricing: $20 / MTok'
+- key: claude_tool_use_overview
+  type: docs
+  authors:
+  - Anthropic
+  title: Tool use with Claude
+  container: Claude Developer Platform documentation
+  publisher: Anthropic
+  date: '2026-09-28'
+  url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Definition of tool use (client vs server tools).
+    quote: Tool use (also called function calling) lets Claude call functions that you define or that Anthropic provides.
+  - claim: 'strict: true guarantees schema-conformant tool calls.'
+    quote: 'Add `strict: true` to your custom tool definitions to ensure Claude''s tool calls always match your schema exactly.'
+- key: claude_structured_outputs
+  type: docs
+  authors:
+  - Anthropic
+  title: Structured outputs
+  container: Claude Developer Platform documentation
+  publisher: Anthropic
+  date: '2026-09-28'
+  url: https://platform.claude.com/docs/en/build-with-claude/structured-outputs
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: JSON outputs via output_config.format (GA; output_format deprecated).
+    quote: '**JSON outputs** (`output_config.format`): Get Claude''s response in a specific JSON format'
+  - claim: Numerical constraints (minimum/maximum/multipleOf) are not supported in schemas - validate numeric ranges client-side.
+    quote: Numerical constraints (such as `minimum`, `maximum`, `multipleOf`)
+  - claim: Objects must set additionalProperties to false.
+    quote: '`required` and `additionalProperties` (must be set to `false` for objects)'
+- key: claude_vision
+  type: docs
+  authors:
+  - Anthropic
+  title: Vision
+  container: Claude Developer Platform documentation
+  publisher: Anthropic
+  date: '2026-09-28'
+  url: https://platform.claude.com/docs/en/build-with-claude/vision
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Supported image formats.
+    quote: Claude supports JPEG, PNG, GIF, and WebP images (`image/jpeg`, `image/png`, `image/gif`, `image/webp`).
+  - claim: Image token cost uses 28x28-pixel patches.
+    quote: An image, therefore, costs `⌈width / 28⌉ × ⌈height / 28⌉` visual tokens.
+  - claim: Max 8000x8000 px per image; 10 MB per image on the Claude API.
+    quote: The maximum dimensions per image are 8000x8000 px.
+- key: claude_prompt_caching
+  type: docs
+  authors:
+  - Anthropic
+  title: Prompt caching
+  container: Claude Developer Platform documentation
+  publisher: Anthropic
+  date: '2026-09-28'
+  url: https://platform.claude.com/docs/en/build-with-claude/prompt-caching
+  accessed: '2026-09-28'
+  verified: fetched
+  claims:
+  - claim: Minimum cacheable prompt is 512 tokens for Opus 5.5 and Sonnet 5.5.
+    quote: 512 tokens for Claude Fable 5.1, Claude Mythos 5.1, Claude Opus 5.5, Claude Opus 5, Claude Sonnet 5.5, Claude Fable
+      5, and
+  - claim: Up to 4 cache breakpoints; 5-minute default TTL, optional 1-hour TTL at 2x base input price.
+    quote: 'You can define up to 4 cache breakpoints if you want to:'

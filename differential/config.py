@@ -10,6 +10,11 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
+# Worker processes parallelise across hypotheses; keep BLAS single-threaded inside
+# each so they do not oversubscribe the CPU.
+for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(_var, "1")
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CIRCUITS_DIR = REPO_ROOT / "circuits"
 DATA_DIR = REPO_ROOT / "data"

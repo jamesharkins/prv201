@@ -1,0 +1,29 @@
+psu eig_per_cost {'top1': 0.99, 'mean_cost': 6.54, 'median_cost': 6.0, 'accuracy_when_confident': 0.9895833333333334, 'confident_fraction': 0.96, 'seconds_per_step': 0.007334720919604933}
+psu eig_per_cost_symptom_prior {'top1': 0.99, 'mean_cost': 4.75, 'median_cost': 4.0, 'accuracy_when_confident': 0.9896907216494846, 'confident_fraction': 0.97, 'seconds_per_step': 0.008438641284850595}
+psu fixed_order {'top1': 1.0, 'mean_cost': 8.7, 'median_cost': 6.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 1.0, 'seconds_per_step': 0.0008054435079074097}
+psu random {'top1': 1.0, 'mean_cost': 13.86, 'median_cost': 12.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 1.0, 'seconds_per_step': 0.000852416747484487}
+triode eig_per_cost {'top1': 0.99, 'mean_cost': 3.23, 'median_cost': 4.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 0.98, 'seconds_per_step': 0.004535201740010658}
+triode eig_per_cost_symptom_prior {'top1': 1.0, 'mean_cost': 2.02, 'median_cost': 1.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 0.99, 'seconds_per_step': 0.004484106096686749}
+triode fixed_order {'top1': 0.98, 'mean_cost': 10.49, 'median_cost': 9.0, 'accuracy_when_confident': 0.98, 'confident_fraction': 1.0, 'seconds_per_step': 0.0006830786884407094}
+triode random {'top1': 0.99, 'mean_cost': 8.51, 'median_cost': 7.0, 'accuracy_when_confident': 0.99, 'confident_fraction': 1.0, 'seconds_per_step': 0.0006963591326045557}
+tone eig_per_cost {'top1': 1.0, 'mean_cost': 5.37, 'median_cost': 6.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 0.99, 'seconds_per_step': 0.0039321807341715}
+tone eig_per_cost_symptom_prior {'top1': 1.0, 'mean_cost': 4.01, 'median_cost': 3.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 1.0, 'seconds_per_step': 0.004129336879935484}
+tone fixed_order {'top1': 1.0, 'mean_cost': 7.44, 'median_cost': 6.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 0.96, 'seconds_per_step': 0.0007345892734887608}
+tone random {'top1': 1.0, 'mean_cost': 8.23, 'median_cost': 7.5, 'accuracy_when_confident': 1.0, 'confident_fraction': 0.99, 'seconds_per_step': 0.0007546581513522811}
+opamp eig_per_cost {'top1': 0.99, 'mean_cost': 3.64, 'median_cost': 4.0, 'accuracy_when_confident': 0.99, 'confident_fraction': 1.0, 'seconds_per_step': 0.00839405039033439}
+opamp eig_per_cost_symptom_prior {'top1': 1.0, 'mean_cost': 3.05, 'median_cost': 3.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 1.0, 'seconds_per_step': 0.008575709142485266}
+opamp fixed_order {'top1': 1.0, 'mean_cost': 5.65, 'median_cost': 4.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 1.0, 'seconds_per_step': 0.0007761625366746675}
+opamp random {'top1': 1.0, 'mean_cost': 8.71, 'median_cost': 8.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 1.0, 'seconds_per_step': 0.0007217991229674666}
+driver eig_per_cost {'top1': 0.99, 'mean_cost': 2.44, 'median_cost': 2.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 0.97, 'seconds_per_step': 0.01201434994665457}
+driver eig_per_cost_symptom_prior {'top1': 1.0, 'mean_cost': 1.99, 'median_cost': 1.0, 'accuracy_when_confident': 1.0, 'confident_fraction': 1.0, 'seconds_per_step': 0.012958655093326948}
+driver fixed_order {'top1': 0.99, 'mean_cost': 13.87, 'median_cost': 16.0, 'accuracy_when_confident': 0.99, 'confident_fraction': 1.0, 'seconds_per_step': 0.0007857136165268713}
+driver random {'top1': 0.98, 'mean_cost': 8.69, 'median_cost': 7.0, 'accuracy_when_confident': 0.98, 'confident_fraction': 1.0, 'seconds_per_step': 0.0008050464004303841}
+channel_strip eig_per_cost {'top1': 0.99, 'mean_cost': 6.4, 'median_cost': 6.0, 'accuracy_when_confident': 0.9897435897435898, 'confident_fraction': 0.975, 'seconds_per_step': 0.08004009682109936}
+channel_strip eig_per_cost_symptom_prior {'top1': 0.975, 'mean_cost': 4.22, 'median_cost': 3.0, 'accuracy_when_confident': 0.975, 'confident_fraction': 1.0, 'seconds_per_step': 0.08875802152451884}
+channel_strip fixed_order {'top1': 0.77, 'mean_cost': 24.98, 'median_cost': 23.0, 'accuracy_when_confident': 0.9541984732824428, 'confident_fraction': 0.655, 'seconds_per_step': 0.0015412460776636008}
+channel_strip random {'top1': 0.84, 'mean_cost': 22.985, 'median_cost': 21.0, 'accuracy_when_confident': 0.9745222929936306, 'confident_fraction': 0.785, 'seconds_per_step': 0.0014636238022151687}
+                                top1  mean_cost
+eig_per_cost                0.991429   4.860000
+eig_per_cost_symptom_prior  0.991429   3.465714
+fixed_order                 0.930000  13.730000
+random                      0.950000  13.424286

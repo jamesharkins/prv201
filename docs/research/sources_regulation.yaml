@@ -1,0 +1,1228 @@
+# sources_regulation.yaml -- Differential (PRV 201) evidence base: regulation, safety, ethics, governance
+# Compiled 2026-09-28. Status statements are "as of 28 September 2026".
+#
+# VERIFICATION CONVENTIONS (read before citing)
+# - verified: fetched
+#     The research agent opened the text at `url` and copied the quote from it. The sandbox egress
+#     proxy blocked almost every official host (EUR-Lex, eCFR/OSHA, NIST, FTC, state legislatures,
+#     SEP, publishers). Some primary texts were therefore opened through GitHub-hosted reproductions
+#     of the official text. Those entries say so in `container`/`publisher`; re-check them against
+#     the official source before final submission.
+# - verified: search_snippet_only
+#     The official page was blocked (EGRESS_BLOCKED). The quote reproduces wording shown in
+#     web-search result text for that page. Queries were restricted to the official domain where
+#     possible. Search-result text can be abridged or lightly normalised, so confirm the exact
+#     wording on the official page before quoting it verbatim in the final report.
+# - Each claim is limited to what its quote supports. Interpretation for Differential lives in
+#   regulation_notes.md. Every quote is <= 40 words.
+# - Nothing here is invented. Topics that could not be verified (IEEE/NSPE codes, NFPA 70E,
+#   IEC 61010-1, IEC 62368-1, CCPA/CPRA, NISTIR 8280, AI Liability Directive withdrawal, SEP
+#   entries, Acemoglu & Restrepo, Brynjolfsson et al., SAE's own J3016 page) are listed as gaps in
+#   regulation_notes.md and are deliberately absent from this file.
+
+# =============================================================================================
+# A. EU AI ACT
+# =============================================================================================
+- key: eu_ai_act
+  type: statute
+  authors: ["European Parliament", "Council of the European Union"]
+  title: "Regulation (EU) 2024/1689 of the European Parliament and of the Council of 13 June 2024 laying down harmonised rules on artificial intelligence (Artificial Intelligence Act)"
+  container: "Official Journal of the European Union, OJ L, 2024/1689, 12.7.2024"
+  publisher: "EUR-Lex, Publications Office of the European Union"
+  date: "2024-06-13"
+  url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The EU AI Act, Regulation (EU) 2024/1689, entered into force on 1 August 2024."
+      quote: "The regulation entered into force on 1 August 2024."
+    - claim: "EUR-Lex publishes a consolidated version of the AI Act dated 27 July 2026, the date on which the Digital Omnibus amendments took effect."
+      quote: "Consolidated TEXT: 32024R1689 — EN — 27.07.2026"
+
+- key: eu_ai_act_text_mirror
+  type: web
+  authors: ["European Parliament", "Council of the European Union"]
+  title: "Regulation (EU) 2024/1689 (AI Act): original Official Journal text of the articles and annexes (reproduction, version 2024-08-01)"
+  container: "GitHub repository bojkovski-cpu/ai-act-annotated, files src/data/articles_en.json and src/data/annexes_en.json, commit 410bd77 (2026-05-19). Unofficial reproduction of the OJ text, used because EUR-Lex was blocked. It shows the text before the 2026 Omnibus amendments."
+  publisher: "GitHub (repository maintained by bojkovski-cpu)"
+  date: "2024-07-12"
+  url: "https://github.com/bojkovski-cpu/ai-act-annotated"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "The AI Act was published in the Official Journal on 12 July 2024 (OJ L, 2024/1689)."
+      quote: "(Artificial Intelligence Act) ( OJ L, 2024/1689, 12.7.2024, ELI: http://data.europa.eu/eli/reg/2024/1689/oj )"
+    - claim: "As originally adopted, Article 113 made the AI Act generally applicable from 2 August 2026 and applied Chapters I and II from 2 February 2025. Chapter I includes the Article 4 AI-literacy duty and Chapter II the Article 5 prohibitions."
+      quote: "It shall apply from 2 August 2026. However: (a) Chapters I and II shall apply from 2 February 2025;"
+    - claim: "As originally adopted, Article 113 applied the notified-body, GPAI (Chapter V), governance and penalties provisions from 2 August 2025."
+      quote: "(b) Chapter III Section 4, Chapter V, Chapter VII and Chapter XII and Article 78 shall apply from 2 August 2025, with the exception of Article 101;"
+    - claim: "As originally adopted, Article 113 applied Article 6(1) (high-risk AI in Annex I products) and its obligations from 2 August 2027."
+      quote: "(c) Article 6(1) and the corresponding obligations in this Regulation shall apply from 2 August 2027."
+    - claim: "The original Article 4 required providers and deployers to ensure, to their best extent, a sufficient level of AI literacy among their staff."
+      quote: "Providers and deployers of AI systems shall take measures to ensure, to their best extent, a sufficient level of AI literacy of their staff and other persons dealing with the operation and use of AI systems on their behalf"
+    - claim: "Under Article 6(1), the first condition for high-risk status is that the AI system is a safety component of a product, or is itself a product, covered by Annex I legislation."
+      quote: "the AI system is intended to be used as a safety component of a product, or the AI system is itself a product, covered by the Union harmonisation legislation listed in Annex I;"
+    - claim: "Under Article 6(1)(b), the second condition is that the product must undergo third-party conformity assessment under that Annex I legislation."
+      quote: "the product whose safety component pursuant to point (a) is the AI system, or the AI system itself as a product, is required to undergo a third-party conformity assessment"
+    - claim: "Under Article 6(2), the AI systems listed in Annex III are also high-risk."
+      quote: "In addition to the high-risk AI systems referred to in paragraph 1, AI systems referred to in Annex III shall be considered to be high-risk."
+    - claim: "Article 50(1) requires providers to design AI systems that interact directly with people so that those people are told they are interacting with an AI system, unless this is obvious."
+      quote: "Providers shall ensure that AI systems intended to interact directly with natural persons are designed and developed in such a way that the natural persons concerned are informed that they are interacting with an AI system, unless this is obvious"
+    - claim: "Article 50(2) requires providers of systems that generate synthetic audio, image, video or text to mark the outputs in a machine-readable, detectable way."
+      quote: "Providers of AI systems, including general-purpose AI systems, generating synthetic audio, image, video or text content, shall ensure that the outputs of the AI system are marked in a machine-readable format and detectable as artificially generated or manipulated."
+    - claim: "The Article 50(2) marking duty does not apply to assistive editing functions, or where the system does not substantially alter the deployer's input."
+      quote: "This obligation shall not apply to the extent the AI systems perform an assistive function for standard editing or do not substantially alter the input data provided by the deployer or the semantics thereof"
+    - claim: "As published in 2024, Annex I lists 20 Union harmonisation acts: items 1-12 in Section A (New Legislative Framework, with item 6 the Radio Equipment Directive 2014/53/EU) and items 13-20 in Section B. Full-text inspection found that the Low Voltage Directive 2014/35/EU is absent, and the EMC Directive 2014/30/EU appears only inside the title of item 20."
+      quote: "Section A. List of Union harmonisation legislation based on the New Legislative Framework"
+    - claim: "Annex III lists eight high-risk areas: biometrics; critical infrastructure; education; employment; essential services; law enforcement; migration and border control; and justice and democratic processes. Full-text inspection found no area covering equipment repair or diagnostics."
+      quote: "High-risk AI systems pursuant to Article 6(2) are the AI systems listed in any of the following areas:"
+    - claim: "Annex III point 4(b) covers AI used in employment relationships to monitor and evaluate workers' performance and behaviour."
+      quote: "to allocate tasks based on individual behaviour or personal traits or characteristics or to monitor and evaluate the performance and behaviour of persons in such relationships."
+
+- key: eurlex_summary_ai_act
+  type: web
+  authors: ["Publications Office of the European Union"]
+  title: "Rules for trustworthy artificial intelligence in the EU (EUR-Lex summary of Regulation (EU) 2024/1689)"
+  publisher: "EUR-Lex"
+  date: "2024"
+  url: "https://eur-lex.europa.eu/EN/legal-content/summary/rules-for-trustworthy-artificial-intelligence-in-the-eu.html"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Before the 2026 Omnibus, the EUR-Lex summary said the high-risk rules would apply from 2 August 2026 or 2 August 2027."
+      quote: "Most provisions – in particular those governing high-risk AI systems – will only start to apply from 2 August 2026 or 2 August 2027."
+    - claim: "The AI Act's governance bodies have been active since 2 August 2025."
+      quote: "The regulation sets up several governing bodies active from 2 August 2025"
+
+- key: eu_ai_omnibus_2026_1744
+  type: statute
+  authors: ["European Parliament", "Council of the European Union"]
+  title: "Regulation (EU) 2026/1744 of 8 July 2026 amending Regulations (EU) 2024/1689, (EU) 2018/1139 and (EU) 2023/1230 as regards the simplification of the implementation of harmonised rules on artificial intelligence (Digital Omnibus on AI)"
+  container: "Official Journal of the European Union, OJ L, 2026/1744"
+  publisher: "EUR-Lex, Publications Office of the European Union"
+  date: "2026-07-08"
+  url: "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Digital Omnibus on AI was adopted as Regulation (EU) 2026/1744 of 8 July 2026. It amends the AI Act, Regulation (EU) 2018/1139 and the Machinery Regulation (EU) 2023/1230."
+      quote: "of 8 July 2026 amending Regulations (EU) 2024/1689, (EU) 2018/1139 and (EU) 2023/1230 as regards the simplification of the implementation of harmonised rules on artificial intelligence (Digital Omnibus on AI)"
+    - claim: "Regulation (EU) 2026/1744 was published in the Official Journal on 24 July 2026."
+      quote: "published in the Official Journal of the European Union (OJ L, 2026/1744) on 24 July 2026"
+    - claim: "The Omnibus sets the Chapter III high-risk rules to apply from 2 December 2027 for Annex III (Article 6(2)) systems and from 2 August 2028 for Annex I (Article 6(1)) systems."
+      quote: "set to 2 December 2027 for AI systems classified as high-risk pursuant to Article 6(2) and Annex III, and to 2 August 2028 for AI systems classified as high-risk pursuant to Article 6(1) and Annex I"
+
+- key: eu_ai_act_consolidated_2026
+  type: statute
+  authors: ["Publications Office of the European Union"]
+  title: "Regulation (EU) 2024/1689, consolidated text 02024R1689-20260727 (incorporating Regulation (EU) 2026/1744)"
+  publisher: "EUR-Lex"
+  date: "2026-07-27"
+  url: "https://eur-lex.europa.eu/eli/reg/2024/1689/2026-07-27/eng"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "As amended, Article 4 requires providers and deployers to take measures that support the development of AI literacy among their staff."
+      quote: "Providers and deployers of AI systems shall take measures to support the development of AI literacy of their staff and other persons dealing with the operation and use of AI systems on their behalf"
+    - claim: "As amended, Article 4 requires the Commission and the Member States to support providers and deployers, especially SMEs, in meeting the AI-literacy obligation."
+      quote: "The Commission and the Member States shall support and facilitate the efforts of providers and deployers of AI systems, in particular SMEs, in fulfilling their obligation under paragraph 1 of this Article"
+    - claim: "For high-risk AI in products covered by Annex I Section B legislation, only Article 6(1), the new Article 60a and Articles 102 to 112 apply."
+      quote: "only Article 6(1), Article 60a and Articles 102 to 112 shall apply."
+    - claim: "Search-result text says that third-party assessment required only for non-health-and-safety risks, such as radio spectrum or EMI, does not satisfy Article 6(1)(b). The snippet could not be pinned to this page with certainty; verify before relying on it."
+      quote: "risks relating to the distribution of radio spectrum or electromagnetic interference that do not affect health and safety, shall not be considered as fulfilling the condition in paragraph 1, point (b)."
+
+- key: council_pr_2026_05_07
+  type: press_release
+  authors: ["Council of the European Union"]
+  title: "Artificial Intelligence: Council and Parliament agree to simplify and streamline rules (Press release 299/26)"
+  publisher: "Council of the European Union"
+  date: "2026-05-07"
+  url: "https://www.consilium.europa.eu/en/press/press-releases/2026/05/07/artificial-intelligence-council-and-parliament-agree-to-simplify-and-streamline-rules/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Council presidency and European Parliament negotiators reached a provisional agreement on the AI Omnibus on 7 May 2026."
+      quote: "the Council presidency and European Parliament negotiators reached a provisional agreement on a proposal to streamline certain rules regarding artificial intelligence (AI)."
+    - claim: "The agreement shortened the grace period for marking AI-generated content, setting a new deadline of 2 December 2026."
+      quote: "reduces the grace period for providers to implement transparency solutions for artificially generated content from 6 months to 3 months, with the new deadline set on 2 December 2026."
+    - claim: "The agreement added a prohibited practice covering AI generation of non-consensual sexual or intimate content and CSAM."
+      quote: "prohibiting AI practices regarding the generation of non-consensual sexual and intimate content or child sexual abuse material (CSAM)."
+
+- key: council_pr_2026_06_29
+  type: press_release
+  authors: ["Council of the European Union"]
+  title: "Artificial Intelligence: Council gives final green light to simplify and streamline rules"
+  publisher: "Council of the European Union"
+  date: "2026-06-29"
+  url: "https://www.consilium.europa.eu/en/press/press-releases/2026/06/29/artificial-intelligence-council-gives-final-green-light-to-simplify-and-streamline-rules/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Council gave final approval to the AI Omnibus on 29 June 2026."
+      quote: "the Council gave its final green light on a new regulation aiming to streamline and simplify certain rules regarding artificial intelligence (AI)."
+    - claim: "The new fixed application dates are 2 December 2027 for stand-alone high-risk AI systems and 2 August 2028 for high-risk AI embedded in products."
+      quote: "the new application dates would be 2 December 2027 for stand-alone high-risk AI systems and 2 August 2028 for high-risk AI systems embedded in products."
+    - claim: "The Omnibus enters into force on the third day after publication in the Official Journal."
+      quote: "The legislative act will be published in the EU's official journal shortly and will enter into force on the third day after this publication."
+
+- key: ep_pr_2026_06_ai_omnibus
+  type: press_release
+  authors: ["European Parliament"]
+  title: "AI Act: EP approves simplification measures and \"nudifier\" app ban (press release 20260611IPR45207)"
+  publisher: "European Parliament"
+  date: "2026-06"
+  url: "https://www.europarl.europa.eu/news/en/press-room/20260611IPR45207/ai-act-ep-approves-simplification-measures-and-nudifier-app-ban"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "In June 2026 the European Parliament approved the AI Act simplification measures together with the ban on 'nudifier' apps."
+      quote: "AI Act: EP approves simplification measures and “nudifier” app ban"
+
+- key: ec_ai_omnibus_in_force
+  type: news
+  authors: ["European Commission"]
+  title: "AI Omnibus enters into force"
+  publisher: "European Commission, Shaping Europe's digital future"
+  date: "2026-07-27"
+  url: "https://digital-strategy.ec.europa.eu/en/news/ai-omnibus-enters-force"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The AI Omnibus entered into force on 27 July 2026."
+      quote: "On 27 July 2026, the AI Omnibus enters into force across the EU, bringing extended timelines to administrative simplification."
+    - claim: "The Commission proposed the Omnibus on 19 November 2025, and political agreement was reached on 7 May 2026."
+      quote: "The legislative proposal was adopted on 19 November 2025, a political agreement was reached on 7 May 2026 and entered into force on 27 July 2026."
+    - claim: "Under the Omnibus, Annex III high-risk rules apply from 2 December 2027, and Annex I product-embedded high-risk rules from 2 August 2028."
+      quote: "High-risk AI systems in Annex III have rules apply starting 2 December 2027, and high-risk AI embedded in physical products (machinery, toys, lifts, etc.) in Annex I have rules apply starting 2 August 2028."
+
+- key: ec_ip_26_1714
+  type: press_release
+  authors: ["European Commission"]
+  title: "Commission starts enforcing AI Act rules and new transparency requirements on 2 August (IP/26/1714)"
+  publisher: "European Commission"
+  date: "2026-07-31"
+  url: "https://digital-strategy.ec.europa.eu/en/news/commission-starts-enforcing-ai-act-rules-and-new-transparency-requirements-2-august"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "From 2 August 2026, the AI Office and national authorities began enforcing the AI Act, and the transparency rules started to apply."
+      quote: "From 2 August 2026, the European Commission's AI Office, together with national authorities, will begin enforcing the Artificial Intelligence (AI) Act. On the same date, new transparency rules will start to apply."
+    - claim: "The Commission's summary of the transparency rules is that chatbots and other interactive AI systems must tell users they are dealing with AI."
+      quote: "Chatbots and other interactive AI systems will have to tell users they are dealing with AI, not a human."
+    - claim: "More than 180 organisations had signed the Code of Practice on transparency of AI-generated content."
+      quote: "a first list of more than 180 organisations that have signed the Code of Practice on transparency of AI-generated content"
+
+- key: ec_ip_25_1787_gpai_code
+  type: press_release
+  authors: ["European Commission"]
+  title: "General-Purpose AI Code of Practice now available (IP/25/1787)"
+  publisher: "European Commission"
+  date: "2025-07"
+  url: "https://ec.europa.eu/commission/presscorner/detail/en/ip_25_1787"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The AI Office can enforce the GPAI rules one year after they apply for new models, and two years after for models already on the market."
+      quote: "The rules become enforceable by the AI Office of the Commission one year later as regards new models and two years later as regards existing models."
+    - claim: "GPAI models placed on the market before 2 August 2025 must comply by 2 August 2027."
+      quote: "Models already on the market before 2 August 2025 must ensure compliance by 2 August 2027."
+
+- key: ec_ai_literacy_qa
+  type: web
+  authors: ["European Commission"]
+  title: "AI Literacy - Questions & Answers"
+  publisher: "European Commission, Shaping Europe's digital future"
+  date: "2026"
+  url: "https://digital-strategy.ec.europa.eu/en/faqs/ai-literacy-questions-answers"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Commission states that Article 4 has applied since 2 February 2025 and describes the duty in its amended 'support the development' form."
+      quote: "Article 4 of the AI Act entered into application on 2 February 2025, therefore the obligation to take measures to support the development of AI literacy of their staff already applies."
+
+- key: ec_draft_highrisk_guidelines_2026
+  type: web
+  authors: ["European Commission"]
+  title: "Targeted consultation on the draft guidelines for the classification of high-risk artificial intelligence systems"
+  publisher: "European Commission, Shaping Europe's digital future"
+  date: "2026"
+  url: "https://digital-strategy.ec.europa.eu/en/consultations/targeted-consultation-draft-guidelines-classification-high-risk-artificial-intelligence-systems"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Commission's Article 6 guidelines on classifying high-risk systems were still in draft in 2026. The consultation closed on 23 July 2026, and final adoption is expected by the end of 2026."
+      quote: "The consultation deadline was extended to 23 July 2026 and the final guidelines will be adopted by the end of 2026."
+
+- key: eu_lvd_2014_35
+  type: statute
+  authors: ["European Parliament", "Council of the European Union"]
+  title: "Directive 2014/35/EU on the harmonisation of the laws of the Member States relating to the making available on the market of electrical equipment designed for use within certain voltage limits (Low Voltage Directive)"
+  publisher: "EUR-Lex"
+  date: "2014-02-26"
+  url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0035"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Low Voltage Directive applies to electrical equipment rated 50 to 1000 V AC or 75 to 1500 V DC."
+      quote: "electrical equipment designed for use with a voltage rating of between 50 and 1 000 V for alternating current and between 75 and 1 500 V for direct current"
+
+# =============================================================================================
+# B. NIST AI RMF, US FEDERAL AND STATE AI POLICY
+# =============================================================================================
+- key: nist_ai_rmf_1_0
+  type: report
+  authors: ["National Institute of Standards and Technology"]
+  title: "Artificial Intelligence Risk Management Framework (AI RMF 1.0), NIST AI 100-1: AI RMF Core"
+  publisher: "NIST AI Resource Center"
+  date: "2023-01-26"
+  url: "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The core of the AI RMF has four functions, GOVERN, MAP, MEASURE and MANAGE, each broken down into categories and subcategories."
+      quote: "The Core is composed of four functions: govern, map, measure, and manage. Each of these high-level functions is broken down into categories and subcategories."
+    - claim: "GOVERN is a cross-cutting function that runs through the other three."
+      quote: "Governance is designed to be a cross-cutting function to inform and be infused throughout the other three functions."
+    - claim: "MAP establishes the context in which an AI system's risks are framed."
+      quote: "The map function establishes the context to frame risks related to an AI system."
+
+- key: nist_ai_rmf_page
+  type: web
+  authors: ["National Institute of Standards and Technology"]
+  title: "AI Risk Management Framework (program page)"
+  publisher: "NIST"
+  date: "2026"
+  url: "https://www.nist.gov/itl/ai-risk-management-framework"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The AI RMF is voluntary."
+      quote: "The AI Risk Management Framework (AI RMF) is intended for voluntary use and to improve the ability to incorporate trustworthiness considerations into the design, development, use, and evaluation of AI products, services, and systems."
+    - claim: "NIST is revising AI RMF 1.0 as part of the White House AI Action Plan."
+      quote: "The AI RMF 1.0 is being revised as part of the White House AI Action Plan."
+    - claim: "NIST released the Generative AI Profile (NIST AI 600-1) on 26 July 2024."
+      quote: "on July 26, 2024, NIST released NIST-AI-600-1, Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile."
+    - claim: "On 7 April 2026 NIST released a concept note for an AI RMF profile on trustworthy AI in critical infrastructure."
+      quote: "On April 7, 2026, NIST released a concept note for an AI RMF Profile on Trustworthy AI in Critical Infrastructure."
+
+- key: nist_ai_rmf_playbook
+  type: web
+  authors: ["National Institute of Standards and Technology"]
+  title: "NIST AI RMF Playbook"
+  publisher: "NIST"
+  date: "2023"
+  url: "https://www.nist.gov/itl/ai-risk-management-framework/nist-ai-rmf-playbook"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "AI RMF 1.0 was released on 26 January 2023. Its Playbook gives suggested actions for achieving each function's outcomes."
+      quote: "The NIST AI RMF Playbook is based on AI RMF 1.0 (released on January 26, 2023), and includes suggested actions, references, and related guidance to achieve the outcomes for the four functions"
+
+- key: nist_ai_600_1
+  type: report
+  authors: ["National Institute of Standards and Technology"]
+  title: "Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile (NIST AI 600-1), as described in NIST's July 2024 news release"
+  publisher: "NIST"
+  date: "2024-07-26"
+  url: "https://www.nist.gov/news-events/news/2024/07/department-commerce-announces-new-guidance-tools-270-days-following"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Generative AI Profile is organised around 12 risks and just over 200 suggested actions."
+      quote: "the guidance centers on a list of 12 risks and just over 200 actions that developers can take to manage them."
+
+- key: nist_ai_update_2026_03
+  type: report
+  authors: ["National Institute of Standards and Technology"]
+  title: "NIST Artificial Intelligence Update, March 27, 2026"
+  publisher: "NIST"
+  date: "2026-03-27"
+  url: "https://www.nist.gov/system/files/documents/2026/03/27/03_AI%20Update-March.pdf"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Following America's AI Action Plan, NIST is revising the AI RMF to remove references to misinformation, DEI and climate change."
+      quote: "NIST is in the process of revising the AI Risk Management Framework (RMF) to eliminate references to misinformation, Diversity, Equity, and Inclusion, and climate change"
+
+- key: nist_ir_8596_cyber_ai_profile
+  type: report
+  authors: ["National Institute of Standards and Technology"]
+  title: "NIST IR 8596 (preliminary draft), Cybersecurity Framework Profile for Artificial Intelligence (Cyber AI Profile)"
+  publisher: "NIST / NCCoE"
+  date: "2025-12-16"
+  url: "https://www.nist.gov/news-events/news/2025/12/draft-nist-guidelines-rethink-cybersecurity-ai-era"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The draft Cyber AI Profile applies CSF 2.0 to three focus areas: securing AI systems, AI-enabled cyber defence, and thwarting AI-enabled attacks."
+      quote: "The Cyber AI Profile centers on three overlapping focus areas: securing AI systems, conducting AI-enabled cyber defense, and thwarting AI-enabled cyberattacks."
+    - claim: "NIST planned to release an initial public draft of the Cyber AI Profile in 2026."
+      quote: "develop the initial public draft for release in 2026"
+
+- key: eo_14179
+  type: docs
+  authors: ["Executive Office of the President"]
+  title: "Executive Order 14179, Removing Barriers to American Leadership in Artificial Intelligence (signed January 23, 2025)"
+  container: "Federal Register document 2025-02172 (90 FR 8741)"
+  publisher: "Federal Register"
+  date: "2025-01-31"
+  url: "https://www.federalregister.gov/documents/2025/01/31/2025-02172/removing-barriers-to-american-leadership-in-artificial-intelligence"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "EO 14179 (signed 23 January 2025) made sustaining and enhancing US 'global AI dominance' official policy."
+      quote: "It is the policy of the United States to sustain and enhance America's global AI dominance in order to promote human flourishing, economic competitiveness, and national security."
+
+- key: us_ai_action_plan_2025
+  type: report
+  authors: ["The White House"]
+  title: "Winning the Race: America's AI Action Plan"
+  publisher: "The White House"
+  date: "2025-07-23"
+  url: "https://www.whitehouse.gov/wp-content/uploads/2025/07/Americas-AI-Action-Plan.pdf"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "America's AI Action Plan (July 2025) sets out more than 90 federal policy actions under three pillars."
+      quote: "The Plan identifies over 90 Federal policy actions across three pillars – Accelerating Innovation, Building American AI Infrastructure, and Leading in International Diplomacy and Security"
+
+- key: eo_14365
+  type: docs
+  authors: ["Executive Office of the President"]
+  title: "Executive Order 14365, Ensuring a National Policy Framework for Artificial Intelligence (signed December 11, 2025)"
+  container: "Federal Register document 2025-23092"
+  publisher: "Federal Register / The White House"
+  date: "2025-12-16"
+  url: "https://www.federalregister.gov/documents/2025/12/16/2025-23092/ensuring-a-national-policy-framework-for-artificial-intelligence"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "EO 14365 directed the Attorney General to create an AI Litigation Task Force to challenge state AI laws."
+      quote: "the Attorney General shall establish an AI Litigation Task Force whose sole responsibility shall be to challenge State AI laws inconsistent with the policy set forth in section 2 of this order."
+    - claim: "EO 14365 directed the Secretary of Commerce to publish an evaluation identifying 'onerous' state AI laws."
+      quote: "publish an evaluation of existing State AI laws that identifies onerous laws that conflict"
+    - claim: "EO 14365 directed the FTC to explain how Section 5 of the FTC Act applies to AI models, including state laws that require altering accurate outputs."
+      quote: "address how State laws requiring alterations to the accurate outputs of AI models can conflict with the requirements of the FTC Act."
+
+- key: wh_ai_legislative_framework_2026
+  type: press_release
+  authors: ["The White House"]
+  title: "President Donald J. Trump Unveils National AI Legislative Framework"
+  publisher: "The White House"
+  date: "2026-03-20"
+  url: "https://www.whitehouse.gov/releases/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "On 20 March 2026 the Administration issued a national AI legislative framework of recommendations to Congress."
+      quote: "On March 20, 2026, the Trump Administration issued a comprehensive national legislative framework addressing the most pressing policy topics that AI presents."
+
+- key: ftc_ai_accuracy_policy_2026
+  type: docs
+  authors: ["Federal Trade Commission"]
+  title: "Policy Statement Concerning the Suppression of Accuracy in Artificial Intelligence Systems (proposed; File No. P264200)"
+  container: "Federal Register document 2026-13628"
+  publisher: "Federal Register"
+  date: "2026-07-07"
+  url: "https://www.federalregister.gov/documents/2026/07/07/2026-13628/policy-statement-concerning-the-suppression-of-accuracy-in-artificial-intelligence-systems"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The FTC's proposed July 2026 policy statement says that covertly steering an AI system's outputs can be deceptive under Section 5, even when the steering is done to comply with state law."
+      quote: "Steering an AI system in this manner may deceive consumers in violation of section 5 of the FTC Act, and that is true even if the deceptive steering is done in an effort to comply with State laws."
+    - claim: "Comments on the proposed policy statement closed on 31 July 2026."
+      quote: "Comments on the policy statement had to be received on or before Friday, July 31, 2026."
+
+- key: eo_14409
+  type: docs
+  authors: ["Executive Office of the President"]
+  title: "Executive Order 14409, Promoting Advanced Artificial Intelligence Innovation and Security (signed June 2, 2026)"
+  container: "Federal Register document 2026-11415"
+  publisher: "Federal Register"
+  date: "2026-06-05"
+  url: "https://www.federalregister.gov/documents/2026/06/05/2026-11415/promoting-advanced-artificial-intelligence-innovation-and-security"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "EO 14409 (June 2026) directs agencies to prioritise the cyber defence of national-security and federal information systems."
+      quote: "The Order directs appropriate agencies to prioritize the cyber defense of National Security Systems, Department of War information systems, and civilian Federal government information systems."
+
+- key: us_hr_5388
+  type: docs
+  authors: ["U.S. House of Representatives (Rep. Baumgartner)"]
+  title: "H.R. 5388, American Artificial Intelligence Leadership and Uniformity Act (119th Congress)"
+  publisher: "Congress.gov, Library of Congress"
+  date: "2025"
+  url: "https://www.congress.gov/bill/119th-congress/house-bill/5388"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "H.R. 5388 would impose a temporary moratorium preempting certain state laws that restrict AI models and systems in interstate commerce."
+      quote: "establish a temporary moratorium preempting certain State laws that restrict artificial intelligence models and systems engaged in interstate commerce."
+
+- key: co_sb25b_004
+  type: statute
+  authors: ["Colorado General Assembly"]
+  title: "SB25B-004, Increase Transparency for Algorithmic Systems (2025 First Extraordinary Session)"
+  publisher: "Colorado General Assembly"
+  date: "2025-08"
+  url: "https://leg.colorado.gov/bills/sb25b-004"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "SB25B-004 delayed the requirements of the Colorado AI Act (SB 24-205) to 30 June 2026."
+      quote: "The act extends the effective date of the requirements of Senate Bill 24-205 to June 30, 2026."
+
+- key: co_sb26_189
+  type: statute
+  authors: ["Colorado General Assembly"]
+  title: "SB26-189, Automated Decision-Making Technology"
+  publisher: "Colorado General Assembly"
+  date: "2026-05-14"
+  url: "https://leg.colorado.gov/bills/sb26-189"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "SB26-189, approved on 14 May 2026, repeals and re-enacts Colorado's AI law as an automated decision-making technology (ADMT) regime."
+      quote: "The act repeals and reenacts provisions with new requirements regarding the use of automated decision-making technology in consequential decisions."
+    - claim: "Apart from its Attorney General provisions, SB26-189 takes effect on 1 January 2027."
+      quote: "All other sections of the bill take effect on January 1, 2027, and apply to consequential decisions made on or after the bill's effective date."
+
+# =============================================================================================
+# C. RIGHT TO REPAIR
+# =============================================================================================
+- key: eu_r2r_directive_2024_1799
+  type: statute
+  authors: ["European Parliament", "Council of the European Union"]
+  title: "Directive (EU) 2024/1799 of 13 June 2024 on common rules promoting the repair of goods"
+  publisher: "European Commission (Directive on repair of goods page) / EUR-Lex"
+  date: "2024-06-13"
+  url: "https://commission.europa.eu/law/law-topic/consumer-protection-law/directive-repair-goods_en"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Member States had to transpose the Repair Directive and apply it from 31 July 2026."
+      quote: "Member States have to transpose it into national rules and apply it from 31 July 2026."
+    - claim: "The manufacturer's duty to repair covers only goods subject to the EU reparability requirements listed in Annex II, and only while those requirements apply."
+      quote: "the obligation to repair only applies to products whilst they are subject to the reparability requirements, in particular, the obligation to provide spare parts according to the legal measures listed in Annex II."
+    - claim: "For Annex II goods, manufacturers may not use contractual, hardware or software techniques that impede repair."
+      quote: "Manufacturers shall not use any contractual clauses, hardware or software techniques that impede the repair of goods covered by Union legal acts listed in Annex II"
+    - claim: "Manufacturers that supply spare parts and tools for Annex II goods must offer them at a reasonable price that does not deter repair."
+      quote: "shall offer these spare parts and tools at a reasonable price that does not deter repair."
+
+- key: ec_r2r_qa_2024
+  type: web
+  authors: ["European Commission"]
+  title: "Questions & Answers: Directive on repair of goods (obligation to repair)"
+  publisher: "European Commission"
+  date: "2024-07-30"
+  url: "https://commission.europa.eu/document/download/2d443b31-dc2a-4e54-a9ec-5fbb61c895e9_en?filename=2024_07_18_QA_Right2repair_FINAL.pdf"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Commission's examples of Annex II product groups include household washing machines, washer-dryers, dishwashers and electronic displays."
+      quote: "The products listed in Annex II include household washing machines and household washer-dryers, household dishwashers, and electronic displays."
+
+- key: eu_deleg_dir_2026_74
+  type: regulation
+  authors: ["European Commission"]
+  title: "Commission Delegated Directive (EU) 2026/74 of 12 January 2026 amending Annex II to Directive (EU) 2024/1799"
+  publisher: "EUR-Lex"
+  date: "2026-01-12"
+  url: "https://eur-lex.europa.eu/eli/dir_del/2026/74/oj/eng"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "In January 2026 the Commission added domestic local space heaters to Annex II of the Repair Directive."
+      quote: "amends Annex II to Directive (EU) 2024/1799 of the European Parliament and of the Council promoting the repair of goods to include domestic local space heaters"
+
+- key: ec_r2r_news_2026_07_31
+  type: news
+  authors: ["European Commission"]
+  title: "Right to repair: New consumer rights for easy and attractive repairs"
+  publisher: "European Commission"
+  date: "2026-07-31"
+  url: "https://commission.europa.eu/news-and-media/news/right-repair-new-consumer-rights-easy-and-attractive-repairs-2026-07-31_en"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The EU repair rules began to apply on 31 July 2026 to household and electronic products."
+      quote: "Starting on 31 July 2026, new rules will apply to household and electronic products such as washing machines, vacuum cleaners, mobile phones, and tablets"
+    - claim: "Consumers who choose repair over replacement get an extra year of legal guarantee."
+      quote: "Consumers will also receive an extra year of legal guarantee if they choose to repair the product instead of replacing it."
+    - claim: "A new online European Repair Platform will help consumers find repairers."
+      quote: "Consumers will be able to find repairers more easily through a new online European Repair Platform"
+
+- key: ny_gbl_399nn
+  type: statute
+  authors: ["New York State Legislature"]
+  title: "N.Y. General Business Law § 399-nn (Digital Fair Repair Act)"
+  publisher: "New York State Senate (Laws of New York)"
+  date: "2022-12-28"
+  url: "https://www.nysenate.gov/legislation/laws/GBS/399-NN"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "New York's Act covers only hardware first sold or used in the state on or after 1 July 2023 that depends on embedded digital electronics."
+      quote: "first sold or used in New York on or after July first, two thousand twenty-three, that depends for its functioning, in whole or in part, on digital electronics embedded in or attached to the product."
+    - claim: "The New York Act does not require manufacturers to divulge trade secrets or license IP."
+      quote: "Nothing in this section shall be construed to require an original equipment manufacturer to divulge any trade secret or license any intellectual property"
+
+- key: ny_ag_repair_2024
+  type: press_release
+  authors: ["New York State Office of the Attorney General"]
+  title: "Attorney General James Reminds Consumers It's Easier Than Ever to Get Electronics Repaired in New York"
+  publisher: "Office of the New York State Attorney General"
+  date: "2024"
+  url: "https://ag.ny.gov/press-release/2024/attorney-general-james-reminds-consumers-its-easier-ever-get-electronics"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "New York's Repair Act took effect on 28 December 2023."
+      quote: "The Repair Act went into effect on December 28, 2023"
+    - claim: "Under the New York Act, 'documentation' includes schematic diagrams and service code descriptions."
+      quote: "\"Documentation\" means any manual, diagram, reporting output, service code description, schematic diagram, or similar kinds of information required for effecting the services of diagnosis, maintenance, or repair"
+    - claim: "According to the New York AG, covered products include televisions and home entertainment systems that rely on digital electronics."
+      quote: "This includes many toys, phones, computers/printers, televisions, home entertainment systems, cameras, tools, or other products that use or rely on digital electronics."
+    - claim: "The New York Act excludes motor vehicles, home appliances, medical devices, off-road and farm equipment, and public-safety communications equipment."
+      quote: "The new law excludes certain products, including motor vehicles, home appliances, medical devices, off-road equipment, farm equipment, yard or garden equipment, construction equipment, power tools, and public safety communications equipment."
+
+- key: mn_stat_325e72
+  type: statute
+  authors: ["Minnesota Legislature"]
+  title: "Minn. Stat. § 325E.72, Digital Fair Repair"
+  publisher: "Minnesota Office of the Revisor of Statutes"
+  date: "2023"
+  url: "https://www.revisor.mn.gov/statutes/cite/325E.72"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Minnesota requires OEMs to give owners and independent repairers documentation, parts, tools and embedded-software updates on fair and reasonable terms."
+      quote: "on fair and reasonable terms, documentation, parts, and tools, inclusive of any updates to information or embedded software, for diagnostic, maintenance, or repair purposes."
+
+- key: mn_ag_r2r
+  type: web
+  authors: ["Minnesota Attorney General's Office"]
+  title: "The Right to Repair in Minnesota"
+  publisher: "Office of Minnesota Attorney General"
+  date: "2024"
+  url: "https://www.ag.state.mn.us/Consumer/Publications/RightToRepair.asp"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Minnesota's Digital Fair Repair Act took effect on 1 July 2024."
+      quote: "The Digital Fair Repair Act became effective in Minnesota on July 1, 2024."
+    - claim: "Minnesota's Act covers equipment sold on or after 1 July 2021, including used products."
+      quote: "The Digital Fair Repair Act applies to equipment that was sold on or after July 1, 2021. Used products are included."
+    - claim: "Minnesota excludes motor vehicles, medical devices, farm machinery and video game consoles."
+      quote: "motor vehicles, medical devices, off-road equipment such as farm machinery and tractors, and video game consoles, which are excluded in the Act."
+
+- key: ca_prc_42488
+  type: statute
+  authors: ["California State Legislature"]
+  title: "SB 244 (2023), Right to Repair Act, Cal. Pub. Resources Code § 42488 et seq."
+  publisher: "California Legislative Information"
+  date: "2023-10-10"
+  url: "https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202320240SB244"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "California's Act applies to electronic and appliance products first sold or used in the state on or after 1 July 2021."
+      quote: "manufactured for the first time and first sold or used in California on or after July 1, 2021"
+    - claim: "For products with a wholesale price of $100 or more, manufacturers must make documentation, parts and tools available for at least seven years after the model was last manufactured."
+      quote: "for at least seven years after the last date a product model or type was manufactured, regardless of whether the seven-year period exceeds the warranty period for the product."
+    - claim: "For products priced $50 to $99.99 wholesale, the availability period is at least three years."
+      quote: "for at least three years after the last date a product model or type was manufactured"
+    - claim: "California's definition of 'documentation' includes manuals, schematics and service code descriptions."
+      quote: "\"Documentation\" means any electronic or appliance product manual, diagram, reporting output, service code description, schematic, or similar information"
+
+- key: ca_bhgs_r2r_advisory_2024
+  type: web
+  authors: ["California Bureau of Household Goods and Services"]
+  title: "Industry Advisory - The Right to Repair Act Effective July 1, 2024"
+  publisher: "California Department of Consumer Affairs, BHGS"
+  date: "2024"
+  url: "https://bhgs.dca.ca.gov/forms_pubs/sb_244_industry_advisory_english.pdf"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "California's Right to Repair Act took effect on 1 July 2024."
+      quote: "The Right to Repair Act Effective July 1, 2024"
+
+- key: or_sb1596_2024
+  type: statute
+  authors: ["Oregon Legislative Assembly"]
+  title: "SB 1596 (2024), Oregon Laws 2024, chapter 69 (right to repair consumer electronic equipment)"
+  publisher: "Oregon State Legislature"
+  date: "2024-03-28"
+  url: "https://www.oregonlegislature.gov/bills_laws/lawsstatutes/2024orLaw0069.pdf"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Oregon requires OEMs to give owners and independent repairers the same documentation, tools and parts they provide to authorised service providers."
+      quote: "make available to an owner of consumer electronic equipment or an independent repair provider on fair and reasonable terms any documentation, tool, part, or other device or implement"
+    - claim: "Oregon's law took effect on 1 January 2025."
+      quote: "The effective date of this law is January 1, 2025."
+    - claim: "Oregon excludes consumer electronic equipment other than cell phones that was first sold or used in the state before 1 July 2015."
+      quote: "Consumer electronic equipment other than a cell phone that was manufactured for the first time, and first sold or used in this state, before July 1, 2015"
+    - claim: "Oregon bans parts pairing that blocks repair for equipment first sold after 1 January 2025."
+      quote: "an original equipment manufacturer may not use parts pairing to: (A) Prevent or inhibit an independent repair provider or an owner from installing or enabling the function of an otherwise functional replacement part"
+
+- key: co_hb24_1121
+  type: statute
+  authors: ["Colorado General Assembly"]
+  title: "HB24-1121, Consumer Right to Repair Digital Electronic Equipment"
+  publisher: "Colorado General Assembly"
+  date: "2024-05-28"
+  url: "https://leg.colorado.gov/bills/hb24-1121"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Colorado's digital-electronics repair law was approved on 28 May 2024 and took effect on 1 January 2026."
+      quote: "HB24-1121 was approved by Governor on May 28, 2024 and becomes effective January 1, 2026."
+    - claim: "Colorado covers devices first sold on or after 1 July 2015 (1 July 2021 for cell phones) that depend on digital electronics."
+      quote: "on or after July 1, 2015 with respect to any consumer electronic device that is not a cell phone, and that depends, in whole or in part, on digital electronics embedded in or attached to the product."
+    - claim: "In Colorado, documentation must be provided free of charge, apart from the cost of printed copies."
+      quote: "the manufacturer provides documentation, including any relevant updates, at no charge; except the manufacturer may charge a fee for a printed copy"
+
+- key: tx_hb2963_2025
+  type: statute
+  authors: ["Texas Legislature (89th, Regular Session)"]
+  title: "HB 2963 (2025), Tex. Bus. & Com. Code ch. 121, Diagnosis, Maintenance, and Repair of Certain Digital Electronic Equipment"
+  publisher: "Texas Legislature Online"
+  date: "2025"
+  url: "https://capitol.texas.gov/tlodocs/89R/billtext/html/HB02963F.htm"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Texas requires OEMs to make documentation, replacement parts and tools needed for diagnosis and repair available on fair and reasonable terms."
+      quote: "make documentation, replacement parts, and tools, or their equivalents, that are required for the diagnosis, maintenance, or repair of the digital electronic equipment available on fair and reasonable terms"
+    - claim: "Texas requires availability no later than one year after the equipment is first sold in the state."
+      quote: "not later than one year after the date of the first sale of the equipment in Texas"
+    - claim: "The Texas law applies only to equipment with a wholesale price of at least $50."
+      quote: "HB 2963 applies only to digital electronic equipment with a wholesale price of at least $50 that is sold to a consumer in Texas."
+    - claim: "Only the Texas Attorney General can enforce the law."
+      quote: "The attorney general has exclusive authority to enforce the bill's provisions"
+    - claim: "The Texas Act takes effect on 1 September 2026."
+      quote: "The act takes effect September 1, 2026."
+
+- key: wa_eshb1483_2025
+  type: statute
+  authors: ["Washington State Legislature"]
+  title: "ESHB 1483 (2025), chapter 353, Laws of 2025 (right to repair digital electronic products)"
+  publisher: "Washington State Legislature"
+  date: "2025-05-19"
+  url: "https://app.leg.wa.gov/billsummary/?BillNumber=1483&Year=2025&Initiative=false"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "From 1 January 2026, Washington requires OEMs to provide parts, tools and documentation on fair and reasonable terms."
+      quote: "Effective January 1, 2026, an original manufacturer shall make available to any independent repair provider or owner on fair and reasonable terms any parts, tools, and documentation"
+    - claim: "Washington covers digital electronic products first manufactured and first sold or used in the state on or after 1 July 2021."
+      quote: "first manufactured, and first sold or used in Washington, on or after July 1, 2021"
+    - claim: "Washington restricts parts pairing that prevents installation of otherwise functional replacement parts."
+      quote: "an original manufacturer may not use parts pairing to prevent or inhibit an independent repair provider or an owner from installing or enabling the function of an otherwise functional replacement part"
+
+- key: ftc_nixing_the_fix_2021
+  type: report
+  authors: ["Federal Trade Commission"]
+  title: "Nixing the Fix: An FTC Report to Congress on Repair Restrictions"
+  publisher: "Federal Trade Commission"
+  date: "2021-05"
+  url: "https://www.ftc.gov/reports/nixing-fix-ftc-report-congress-repair-restrictions"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The FTC's 2021 report to Congress found scant evidence supporting manufacturers' justifications for repair restrictions."
+      quote: "there is scant evidence to support manufacturers' justifications for repair restrictions"
+
+- key: ftc_repair_policy_statement_2021
+  type: docs
+  authors: ["Federal Trade Commission"]
+  title: "Policy Statement of the Federal Trade Commission on Repair Restrictions Imposed by Manufacturers and Sellers"
+  publisher: "Federal Trade Commission"
+  date: "2021-07"
+  url: "https://www.ftc.gov/system/files/documents/public_statements/1592330/p194400repairrestrictionspolicystatement.pdf"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "In July 2021 the FTC committed to prioritising enforcement against unlawful repair restrictions."
+      quote: "committing the agency to focus greater enforcement efforts and resources on unlawful repair restriction practices going forward."
+
+- key: ftc_warranty_letters_2024
+  type: press_release
+  authors: ["Federal Trade Commission"]
+  title: "FTC Warns Companies to Stop Warranty Practices That Harm Consumers' Right to Repair"
+  publisher: "Federal Trade Commission"
+  date: "2024-07"
+  url: "https://www.ftc.gov/news-events/news/press-releases/2024/07/ftc-warns-companies-stop-warranty-practices-harm-consumers-right-repair"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "In July 2024 FTC staff warned companies against tying warranties to branded parts and against 'warranty void if removed' stickers."
+      quote: "including warnings about tying warranty to use of branded parts and affixing \"warranty void if removed\" stickers to their products."
+
+- key: ftc_deere_settlement_2026
+  type: press_release
+  authors: ["Federal Trade Commission"]
+  title: "FTC, States Secure Settlement with Deere & Company, Advancing Farmers' Right to Repair"
+  publisher: "Federal Trade Commission"
+  date: "2026-07-08"
+  url: "https://www.ftc.gov/news-events/news/press-releases/2026/07/ftc-states-secure-settlement-deere-company-advancing-farmers-right-repair"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The July 2026 FTC/states settlement requires Deere, for 10 years, to give farmers and independent repairers the same repair resources as its dealers, including software capabilities."
+      quote: "requires Deere—for the next 10 years and under the supervision of the FTC and plaintiff states—to provide farmers and independent repair providers with the same equipment repair resources, including applicable software capabilities"
+    - claim: "The resources Deere must provide include fault-code tools, reprogramming and access to technical manuals."
+      quote: "reading, clearing and resetting electronic fault codes; reprogramming of electronic components; restarting a machine following an emissions-related shutdown; and viewing and searching technical manuals"
+
+- key: usco_1201_ninth_2024
+  type: regulation
+  authors: ["U.S. Copyright Office", "Library of Congress"]
+  title: "Exemption to Prohibition on Circumvention of Copyright Protection Systems for Access Control Technologies (final rule, ninth triennial proceeding)"
+  container: "Federal Register document 2024-24563; 37 CFR Part 201"
+  publisher: "Federal Register"
+  date: "2024-10-28"
+  url: "https://www.federalregister.gov/documents/2024/10/28/2024-24563/exemption-to-prohibition-on-circumvention-of-copyright-protection-systems-for-access-control"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The ninth triennial Section 1201 rulemaking ended with a final rule adopting circumvention exemptions."
+      quote: "published a final rule in the Federal Register adopting exemptions to the statutory prohibition on circumvention of technological measures that control access to copyrighted works, marking the completion of the ninth triennial rulemaking proceeding."
+    - claim: "The ninth-cycle final rule took effect on 28 October 2024."
+      quote: "The final rule became effective October 28, 2024."
+
+- key: cfr_37_201_40
+  type: regulation
+  authors: ["U.S. Copyright Office"]
+  title: "37 CFR 201.40, Exemptions to prohibition against circumvention"
+  publisher: "eCFR"
+  date: "2024-10-28"
+  url: "https://www.ecfr.gov/current/title-37/chapter-II/subchapter-A/part-201/section-201.40"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The Section 1201 exemptions allow circumvention of access controls on software in lawfully acquired consumer devices when necessary for diagnosis, maintenance or repair."
+      quote: "lawfully acquired device that is primarily designed for use by consumers, when circumvention is a necessary step to allow the diagnosis, maintenance, or repair of such a device"
+
+- key: usco_1201_tenth_2027
+  type: regulation
+  authors: ["U.S. Copyright Office"]
+  title: "Exemptions To Permit Circumvention of Access Controls on Copyrighted Works (notice of inquiry, tenth triennial proceeding)"
+  container: "Federal Register document 2026-11545"
+  publisher: "Federal Register / U.S. Copyright Office"
+  date: "2026-06-09"
+  url: "https://www.federalregister.gov/documents/2026/06/09/2026-11545/exemptions-to-permit-circumvention-of-access-controls-on-copyrighted-works"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "In the tenth triennial Section 1201 proceeding (the 2027 cycle), petitions were due on 24 August 2026."
+      quote: "Written petitions for new exemptions and written petitions for renewal of current exemptions must be received no later than 11:59 p.m. Eastern Time on August 24, 2026."
+    - claim: "Comments on renewal petitions are due on 28 September 2026."
+      quote: "Written comments in response to petitions for renewal must be received no later than 11:59 p.m. Eastern Time on September 28, 2026."
+
+# =============================================================================================
+# D. PRODUCT LIABILITY AND ACCOUNTABILITY
+# =============================================================================================
+- key: eu_pld_2024_2853
+  type: statute
+  authors: ["European Parliament", "Council of the European Union"]
+  title: "Directive (EU) 2024/2853 of 23 October 2024 on liability for defective products (Product Liability Directive)"
+  container: "Official Journal of the European Union, OJ L, 2024/2853"
+  publisher: "EUR-Lex"
+  date: "2024-10-23"
+  url: "https://eur-lex.europa.eu/eli/dir/2024/2853/oj/eng"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The new PLD defines 'product' to include software."
+      quote: "\"Product\" means all movables, even if integrated into, or inter-connected with, another movable or an immovable; it includes electricity, digital manufacturing files, raw materials and software."
+    - claim: "Member States must transpose the PLD by 9 December 2026."
+      quote: "Member States shall bring into force the laws, regulations and administrative provisions necessary to comply with this Directive by 9 December 2026."
+    - claim: "The PLD applies to products placed on the market or put into service after 9 December 2026."
+      quote: "This Directive shall apply to products placed on the market or put into service after 9 December 2026."
+    - claim: "The PLD does not compensate damage to property used exclusively for professional purposes."
+      quote: "damage to property used exclusively for professional purposes should not be compensated under this Directive."
+
+- key: us_ai_lead_act_s2937
+  type: docs
+  authors: ["U.S. Senate (Sen. Durbin, Sen. Hawley)"]
+  title: "S. 2937, AI LEAD Act (Aligning Incentives for Leadership, Excellence, and Advancement in Development Act), 119th Congress (introduced September 2025)"
+  publisher: "Office of Sen. Hawley / Congress.gov"
+  date: "2025-09-29"
+  url: "https://www.hawley.senate.gov/hawley-durbin-introduce-legislation-empowering-americans-to-bring-liability-claims-against-ai-companies/"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The AI LEAD Act (S. 2937) would classify AI systems as products and create a federal product-liability cause of action for AI harms."
+      quote: "The AI LEAD Act classifies AI systems as products and creates a federal cause of action for products liability claims to be brought when an AI system causes harm."
+
+- key: us_rise_act_s2081
+  type: docs
+  authors: ["U.S. Senate (Sen. Lummis)"]
+  title: "S. 2081, Responsible Innovation and Safe Expertise (RISE) Act of 2025, 119th Congress"
+  publisher: "Congress.gov / Office of Sen. Lummis"
+  date: "2025"
+  url: "https://www.congress.gov/bill/119th-congress/senate-bill/2081/text"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The RISE Act would give AI developers immunity from civil liability for errors when a learned professional uses their product, conditioned on publishing a model card and model specification."
+      quote: "A developer shall be immune from civil liability for errors generated by an artificial intelligence product when used by a learned professional in the course of providing professional services to a client"
+    - claim: "The RISE Act's sponsor says professionals, including engineers, keep the duty to verify AI outputs."
+      quote: "they retain the legal duty to exercise due diligence, verify the system's outputs, and stand behind the advice they deliver."
+
+# =============================================================================================
+# E. ELECTRICAL SAFETY (text opened via an eCFR-API-derived corpus on GitHub; ecfr.gov and osha.gov were blocked)
+# =============================================================================================
+- key: osha_1910_333
+  type: regulation
+  authors: ["Occupational Safety and Health Administration"]
+  title: "29 CFR 1910.333, Selection and use of work practices (Subpart S, Electrical)"
+  container: "29 CFR Part 1910. Text opened in data/corpus/sections.jsonl of GitHub repo dgrinnell/ehs-regulatory-assistant (ingested from the eCFR versioner API; commit 8c08921, 2026-07-22)"
+  publisher: "U.S. Department of Labor, OSHA (text); GitHub corpus by D. Grinnell"
+  date: "2026-07-22"
+  url: "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "OSHA's default rule is that exposed live parts must be de-energised before work on or near them (29 CFR 1910.333(a)(1))."
+      quote: "Live parts to which an employee may be exposed shall be deenergized before the employee works on or near them"
+    - claim: "OSHA's 50-volt threshold: live parts under 50 V to ground need not be de-energised when there is no increased burn or arc-explosion exposure (29 CFR 1910.333(a)(1))."
+      quote: "Live parts that operate at less than 50 volts to ground need not be deenergized if there will be no increased exposure to electrical burns or to explosion due to electric arcs."
+    - claim: "Dangerous stored electrical energy must be released, and capacitors discharged, before equipment is worked on as de-energised (29 CFR 1910.333(b)(2)(ii)(C))."
+      quote: "Stored electric energy which might endanger personnel shall be released. Capacitors shall be discharged and high capacitance elements shall be short-circuited and grounded, if the stored electric energy might endanger personnel."
+    - claim: "Capacitors handled while being discharged must be treated as energised."
+      quote: "If the capacitors or associated equipment are handled in meeting this requirement, they shall be treated as energized."
+    - claim: "A qualified person must verify the de-energised condition with test equipment (29 CFR 1910.333(b)(2)(iv)(B))."
+      quote: "A qualified person shall use test equipment to test the circuit elements and electrical parts of equipment to which employees will be exposed and shall verify that the circuit elements and equipment parts are deenergized."
+
+- key: osha_1910_334
+  type: regulation
+  authors: ["Occupational Safety and Health Administration"]
+  title: "29 CFR 1910.334(c), Use of equipment: test instruments and equipment"
+  container: "Same eCFR-derived GitHub corpus as osha_1910_333"
+  publisher: "U.S. Department of Labor, OSHA (text); GitHub corpus by D. Grinnell"
+  date: "2026-07-22"
+  url: "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "Only qualified persons may test electric circuits or equipment (29 CFR 1910.334(c)(1))."
+      quote: "Only qualified persons may perform testing work on electric circuits or equipment."
+    - claim: "Test instruments and accessories must be rated for the circuits and equipment they connect to (29 CFR 1910.334(c)(3))."
+      quote: "Test instruments and equipment and their accessories shall be rated for the circuits and equipment to which they will be connected and shall be designed for the environment in which they will be used."
+
+- key: osha_1910_303
+  type: regulation
+  authors: ["Occupational Safety and Health Administration"]
+  title: "29 CFR 1910.303(g)(2), Guarding of live parts"
+  container: "Same eCFR-derived GitHub corpus as osha_1910_333"
+  publisher: "U.S. Department of Labor, OSHA (text); GitHub corpus by D. Grinnell"
+  date: "2026-07-22"
+  url: "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "OSHA requires live parts of electric equipment operating at 50 V or more to be guarded against accidental contact (29 CFR 1910.303(g)(2)(i))."
+      quote: "live parts of electric equipment operating at 50 volts or more shall be guarded against accidental contact by use of approved cabinets or other forms of approved enclosures"
+
+- key: osha_1910_269
+  type: regulation
+  authors: ["Occupational Safety and Health Administration"]
+  title: "29 CFR 1910.269, Electric power generation, transmission, and distribution (scope)"
+  container: "Same eCFR-derived GitHub corpus as osha_1910_333"
+  publisher: "U.S. Department of Labor, OSHA (text); GitHub corpus by D. Grinnell"
+  date: "2026-07-22"
+  url: "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "29 CFR 1910.269 covers operation and maintenance of power generation, transmission and distribution installations."
+      quote: "This section covers the operation and maintenance of electric power generation, control, transformation, transmission, and distribution lines and equipment."
+    - claim: "1910.269 does not apply to electrical safety-related work practices already covered by Subpart S."
+      quote: "To electrical installations, electrical safety-related work practices, or electrical maintenance considerations covered by subpart S of this part."
+
+- key: osha_1910_331_399
+  type: regulation
+  authors: ["Occupational Safety and Health Administration"]
+  title: "29 CFR 1910.331 (scope of electrical safety-related work practices) and 1910.399 (definition of qualified person)"
+  container: "Same eCFR-derived GitHub corpus as osha_1910_333"
+  publisher: "U.S. Department of Labor, OSHA (text); GitHub corpus by D. Grinnell"
+  date: "2026-07-22"
+  url: "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "OSHA's electrical work-practice rules (1910.331-.335) apply to both qualified and unqualified persons."
+      quote: "cover electrical safety-related work practices for both qualified persons (those who have training in avoiding the electrical hazards of working on or near exposed energized parts) and unqualified persons"
+    - claim: "The installations covered by 1910.331 are framed around premises wiring and other installations of conductors and equipment."
+      quote: "(1) Premises wiring. Installations of electric conductors and equipment within or on buildings or other structures"
+    - claim: "OSHA defines a 'qualified person' by training plus demonstrated skill and knowledge of the equipment and its hazards."
+      quote: "One who has received training in and has demonstrated skills and knowledge in the construction and operation of electric equipment and installations and the hazards involved."
+    - claim: "OSHA notes that qualification is equipment-specific."
+      quote: "it is possible and, in fact, likely for an individual to be considered “qualified” with regard to certain equipment in the workplace, but “unqualified” as to other equipment."
+
+# =============================================================================================
+# F. PRIVACY
+# =============================================================================================
+- key: gdpr
+  type: statute
+  authors: ["European Parliament", "Council of the European Union"]
+  title: "Regulation (EU) 2016/679 (General Data Protection Regulation), Articles 5 and 25"
+  container: "OJ L 119, 4.5.2016. Text opened in GitHub repo 6022-labs/gdpr-mcp-server, data/v1/articles/art-5 and art-25 (commit 24ef3c2, 2025-11-16), an unofficial reproduction used because EUR-Lex was blocked"
+  publisher: "European Union (text); GitHub reproduction by 6022-labs"
+  date: "2016-04-27"
+  url: "https://github.com/6022-labs/gdpr-mcp-server/tree/main/data/v1/articles"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "GDPR Article 5(1)(c), the data-minimisation principle, limits personal data to what is necessary for the purposes of processing."
+      quote: "(c) adequate, relevant and limited to what is necessary in relation to the purposes for which they are processed (‘data minimisation’);"
+    - claim: "GDPR Article 25(1), data protection by design, requires appropriate measures such as pseudonymisation that put data-protection principles into effect."
+      quote: "implement appropriate technical and organisational measures, such as pseudonymisation, which are designed to implement data-protection principles, such as data minimisation, in an effective manner"
+    - claim: "GDPR Article 25(2), data protection by default, allows only the personal data necessary for each specific purpose to be processed."
+      quote: "The controller shall implement appropriate technical and organisational measures for ensuring that, by default, only personal data which are necessary for each specific purpose of the processing are processed."
+    - claim: "The default-minimisation duty covers how much is collected, how far it is processed, how long it is stored and who can access it."
+      quote: "That obligation applies to the amount of personal data collected, the extent of their processing, the period of their storage and their accessibility."
+
+# =============================================================================================
+# G. BIAS AUDITING METHODOLOGY
+# =============================================================================================
+- key: buolamwini_gebru_2018
+  type: paper
+  authors: ["Joy Buolamwini", "Timnit Gebru"]
+  title: "Gender Shades: Intersectional Accuracy Disparities in Commercial Gender Classification"
+  container: "Proceedings of Machine Learning Research 81:1-15 (Conference on Fairness, Accountability, and Transparency, 2018)"
+  publisher: "PMLR (PDF opened from the publisher's GitHub repository mlresearch/v81)"
+  date: "2018"
+  url: "https://raw.githubusercontent.com/mlresearch/v81/gh-pages/buolamwini18a/buolamwini18a.pdf"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "Gender Shades found error rates of up to 34.7% for darker-skinned females, against at most 0.8% for lighter-skinned males."
+      quote: "show that darker-skinned females are the most misclassified group (with error rates of up to 34.7%). The maximum error rate for lighter-skinned males is 0.8%."
+    - claim: "Gender Shades disaggregates accuracy into intersectional subgroups instead of evaluating single attributes alone."
+      quote: "Instead of evaluating accuracy by gender or skin type alone, accuracy is also examined on 4 intersectional subgroups: darker females, darker males, lighter females, and lighter males."
+    - claim: "The authors built a new benchmark balanced by skin type because existing benchmarks were skewed toward lighter-skinned subjects."
+      quote: "introducing a new face dataset composed of 1270 unique individuals that is more phenotypically balanced on the basis of skin type than existing benchmarks."
+    - claim: "The authors argue that intersectional error analysis can guide dataset composition and model design."
+      quote: "Intersectional phenotypic and demographic error analysis can help inform methods to improve dataset composition, feature selection, and neural network architectures."
+
+# =============================================================================================
+# H. SECURITY (PROMPT INJECTION, AGENTIC SYSTEMS)
+# =============================================================================================
+- key: owasp_llm_top10_2025
+  type: report
+  authors: ["OWASP GenAI Security Project"]
+  title: "OWASP Top 10 for LLM Applications, 2025 edition: LLM01:2025 Prompt Injection"
+  container: "Canonical Markdown source, file 2025/LLM01_PromptInjection.md (the repository README describes it as the previous release)"
+  publisher: "OWASP Foundation (GitHub: GenAI-Security-Project/GenAI-LLM-Top10)"
+  date: "2025"
+  url: "https://github.com/GenAI-Security-Project/GenAI-LLM-Top10/blob/main/2025/LLM01_PromptInjection.md"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "OWASP 2025 defines prompt injection as user prompts that alter an LLM's behaviour or output in unintended ways."
+      quote: "A Prompt Injection Vulnerability occurs when user prompts alter the LLM’s behavior or output in unintended ways."
+    - claim: "OWASP 2025 defines indirect prompt injection as instructions that arrive through external sources such as websites or files."
+      quote: "Indirect prompt injections occur when an LLM accepts input from external sources, such as websites or files."
+    - claim: "OWASP 2025 says RAG and fine-tuning do not fully mitigate prompt injection."
+      quote: "research shows that they do not fully mitigate prompt injection vulnerabilities."
+    - claim: "OWASP 2025 says it is unclear whether any fool-proof prevention exists."
+      quote: "it is unclear if there are fool-proof methods of prevention for prompt injection."
+    - claim: "OWASP 2025 recommends human-in-the-loop controls for privileged operations."
+      quote: "Implement human-in-the-loop controls for privileged operations to prevent unauthorized actions."
+
+- key: owasp_llm_top10_2026
+  type: report
+  authors: ["OWASP GenAI Security Project"]
+  title: "OWASP Top 10 for LLM Applications 2026 (LLM01:2026 Prompt Injection; LLM03:2026 Excessive Agency; LLM07:2026 Misinformation)"
+  container: "Canonical Markdown source in 2026/final/ (README.md, LLM00_Preface.md, LLM01_PromptInjection.md, LLM03_ExcessiveAgency.md, LLM07_Misinformation.md)"
+  publisher: "OWASP Foundation (GitHub: GenAI-Security-Project/GenAI-LLM-Top10)"
+  date: "2026-08-04"
+  url: "https://github.com/GenAI-Security-Project/GenAI-LLM-Top10/tree/main/2026/final"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "The 2026 edition of the OWASP LLM Top 10 was published on 4 August 2026 and is now the current release. Prompt injection remains LLM01."
+      quote: "Current release: 2026 — published August 4, 2026."
+    - claim: "OWASP 2026 extends prompt injection to inputs from retrieved content, tool output, multimodal content and persistent memory."
+      quote: "input to a large language model (LLM), whether direct user input, retrieved content, tool output, image, audio, or video content, intermediate reasoning, or persistent memory, alters the model's behavior"
+    - claim: "OWASP 2026 says no single control is sufficient and prescribes defence in depth."
+      quote: "Apply the controls below as defense-in-depth, since no single control is sufficient."
+    - claim: "OWASP 2026 recommends keeping credentials and state-changing capability in application code, not in the model, with least privilege for each operation."
+      quote: "Hold credentials and state-change capability in application code, not the model, and grant least privilege per operation."
+    - claim: "OWASP 2026 recommends explicit human confirmation before privileged, irreversible or externally visible actions."
+      quote: "Require explicit human confirmation before any privileged, irreversible, or externally visible action"
+    - claim: "OWASP 2026 adopts the 'Rule of Two': an agent that combines untrusted input, sensitive data and state change needs per-action human approval."
+      quote: "Treat simultaneous access to (A) untrusted input, (B) sensitive data, and (C) state change or external communication as high-risk: any [A,B,C] agent needs per-action human approval"
+    - claim: "OWASP 2026 (LLM07) defines misinformation as the risk that incorrect but credible output is trusted and acted upon."
+      quote: "The core risk is that the incorrect output is trusted and acted upon."
+    - claim: "Excessive Agency rose to third place in the 2026 list because agentic deployments are where the damage is occurring."
+      quote: "Excessive Agency climbed to third, the most consequential move on the list, because the vote and the record agree that agentic deployments are where the damage is landing."
+
+- key: greshake_2023
+  type: paper
+  authors: ["Kai Greshake", "Sahar Abdelnabi", "Shailesh Mishra", "Christoph Endres", "Thorsten Holz", "Mario Fritz"]
+  title: "Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"
+  container: "Proceedings of the 16th ACM Workshop on Artificial Intelligence and Security (AISec '23); arXiv:2302.12173"
+  publisher: "ACM"
+  date: "2023"
+  url: "https://dl.acm.org/doi/10.1145/3605764.3623985"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "Greshake et al. show that indirect prompt injection lets adversaries attack LLM-integrated applications remotely by planting prompts in data likely to be retrieved."
+      quote: "by strategically injecting prompts into data likely to be retrieved."
+    - claim: "Greshake et al. argue that LLM-integrated applications blur the line between data and instructions."
+      quote: "LLM-Integrated Applications blur the line between data and instructions."
+
+- key: greshake_llm_security_repo
+  type: web
+  authors: ["Kai Greshake", "Sahar Abdelnabi", "Shailesh Mishra", "Christoph Endres", "Thorsten Holz", "Mario Fritz"]
+  title: "llm-security: Compromising LLMs using Indirect Prompt Injection (authors' proof-of-concept repository)"
+  publisher: "GitHub (greshake/llm-security)"
+  date: "2023"
+  url: "https://github.com/greshake/llm-security"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "The authors present indirect prompt injection as a new class of vulnerability for language models integrated with applications."
+      quote: "We present a new class of vulnerabilities and impacts stemming from \"indirect prompt injection\" affecting language models integrated with applications."
+    - claim: "The authors conclude that prompt injections can be as powerful as arbitrary code execution."
+      quote: "Prompt injections can be as powerful as arbitrary code execution"
+    - claim: "The authors conclude that indirect injection is a much more powerful way of delivering injections."
+      quote: "Indirect prompt injections are a new, much more powerful way of delivering injections."
+
+- key: nist_ai_100_2_e2025
+  type: report
+  authors: ["National Institute of Standards and Technology"]
+  title: "Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations (NIST AI 100-2 E2025)"
+  publisher: "NIST Computer Security Resource Center"
+  date: "2025-03"
+  url: "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "NIST AI 100-2 E2025 groups attacks on generative AI into four classes: evasion, poisoning, privacy and misuse."
+      quote: "evasion, poisoning, privacy, and misuse attacks for Generative AI (GenAI) systems"
+    - claim: "NIST AI 100-2 E2025 has a dedicated section on indirect prompt injection attacks and mitigations."
+      quote: "Indirect Prompt Injection Attacks and Mitigations"
+
+- key: nist_csrc_glossary_prompt_injection
+  type: web
+  authors: ["National Institute of Standards and Technology"]
+  title: "CSRC Glossary: prompt injection; indirect prompt injection (source: NIST AI 100-2e2025)"
+  publisher: "NIST Computer Security Resource Center"
+  date: "2025"
+  url: "https://csrc.nist.gov/glossary/term/indirect_prompt_injection"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "NIST defines prompt injection as exploiting the concatenation of untrusted input with a prompt built by a higher-trust party."
+      quote: "An attack which exploits the concatenation of untrusted input with a prompt constructed by a higher-trust party such as the application designer."
+    - claim: "NIST defines indirect prompt injection as injection executed through resource control rather than through direct user input."
+      quote: "A type of prompt injection executed through resource control rather than through user-provided input as in a direct prompt injection."
+
+- key: nist_caisi_agent_hijacking_2025
+  type: web
+  authors: ["NIST Center for AI Standards and Innovation (CAISI)"]
+  title: "Technical Blog: Strengthening AI Agent Hijacking Evaluations"
+  publisher: "NIST"
+  date: "2025-01"
+  url: "https://www.nist.gov/news-events/news/2025/01/technical-blog-strengthening-ai-agent-hijacking-evaluations"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "NIST describes agent hijacking as a form of indirect prompt injection that makes an agent take unintended, harmful actions."
+      quote: "Agent hijacking is a type of indirect prompt injection in which an attacker inserts malicious instructions into data that may be ingested by an AI agent, causing it to take unintended, harmful actions."
+
+- key: fr_caisi_rfi_ai_agents_2026
+  type: docs
+  authors: ["NIST Center for AI Standards and Innovation (CAISI)"]
+  title: "Request for Information Regarding Security Considerations for Artificial Intelligence Agents (Docket NIST-2025-0035)"
+  container: "Federal Register document 2026-00206"
+  publisher: "Federal Register"
+  date: "2026-01-08"
+  url: "https://www.federalregister.gov/documents/2026/01/08/2026-00206/request-for-information-regarding-security-considerations-for-artificial-intelligence-agents"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "CAISI's January 2026 RFI describes AI agents as capable of autonomous real-world actions and susceptible to hijacking and backdoors."
+      quote: "AI agent systems are capable of taking autonomous actions that impact real-world systems or environments, and may be susceptible to hijacking, backdoor attacks, and other exploits."
+    - claim: "Responses to the RFI were due by 9 March 2026."
+      quote: "must be received on or before March 9, 2026"
+
+- key: nist_ai_agent_standards_2026
+  type: news
+  authors: ["NIST Center for AI Standards and Innovation (CAISI)"]
+  title: "Announcing the \"AI Agent Standards Initiative\" for Interoperable and Secure Innovation"
+  publisher: "NIST"
+  date: "2026-02-17"
+  url: "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "In February 2026, NIST launched an AI Agent Standards Initiative focused on secure, interoperable AI agents."
+      quote: "The Initiative will ensure that the next generation of AI—AI agents capable of autonomous actions—is widely adopted with confidence, can function securely on behalf of its users, and can interoperate smoothly across the digital ecosystem."
+
+- key: ncsc_prompt_injection_2025
+  type: web
+  authors: ["UK National Cyber Security Centre"]
+  title: "Prompt injection is not SQL injection (it may be worse)"
+  publisher: "National Cyber Security Centre (UK)"
+  date: "2025-12-08"
+  url: "https://www.ncsc.gov.uk/blog-post/prompt-injection-is-not-sql-injection"
+  accessed: "2026-09-28"
+  verified: search_snippet_only
+  claims:
+    - claim: "The UK NCSC warns that prompt injection may never be totally mitigated in the way SQL injection can be."
+      quote: "prompt injection attacks against generative artificial intelligence applications may never be totally mitigated in the way SQL injection attacks can be."
+    - claim: "The NCSC explains that prompt injection exploits LLMs' inability to distinguish data from instructions."
+      quote: "prompt injection exploits the inability of large language models (LLMs) to distinguish between the two."
+
+- key: debenedetti_camel_2025
+  type: web
+  authors: ["Edoardo Debenedetti", "Ilia Shumailov", "Tianqi Fan", "Jamie Hayes", "Nicholas Carlini", "Daniel Fabian", "Christoph Kern", "Chongyang Shi", "Florian Tramèr"]
+  title: "CaMeL: Defeating Prompt Injections by Design (arXiv:2503.18813), research-artifact repository"
+  publisher: "GitHub (google-research/camel-prompt-injection)"
+  date: "2025"
+  url: "https://github.com/google-research/camel-prompt-injection"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "CaMeL, from Google, Google DeepMind and ETH Zurich, is a design-level defence against prompt injection."
+      quote: "CaMeL: Defeating Prompt Injections by Design"
+    - claim: "The authors warn that the CaMeL research-artifact implementation may contain bugs and might not be fully secure."
+      quote: "The interpreter implementation likely contains bugs (e.g., it might throw uncaught exceptions and crash) and the implementation might not be fully secure."
+
+# =============================================================================================
+# I. AUTONOMY LEVELS (secondary reproduction; sae.org was blocked)
+# =============================================================================================
+- key: kulicki_trypuz_j3016_ontology
+  type: web
+  authors: ["Piotr Kulicki", "Robert Trypuz"]
+  title: "Ontology of Driving Automation Systems for On-Road Motor Vehicles (BFO-based ontology of SAE J3016)"
+  container: "File ontology-autonomous-driving.ttl. Level definitions carry the annotation 'adaptedFrom J3016 APR2021, section 5.1-5.6'. This is a secondary reproduction; SAE's own J3016 page was not reachable."
+  publisher: "GitHub (kul-ai/ontology-autonomous-driving), CC BY-NC-SA 4.0"
+  date: "2021"
+  url: "https://github.com/kul-ai/ontology-autonomous-driving"
+  accessed: "2026-09-28"
+  verified: fetched
+  claims:
+    - claim: "The ontology draws on SAE J3016 in its June 2018 and April 2021 versions."
+      quote: "SAE document ID: J3016 (JUN2018, APR2021)."
+    - claim: "Level 0, per J3016 APR2021 section 5.1: the driver performs the entire dynamic driving task (DDT)."
+      quote: "the performance by the driver of the entire DDT, even when enhanced by active safety systems"
+    - claim: "Level 1, per J3016 APR2021 section 5.2: the system performs either lateral or longitudinal control, and the driver does the rest."
+      quote: "the sustained and ODD-specific execution by a driving automation system of either the lateral or the longitudinal vehicle motion control subtask of the DDT (but not both simultaneously)"
+    - claim: "Level 2, per J3016 APR2021 section 5.3: the system performs both control subtasks, while the driver does object and event detection and response (OEDR) and supervises."
+      quote: "with the expectation that the driver completes the OEDR subtask and supervises the driving automation system"
+    - claim: "Level 3, per J3016 APR2021 section 5.4: the system performs the entire DDT, but a fallback-ready user must respond to requests to intervene."
+      quote: "the sustained and ODD-specific performance by an ADS of the entire DDT with the expectation that the DDT fallback-ready user is receptive to ADS-issued requests to intervene"
+    - claim: "Level 4, per J3016 APR2021 section 5.5: the system also performs the fallback within its operational design domain (ODD), with no expectation that a user responds."
+      quote: "the sustained and ODD-specific performance by an ADS of the entire DDT and DDT fallback, without any expectation that a user will respond to a request to intervene"
+    - claim: "Level 5, per J3016 APR2021 section 5.6: the same as Level 4 but unconditional, with no ODD limit."
+      quote: "the sustained and unconditional (i.e., not ODD-specific) performance by an ADS of the entire DDT and DDT fallback without any expectation that a user will respond to a request to intervene"

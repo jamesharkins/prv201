@@ -8,10 +8,9 @@ Steps (all seeds fixed):
     and parsed by the offline extractor (the same path the hybrid uses offline).
  4. Discriminative model: LightGBM on masked, noise-augmented training draws,
     temperature-scaled on validation.
- 5. Unmodeled threshold: the per-dimension log-density offset of the unmodeled
-    hypothesis is chosen on validation sessions so that at most 5 % of single-fault
-    validation cases end with U as the top group, maximising detection of the
-    validation double-fault / out-of-catalog cases.
+ 5. Unmodeled threshold, provisional: an offset chosen on random validation units.
+    It is superseded by eval/recalibrate_unmodeled.py (``make calibrate``, run after
+    ``make cases``), which calibrates two levels on symptomatic units (ADR-029).
 """
 
 from __future__ import annotations

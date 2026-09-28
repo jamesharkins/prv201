@@ -1,0 +1,13 @@
+{
+ "hv_steps": 28,
+ "hv_steps_complete": 28,
+ "hv_lifts": 81,
+ "hv_lifts_locked_correctly": 81,
+ "steps_checked": 109,
+ "coverage": 1.0,
+ "lv_false_alarms": 0,
+ "poisoned_notes": 1,
+ "poisoned_notes_flagged": true,
+ "poisoned_request_refused": true
+}
+exit=0

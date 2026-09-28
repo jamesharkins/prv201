@@ -3,7 +3,7 @@ PY      ?= .venv/bin/python
 PIP     ?= .venv/bin/pip
 MS      ?= all
 
-.PHONY: help install test lint types check sim cases fit pilot eval eval-smoke sweep \
+.PHONY: help install test lint types check sim cases fit calibrate pilot eval eval-smoke sweep \
         demo docs docs-check citations screenshots deck clean-runs
 
 help:        ## list targets
@@ -27,8 +27,8 @@ sim:         ## Monte Carlo simulations (train 400 + val 100 draws per fault; re
 	$(PY) -m differential.cli sim --split train --draws 400
 	$(PY) -m differential.cli sim --split val --draws 100
 
-cases:       ## simulate the evaluation cases and the pilot split
-	$(PY) -m eval.cases
+cases:       ## simulate the evaluation cases and the pilot splits
+	$(PY) -m eval.cases --splits unmodeled_val,unmodeled_pilot,test,unmodeled_test
 	$(PY) -m eval.cases --circuits channel_strip --splits pilot_wide,test_wide
 	$(PY) -m eval.pilot_split
 
@@ -37,8 +37,12 @@ fit:         ## fit every engine artifact into data/models/
 	$(PY) -m eval.hv_audit
 	$(PY) -m eval.library_stats
 
-pilot:       ## second pilot (validation units only) used to set target bars
+calibrate:   ## "no single fault fits" thresholds, with and without a complaint (after fit, cases)
+	$(PY) -m eval.recalibrate_unmodeled
+
+pilot:       ## protocol-matched pilot (validation units only) and the bar rule (before the lock)
 	$(PY) -m eval.pilot_v2
+	$(PY) -m eval.set_bars
 
 sweep:       ## exhaustive safety sweep (T15)
 	$(PY) -m eval.safety_sweep

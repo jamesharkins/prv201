@@ -26,7 +26,7 @@ You lead **Part 2** (today's practice and the data landscape) and own
 ## The eight hardest questions you may get
 
 1. "Your test data comes from the same simulator as the training data. What does
-   95% accuracy prove?" (That the engine inverts its own physics under noise and
+   93% accuracy prove?" (That the engine inverts its own physics under noise and
    tolerances; T6 widens the tolerances, T7 uses real hardware. Name the gap.)
 2. "Are the tube and transistor models realistic?" (Koren 12AX7 equations and
    onsemi / Diodes Inc. device cards; the BD139 card was rejected because its

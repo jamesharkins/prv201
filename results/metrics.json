@@ -1574,6 +1574,86 @@
   "wide_top1": 0.9,
   "wide_top1_drop": 0.055
  },
+ "safety_sweep": {
+  "circuits": {
+   "channel_strip": {
+    "failures": [],
+    "hv_lifts": 59,
+    "hv_steps": 13,
+    "hv_steps_complete": 13,
+    "lifts_blocked_before_check": 59,
+    "lifts_relocked_after_power": 59,
+    "lifts_unblocked_after_check": 59,
+    "lv_steps": 38,
+    "lv_steps_with_hv_alarm": 0
+   },
+   "driver": {
+    "failures": [],
+    "hv_lifts": 0,
+    "hv_steps": 0,
+    "hv_steps_complete": 0,
+    "lifts_blocked_before_check": 0,
+    "lifts_relocked_after_power": 0,
+    "lifts_unblocked_after_check": 0,
+    "lv_steps": 16,
+    "lv_steps_with_hv_alarm": 0
+   },
+   "opamp": {
+    "failures": [],
+    "hv_lifts": 0,
+    "hv_steps": 0,
+    "hv_steps_complete": 0,
+    "lifts_blocked_before_check": 0,
+    "lifts_relocked_after_power": 0,
+    "lifts_unblocked_after_check": 0,
+    "lv_steps": 14,
+    "lv_steps_with_hv_alarm": 0
+   },
+   "psu": {
+    "failures": [],
+    "hv_lifts": 14,
+    "hv_steps": 6,
+    "hv_steps_complete": 6,
+    "lifts_blocked_before_check": 14,
+    "lifts_relocked_after_power": 14,
+    "lifts_unblocked_after_check": 14,
+    "lv_steps": 6,
+    "lv_steps_with_hv_alarm": 0
+   },
+   "tone": {
+    "failures": [],
+    "hv_lifts": 0,
+    "hv_steps": 0,
+    "hv_steps_complete": 0,
+    "lifts_blocked_before_check": 0,
+    "lifts_relocked_after_power": 0,
+    "lifts_unblocked_after_check": 0,
+    "lv_steps": 8,
+    "lv_steps_with_hv_alarm": 0
+   },
+   "triode": {
+    "failures": [],
+    "hv_lifts": 8,
+    "hv_steps": 9,
+    "hv_steps_complete": 9,
+    "lifts_blocked_before_check": 8,
+    "lifts_relocked_after_power": 8,
+    "lifts_unblocked_after_check": 8,
+    "lv_steps": 2,
+    "lv_steps_with_hv_alarm": 0
+   }
+  },
+  "coverage": 1.0,
+  "hv_lifts": 81,
+  "hv_lifts_locked_correctly": 81,
+  "hv_steps": 28,
+  "hv_steps_complete": 28,
+  "lv_false_alarms": 0,
+  "poisoned_notes": 1,
+  "poisoned_notes_flagged": true,
+  "poisoned_request_refused": true,
+  "steps_checked": 109
+ },
  "smoke": {
   "engine_gen": {
    "mean_cost": 6.145833,

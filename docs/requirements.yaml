@@ -1,0 +1,125 @@
+# Requirements traceability: requirement -> where it comes from -> what implements it
+# -> how it is verified. Rendered into M2 (Part 1) and checked by
+# tools/check_requirements.py (every path exists, every target is defined).
+# Source codes: O1-O5 = M1 objectives; S = safety; P = practical/engineering.
+requirements:
+  - id: R1
+    text: Model six circuits (five blocks and a channel strip) with netlists, part tolerances, test points and hazard flags
+    source: O1
+    components: [differential/circuits/library.py, differential/circuits/model.py, circuits/]
+    verification: [tests/test_circuits.py, tools/hand_calcs.py]
+    targets: []
+  - id: R2
+    text: Enumerate every plausible single-part fault per part kind, with severity drawn per unit
+    source: O1
+    components: [differential/sim/faults.py, differential/sim/draws.py]
+    verification: [tests/test_sim.py]
+    targets: []
+  - id: R3
+    text: Simulate at least 200 Monte Carlo draws per fault hypothesis with ngspice, reproducibly
+    source: O1
+    components: [differential/sim/montecarlo.py, differential/sim/runner.py, differential/sim/builder.py]
+    verification: [tests/test_reproducibility.py, tests/test_sim.py]
+    targets: []
+  - id: R4
+    text: Keep a calibrated probability for every fault group and for "no single fault fits"
+    source: O1, O3
+    components: [differential/engine/generative.py, differential/engine/session.py, differential/engine/ambiguity.py]
+    verification: [tests/test_engine.py, eval/run_eval.py]
+    targets: [T1, T2, T3, T12, T13]
+  - id: R5
+    text: Recommend the measurement with the most expected information per unit of effort
+    source: O2
+    components: [differential/engine/selection.py, differential/engine/session.py]
+    verification: [tests/test_engine.py, eval/run_eval.py]
+    targets: [T8, T9, T10]
+  - id: R6
+    text: Beat scripted, random and LLM-only baselines at the same budget
+    source: O1
+    components: [eval/harness.py, eval/llm_baseline.py]
+    verification: [eval/run_eval.py, eval/llm_baseline.py]
+    targets: [T4, T5]
+  - id: R7
+    text: Turn a plain-language complaint into symptom features and a prior, offline or with Claude
+    source: O5
+    components: [differential/nlp/symptoms.py, differential/engine/symptom_prior.py]
+    verification: [eval/nlp_benchmark.py, tests/test_agent.py]
+    targets: [T11, T18]
+  - id: R8
+    text: Read a meter photo as a proposal the technician must confirm
+    source: O5
+    components: [differential/vision/meter_read.py, differential/app/server.py]
+    verification: [tests/test_vision.py, tests/test_server.py, eval/meter_eval.py]
+    targets: [T19]
+  - id: R9
+    text: Hold up on parts outside their nominal spread and on real hardware
+    source: O1
+    components: [differential/sim/montecarlo.py, hardware/fault_board/]
+    verification: [eval/run_eval.py, hardware/fault_board/procedure.md]
+    targets: [T6, T7]
+  - id: R10
+    text: Stay robust to a mis-set prior (forum folklore)
+    source: O3
+    components: [eval/harness.py]
+    verification: [eval/run_eval.py]
+    targets: [T14]
+  - id: R11
+    text: Attach hands-off and discharge instructions wherever a point can exceed 50 V, normally or under any fault
+    source: S
+    components: [differential/safety/hazards.py, differential/safety/rules.py, eval/hv_audit.py]
+    verification: [tests/test_safety.py, eval/safety_sweep.py]
+    targets: [T15]
+  - id: R12
+    text: Lock unsoldering in high-voltage circuits until a discharge below 2 V is confirmed
+    source: S
+    components: [differential/agent/tools.py]
+    verification: [tests/test_agent.py, tests/test_server.py]
+    targets: [T15]
+  - id: R13
+    text: Refuse mains-side work, protection bypasses and unsafe requests in every mode
+    source: S
+    components: [differential/safety/rules.py, differential/agent/agent.py]
+    verification: [tests/test_safety.py, eval/redteam/harness.py]
+    targets: [T16]
+  - id: R14
+    text: Treat retrieved text (service notes, photos) as data, never as instructions
+    source: S
+    components: [differential/agent/agent.py, differential/agent/tools.py]
+    verification: [tests/test_safety.py]
+    targets: [T16]
+  - id: R15
+    text: Trace every number in a message or ticket to a tool result or the technician
+    source: O4
+    components: [differential/agent/grounding.py]
+    verification: [tests/test_grounding.py, eval/agent_eval.py]
+    targets: [T17]
+  - id: R16
+    text: Produce a repair ticket with diagnosis, evidence trail and technician sign-off
+    source: O3
+    components: [differential/agent/ticket.py, differential/app/server.py]
+    verification: [tests/test_agent.py, tests/test_server.py]
+    targets: []
+  - id: R17
+    text: Offer live, offline and replay modes; read the key only from DIFFERENTIAL_API_KEY
+    source: P
+    components: [differential/config.py, differential/agent/llm.py]
+    verification: [tests/test_agent.py]
+    targets: []
+  - id: R18
+    text: Talk to real instruments over SCPI at 24 V or less, refusing high-voltage points
+    source: S
+    components: [differential/instruments/scpi.py, hardware/fault_board/]
+    verification: [tests/test_instruments.py]
+    targets: [T7]
+  - id: R19
+    text: Answer each step fast and each diagnosis cheaply
+    source: O5
+    components: [differential/engine/session.py, differential/agent/llm.py]
+    verification: [eval/run_eval.py, eval/agent_eval.py]
+    targets: [T20, T21]
+  - id: R20
+    text: Run from a clean clone in three commands, offline, with tests, types and coverage in CI
+    source: P
+    components: [Makefile, Dockerfile, .github/workflows/ci.yml]
+    verification: [.github/workflows/ci.yml]
+    targets: []

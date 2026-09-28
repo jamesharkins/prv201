@@ -145,6 +145,11 @@ def render(ms: str) -> Path:
         print(f"rendered {out.relative_to(ROOT)} -> {pdf.relative_to(ROOT)}")
     if produced is None:
         raise FileNotFoundError(f"no templates in {tpl_dir}")
+    for tpl in sorted(tpl_dir.glob("*.md.j2")):  # submission sheets and other Markdown
+        text = env.get_template(f"{ms}/{tpl.name}").render(
+            **context(), citation_check=load_json(RESULTS / f"citation_check_{ms}.json"))
+        (out_dir / tpl.name.removesuffix(".j2")).write_text(text)
+        print(f"rendered {(out_dir / tpl.name.removesuffix('.j2')).relative_to(ROOT)}")
     return produced
 
 

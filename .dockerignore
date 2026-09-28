@@ -1,0 +1,14 @@
+# Keep the build context to what the image needs (see Dockerfile).
+.git
+.venv
+**/__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+data/sim
+data/eval/runs
+data/models/*/discriminative.txt
+data/meter_photos
+docs/media
+submissions
+*.log

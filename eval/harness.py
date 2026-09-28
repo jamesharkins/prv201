@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import time
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -39,7 +39,7 @@ class SystemSpec:
     prior: str = "uniform"  # uniform | symptoms_rules | symptoms_oracle | recap_folklore
     model_variant: str = ""  # "" or e.g. "n50" for the sample-size ablation
     text_field: str = "complaint"  # which complaint text feeds the extractor
-    cost_scale: tuple[float, float] = (1.0, 1.0)  # (scope, lift) effort-weight sensitivity
+    cost_scale: tuple[float, float, float] = (1.0, 1.0, 1.0)  # (scope, lift, hv) weight scales
 
 
 SYSTEMS: dict[str, SystemSpec] = {
@@ -58,18 +58,25 @@ SYSTEMS: dict[str, SystemSpec] = {
     "engine_n50": SystemSpec("engine_n50", model_variant="n50"),
     "engine_n100": SystemSpec("engine_n100", model_variant="n100"),
     "engine_n200": SystemSpec("engine_n200", model_variant="n200"),
-    # effort-weight sensitivity (scope and lift weights halved / doubled)
-    "engine_w_half": SystemSpec("engine_w_half", cost_scale=(0.5, 0.5)),
-    "engine_w_double": SystemSpec("engine_w_double", cost_scale=(2.0, 2.0)),
-    "fixed_order_w_half": SystemSpec("fixed_order_w_half", policy="fixed_order",
-                                     cost_scale=(0.5, 0.5)),
-    "fixed_order_w_double": SystemSpec("fixed_order_w_double", policy="fixed_order",
-                                       cost_scale=(2.0, 2.0)),
-    "half_split_w_half": SystemSpec("half_split_w_half", policy="half_split",
-                                    cost_scale=(0.5, 0.5)),
-    "half_split_w_double": SystemSpec("half_split_w_double", policy="half_split",
-                                      cost_scale=(2.0, 2.0)),
 }
+
+# Effort-weight sensitivity: every system behind an effort target (T8-T11) is re-run
+# with one weight (oscilloscope, unsoldering or high-voltage extra) halved or doubled.
+EFFORT_WEIGHTS = ("scope", "lift", "hv")
+WEIGHT_FACTORS = {"half": 0.5, "double": 2.0}
+SENSITIVITY_BASES = ("engine_gen", "hybrid", "fixed_order", "half_split", "random")
+
+
+def sensitivity_name(base: str, weight: str, factor: str) -> str:
+    return f"{base}_w_{weight}_{factor}"
+
+
+for _base in SENSITIVITY_BASES:
+    for _i, _w in enumerate(EFFORT_WEIGHTS):
+        for _f, _k in WEIGHT_FACTORS.items():
+            _scale = tuple(_k if j == _i else 1.0 for j in range(3))
+            _name = sensitivity_name(_base, _w, _f)
+            SYSTEMS[_name] = replace(SYSTEMS[_base], name=_name, cost_scale=_scale)
 
 
 @lru_cache(maxsize=32)

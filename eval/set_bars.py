@@ -167,6 +167,26 @@ def derivation(tid: str, v: dict[str, Any]) -> str:
     return f"Pilot estimate {f(v['estimate'])} (standard error {se}); {rule}."
 
 
+def pilot_text(tid: str, v: dict[str, Any]) -> str:
+    """The pilot estimate as printed next to its bar in the M1 targets table."""
+    if tid in ("T1", "T2", "T3"):
+        return f"{100 * v['estimate']:.1f}%"
+    if tid == "T4":
+        return (f"{100 * v['estimate_vs_fixed_order']:+.0f} / "
+                f"{100 * v['estimate_vs_random']:+.0f} pts")
+    if tid in ("T6", "T14"):
+        sign = "+" if tid == "T14" else ""
+        return f"{100 * v['estimate']:{sign}.1f} pts".replace("-", "−")
+    if tid in ("T8", "T9", "T10", "T11"):
+        return f"{v['estimate']:.2f}×"
+    if tid == "T12":
+        return f"{v['estimate']:.3f}"
+    if tid == "T13":
+        return (f"{v['estimate']:.2f}; {100 * v['flagged_estimate']:.0f}%; "
+                f"{100 * v['misleading_estimate']:.0f}%")
+    raise KeyError(tid)
+
+
 def main() -> None:
     hyb, eng = runs("hybrid"), runs("engine_gen")
     fixed, half, rnd, recap = runs("fixed_order"), runs("half_split"), runs("random"), runs("recap_prior")
@@ -226,6 +246,7 @@ def main() -> None:
             t["text"] = text[t["id"]]
             t["pilot_dependent"] = True
             t["derivation"] = derivation(t["id"], d[t["id"]])
+            t["pilot_text"] = pilot_text(t["id"], d[t["id"]])
             if t["id"] == "T13":
                 t["value_flag_rate"] = d["T13"]["flagged_bar"]
                 t["value_misleading"] = d["T13"]["misleading_bar"]

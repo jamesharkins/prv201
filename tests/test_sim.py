@@ -41,6 +41,7 @@ from differential.sim.observables import (
     lift_observables,
     measurement_cost,
     observable_map,
+    scaled_cost,
     spice_observables,
     thd_node,
 )
@@ -78,6 +79,19 @@ def test_observables_costs() -> None:
     assert len(all_observables(c)) == len(spice_observables(c)) + len(lift_observables(c))
     assert thd_node(get_circuit("psu")) is None
     assert obs["dc:TP3"].unit == "V" and obs["thd:TP22"].unit == "%"
+
+
+def test_effort_weight_scaling() -> None:
+    obs = observable_map(get_circuit("channel_strip"))
+    for o in obs.values():
+        assert scaled_cost(o) == o.cost
+    # one weight at a time; the DC weight is the unit
+    assert scaled_cost(obs["dc:TP3"], scope=2.0, lift=2.0) == 1.0
+    assert scaled_cost(obs["dc:TP9"], hv=2.0) == 5.0
+    assert scaled_cost(obs["ac:TP9"], scope=2.0) == 8.0
+    assert scaled_cost(obs["ac:TP9"], hv=0.5) == 4.0
+    assert scaled_cost(obs["lift:R501"], lift=0.5) == 5.0
+    assert scaled_cost(obs["lift:C104"], lift=2.0, hv=0.5) == 21.0
 
 
 def test_healthy_draw_within_tolerance_and_deterministic() -> None:

@@ -91,8 +91,7 @@
   inset: (left: 8pt, y: 4pt, right: 4pt),
   breakable: true,
 )[
-  #text(font: "Inter", size: 8.4pt, weight: "semibold", fill: accent)[DESIGN DECISION · #title]
-  #v(-3pt)
+  #block(sticky: true, below: 0.5em)[#text(font: "Inter", size: 8.4pt, weight: "semibold", fill: accent)[DESIGN DECISION · #title]]
   #set text(size: 9.4pt)
   #body
 ]

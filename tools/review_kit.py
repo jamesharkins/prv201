@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PART = re.compile(r"^\s*Part (\d) [—-] ", re.M)
+PART = re.compile(r"^\s*Part (\d) [—-] [^\n]*Section lead", re.M)  # headers, not cross-references
 BACK = re.compile(r"^References\s*$", re.M)
 
 

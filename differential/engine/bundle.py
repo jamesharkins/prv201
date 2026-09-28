@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -14,7 +14,7 @@ from differential.config import MODELS_DIR
 from differential.engine.ambiguity import AmbiguityGroups, singleton_groups
 from differential.engine.discriminative import DiscriminativeModel
 from differential.engine.generative import GenerativeModel
-from differential.sim.observables import ObservableSpec, all_observables
+from differential.sim.observables import COST_HV_EXTRA, ObservableSpec, all_observables
 
 DEFAULT_UNMODELED_PRIOR = 0.05
 DISC_FILE = "discriminative.txt.gz"
@@ -72,7 +72,18 @@ class EngineBundle:
 
     @property
     def observables(self) -> dict[str, ObservableSpec]:
-        return {o.key: o for o in all_observables(self.circuit)}
+        """Measurements with their effort costs. A point that can exceed 50 V under a
+        catalog fault (fault-conditioned hazard map) needs the same hands-off protocol
+        as one that is high voltage in normal operation, so it carries the same extra
+        cost (ADR-030)."""
+        from differential.safety.hazards import hazard
+
+        out = {}
+        for o in all_observables(self.circuit):
+            if o.tp is not None and not o.hv and hazard(self.circuit.id, o.tp).high_voltage:
+                o = replace(o, hv=True, cost=o.cost + COST_HV_EXTRA)
+            out[o.key] = o
+        return out
 
     @property
     def hypotheses(self) -> list[str]:

@@ -9,6 +9,7 @@ from differential.circuits.library import BLOCK_IDS, CIRCUIT_IDS, get_circuit
 from differential.config import SIM_DIR
 from differential.engine.bundle import DEFAULT_UNMODELED_PRIOR
 from differential.engine.session import DEFAULT_BUDGET, STOP_THRESHOLD
+from differential.safety.hazards import DISCHARGE_VERIFY_MAX_V
 from differential.sim.faults import FAULT_MODES, fault_catalog
 from differential.sim.observables import (
     COST_DC,
@@ -19,6 +20,7 @@ from differential.sim.observables import (
     spice_observables,
 )
 from eval import metrics_io
+from eval.recalibrate_unmodeled import FPR_BUDGET
 
 
 def symptom_stats() -> dict[str, object]:
@@ -44,6 +46,24 @@ def symptom_stats() -> dict[str, object]:
             "faults_per_symptom": per_feature,
             "max_faults_sharing_a_symptom": max(per_feature.values()),
         }
+    return out
+
+
+def group_stats() -> dict[str, object]:
+    """Ambiguity groups per circuit (faults that no measurement can tell apart)."""
+    from differential.config import MODELS_DIR
+
+    out: dict[str, object] = {}
+    for cid in CIRCUIT_IDS:
+        path = MODELS_DIR / cid / "groups.json"
+        if not path.exists():
+            continue
+        g = json.loads(path.read_text())
+        sizes = [len(m) for m in g["groups"]]
+        faults = sum(1 for h in g["hypotheses"] if h != "healthy")
+        out[cid] = {"groups": len(sizes), "hypotheses": len(g["hypotheses"]), "faults": faults,
+                    "mean_size": sum(sizes) / len(sizes), "max_size": max(sizes),
+                    "singletons": sum(1 for n in sizes if n == 1)}
     return out
 
 
@@ -80,20 +100,31 @@ def main() -> None:
             "cost_dc": COST_DC, "cost_scope": COST_SCOPE, "cost_hv_extra": COST_HV_EXTRA,
             "cost_lift": COST_LIFT, "budget": DEFAULT_BUDGET, "stop_threshold": STOP_THRESHOLD,
             "unmodeled_prior": DEFAULT_UNMODELED_PRIOR, "train_draws": 400, "val_draws": 100,
+            "discharge_verify_max_v": DISCHARGE_VERIFY_MAX_V, "false_alarm_budget": FPR_BUDGET,
         },
     }
     sym = symptom_stats()
     if sym:
         data["symptoms"] = sym
+    data["groups"] = group_stats()
+    from differential.sim.measurement import DMM_DIGITS, DMM_PCT, SCOPE_REL
+
+    data["instrument"] = {"dmm_pct": 100 * DMM_PCT, "dmm_counts": DMM_DIGITS,
+                          "scope_pct": 100 * SCOPE_REL}
     metrics_io.update("library", data)
     hc_path = SIM_DIR.parent.parent / "results" / "hand_calcs.json"
     if hc_path.exists():
         hc = json.loads(hc_path.read_text())
         checked = [r for r in hc["rows"] if r["ok"] is not None]
         ratios = [h["ratio"] for h in hc["hum_validation"] if h["ratio"] is not None]
+        tols = [100 * r["rel_tol"] for r in checked if r.get("rel_tol")]
         metrics_io.update("hand_calcs", {
             "rows_checked": len(checked),
             "rows_ok": sum(1 for r in checked if r["ok"]),
+            "rel_tol_min_pct": min(tols) if tols else None,
+            "rel_tol_max_pct": max(tols) if tols else None,
+            "abs_tol_db": max((r["abs_tol"] for r in checked
+                               if r.get("abs_tol") and r["unit"] == "dB"), default=None),
             "hum_model_overstatement_min_pct": 100 * (min(ratios) - 1) if ratios else None,
             "hum_model_overstatement_max_pct": 100 * (max(ratios) - 1) if ratios else None,
             "rows": {r["quantity"]: {"hand": r["hand"], "sim": r["sim"], "unit": r["unit"]}

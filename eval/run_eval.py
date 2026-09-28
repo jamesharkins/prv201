@@ -27,7 +27,15 @@ from differential.config import FIGURES_DIR, RESULTS_DIR
 from differential.engine.bundle import load_bundle
 from differential.sim.faults import MODE_TYPE, parse_fault_id
 from eval import figstyle, metrics_io
-from eval.harness import SYSTEMS, run_system, unmodeled_outcome
+from eval.harness import (
+    EFFORT_WEIGHTS,
+    SENSITIVITY_BASES,
+    SYSTEMS,
+    WEIGHT_FACTORS,
+    run_system,
+    sensitivity_name,
+    unmodeled_outcome,
+)
 from eval.stats import (
     Estimate,
     auroc_ci,
@@ -41,10 +49,10 @@ from eval.stats import (
 
 CIRCUITS = [COMPOSITE_ID, *BLOCK_IDS]
 MAIN = ["random", "fixed_order", "half_split", "engine_gen", "engine_disc", "hybrid"]
+SENSITIVITY = [sensitivity_name(b, w, f) for b in SENSITIVITY_BASES for w in EFFORT_WEIGHTS
+               for f in WEIGHT_FACTORS]
 ABLATIONS = ["hybrid_oracle", "hybrid_paraphrase", "recap_prior", "engine_eig_nocost",
-             "engine_n50", "engine_n100", "engine_n200", "engine_w_half", "engine_w_double",
-             "fixed_order_w_half", "fixed_order_w_double", "half_split_w_half",
-             "half_split_w_double"]
+             "engine_n50", "engine_n100", "engine_n200", *SENSITIVITY]
 SMOKE_SYSTEMS = ["random", "fixed_order", "half_split", "engine_gen", "hybrid"]
 SMOKE_LIMIT = 8
 # The smoke test checks the pipeline, not the system: it runs on the pilot splits so
@@ -279,13 +287,20 @@ def analyses(R: dict[str, dict[str, pd.DataFrame]]) -> dict[str, Any]:
     # Complaint voice (people-facing fairness check): accuracy by persona of the complaint.
     if "persona" in hyb.columns:
         out["top1_by_persona"] = hyb.groupby("persona")["correct"].mean().to_dict()
-    # Sensitivity of the effort results to the effort weights.
-    sens = {}
-    for w in ("half", "double"):
-        e, f, h = (f"engine_w_{w}", f"fixed_order_w_{w}", f"half_split_w_{w}")
-        if all(x in R for x in (e, f, h)):
-            sens[w] = {"vs_fixed_order": effort_target(pooled(R[e]), pooled(R[f])),
-                       "vs_half_split": effort_target(pooled(R[e]), pooled(R[h]))}
+    # Sensitivity of the effort targets (T8-T11) to each effort weight, halved and doubled.
+    sens: dict[str, dict[str, Any]] = {}
+    for w in EFFORT_WEIGHTS:
+        for f in WEIGHT_FACTORS:
+            n = {b: sensitivity_name(b, w, f) for b in SENSITIVITY_BASES}
+            if not all(x in R for x in n.values()):
+                continue
+            eng = pooled(R[n["engine_gen"]])
+            sens[f"{w}_{f}"] = {
+                "T8_vs_fixed_order": effort_target(eng, pooled(R[n["fixed_order"]])),
+                "T9_vs_half_split": effort_target(eng, pooled(R[n["half_split"]])),
+                "T10_vs_random": effort_target(eng, pooled(R[n["random"]])),
+                "T11_complaint": effort_target(pooled(R[n["hybrid"]]), eng),
+            }
     out["effort_weight_sensitivity"] = sens
     # Monte Carlo sample-size ablation.
     mc = {}

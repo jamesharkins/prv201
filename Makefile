@@ -27,10 +27,10 @@ sim:         ## Monte Carlo simulations (train 400 + val 100 draws per fault; re
 	$(PY) -m differential.cli sim --split train --draws 400
 	$(PY) -m differential.cli sim --split val --draws 100
 
-cases:       ## simulate the evaluation cases and the pilot splits
-	$(PY) -m eval.cases --splits unmodeled_val,unmodeled_pilot,test,unmodeled_test
+cases:       ## simulate the evaluation and pilot sets (symptomatic units only) and paraphrases
+	$(PY) -m eval.cases --splits unmodeled_val,unmodeled_pilot,pilot,test,unmodeled_test
 	$(PY) -m eval.cases --circuits channel_strip --splits pilot_wide,test_wide
-	$(PY) -m eval.pilot_split
+	$(PY) -m eval.nlp_benchmark --render-only
 
 fit:         ## fit every engine artifact into data/models/
 	$(PY) -m eval.train

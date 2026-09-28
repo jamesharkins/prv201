@@ -3,9 +3,9 @@
 Adds what the M1 review asked for: a half-split tracing baseline, calibration over
 every step (not only at the stop), the unmodeled detector's operating point, the
 folklore-prior robustness check, and the widened-tolerance stress set. Uses the
-pilot split (symptomatic validation units, draws 50-99), the pilot_wide split and
-the unmodeled_pilot split; none of them is used by any calibration step that the
-pilot checks (ADR-029).
+pilot split (units simulated from their own seed stream with the test protocol),
+the pilot_wide split and the unmodeled_pilot split; none of them is used for any
+training, calibration or tuning (ADR-029, ADR-030).
 Writes metrics.json section "pilot2" and results/pilot2.log.
 """
 
@@ -26,35 +26,17 @@ PILOT_SYSTEMS = ["engine_gen", "hybrid", "fixed_order", "half_split", "random", 
 CIRCUITS = [COMPOSITE_ID, *BLOCK_IDS]
 
 
-def population_check(cid: str = COMPOSITE_ID, n: int = 200) -> dict[str, float]:
-    """Why the first pilot (units of every catalog fault) scored higher than this one
-    (symptomatic units only): the engine alone on validation units (draws 50-99) of
-    faults that usually cause no symptom, next to its score on the pilot split."""
-    from concurrent.futures import ProcessPoolExecutor
-
-    from differential.config import n_workers
-    from differential.sim.montecarlo import load_dataset
+def by_symptom_rate(df: pd.DataFrame, cid: str) -> pd.DataFrame:
+    """Attach each unit's fault symptom rate (share of training draws with a symptom)."""
     from eval.cases import symptom_model
-    from eval.harness import run_one
 
     sm = symptom_model(cid)
     assert sm.symptomatic_rate is not None
-    latent = {h for h, r in zip(sm.hypotheses, sm.symptomatic_rate, strict=True)
-              if h != "healthy" and r < 0.5}
-    va = load_dataset(cid, "val")
-    va = va[va["ok"] & va["hypothesis"].isin(latent) & (va["draw"] >= 50)]
-    va = va.sample(min(n, len(va)), random_state=13)
-    jobs = []
-    for i, (_, r) in enumerate(va.iterrows()):
-        row = r.to_dict()
-        row["case_id"] = f"{cid}-latent-{i:04d}"
-        jobs.append((SYSTEMS["engine_gen"], cid, row, {"case_id": row["case_id"]}))
-    with ProcessPoolExecutor(max_workers=n_workers()) as pool:
-        res = pd.DataFrame(list(pool.map(run_one, jobs, chunksize=4)))
-    return {"n": len(res), "engine_top1_no_symptom_faults": float(res["correct"].mean()),
-            "engine_mean_cost_no_symptom_faults": float(res["cost"].mean()),
-            "no_symptom_faults": len(latent),
-            "faults": len([h for h in sm.hypotheses if h != "healthy"])}
+    rate = dict(zip(sm.hypotheses, sm.symptomatic_rate, strict=True))
+    return df.assign(symptom_rate=[float(rate.get(t, np.nan)) for t in df["truth"]])
+
+
+BANDS = [(0.0, 0.25), (0.25, 0.5), (0.5, 1.0001)]
 
 
 def step_ece(df: pd.DataFrame) -> float:
@@ -73,8 +55,8 @@ def main() -> None:
             runs[s][cid] = run_system(SYSTEMS[s], cid, split="pilot")
         print(cid, "done", round(time.time() - t0), "s", flush=True)
     pooled = {s: pd.concat(runs[s].values(), ignore_index=True) for s in PILOT_SYSTEMS}
-    out: dict[str, object] = {"protocol": "symptomatic validation units (pilot split), "
-                                          "models fit on training draws; never test data",
+    out: dict[str, object] = {"protocol": "pilot split: symptomatic units simulated from their own "
+                                          "seed stream with the test protocol; never test data",
                               "n_cases": {cid: len(runs["hybrid"][cid]) for cid in CIRCUITS}}
     per = {}
     for s, df in pooled.items():
@@ -127,7 +109,14 @@ def main() -> None:
         out[f"{s}_unmodeled_misleading_rate"] = float((oc == "misleading").mean())
         out[f"{s}_unmodeled_n"] = len(pos)
         out[f"{s}_single_false_flag_rate"] = float(np.mean(pooled[s]["top_group"] == -1))
-    out["population_check"] = population_check()
+    # Accuracy by how often the true fault causes a symptom (the test set includes
+    # rarely-symptomatic faults in proportion to how often they reach a bench).
+    rated = pd.concat([by_symptom_rate(runs["hybrid"][c], c) for c in CIRCUITS], ignore_index=True)
+    out["hybrid_by_symptom_rate"] = {
+        f"{lo:.2f}-{min(hi, 1.0):.2f}": {
+            "n": int(((rated.symptom_rate > lo) & (rated.symptom_rate <= hi)).sum()),
+            "top1": float(rated[(rated.symptom_rate > lo) & (rated.symptom_rate <= hi)]["correct"].mean())}
+        for lo, hi in BANDS}
     out["seconds"] = time.time() - t0
     metrics_io.update("pilot2", out)
     text = json.dumps(out, indent=1, default=float)

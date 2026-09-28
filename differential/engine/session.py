@@ -38,7 +38,7 @@ from differential.sim.measurement import (
     from_engine,
     reading_to_engine,
 )
-from differential.sim.observables import ObservableSpec
+from differential.sim.observables import ObservableSpec, scaled_cost
 
 POLICIES = ("eig_per_cost", "eig", "fixed_order", "half_split", "random")
 SCRIPTED = ("fixed_order", "half_split")
@@ -111,7 +111,7 @@ class DiagnosisSession:
         seed: int = 0,
         allow_lifts: bool = True,
         eig_min: float = 1e-3,
-        cost_scale: tuple[float, float] = (1.0, 1.0),
+        cost_scale: tuple[float, float, float] = (1.0, 1.0, 1.0),
         complaint_prior: bool | None = None,
     ) -> None:
         if likelihood not in LIKELIHOODS:
@@ -138,13 +138,10 @@ class DiagnosisSession:
         self.eig_min = eig_min
         self.readings: list[Reading] = []
         self._obs = bundle.observables
-        if cost_scale != (1.0, 1.0):
-            # Sensitivity analysis: scale the scope and lift effort weights (DC stays 1).
-            scope_scale, lift_scale = cost_scale
-            self._obs = {
-                k: replace(o, cost=o.cost * (lift_scale if o.is_lift else
-                                             1.0 if o.kind == "dc" else scope_scale))
-                for k, o in self._obs.items()}
+        if tuple(cost_scale) != (1.0, 1.0, 1.0):
+            # Sensitivity analysis: scale the scope, lift and high-voltage effort weights.
+            self._obs = {k: replace(o, cost=scaled_cost(o, *cost_scale))
+                         for k, o in self._obs.items()}
         self._order = bundle.order()
         self._hyp_refs = [h.split(":")[0] if ":" in h else "" for h in self.gen.hypotheses]
         self._post: np.ndarray | None = None

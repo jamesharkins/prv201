@@ -53,6 +53,13 @@ def score(pairs: list[tuple[dict[str, bool], dict[str, bool]]]) -> dict[str, flo
 
 
 def main() -> None:
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--render-only", action="store_true",
+                    help="write the paraphrase files for the hybrid_paraphrase ablation without "
+                         "scoring anything (safe before the targets are locked)")
+    render_only = ap.parse_args().render_only
     held: dict[str, list[tuple[dict[str, bool], dict[str, bool]]]] = {}
     dev: dict[str, list[tuple[dict[str, bool], dict[str, bool]]]] = {}
     leaks = 0
@@ -71,12 +78,17 @@ def main() -> None:
             leak = leakage(text)
             leaks += bool(leak)
             out.append({"case_id": m["case_id"], "persona": persona, "text": text, "leakage": leak})
+            if render_only:
+                continue
             gold = facts.features
             held.setdefault(persona, []).append((gold, extract_rules(text).features()))
             dev.setdefault(persona, []).append((gold, extract_rules(str(m["complaint"])).features()))
         with (EVAL_DATA_DIR / f"paraphrases__{cid}__test.jsonl").open("w") as fh:
             for rec in out:
                 fh.write(json.dumps(rec) + "\n")
+    if render_only:
+        print(f"paraphrases written; {leaks} texts with leakage (nothing scored)")
+        return
     result = {
         "held_out_rules": score([p for v in held.values() for p in v]),
         "held_out_rules_by_persona": {k: score(v) for k, v in held.items()},

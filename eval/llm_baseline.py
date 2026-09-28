@@ -40,7 +40,7 @@ from differential.sim.measurement import from_engine, simulate_lift, simulate_re
 from differential.sim.montecarlo import load_dataset
 from differential.sim.observables import KIND_LABEL
 
-SUBSET = {COMPOSITE_ID: 75, **dict.fromkeys(BLOCK_IDS, 15)}
+SUBSET = {COMPOSITE_ID: 150, **dict.fromkeys(BLOCK_IDS, 30)}  # 300 paired units: about +-6 points on the margin
 MAX_TURNS = 40
 
 SYSTEM = (

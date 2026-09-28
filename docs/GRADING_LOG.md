@@ -23,3 +23,4 @@ repository beyond the files listed above. Their reports are summarised in
 | Milestone | Round | Min per line (graders) | Graders | Judges | Notes |
 |---|---|---|---|---|---|
 | M1 | 1 | 19.0 / 25 | 19.0, 19.5, 22.5 | 21.0, 20.5, 20.0, 21.5 | `docs/grading/M1_round1.md`; source audit: 10 supported, 7 partly, 6 overstated, 1 unsupported |
+| M1 | 2 | 18.0 / 25 | 20.5, 18.0, 21.0 | 19.0, 19.0, 20.0, 20.5 | `docs/grading/M1_round2.md`; personas now as in the brief; source audit 35/5/3/0; found a simulator artifact (TP8) and a test-population flaw, both fixed in the system (ADR-030) |

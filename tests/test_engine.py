@@ -238,6 +238,10 @@ def test_session_api_details(tone_bundle: EngineBundle) -> None:
         DiagnosisSession(tone_bundle, likelihood="discriminative")
     with pytest.raises(ValueError):
         DiagnosisSession(tone_bundle, policy="psychic")
+    base = DiagnosisSession(tone_bundle)._obs
+    lifts = DiagnosisSession(tone_bundle, cost_scale=(1.0, 2.0, 1.0))._obs
+    assert all(lifts[k].cost == (2 * o.cost if o.is_lift and not o.hv else o.cost)
+               for k, o in base.items())
 
 
 def test_bundle_roundtrip(tone_bundle: EngineBundle, tmp_path: Path) -> None:

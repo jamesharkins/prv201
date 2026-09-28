@@ -68,6 +68,10 @@ def _state(s: dict[str, Any]) -> dict[str, Any]:
         lines = (pending.get("safety") or {}).get("lines", [])
         banner = {"level": "danger", "title": lines[0] if lines else "High voltage",
                   "lines": lines[1:]}
+    elif pending and (pending.get("safety") or {}).get("live_chassis"):
+        lines = pending["safety"]["lines"]
+        banner = {"level": "warning", "title": "Live chassis: high-voltage supply present",
+                  "lines": lines}
     readings = [{"step": r.step, "key": r.key, "value": r.value,
                  "text": fmt_reading(e._obs[r.key].kind, r.value), "source": r.source,
                  "cost": r.cost} for r in e.readings]

@@ -47,5 +47,13 @@ def hazard(circuit_id: str, tp: str) -> Hazard:
                   float(info["worst_case_v"]), tuple(info.get("example_faults", [])))
 
 
+def supply_voltage(circuit_id: str) -> float | None:
+    """Highest normal-operation voltage in the circuit when it is 50 V or more (the unit
+    has a high-voltage supply), else None."""
+    vals = [float(v["normal_max_v"]) for v in _map().get(circuit_id, {}).values()]
+    top = max(vals, default=0.0)
+    return top if top >= 50.0 else None
+
+
 def circuit_has_hv(circuit_id: str) -> bool:
     return any(v.get("hazard") != "lv" for v in _map().get(circuit_id, {}).values())

@@ -74,6 +74,15 @@ def measurement_cost(kind: str, hv: bool) -> float:
     return base + (COST_HV_EXTRA if hv else 0.0)
 
 
+def scaled_cost(o: ObservableSpec, scope: float = 1.0, lift: float = 1.0, hv: float = 1.0) -> float:
+    """Effort of ``o`` with the scope, lift and high-voltage weights scaled (effort-weight
+    sensitivity analysis). The DC weight is the unit and stays 1."""
+    extra = COST_HV_EXTRA if o.hv else 0.0
+    base = o.cost - extra
+    k = lift if o.is_lift else 1.0 if o.kind == "dc" else scope
+    return base * k + extra * hv
+
+
 def spice_observables(circuit: CircuitSpec) -> list[ObservableSpec]:
     """Simulated observables in a fixed, documented order (grouped by kind)."""
     out: list[ObservableSpec] = []

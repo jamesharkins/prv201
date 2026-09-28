@@ -121,7 +121,7 @@ def test_llm_baseline_protocol_with_scripted_model(tmp_path: Any) -> None:
     from eval.llm_baseline import run_case
 
     bundle = bundle_for("driver")
-    df, _meta = load_cases("driver", "test")
+    df, _meta = load_cases("driver", "pilot")
     row = df[df["ok"]].iloc[0].to_dict()
     truth = str(row["hypothesis"])
     dc = next(k for k, o in bundle.observables.items() if o.kind == "dc")

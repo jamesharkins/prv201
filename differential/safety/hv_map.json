@@ -7,7 +7,8 @@
    "hazard": "lv",
    "name": "Unregulated LV rail",
    "normal_max_v": 25.16,
-   "worst_case_v": 25.24
+   "worst_case_v": 25.24,
+   "worst_fault": "R102:open"
   },
   "TP10": {
    "example_faults": [
@@ -18,7 +19,8 @@
    "hazard": "hv_under_fault",
    "name": "Tone-control input (triode stage output)",
    "normal_max_v": 0.0,
-   "worst_case_v": 125.4
+   "worst_case_v": 125.4,
+   "worst_fault": "C203:short"
   },
   "TP11": {
    "example_faults": [],
@@ -27,7 +29,8 @@
    "hazard": "lv",
    "name": "Bass control wiper",
    "normal_max_v": 0.0,
-   "worst_case_v": 13.21
+   "worst_case_v": 13.21,
+   "worst_fault": "C203:short"
   },
   "TP12": {
    "example_faults": [],
@@ -36,7 +39,8 @@
    "hazard": "lv",
    "name": "Tone-control output",
    "normal_max_v": 0.0,
-   "worst_case_v": 13.21
+   "worst_case_v": 13.21,
+   "worst_fault": "C203:short"
   },
   "TP13": {
    "example_faults": [],
@@ -45,7 +49,8 @@
    "hazard": "lv",
    "name": "Op-amp non-inverting input",
    "normal_max_v": 7.99,
-   "worst_case_v": 15.91
+   "worst_case_v": 15.91,
+   "worst_fault": "R402:short"
   },
   "TP14": {
    "example_faults": [],
@@ -54,7 +59,8 @@
    "hazard": "lv",
    "name": "Op-amp inverting input",
    "normal_max_v": 7.99,
-   "worst_case_v": 14.45
+   "worst_case_v": 14.45,
+   "worst_fault": "R403:drift_x10"
   },
   "TP15": {
    "example_faults": [],
@@ -63,7 +69,8 @@
    "hazard": "lv",
    "name": "Op-amp output",
    "normal_max_v": 7.99,
-   "worst_case_v": 14.45
+   "worst_case_v": 14.45,
+   "worst_fault": "R403:drift_x10"
   },
   "TP16": {
    "example_faults": [],
@@ -72,7 +79,8 @@
    "hazard": "lv",
    "name": "Half-supply bias",
    "normal_max_v": 7.99,
-   "worst_case_v": 15.92
+   "worst_case_v": 15.92,
+   "worst_fault": "R402:short"
   },
   "TP17": {
    "example_faults": [],
@@ -81,7 +89,8 @@
    "hazard": "lv",
    "name": "Line-driver input",
    "normal_max_v": 0.0,
-   "worst_case_v": 7.98
+   "worst_case_v": 7.98,
+   "worst_fault": "C404:short"
   },
   "TP18": {
    "example_faults": [],
@@ -90,7 +99,8 @@
    "hazard": "lv",
    "name": "Q501 base",
    "normal_max_v": 3.81,
-   "worst_case_v": 14.97
+   "worst_case_v": 14.97,
+   "worst_fault": "R501:short"
   },
   "TP19": {
    "example_faults": [],
@@ -99,7 +109,8 @@
    "hazard": "lv",
    "name": "Q501 emitter",
    "normal_max_v": 3.18,
-   "worst_case_v": 14.25
+   "worst_case_v": 14.25,
+   "worst_fault": "R501:short"
   },
   "TP2": {
    "example_faults": [],
@@ -108,7 +119,8 @@
    "hazard": "lv",
    "name": "Zener reference",
    "normal_max_v": 16.7,
-   "worst_case_v": 24.99
+   "worst_case_v": 24.99,
+   "worst_fault": "D101:open"
   },
   "TP20": {
    "example_faults": [],
@@ -117,7 +129,8 @@
    "hazard": "lv",
    "name": "Q501 collector / Q502 base",
    "normal_max_v": 9.79,
-   "worst_case_v": 15.15
+   "worst_case_v": 15.15,
+   "worst_fault": "R505:short"
   },
   "TP21": {
    "example_faults": [],
@@ -126,7 +139,8 @@
    "hazard": "lv",
    "name": "Q502 emitter",
    "normal_max_v": 9.07,
-   "worst_case_v": 15.07
+   "worst_case_v": 15.07,
+   "worst_fault": "Q502:ce_short"
   },
   "TP22": {
    "example_faults": [],
@@ -135,7 +149,8 @@
    "hazard": "lv",
    "name": "Line output",
    "normal_max_v": 0.0,
-   "worst_case_v": 8.99
+   "worst_case_v": 8.99,
+   "worst_fault": "C503:short"
   },
   "TP23": {
    "example_faults": [],
@@ -144,7 +159,8 @@
    "hazard": "lv",
    "name": "Driver supply",
    "normal_max_v": 15.44,
-   "worst_case_v": 24.34
+   "worst_case_v": 24.34,
+   "worst_fault": "D102:short"
   },
   "TP3": {
    "example_faults": [],
@@ -153,7 +169,8 @@
    "hazard": "lv",
    "name": "Regulated +15 V rail",
    "normal_max_v": 15.94,
-   "worst_case_v": 25.1
+   "worst_case_v": 25.1,
+   "worst_fault": "D102:short"
   },
   "TP4": {
    "example_faults": [
@@ -169,7 +186,8 @@
    "hazard": "hv",
    "name": "HV reservoir",
    "normal_max_v": 295.53,
-   "worst_case_v": 295.82
+   "worst_case_v": 295.82,
+   "worst_fault": "R104:drift_x10"
   },
   "TP5": {
    "example_faults": [
@@ -185,7 +203,8 @@
    "hazard": "hv",
    "name": "HV filter node",
    "normal_max_v": 287.44,
-   "worst_case_v": 295.77
+   "worst_case_v": 295.77,
+   "worst_fault": "R106:open"
   },
   "TP6": {
    "example_faults": [
@@ -201,7 +220,8 @@
    "hazard": "hv",
    "name": "B+ to triode stage",
    "normal_max_v": 269.62,
-   "worst_case_v": 295.75
+   "worst_case_v": 295.75,
+   "worst_fault": "R203:open"
   },
   "TP7": {
    "example_faults": [],
@@ -210,18 +230,18 @@
    "hazard": "lv",
    "name": "Triode grid",
    "normal_max_v": 0.0,
-   "worst_case_v": 1.0
+   "worst_case_v": 1.0,
+   "worst_fault": "R202:open"
   },
   "TP8": {
-   "example_faults": [
-    "R204:open"
-   ],
-   "faults_above_threshold": 1,
+   "example_faults": [],
+   "faults_above_threshold": 0,
    "flag_hv": false,
-   "hazard": "hv_under_fault",
+   "hazard": "lv",
    "name": "Triode cathode",
    "normal_max_v": 1.4,
-   "worst_case_v": 147.22
+   "worst_case_v": 7.11,
+   "worst_fault": "R204:open"
   },
   "TP9": {
    "example_faults": [
@@ -237,7 +257,8 @@
    "hazard": "hv",
    "name": "Triode plate",
    "normal_max_v": 188.53,
-   "worst_case_v": 295.69
+   "worst_case_v": 295.73,
+   "worst_fault": "V201:heater_open"
   }
  },
  "driver": {
@@ -248,7 +269,8 @@
    "hazard": "lv",
    "name": "Line-driver input",
    "normal_max_v": 0.0,
-   "worst_case_v": 0.04
+   "worst_case_v": 0.04,
+   "worst_fault": "C501:short"
   },
   "TP18": {
    "example_faults": [],
@@ -257,7 +279,8 @@
    "hazard": "lv",
    "name": "Q501 base",
    "normal_max_v": 3.7,
-   "worst_case_v": 14.44
+   "worst_case_v": 14.44,
+   "worst_fault": "R501:short"
   },
   "TP19": {
    "example_faults": [],
@@ -266,7 +289,8 @@
    "hazard": "lv",
    "name": "Q501 emitter",
    "normal_max_v": 3.08,
-   "worst_case_v": 13.72
+   "worst_case_v": 13.72,
+   "worst_fault": "R501:short"
   },
   "TP20": {
    "example_faults": [],
@@ -275,7 +299,8 @@
    "hazard": "lv",
    "name": "Q501 collector / Q502 base",
    "normal_max_v": 9.54,
-   "worst_case_v": 14.62
+   "worst_case_v": 14.62,
+   "worst_fault": "R505:short"
   },
   "TP21": {
    "example_faults": [],
@@ -284,7 +309,8 @@
    "hazard": "lv",
    "name": "Q502 emitter",
    "normal_max_v": 8.82,
-   "worst_case_v": 14.58
+   "worst_case_v": 14.58,
+   "worst_fault": "Q502:ce_short"
   },
   "TP22": {
    "example_faults": [],
@@ -293,7 +319,8 @@
    "hazard": "lv",
    "name": "Line output",
    "normal_max_v": 0.0,
-   "worst_case_v": 8.76
+   "worst_case_v": 8.76,
+   "worst_fault": "C503:short"
   },
   "TP23": {
    "example_faults": [],
@@ -302,7 +329,8 @@
    "hazard": "lv",
    "name": "Driver supply",
    "normal_max_v": 14.87,
-   "worst_case_v": 15.33
+   "worst_case_v": 15.33,
+   "worst_fault": "R509:short"
   }
  },
  "opamp": {
@@ -313,7 +341,8 @@
    "hazard": "lv",
    "name": "Op-amp stage input",
    "normal_max_v": 0.0,
-   "worst_case_v": 1.19
+   "worst_case_v": 1.19,
+   "worst_fault": "C401:short"
   },
   "TP13": {
    "example_faults": [],
@@ -322,7 +351,8 @@
    "hazard": "lv",
    "name": "Op-amp non-inverting input",
    "normal_max_v": 7.73,
-   "worst_case_v": 15.32
+   "worst_case_v": 15.32,
+   "worst_fault": "R402:short"
   },
   "TP14": {
    "example_faults": [],
@@ -331,7 +361,8 @@
    "hazard": "lv",
    "name": "Op-amp inverting input",
    "normal_max_v": 7.73,
-   "worst_case_v": 13.84
+   "worst_case_v": 13.84,
+   "worst_fault": "R402:short"
   },
   "TP15": {
    "example_faults": [],
@@ -340,7 +371,8 @@
    "hazard": "lv",
    "name": "Op-amp output",
    "normal_max_v": 7.73,
-   "worst_case_v": 13.83
+   "worst_case_v": 13.83,
+   "worst_fault": "R402:short"
   },
   "TP16": {
    "example_faults": [],
@@ -349,7 +381,8 @@
    "hazard": "lv",
    "name": "Half-supply bias",
    "normal_max_v": 7.73,
-   "worst_case_v": 15.33
+   "worst_case_v": 15.33,
+   "worst_fault": "R402:short"
   },
   "TP17": {
    "example_faults": [],
@@ -358,7 +391,8 @@
    "hazard": "lv",
    "name": "Op-amp stage output",
    "normal_max_v": 0.0,
-   "worst_case_v": 7.69
+   "worst_case_v": 7.69,
+   "worst_fault": "C404:short"
   }
  },
  "psu": {
@@ -369,7 +403,8 @@
    "hazard": "lv",
    "name": "Unregulated LV rail",
    "normal_max_v": 25.16,
-   "worst_case_v": 25.26
+   "worst_case_v": 25.26,
+   "worst_fault": "R102:open"
   },
   "TP2": {
    "example_faults": [],
@@ -378,7 +413,8 @@
    "hazard": "lv",
    "name": "Zener reference",
    "normal_max_v": 16.63,
-   "worst_case_v": 24.93
+   "worst_case_v": 24.93,
+   "worst_fault": "D101:open"
   },
   "TP3": {
    "example_faults": [],
@@ -387,7 +423,8 @@
    "hazard": "lv",
    "name": "Regulated +15 V rail",
    "normal_max_v": 15.86,
-   "worst_case_v": 25.1
+   "worst_case_v": 25.1,
+   "worst_fault": "D102:short"
   },
   "TP4": {
    "example_faults": [
@@ -403,7 +440,8 @@
    "hazard": "hv",
    "name": "HV reservoir",
    "normal_max_v": 295.48,
-   "worst_case_v": 295.84
+   "worst_case_v": 295.84,
+   "worst_fault": "R104:drift_x10"
   },
   "TP5": {
    "example_faults": [
@@ -419,7 +457,8 @@
    "hazard": "hv",
    "name": "HV filter node",
    "normal_max_v": 286.58,
-   "worst_case_v": 295.71
+   "worst_case_v": 295.71,
+   "worst_fault": "R106:open"
   },
   "TP6": {
    "example_faults": [
@@ -435,7 +474,8 @@
    "hazard": "hv",
    "name": "B+ to triode stage",
    "normal_max_v": 267.58,
-   "worst_case_v": 286.0
+   "worst_case_v": 286.0,
+   "worst_fault": "R106:short"
   }
  },
  "tone": {
@@ -446,7 +486,8 @@
    "hazard": "lv",
    "name": "Tone-control input",
    "normal_max_v": 0.0,
-   "worst_case_v": 0.0
+   "worst_case_v": 0.0,
+   "worst_fault": "healthy"
   },
   "TP11": {
    "example_faults": [],
@@ -455,7 +496,8 @@
    "hazard": "lv",
    "name": "Bass control wiper",
    "normal_max_v": 0.0,
-   "worst_case_v": 0.0
+   "worst_case_v": 0.0,
+   "worst_fault": "healthy"
   },
   "TP12": {
    "example_faults": [],
@@ -464,7 +506,8 @@
    "hazard": "lv",
    "name": "Tone-control output",
    "normal_max_v": 0.0,
-   "worst_case_v": 0.0
+   "worst_case_v": 0.0,
+   "worst_fault": "healthy"
   }
  },
  "triode": {
@@ -477,7 +520,8 @@
    "hazard": "hv_under_fault",
    "name": "Triode stage output / tone input",
    "normal_max_v": 0.0,
-   "worst_case_v": 105.08
+   "worst_case_v": 105.09,
+   "worst_fault": "C203:short"
   },
   "TP7": {
    "example_faults": [],
@@ -486,18 +530,18 @@
    "hazard": "lv",
    "name": "Triode grid",
    "normal_max_v": 0.0,
-   "worst_case_v": 1.0
+   "worst_case_v": 1.0,
+   "worst_fault": "R202:open"
   },
   "TP8": {
-   "example_faults": [
-    "R204:open"
-   ],
-   "faults_above_threshold": 1,
+   "example_faults": [],
+   "faults_above_threshold": 0,
    "flag_hv": false,
-   "hazard": "hv_under_fault",
+   "hazard": "lv",
    "name": "Triode cathode",
    "normal_max_v": 1.32,
-   "worst_case_v": 124.43
+   "worst_case_v": 6.04,
+   "worst_fault": "R204:open"
   },
   "TP9": {
    "example_faults": [
@@ -512,8 +556,9 @@
    "flag_hv": true,
    "hazard": "hv",
    "name": "Triode plate",
-   "normal_max_v": 178.03,
-   "worst_case_v": 250.0
+   "normal_max_v": 178.04,
+   "worst_case_v": 250.0,
+   "worst_fault": "V201:heater_open"
   }
  }
 }

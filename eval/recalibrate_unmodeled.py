@@ -17,9 +17,11 @@ faults that fit it and so changes how much evidence U needs:
   symptom falls back to the first level, which is fixed by then.
 
 Both use per-case noise seeds as in eval/harness.py and the same units:
-negatives are symptomatic single-fault validation units from draws 0-49 (the
-pilot split uses draws 50-99, so the pilot checks the thresholds on unseen
-units); positives are the unmodeled_val split (double faults and modifications).
+negatives are a uniform sample of symptomatic single-fault validation units
+(so each fault appears in proportion to how often it causes a symptom, as on a
+bench and in the test set); positives are the unmodeled_val split (double faults
+and modifications). The pilot is a separate simulated split, so it checks the
+thresholds on units they were not tuned on.
 Each level is the offset that flags the most positives while flagging at most
 5 % of negatives. Both rates rise with the offset, so the search brackets the
 largest feasible offset and bisects to 0.1; every evaluated point is recorded.
@@ -44,13 +46,12 @@ from differential.engine.bundle import load_bundle
 from differential.engine.symptom_prior import derive_facts
 from differential.nlp.benchmark import MAIN_BANK, PERSONAS, render
 from differential.sim.montecarlo import BASE_SEED, load_dataset
-from eval.cases import load_cases, symptomatic_faults
+from eval.cases import eligible_faults, load_cases
 from eval.harness import SYSTEMS, bundle_for, run_one
 
 PROBES = [1.0, 2.0, 4.0, 6.0, 8.0, 10.0]  # bracketing pass: stop at the first infeasible one
 RESOLUTION = 0.1
 FPR_BUDGET = 0.05
-CALIBRATION_MAX_DRAW = 50  # validation draws 0-49; the pilot split uses 50-99
 N_SINGLE = {COMPOSITE_ID: 200, **dict.fromkeys(BLOCK_IDS, 80)}
 # (name, system run by eval/harness.py, GenerativeModel attribute), in calibration order
 REGIMES = (("no_complaint", "engine_gen", "unmod_offset_nocomplaint"),
@@ -70,14 +71,14 @@ def _flag(args: tuple[str, str, dict[str, float], dict[str, Any], dict[str, Any]
 
 
 def calibration_singles(cid: str) -> list[tuple[dict[str, Any], dict[str, Any]]]:
-    """Symptomatic single-fault validation units (draws 0-49) with rendered complaints."""
+    """A uniform sample of symptomatic single-fault validation units, with complaints."""
     sm = load_bundle(cid, with_disc=False).symptom_model
     assert sm is not None and sm.reference is not None
     circ = get_circuit(cid)
     tp_stage = {tp.id: tp.stage for tp in circ.test_points}
-    pool = set(symptomatic_faults(sm))
+    pool = set(eligible_faults(sm))
     va = load_dataset(cid, "val")
-    va = va[va["ok"] & va["hypothesis"].isin(pool) & (va["draw"] < CALIBRATION_MAX_DRAW)]
+    va = va[va["ok"] & va["hypothesis"].isin(pool)]
     va = va.sample(frac=1.0, random_state=5)
     rng = np.random.default_rng([BASE_SEED, 404, len(cid)])
     out: list[tuple[dict[str, Any], dict[str, Any]]] = []
@@ -160,9 +161,8 @@ def calibrate(cid: str) -> dict[str, Any]:
     if "unmodeled_calibration_v1" not in meta:
         meta["unmodeled_calibration_v1"] = meta.get("unmodeled_calibration")
     meta["unmodeled_calibration"] = {
-        "protocol": "eval/recalibrate_unmodeled.py; negatives: symptomatic single-fault "
-                    f"validation units, draws 0-{CALIBRATION_MAX_DRAW - 1}; positives: "
-                    "unmodeled_val split",
+        "protocol": "eval/recalibrate_unmodeled.py; negatives: uniform sample of "
+                    "symptomatic single-fault validation units; positives: unmodeled_val split",
         "fpr_budget": FPR_BUDGET, "n_single": len(singles), "n_unmodeled": len(unmod),
         "regimes": report, "offsets": chosen, "seconds": round(time.time() - t0, 1)}
     meta_path.write_text(json.dumps(meta, indent=2, sort_keys=True))

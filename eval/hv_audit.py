@@ -39,6 +39,7 @@ def audit(cid: str) -> dict[str, object]:
         v = np.abs(df[col].to_numpy(dtype=float))
         hv_rows = df[np.abs(df[col]) > HV_THRESHOLD_V]
         faults = sorted(set(hv_rows["hypothesis"]) - {"healthy"})
+        worst_row = df.iloc[int(np.nanargmax(v))]
         out[tp.id] = {
             "name": tp.name,
             "flag_hv": tp.hv,
@@ -46,6 +47,7 @@ def audit(cid: str) -> dict[str, object]:
             "worst_case_v": round(float(np.nanmax(v)), 2),
             "faults_above_threshold": len(faults),
             "example_faults": faults[:6],
+            "worst_fault": str(worst_row["hypothesis"]),
             "hazard": "hv" if tp.hv else ("hv_under_fault" if faults else "lv"),
         }
     return out
@@ -55,6 +57,8 @@ def main() -> None:
     result = {cid: audit(cid) for cid in CIRCUIT_IDS}
     HV_MAP.write_text(json.dumps(result, indent=1, sort_keys=True))
     summary = {}
+    from differential.agent.format import fault_label
+
     for cid, tps in result.items():
         hazards = [v["hazard"] for v in tps.values()]  # type: ignore[index]
         summary[cid] = {
@@ -64,6 +68,16 @@ def main() -> None:
             "low_voltage": hazards.count("lv"),
             "points": tps,
         }
+        # The clearest example of a fault-only hazard: the normally low-voltage point
+        # with the highest worst case, and the fault that produces it.
+        fault_only = [(tp, v) for tp, v in tps.items() if v["hazard"] == "hv_under_fault"]  # type: ignore[index]
+        if fault_only:
+            tp, v = max(fault_only, key=lambda kv: kv[1]["worst_case_v"])  # type: ignore[index]
+            summary[cid]["showcase"] = {
+                "tp": tp, "name": v["name"], "normal_max_v": v["normal_max_v"],  # type: ignore[index]
+                "worst_case_v": v["worst_case_v"], "fault": v["worst_fault"],  # type: ignore[index]
+                "fault_label": fault_label(str(v["worst_fault"])),  # type: ignore[index]
+            }
     metrics_io.update("hv_audit", {"threshold_v": HV_THRESHOLD_V, "circuits": summary})
     for cid, s in summary.items():
         print(cid, {k: v for k, v in s.items() if k != "points"})

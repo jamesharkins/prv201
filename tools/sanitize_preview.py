@@ -46,7 +46,8 @@ def main(argv: list[str]) -> int:
         clean = sanitize(raw)
         out = pdf.with_suffix(".sanitized.txt")
         out.write_text(clean)
-        headers = re.findall(r"Part (\d+) — ", clean)
+        # headers carry the section lead; cross-references by title do not
+        headers = re.findall(r"Part (\d+) — [^\n]*Section lead", clean)
         leftover = [n for n in names() if n in clean]
         print(f"{pdf.name}: part headers {sorted(set(headers))}; residual names {leftover}; "
               f"-> {out.relative_to(ROOT)}")

@@ -424,3 +424,43 @@ deleted.
   first with trained models, so its CI run may have diagnosed those units once
   before the lock. Its output was not read and nothing was tuned on it. The
   smoke test now runs on the pilot splits.
+
+## ADR-030 - Round-2 fixes: tube-model artifact, bench population, fresh pilot, live chassis
+
+- **Context.** Review round 2 (docs/grading/M1_round2.md) questioned the hazard
+  example "TP8, near 1.4 V in normal operation, reaches 147 V when its cathode
+  resistor opens": a cut-off 12AX7 cathode floats only a few volts. It also
+  found that the test set dropped whole faults that cause a symptom in fewer than
+  half of units, that the pilot reused the validation units that had exposed an
+  engine bug and tuned the ambiguity groups, and that the safety rules looked only
+  at the probed point.
+- **Decision.**
+  1. *Tube model.* The Koren subcircuit carried a 1 GOhm plate-cathode resistor;
+     with the cathode resistor "open" (1 GOhm) the cathode sat on a divider at
+     half the plate voltage. Simulating R204:open gave 134 V with the resistor and
+     6 V without it; healthy readings did not change. The resistor is removed; the
+     channel strip and the triode block are re-simulated (train and validation)
+     and retrained; the hazard map is re-audited. The old results are kept outside
+     the repository until the new ones are verified.
+  2. *Bench population.* Every evaluation and pilot set is a uniform sample of
+     symptomatic units: each case draws a hypothesis and a unit, and keeps it only
+     if the unit shows a symptom, otherwise it draws a new hypothesis. Each fault
+     therefore appears in proportion to how often it causes a symptom; faults that
+     never did in 400 training draws are left out. Calibration negatives follow the
+     same population (a uniform sample of symptomatic validation units).
+  3. *Fresh pilot.* The pilot is its own simulated split (seed stream 9) built
+     with the test protocol; it is used for nothing but setting bars. The old
+     validation-based pilot and `eval/pilot_split.py` are retired.
+  4. *Live chassis.* In a unit with a high-voltage supply every powered step
+     carries a live-chassis notice (leads clipped with power off, one hand clear,
+     no probe slips, rated meter, variac or series-lamp limiter at first power-up),
+     not only steps at high-voltage points; oscilloscope steps carry a ground-clip
+     warning in every circuit. T15's sweep checks the notice on every such step.
+  5. *Effort for fault-conditioned hazards.* A point that can exceed 50 V under a
+     catalog fault needs the same hands-off protocol as a normally high-voltage
+     point, so it carries the same extra effort (2 units) in measurement selection
+     and in every effort comparison.
+- **Consequences.** Calibration, the pilot and all pilot-derived bars are redone
+  after these changes, before the targets are locked. The test set drawn before
+  this change was never evaluated (apart from the CI smoke check disclosed in
+  ADR-029) and is replaced.

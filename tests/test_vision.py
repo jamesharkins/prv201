@@ -279,3 +279,24 @@ def test_meter_schema_suits_structured_outputs() -> None:
         assert not unsupported & set(node)
         if node.get("type") == "object":
             assert node.get("additionalProperties") is False
+
+
+def test_photos_leave_without_metadata() -> None:
+    """Live mode sends a re-encoded image: no EXIF (GPS, device) survives."""
+    from io import BytesIO
+
+    from PIL import Image
+
+    from differential.vision import strip_metadata
+
+    im = Image.new("RGB", (32, 24), (200, 30, 30))
+    exif = Image.Exif()
+    exif[0x010F] = "PhoneMaker"  # camera make
+    exif[0x0112] = 6  # orientation: rotate 90 degrees
+    buf = BytesIO()
+    im.save(buf, format="JPEG", exif=exif.tobytes())
+    clean, media_type = strip_metadata(buf.getvalue())
+    assert media_type == "image/jpeg"
+    with Image.open(BytesIO(clean)) as out:
+        assert not dict(out.getexif())
+        assert out.size == (24, 32)  # turned upright before the metadata was dropped

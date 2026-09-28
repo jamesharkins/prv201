@@ -153,6 +153,20 @@ def hv_warning(voltage: float | None, where: str, discharge_parts: list[str],
     ]
 
 
+def live_chassis_notice(supply_v: float) -> str:
+    """For every powered step in a chassis with a high-voltage supply, not only at the
+    points that carry it: in an open chassis the hazard is every exposed conductor."""
+    return (f"LIVE CHASSIS: this unit has a supply of about {supply_v:.0f} V DC, so exposed parts "
+            "anywhere in the chassis can be live while it is powered. Clip the leads on with the "
+            "power off where you can, keep one hand clear of the chassis, keep the probe from "
+            "slipping across adjacent pins, and use a meter and leads rated for that voltage. Bring "
+            "an unfamiliar unit up through a variac or a series-lamp current limiter the first time.")
+
+
+SCOPE_GROUND_NOTE = ("Clip the oscilloscope's ground lead only to chassis ground: on an earthed "
+                     "scope, clipping it to any other node shorts that node to earth.")
+
+
 @dataclass
 class ScreenResult:
     allowed: bool

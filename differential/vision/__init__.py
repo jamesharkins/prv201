@@ -19,6 +19,21 @@ def _media_type(data: bytes) -> str:
     return "image/png"
 
 
+def strip_metadata(image_bytes: bytes) -> tuple[bytes, str]:
+    """Re-encode a photo without metadata (EXIF, GPS, device data) before it leaves
+    the machine; the pixels are kept, turned upright by the EXIF orientation first."""
+    from io import BytesIO
+
+    from PIL import Image, ImageOps
+
+    with Image.open(BytesIO(image_bytes)) as im:
+        upright = ImageOps.exif_transpose(im)
+        rgb = upright.convert("RGB")
+    out = BytesIO()
+    rgb.save(out, format="JPEG", quality=92)  # a fresh image carries no metadata
+    return out.getvalue(), "image/jpeg"
+
+
 def read_meter(image_bytes: bytes, client: Any | None = None) -> dict[str, Any]:
     from differential.vision.meter_read import read_llm, read_offline
 
@@ -26,7 +41,8 @@ def read_meter(image_bytes: bytes, client: Any | None = None) -> dict[str, Any]:
     source_note = ""
     if client is not None:
         try:
-            reading = read_llm(image_bytes, _media_type(image_bytes), client)
+            clean, media_type = strip_metadata(image_bytes)
+            reading = read_llm(clean, media_type, client)
         except Exception as exc:  # no key, no cache or API error: fall back to offline
             source_note = f"live reading unavailable ({type(exc).__name__}); offline reader used"
     if reading is None:
@@ -42,4 +58,4 @@ def read_meter(image_bytes: bytes, client: Any | None = None) -> dict[str, Any]:
     return out
 
 
-__all__ = ["read_meter"]
+__all__ = ["read_meter", "strip_metadata"]

@@ -53,6 +53,9 @@ BVZ K n3 V = V(PVZ)
 *   - |E1|^EX + sgn(E1)|E1|^EX is written as 2*max(E1,0)^EX (identical value;
 *     ngspice B sources have no signed-power function).
 *   - Grid current: Koren's diode DX in series with RGI = 2k, verbatim.
+*   - No plate-cathode leakage resistor. An earlier 1 GOhm Rpk formed a divider
+*     with an open cathode resistor (also 1 GOhm) and put half the plate voltage on
+*     the cathode; a real cut-off cathode floats only a few volts (ADR-030).
 * =============================================================================
 .subckt TRIODE_KOREN P G K PV PMU PKG
 Bx x 0 V = 600*(1/V(PMU) + V(G,K)/sqrt(300 + V(P,K)*V(P,K)))
@@ -61,7 +64,6 @@ Bp P K I = V(PV)*2*pwr(uramp(V(e1)),1.4)/V(PKG)
 D3 gg K DX_KOREN
 RGI G gg 2000
 .model DX_KOREN D(IS=1N RS=1 CJO=10PF TT=1N)
-Rpk P K 1G
 Cgk G K 2.3p
 Cgp G P 2.4p
 Cpk P K 0.9p

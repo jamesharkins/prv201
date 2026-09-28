@@ -28,3 +28,4 @@ data/models/*/discriminative.txt
 
 # Smoke-test run cache (pilot splits, 8 units)
 data/eval/runs/*__8.parquet
+data/sim_old_rpk/

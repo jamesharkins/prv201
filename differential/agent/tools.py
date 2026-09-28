@@ -20,8 +20,19 @@ from differential.engine.bundle import EngineBundle, cached_bundle
 from differential.engine.session import DiagnosisSession
 from differential.instruments.base import Instrument, InstrumentError
 from differential.nlp.symptoms import SymptomReport, extract_llm, extract_rules
-from differential.safety.hazards import DISCHARGE_VERIFY_MAX_V, circuit_has_hv, hazard
-from differential.safety.rules import HV_THRESHOLD_V, hv_warning, wrap_untrusted
+from differential.safety.hazards import (
+    DISCHARGE_VERIFY_MAX_V,
+    circuit_has_hv,
+    hazard,
+    supply_voltage,
+)
+from differential.safety.rules import (
+    HV_THRESHOLD_V,
+    SCOPE_GROUND_NOTE,
+    hv_warning,
+    live_chassis_notice,
+    wrap_untrusted,
+)
 from differential.sim.faults import parse_fault_id
 from differential.sim.observables import KIND_INSTRUMENT, KIND_LABEL, ObservableSpec
 
@@ -345,11 +356,18 @@ class ToolBox:
                              for a in (alternatives or [])],
             "expected_readings": self._expected(o.key),
         }
+        supply = supply_voltage(self.circuit_id)
         if o.tp is not None and hazard(self.circuit_id, o.tp).high_voltage:
             out["safety"] = self.t_safety_brief(o.tp)
             out["high_voltage"] = True
         elif o.is_lift and circuit_has_hv(self.circuit_id):
             out["safety"] = self.t_safety_brief(o.ref or "")
+        elif supply is not None and not o.is_lift:
+            out["safety"] = {"target": o.tp, "high_voltage": False, "live_chassis": True,
+                             "lines": [live_chassis_notice(supply)]}
+        if not o.is_lift and o.kind != "dc":  # oscilloscope measurement
+            safety = out.setdefault("safety", {"target": o.tp, "high_voltage": False, "lines": []})
+            safety["lines"] = [*safety["lines"], SCOPE_GROUND_NOTE]
         return out
 
     def t_record_measurement(self, key: str, value: float, source: str = "technician") -> dict[

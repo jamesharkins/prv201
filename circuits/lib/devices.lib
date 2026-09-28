@@ -1,0 +1,71 @@
+* =============================================================================
+* Differential device library (ngspice)
+* Sources for every model are listed in docs/research/sources_technical.yaml and
+* summarised in docs/hand_calcs.md. Model cards are used unmodified unless a
+* comment says otherwise.
+* =============================================================================
+
+* --- Small-signal NPN, 2N3904 class ------------------------------------------
+* Widely distributed manufacturer model (Fairchild/onsemi 2N3904 library card).
+.model Q2N3904 NPN(Is=6.734f Xti=3 Eg=1.11 Vaf=74.03 Bf=416.4 Ne=1.259 Ise=6.734f
++ Ikf=66.78m Xtb=1.5 Br=.7371 Nc=2 Isc=0 Ikr=0 Rc=1 Cjc=3.638p Mjc=.3085 Vjc=.75
++ Fc=.5 Cje=4.493p Mje=.2593 Vje=.75 Tr=239.5n Tf=301.2p Itf=.4 Vtf=4 Xtf=2 Rb=10)
+
+* --- Medium-power NPN pass transistor, BD139 class ---------------------------
+.model QBD139 NPN(Is=1.8e-13 Bf=150 Vaf=100 Ikf=0.8 Ise=1e-13 Ne=1.5 Br=5 Rb=5
++ Rc=0.2 Re=0.05 Cje=120p Cjc=40p Tf=8n Tr=300n)
+
+* --- Small-signal switching diode, 1N4148 class -------------------------------
+.model D1N4148 D(Is=2.52n Rs=.568 N=1.752 Cjo=4p M=.4 tt=20n BV=100 IBV=100u)
+
+* --- 16 V zener reference, 1N4745A class (Vz = 16 V at Izt = 15.5 mA) ---------
+.model DZ1N4745A D(Is=1n Rs=2 N=1.5 Cjo=70p BV=16 IBV=15.5m NBV=1.2 TT=50n)
+
+* =============================================================================
+* Triode (12AX7 / ECC83 class), after N. Koren, "Improved vacuum-tube models for
+* SPICE simulations" (Glass Audio, 1996; web edition). Plate current:
+*   E1 = (Vpk/KP) * ln(1 + exp(KP*(1/MU + Vgk/sqrt(KVB + Vpk^2))))
+*   Ip = (E1^EX + sgn(E1)*|E1|^EX) / KG1        (= 2*E1^EX/KG1 for E1 > 0)
+* Published 12AX7 parameters: MU=100 EX=1.4 KG1=1060 KP=600 KVB=300 RGI=2000,
+* CCG=2.3p CGP=2.4p CCP=0.9p.
+* Project changes (behaviour-preserving):
+*   - ln(1+exp(x)) is evaluated as uramp(x) + ln(1+exp(-abs(x))): identical value,
+*     no overflow, continuous derivative (smooth for Newton iteration).
+*   - MU and KG1 come from parameter nodes PMU and PKG (volts) so Monte Carlo draws
+*     can vary them with 'alter'. PV scales emission: 1 = nominal, 0.3-0.6 = worn
+*     cathode (low emission), 0 = heater open (no conduction).
+*   - |E1|^EX + sgn(E1)|E1|^EX is written as 2*max(E1,0)^EX (identical value;
+*     ngspice B sources have no signed-power function).
+*   - Grid current: Ig = PV * max(Vgk,0)^1.5 / RGI (smooth replacement for Koren's
+*     diode + RGI branch).
+* =============================================================================
+.subckt TRIODE_KOREN P G K PV PMU PKG
+Bx x 0 V = 600*(1/V(PMU) + V(G,K)/sqrt(300 + V(P,K)*V(P,K)))
+Be1 e1 0 V = (V(P,K)/600)*(uramp(V(x)) + ln(1 + exp(-abs(V(x)))))
+Bp P K I = V(PV)*2*pwr(uramp(V(e1)),1.4)/V(PKG)
+Bg G K I = V(PV)*pwr(uramp(V(G,K)),1.5)/2000
+Rpk P K 1G
+Cgk G K 2.3p
+Cgp G P 2.4p
+Cpk P K 0.9p
+.ends TRIODE_KOREN
+
+* =============================================================================
+* Behavioural op-amp (FET-input, TL07x class): single-pole, finite gain-bandwidth,
+* output swing limited to 1.5 V inside each rail by a smooth tanh limiter.
+*   A0 = 2e5 (106 dB); GBW (MHz) read from parameter node PGBW; dominant pole
+*   = GBW/A0. PDEAD = 1 forces the output to a rail (PRAIL = 1 -> top rail,
+*   0 -> bottom rail); PDEAD = 0 is normal operation.
+* =============================================================================
+.subckt OPAMP_BEH INP INM OUT VCC VEE PGBW PDEAD PRAIL
+Rin INP INM 10Meg
+Bmid mid 0 V = 0.5*(V(VCC) + V(VEE))
+* gm = 2*pi*GBW*C1 with C1 = 1 nF and GBW in MHz -> 6.2832e-3 * V(PGBW) S
+Bgm mid n1 I = 6.2832e-3*V(PGBW)*V(INP,INM)
+R1 n1 mid {2e5/(6.2832e-3*3)}
+C1 n1 mid 1n
+Bout outi 0 V = (1 - V(PDEAD))*(V(mid) + (0.5*(V(VCC) - V(VEE)) - 1.5)*tanh((V(n1) - V(mid))/(0.5*(V(VCC) - V(VEE)) - 1.5)))
++ + V(PDEAD)*(V(PRAIL)*(V(VCC) - 1.5) + (1 - V(PRAIL))*(V(VEE) + 1.5))
+Rout outi OUT 50
+Iq VCC VEE DC 2.5m
+.ends OPAMP_BEH

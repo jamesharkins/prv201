@@ -1,0 +1,52 @@
+id: triode
+name: "Block 2 - Triode gain stage (12AX7 class)"
+netlist: triode.cir
+description: >
+  Cathode-biased common-cathode triode stage (one 12AX7 section): 100k plate
+  load, 1.5k cathode resistor with 22 uF bypass, 1 M grid leak, 2.2k grid
+  stopper, 220 nF output coupling capacitor. About 0.8 mA plate current, 170 V
+  on the plate, gain about 45 into a 100k load.
+stages:
+  - {id: triode, name: "Triode gain stage"}
+signal:
+  source: VIN
+  output_node: tone_in
+  tran_amplitude: 0.0424
+  frequency: 1000
+hum: null
+fixtures: [VBPLUS_BENCH, VIN, RSRC, RLOAD_TONE]
+infrastructure: [VPV_V201, VMU_V201, VKG_V201]
+components:
+  - {ref: C201, kind: film_cap, value: 100n, tolerance: 0.10, family: film_cap_10pct, stage: triode,
+     rating: "100 V", elements: {main: C201},
+     hint: "Input coupling capacitor between the input jack and the grid-leak resistor"}
+  - {ref: R201, kind: resistor, value: 1Meg, tolerance: 0.05, family: carbon_film_5pct, stage: triode,
+     rating: "0.25 W", elements: {main: R201},
+     hint: "1 M grid-leak resistor from the grid circuit to ground"}
+  - {ref: R202, kind: resistor, value: 2.2k, tolerance: 0.01, family: metal_film_1pct, stage: triode,
+     rating: "0.25 W", elements: {main: R202},
+     hint: "Grid stopper resistor soldered at V201 pin 2"}
+  - {ref: V201, kind: triode, value: "12AX7", family: triode_12ax7, stage: triode,
+     elements: {main: XV201}, params: {pv: VPV_V201, mu: VMU_V201, kg: VKG_V201},
+     hint: "Dual triode, section 1 (plate pin 1, grid pin 2, cathode pin 3, heater pins 4/5/9)"}
+  - {ref: R203, kind: resistor, value: 100k, tolerance: 0.01, family: metal_film_1pct, stage: triode,
+     rating: "0.5 W", elements: {main: R203},
+     hint: "100k plate load resistor between B+ and V201 pin 1"}
+  - {ref: R204, kind: resistor, value: 1.5k, tolerance: 0.01, family: metal_film_1pct, stage: triode,
+     rating: "0.25 W", elements: {main: R204},
+     hint: "Cathode resistor from V201 pin 3 to ground"}
+  - {ref: C202, kind: electrolytic, value: 22u, tolerance: 0.20, family: alu_elec, stage: triode,
+     rating: "25 V", elements: {main: C202, esr: RESR_C202},
+     hint: "Cathode bypass capacitor in parallel with R204"}
+  - {ref: C203, kind: film_cap, value: 220n, tolerance: 0.10, family: film_cap_10pct, stage: triode,
+     rating: "400 V", elements: {main: C203},
+     hint: "Output coupling capacitor from the plate to the tone-control input (sees ~170 V DC)"}
+test_points:
+  - {id: TP7, node: grid, name: "Triode grid", stage: triode, hv: false,
+     measurements: [dc, ac], hint: "V201 pin 2 (grid side of R202)"}
+  - {id: TP8, node: cath, name: "Triode cathode", stage: triode, hv: false,
+     measurements: [dc, ac], hint: "V201 pin 3, top of R204 and C202"}
+  - {id: TP9, node: plate, name: "Triode plate", stage: triode, hv: true,
+     measurements: [dc, ac], hint: "V201 pin 1, lower end of R203"}
+  - {id: TP10, node: tone_in, name: "Triode stage output / tone input", stage: triode, hv: false,
+     measurements: [dc, ac, ac20, ac20k, thd], hint: "Output side of C203 (tone-control input)"}

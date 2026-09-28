@@ -1,0 +1,70 @@
+id: opamp
+name: "Block 4 - Op-amp make-up gain stage"
+netlist: opamp.cir
+description: >
+  Single-supply non-inverting stage (gain 11) biased at half supply (7.67 V).
+  Behavioural FET-input op-amp with 3 MHz gain-bandwidth and outputs limited to
+  1.5 V inside each rail.
+stages:
+  - {id: opamp, name: "Op-amp gain stage"}
+signal:
+  source: VIN_O
+  output_node: drv_in
+  tran_amplitude: 0.0636
+  frequency: 1000
+hum: null
+fixtures: [VREG_BENCH, VIN_O, RSRC_O, RLOAD_DRV]
+infrastructure: [VPGBW_U401, VPDEAD_U401, VPRAIL_U401]
+components:
+  - {ref: C401, kind: film_cap, value: 1u, tolerance: 0.10, family: film_cap_10pct, stage: opamp,
+     rating: "63 V", elements: {main: C401},
+     hint: "Input coupling capacitor from the tone output to U401 pin 3"}
+  - {ref: R401, kind: resistor, value: 100k, tolerance: 0.01, family: metal_film_1pct, stage: opamp,
+     rating: "0.25 W", elements: {main: R401},
+     hint: "Input bias resistor from U401 pin 3 to the half-supply node"}
+  - {ref: R402, kind: resistor, value: 22k, tolerance: 0.01, family: metal_film_1pct, stage: opamp,
+     rating: "0.25 W", elements: {main: R402},
+     hint: "Upper half-supply divider resistor from +15 V"}
+  - {ref: R403, kind: resistor, value: 22k, tolerance: 0.01, family: metal_film_1pct, stage: opamp,
+     rating: "0.25 W", elements: {main: R403},
+     hint: "Lower half-supply divider resistor to ground"}
+  - {ref: C402, kind: electrolytic, value: 47u, tolerance: 0.20, family: alu_elec, stage: opamp,
+     rating: "25 V", elements: {main: C402, esr: RESR_C402},
+     hint: "Half-supply decoupling capacitor at the R402/R403 junction"}
+  - {ref: U401, kind: opamp, value: "TL071-class", family: opamp_fet, stage: opamp,
+     elements: {main: XU401}, params: {gbw: VPGBW_U401, dead: VPDEAD_U401, rail: VPRAIL_U401},
+     hint: "Op-amp, 8-pin DIP (pin 2 inverting input, pin 3 non-inverting input, pin 6 output in single packages; this board uses pins 1-3 of a dual)"}
+  - {ref: R404, kind: resistor, value: 100k, tolerance: 0.01, family: metal_film_1pct, stage: opamp,
+     rating: "0.25 W", elements: {main: R404},
+     hint: "Feedback resistor from U401 output to pin 2"}
+  - {ref: R405, kind: resistor, value: 10k, tolerance: 0.01, family: metal_film_1pct, stage: opamp,
+     rating: "0.25 W", elements: {main: R405},
+     hint: "Gain-setting resistor from U401 pin 2 to C403"}
+  - {ref: C403, kind: electrolytic, value: 22u, tolerance: 0.20, family: alu_elec, stage: opamp,
+     rating: "25 V", elements: {main: C403, esr: RESR_C403},
+     hint: "Feedback DC-blocking capacitor in series with R405"}
+  - {ref: R406, kind: resistor, value: 100, tolerance: 0.01, family: metal_film_1pct, stage: opamp,
+     rating: "0.25 W", elements: {main: R406},
+     hint: "Output isolation resistor after U401 output"}
+  - {ref: C404, kind: electrolytic, value: 10u, tolerance: 0.20, family: alu_elec, stage: opamp,
+     rating: "50 V", elements: {main: C404, esr: RESR_C404},
+     hint: "Output coupling capacitor to the line-driver board"}
+  - {ref: C405, kind: film_cap, value: 100n, tolerance: 0.10, family: film_cap_10pct, stage: opamp,
+     rating: "63 V", elements: {main: C405},
+     hint: "Supply decoupling capacitor at the U401 supply pin"}
+  - {ref: R407, kind: resistor, value: 100k, tolerance: 0.05, family: carbon_film_5pct, stage: opamp,
+     rating: "0.25 W", elements: {main: R407},
+     hint: "Output DC-restoring resistor from the output side of C404 to ground"}
+test_points:
+  - {id: TP12, node: tone_out, name: "Op-amp stage input", stage: opamp, hv: false,
+     measurements: [dc, ac], hint: "Input side of C401"}
+  - {id: TP13, node: op_in, name: "Op-amp non-inverting input", stage: opamp, hv: false,
+     measurements: [dc, ac], hint: "U401 pin 3"}
+  - {id: TP14, node: op_fb, name: "Op-amp inverting input", stage: opamp, hv: false,
+     measurements: [dc, ac], hint: "U401 pin 2, junction of R404 and R405"}
+  - {id: TP15, node: op_pin, name: "Op-amp output", stage: opamp, hv: false,
+     measurements: [dc, ac], hint: "U401 pin 1 (output), left end of R406"}
+  - {id: TP16, node: vref, name: "Half-supply bias", stage: opamp, hv: false,
+     measurements: [dc], hint: "Junction of R402 and R403, positive terminal of C402"}
+  - {id: TP17, node: drv_in, name: "Op-amp stage output", stage: opamp, hv: false,
+     measurements: [dc, ac, ac20, ac20k, thd], hint: "Output side of C404"}

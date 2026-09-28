@@ -1,0 +1,78 @@
+id: driver
+name: "Block 5 - Discrete BJT line driver"
+netlist: driver.cir
+description: >
+  Common-emitter voltage amplifier (Q501, gain about 2) direct-coupled to an
+  emitter follower (Q502, about 8.5 mA standing current), with an output
+  coupling capacitor, series output resistor and a 0 V DC-restoring resistor.
+stages:
+  - {id: driver, name: "BJT line driver"}
+signal:
+  source: VIN_D
+  output_node: out
+  tran_amplitude: 0.69
+  frequency: 1000
+hum: null
+fixtures: [VREG_BENCH, VIN_D, RSRC_D, RLOAD_EXT]
+infrastructure: []
+components:
+  - {ref: C501, kind: electrolytic, value: 10u, tolerance: 0.20, family: alu_elec, stage: driver,
+     rating: "50 V", elements: {main: C501, esr: RESR_C501},
+     hint: "Input coupling capacitor to the Q501 base network"}
+  - {ref: R501, kind: resistor, value: 39k, tolerance: 0.01, family: metal_film_1pct, stage: driver,
+     rating: "0.25 W", elements: {main: R501},
+     hint: "Upper base-bias resistor from the driver supply to the Q501 base"}
+  - {ref: R502, kind: resistor, value: 13k, tolerance: 0.01, family: metal_film_1pct, stage: driver,
+     rating: "0.25 W", elements: {main: R502},
+     hint: "Lower base-bias resistor from the Q501 base to ground"}
+  - {ref: Q501, kind: bjt, value: "2N3904", family: bjt_2n3904, stage: driver, model: Q2N3904,
+     elements: {main: Q501},
+     hint: "Voltage-amplifier transistor (TO-92, flat face towards you: E-B-C from the left)"}
+  - {ref: R503, kind: resistor, value: 2.2k, tolerance: 0.01, family: metal_film_1pct, stage: driver,
+     rating: "0.25 W", elements: {main: R503},
+     hint: "Unbypassed emitter resistor from the Q501 emitter"}
+  - {ref: R504, kind: resistor, value: 470, tolerance: 0.01, family: metal_film_1pct, stage: driver,
+     rating: "0.25 W", elements: {main: R504},
+     hint: "Bypassed emitter resistor from R503 to ground"}
+  - {ref: C502, kind: electrolytic, value: 100u, tolerance: 0.20, family: alu_elec, stage: driver,
+     rating: "25 V", elements: {main: C502, esr: RESR_C502},
+     hint: "Emitter bypass capacitor across R504"}
+  - {ref: R505, kind: resistor, value: 4.7k, tolerance: 0.01, family: metal_film_1pct, stage: driver,
+     rating: "0.25 W", elements: {main: R505},
+     hint: "Collector load resistor from the driver supply to the Q501 collector"}
+  - {ref: Q502, kind: bjt, value: "2N3904", family: bjt_2n3904, stage: driver, model: Q2N3904,
+     elements: {main: Q502},
+     hint: "Emitter-follower output transistor (TO-92, E-B-C from the left)"}
+  - {ref: R506, kind: resistor, value: 1k, tolerance: 0.01, family: metal_film_1pct, stage: driver,
+     rating: "0.25 W", elements: {main: R506},
+     hint: "Emitter-follower load resistor from the Q502 emitter to ground"}
+  - {ref: C503, kind: electrolytic, value: 100u, tolerance: 0.20, family: alu_elec, stage: driver,
+     rating: "25 V", elements: {main: C503, esr: RESR_C503},
+     hint: "Output coupling capacitor from the Q502 emitter"}
+  - {ref: R507, kind: resistor, value: 47, tolerance: 0.01, family: metal_film_1pct, stage: driver,
+     rating: "0.25 W", elements: {main: R507},
+     hint: "Series output resistor to the output jack"}
+  - {ref: R508, kind: resistor, value: 100k, tolerance: 0.05, family: carbon_film_5pct, stage: driver,
+     rating: "0.25 W", elements: {main: R508},
+     hint: "Output DC-restoring resistor from the output jack to ground"}
+  - {ref: R509, kind: resistor, value: 47, tolerance: 0.01, family: metal_film_1pct, stage: driver,
+     rating: "0.5 W", elements: {main: R509},
+     hint: "Supply decoupling resistor from the +15 V rail to the driver supply node"}
+  - {ref: C504, kind: electrolytic, value: 220u, tolerance: 0.20, family: alu_elec, stage: driver,
+     rating: "25 V", elements: {main: C504, esr: RESR_C504},
+     hint: "Driver supply decoupling capacitor"}
+test_points:
+  - {id: TP17, node: drv_in, name: "Line-driver input", stage: driver, hv: false,
+     measurements: [dc, ac], hint: "Input side of C501"}
+  - {id: TP18, node: q1b, name: "Q501 base", stage: driver, hv: false,
+     measurements: [dc, ac], hint: "Centre leg of Q501, junction of R501 and R502"}
+  - {id: TP19, node: q1e, name: "Q501 emitter", stage: driver, hv: false,
+     measurements: [dc, ac], hint: "Left leg of Q501, top of R503"}
+  - {id: TP20, node: q1c, name: "Q501 collector / Q502 base", stage: driver, hv: false,
+     measurements: [dc, ac], hint: "Right leg of Q501, lower end of R505"}
+  - {id: TP21, node: q2e, name: "Q502 emitter", stage: driver, hv: false,
+     measurements: [dc, ac], hint: "Left leg of Q502, top of R506"}
+  - {id: TP22, node: out, name: "Line output", stage: driver, hv: false,
+     measurements: [dc, ac, ac20, ac20k, thd], hint: "Output jack tip, right end of R507"}
+  - {id: TP23, node: vcc_d, name: "Driver supply", stage: driver, hv: false,
+     measurements: [dc], hint: "Junction of R509 and C504"}

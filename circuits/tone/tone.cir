@@ -1,0 +1,44 @@
+* Differential reference circuit - Block 3: passive Baxandall tone control (standalone)
+* ---------------------------------------------------------------------------
+* Original generic design written for this project, after the passive form of
+* Baxandall's tone control (Wireless World, 1952). Bass: R301-VR301-R302 divider
+* with C301/C302 bridging the pot sections. Treble: C303-VR302-C304 with the
+* wiper to the output; the bass wiper joins the output through R303.
+* Potentiometers are 100k audio (A) taper set to mid-rotation, which on an A
+* taper leaves ~10 % of the track between wiper and the grounded end. Each pot
+* is modelled as upper track (A), lower track (B) and a 1 ohm wiper contact (W).
+* Fixtures: source with 43k output impedance (the triode stage's Ra || rp) and a
+* 100k load (the op-amp stage bias resistor).
+* Run standalone: ngspice -b circuits/tone/tone.cir
+* ---------------------------------------------------------------------------
+.include ../lib/devices.lib
+
+* ---- Fixtures ----
+VIN_T tone_src 0 DC 0 AC 1 SIN(0 1 1k)
+RSRC_T tone_src tone_in 43k
+RLOAD_OP tone_out 0 100k
+
+* ---- Bass section ----
+R301 tone_in bass_a 47k
+RVR301A bass_a bass_t 90k
+RVR301B bass_t bass_b 10k
+RVR301W bass_t bass_w 1
+C301 bass_a bass_w 10n
+C302 bass_w bass_b 100n
+R302 bass_b 0 4.7k
+R303 bass_w tone_out 33k
+
+* ---- Treble section ----
+C303 tone_in treb_a 1n
+RVR302A treb_a treb_t 90k
+RVR302B treb_t treb_b 10k
+RVR302W treb_t tone_out 1
+C304 treb_b 0 10n
+
+.control
+set noaskquit
+ac dec 5 10 100k
+let gdb = db(mag(v(tone_out)))
+print gdb
+.endc
+.end

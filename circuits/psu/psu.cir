@@ -1,0 +1,69 @@
+* Differential reference circuit - Block 1: power supply (standalone)
+* ---------------------------------------------------------------------------
+* Original generic design written for this project (not derived from any
+* commercial schematic). Two rails:
+*   LV: bridge-rectified 18 Vrms secondary -> 2200 uF reservoir -> discrete
+*       series regulator (16 V zener reference + BD139 pass transistor) -> +15.3 V
+*   HV: rectified ~200 Vrms secondary -> 47 uF reservoir -> two-section RC filter
+*       chain -> ~250 V B+ for the triode stage.
+* Model boundary: the transformer, rectifier diodes and fuse are mains-side /
+* out of scope. Each rectifier is represented by a quasi-static average model
+* (B source) isolated from the ripple path by a large inductor, plus an injected
+* 120 Hz ripple current of amplitude 2*Idc (the fundamental of the rectifier
+* charging-pulse train). VHUMREF carries AC 1 only during the hum analysis.
+* See docs/hand_calcs.md section "Power supply" for the derivation and limits.
+* Run standalone: ngspice -b circuits/psu/psu.cir
+* ---------------------------------------------------------------------------
+.include ../lib/devices.lib
+
+* ---- LV rectifier (quasi-static model; parameter nodes pk_lv, cres_lv) ----
+VPK_LV pk_lv 0 DC 24.06
+VCRES_LV cres_lv 0 DC 2200e-6
+BRECT_LV rect_lv 0 V = max(V(pk_lv) - I(VSENS_LV)*(1.5 + 1/(240*V(cres_lv))), 0.6366*V(pk_lv) - I(VSENS_LV)*1.5)
+LRECT_LV rect_lv rect_lv_l 10
+VSENS_LV rect_lv_l vunreg DC 0
+BRIP_LV 0 vunreg I = 2*V(humref)*I(VSENS_LV)
+VHUMREF humref 0 DC 0 AC 0
+
+* ---- LV reservoir and series regulator ----
+C101 vunreg c101_esr 2200u
+RESR_C101 c101_esr 0 0.072
+R102 vunreg vz 1k
+D101 0 vz DZ1N4745A
+C102 vz c102_esr 47u
+RESR_C102 c102_esr 0 3.95
+Q101 vunreg vz vreg QBD139
+D102 vreg vunreg D1N4148
+C103 vreg c103_esr 220u
+RESR_C103 c103_esr 0 0.84
+R103 vreg 0 2.2k
+
+* ---- HV rectifier (quasi-static model; parameter nodes pk_hv, cres_hv) ----
+VPK_HV pk_hv 0 DC 282
+VCRES_HV cres_hv 0 DC 47e-6
+BRECT_HV rect_hv 0 V = max(V(pk_hv) - I(VSENS_HV)*(150 + 1/(240*V(cres_hv))), 0.6366*V(pk_hv) - I(VSENS_HV)*150)
+LRECT_HV rect_hv rect_hv_l 100
+VSENS_HV rect_hv_l hv1 DC 0
+BRIP_HV 0 hv1 I = 2*V(humref)*I(VSENS_HV)
+
+* ---- HV reservoir, bleeder and RC filter chain ----
+C104 hv1 c104_esr 47u
+RESR_C104 c104_esr 0 5.64
+R104 hv1 0 220k
+R105 hv1 hv2 10k
+C105 hv2 c105_esr 22u
+RESR_C105 c105_esr 0 12.06
+R106 hv2 bplus 22k
+C106 bplus c106_esr 22u
+RESR_C106 c106_esr 0 12.06
+
+* ---- Fixtures (standalone bench test only): dummy loads ----
+RLOAD_LV vreg 0 1k
+RLOAD_HV bplus 0 300k
+
+.control
+set noaskquit
+op
+print v(vunreg) v(vz) v(vreg) v(hv1) v(hv2) v(bplus)
+.endc
+.end

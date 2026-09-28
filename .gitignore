@@ -1,0 +1,24 @@
+# Python / tooling
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+build/
+dist/
+node_modules/
+
+# Large regenerable simulation cache (make sim / make eval regenerate it)
+data/sim/parts/
+data/sim/*.parquet
+data/sim/progress.log
+data/sim/*.log
+
+# Scratch
+*.tmp
+.DS_Store

@@ -1,0 +1,309 @@
+"""Monte Carlo parameter draws: component tolerances plus fault application.
+
+A draw is a ``Draw`` holding
+  * ``alters``    element name -> value            (``alter NAME = value``)
+  * ``altermods`` (model name, param) -> value     (``altermod MODEL param = value``)
+  * ``lift``      component ref -> out-of-circuit reading (for lift tests)
+  * ``severity``  fault-severity parameters that were sampled (for provenance)
+Structural netlist edits needed by a fault (added shorting resistors, broken
+leads) are described by :func:`structural_edits` and applied by the builder.
+
+Tolerance distributions (documented in docs/DECISIONS.md, ADR-006):
+  * passive values: truncated normal, sigma = tol/2, truncated at +-tol
+  * electrolytic ESR: nominal (tan-delta limit) x U(0.4, 1.0)
+  * potentiometer: track total +-20 %, rotation setting +-0.02 of track
+  * BJT beta: model BF x log-uniform over the datasheet hFE range
+  * zener voltage: truncated normal, sigma = 2.5 %, +-5 %
+  * triode: MU x U(0.9, 1.1); KG1 x log-uniform(0.8, 1.25)
+  * op-amp gain-bandwidth: 3 MHz x U(0.7, 1.3)
+  * mains: +-5 % (common factor on both rectifier peak voltages)
+"""
+
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass, field
+
+import numpy as np
+
+from differential.circuits.model import CircuitSpec, ComponentSpec
+from differential.sim.faults import Fault
+
+R_OPEN = 1e9
+C_OPEN = 1e-15
+BRIDGE = "BRIDGE"  # pseudo-ref for out-of-catalog solder-bridge modifications
+
+# BF scale ranges chosen so the simulated hFE at the operating current spans the
+# datasheet hFE range (2N3904: 100-300 at 10 mA -> model hFE 169 there;
+# BD139 -10/-16 groups: 63-250 at 150 mA -> model hFE ~150 at 22 mA).
+BETA_SCALE_RANGE = {
+    "bjt_2n3904": (100 / 169, 300 / 169),
+    "bd139": (63 / 150, 250 / 150),
+}
+MODEL_BF = {"Q2N3904": 416.4, "QBD139": 150.0}
+ZENER_BV = {"DZ1N4745A": 16.0}
+
+TRIODE_MU = 100.0
+TRIODE_KG1 = 1060.0
+OPAMP_GBW_MHZ = 3.0
+MAINS_TOL = 0.05
+
+
+@dataclass
+class Draw:
+    alters: dict[str, float] = field(default_factory=dict)
+    altermods: dict[tuple[str, str], float] = field(default_factory=dict)
+    lift: dict[str, float] = field(default_factory=dict)
+    severity: dict[str, float] = field(default_factory=dict)
+
+
+def device_model_name(comp: ComponentSpec) -> str:
+    """Per-device model clone name used by the builder (so altermod is per device)."""
+    assert comp.model is not None
+    return f"{comp.model}_{comp.ref}".upper()
+
+
+def _trunc_normal(rng: np.random.Generator, sigma: float, limit: float) -> float:
+    while True:
+        x = float(rng.normal(0.0, sigma))
+        if abs(x) <= limit:
+            return x
+
+
+def _log_uniform(rng: np.random.Generator, lo: float, hi: float) -> float:
+    return float(math.exp(rng.uniform(math.log(lo), math.log(hi))))
+
+
+def healthy_draw(circuit: CircuitSpec, rng: np.random.Generator) -> Draw:
+    """Draw every tolerance-affected parameter of a healthy unit."""
+    d = Draw()
+    net = circuit.netlist
+    for comp in circuit.components:
+        kind = comp.kind
+        if kind in ("resistor", "film_cap", "electrolytic"):
+            nominal = comp.nominal
+            assert nominal is not None and comp.tolerance is not None
+            val = nominal * (1.0 + _trunc_normal(rng, comp.tolerance / 2, comp.tolerance))
+            d.alters[comp.main_element] = val
+            d.lift[comp.ref] = val
+            if kind == "electrolytic":
+                esr_el = comp.elements["esr"]
+                esr_nom = net.element(esr_el).numeric_value
+                assert esr_nom is not None
+                d.alters[esr_el] = esr_nom * float(rng.uniform(0.4, 1.0))
+        elif kind == "potentiometer":
+            nominal = comp.nominal
+            assert nominal is not None and comp.tolerance is not None and comp.setting is not None
+            total = nominal * (1.0 + _trunc_normal(rng, comp.tolerance / 2, comp.tolerance))
+            setting = min(0.99, max(0.01, comp.setting + float(rng.uniform(-0.02, 0.02))))
+            d.alters[comp.elements["upper"]] = total * (1.0 - setting)
+            d.alters[comp.elements["lower"]] = total * setting
+            d.alters[comp.elements["wiper"]] = float(rng.uniform(0.5, 2.0))
+            d.lift[comp.ref] = total
+        elif kind == "bjt":
+            assert comp.model is not None
+            lo, hi = BETA_SCALE_RANGE[comp.family]
+            scale = _log_uniform(rng, lo, hi)
+            d.altermods[(device_model_name(comp), "bf")] = MODEL_BF[comp.model] * scale
+            d.lift[comp.ref] = scale  # relative hFE as read on a transistor tester
+        elif kind == "zener":
+            assert comp.model is not None
+            bv = ZENER_BV[comp.model] * (1.0 + _trunc_normal(rng, 0.025, 0.05))
+            d.altermods[(device_model_name(comp), "bv")] = bv
+            d.lift[comp.ref] = bv
+        elif kind == "diode":
+            d.lift[comp.ref] = 1.0  # forward drop reads normal on a diode test
+        elif kind == "triode":
+            d.alters[comp.params["pv"]] = 1.0
+            d.alters[comp.params["mu"]] = TRIODE_MU * float(rng.uniform(0.9, 1.1))
+            d.alters[comp.params["kg"]] = TRIODE_KG1 * _log_uniform(rng, 0.8, 1.25)
+            d.lift[comp.ref] = TRIODE_KG1 / d.alters[comp.params["kg"]]  # relative emission
+        elif kind == "opamp":
+            d.alters[comp.params["gbw"]] = OPAMP_GBW_MHZ * float(rng.uniform(0.7, 1.3))
+            d.alters[comp.params["dead"]] = 0.0
+            d.alters[comp.params["rail"]] = 1.0
+            d.lift[comp.ref] = d.alters[comp.params["gbw"]] / OPAMP_GBW_MHZ
+        else:  # pragma: no cover - guarded by the YAML schema test
+            raise ValueError(f"unknown kind {kind}")
+    if circuit.hum is not None:
+        mains = 1.0 + float(rng.uniform(-MAINS_TOL, MAINS_TOL))
+        d.severity["mains_factor"] = mains
+        for rect in circuit.hum.rectifiers:
+            d.alters[rect.pk_source] = rect.pk_nominal * mains
+    return d
+
+
+def apply_fault(
+    circuit: CircuitSpec, draw: Draw, fault: Fault, rng: np.random.Generator
+) -> Draw:
+    """Modify a healthy draw in place to realise ``fault``; returns the draw."""
+    if fault.is_healthy:
+        _sync_rectifiers(circuit, draw)
+        return draw
+    if fault.ref == BRIDGE:
+        # Out-of-catalog modification: solder bridge between two nodes.
+        r = _log_uniform(rng, 0.1, 10.0)
+        draw.severity["bridge_ohms"] = r
+        draw.alters[bridge_element(fault)] = r
+        _sync_rectifiers(circuit, draw)
+        return draw
+    comp = circuit.component(fault.ref)
+    mode = fault.mode
+    main = comp.main_element
+    if comp.kind == "resistor":
+        if mode == "open":
+            draw.alters[main] = R_OPEN
+        elif mode == "short":
+            draw.alters[main] = _log_uniform(rng, 0.01, 1.0)
+        elif mode.startswith("drift_x"):
+            draw.alters[main] *= float(mode.removeprefix("drift_x"))
+        elif mode.startswith("value_x"):  # out-of-catalog: wrong value fitted
+            draw.alters[main] *= float(mode.removeprefix("value_x"))
+        draw.lift[comp.ref] = draw.alters[main]
+    elif comp.kind in ("film_cap", "electrolytic"):
+        if mode == "open":
+            draw.alters[main] = C_OPEN
+            draw.lift[comp.ref] = C_OPEN
+        elif mode == "short":
+            r = _log_uniform(rng, 0.1, 10.0)
+            draw.severity["short_ohms"] = r
+            draw.alters[f"RFLT_{comp.ref}"] = r
+            draw.lift[comp.ref] = 0.0  # reads as a short on a capacitance meter
+        elif mode == "cap_loss_50":
+            draw.alters[main] *= 0.5
+            draw.lift[comp.ref] = draw.alters[main]
+        elif mode == "cap_loss_90":
+            draw.alters[main] *= 0.1
+            draw.lift[comp.ref] = draw.alters[main]
+        elif mode.startswith("value_x"):  # out-of-catalog: wrong value fitted
+            draw.alters[main] *= float(mode.removeprefix("value_x"))
+            draw.lift[comp.ref] = draw.alters[main]
+        elif mode == "high_esr":
+            esr_el = comp.elements["esr"]
+            nominal_esr = circuit.netlist.element(esr_el).numeric_value
+            assert nominal_esr is not None
+            factor = _log_uniform(rng, 10.0, 100.0)
+            draw.severity["esr_factor"] = factor
+            draw.alters[esr_el] = nominal_esr * factor
+    elif comp.kind == "potentiometer":
+        if mode == "wiper_open":
+            draw.alters[comp.elements["wiper"]] = R_OPEN
+        elif mode == "track_open":
+            side = "upper" if rng.uniform() < 0.5 else "lower"
+            draw.severity["track_open_upper"] = 1.0 if side == "upper" else 0.0
+            draw.alters[comp.elements[side]] = R_OPEN
+            draw.lift[comp.ref] = R_OPEN
+    elif comp.kind in ("diode", "zener"):
+        if mode == "open":
+            draw.alters[f"RFLT_{comp.ref}"] = R_OPEN
+            draw.lift[comp.ref] = 0.0
+        elif mode == "short":
+            r = _log_uniform(rng, 0.1, 10.0)
+            draw.severity["short_ohms"] = r
+            draw.alters[f"RFLT_{comp.ref}"] = r
+            draw.lift[comp.ref] = -1.0
+    elif comp.kind == "bjt":
+        if mode == "ce_short":
+            r = _log_uniform(rng, 1.0, 50.0)
+            draw.severity["short_ohms"] = r
+            draw.alters[f"RFLT_{comp.ref}"] = r
+            draw.lift[comp.ref] = -1.0
+        elif mode == "be_open":
+            draw.alters[f"RFLT_{comp.ref}"] = R_OPEN
+            draw.lift[comp.ref] = 0.0
+        elif mode == "beta_low":
+            key = (device_model_name(comp), "bf")
+            draw.altermods[key] *= 0.2
+            draw.lift[comp.ref] *= 0.2
+        elif mode == "cb_leak":
+            r = _log_uniform(rng, 47e3, 470e3)
+            draw.severity["leak_ohms"] = r
+            draw.alters[f"RFLT_{comp.ref}"] = r
+            draw.lift[comp.ref] = -2.0
+    elif comp.kind == "triode":
+        if mode == "low_emission":
+            k = float(rng.uniform(0.3, 0.6))
+            draw.severity["emission"] = k
+            draw.alters[comp.params["pv"]] = k
+            draw.lift[comp.ref] *= k
+        elif mode == "heater_open":
+            draw.alters[comp.params["pv"]] = 0.0
+            draw.lift[comp.ref] = 0.0
+    elif comp.kind == "opamp":
+        if mode == "dead":
+            rail = 1.0 if rng.uniform() < 0.5 else 0.0
+            draw.severity["dead_rail_high"] = rail
+            draw.alters[comp.params["dead"]] = 1.0
+            draw.alters[comp.params["rail"]] = rail
+            draw.lift[comp.ref] = 0.0
+        elif mode == "gbw_low":
+            factor = _log_uniform(rng, 0.01, 0.1)
+            draw.severity["gbw_factor"] = factor
+            draw.alters[comp.params["gbw"]] *= factor
+            draw.lift[comp.ref] *= factor
+    else:  # pragma: no cover
+        raise ValueError(f"unsupported fault {fault.id}")
+    _sync_rectifiers(circuit, draw)
+    return draw
+
+
+def _sync_rectifiers(circuit: CircuitSpec, draw: Draw) -> None:
+    """Keep each rectifier's reservoir-capacitance parameter node equal to the reservoir."""
+    if circuit.hum is None:
+        return
+    for rect in circuit.hum.rectifiers:
+        if rect.reservoir in circuit.refs:
+            draw.alters[rect.cres_source] = draw.alters[circuit.component(rect.reservoir).main_element]
+
+
+@dataclass(frozen=True)
+class StructuralEdit:
+    """A netlist edit: add a two-terminal resistor, optionally breaking a lead first."""
+
+    add_name: str
+    node_a: str
+    node_b: str
+    default_value: float
+    remove_element: str | None = None
+    rewire: tuple[str, int, str] | None = None  # (element, node index, new node)
+
+
+def bridge_element(fault: Fault) -> str:
+    a, b = fault.mode.split("~")
+    return f"RBRIDGE_{a}_{b}".upper()
+
+
+def structural_edits(circuit: CircuitSpec, fault: Fault) -> list[StructuralEdit]:
+    if fault.is_healthy:
+        return []
+    if fault.ref == BRIDGE:
+        a, b = fault.mode.split("~")
+        return [StructuralEdit(bridge_element(fault), a, b, 1.0)]
+    comp = circuit.component(fault.ref)
+    mode = fault.mode
+    name = f"RFLT_{comp.ref}"
+    net = circuit.netlist
+    if comp.kind in ("film_cap", "electrolytic") and mode == "short":
+        if comp.kind == "electrolytic":
+            a = net.element(comp.main_element).nodes[0]
+            b = net.element(comp.elements["esr"]).nodes[1]
+        else:
+            a, b = net.element(comp.main_element).nodes
+        return [StructuralEdit(name, a, b, 1.0)]
+    if comp.kind in ("diode", "zener"):
+        anode, cathode = net.element(comp.main_element).nodes
+        if mode == "open":
+            return [StructuralEdit(name, anode, cathode, R_OPEN, remove_element=comp.main_element)]
+        return [StructuralEdit(name, anode, cathode, 1.0)]
+    if comp.kind == "bjt":
+        c, b, e = net.element(comp.main_element).nodes
+        if mode == "ce_short":
+            return [StructuralEdit(name, c, e, 1.0)]
+        if mode == "cb_leak":
+            return [StructuralEdit(name, c, b, 1e5)]
+        if mode == "be_open":
+            new_node = f"{comp.ref.lower()}_bopen"
+            return [
+                StructuralEdit(name, b, new_node, R_OPEN, rewire=(comp.main_element, 1, new_node))
+            ]
+    return []

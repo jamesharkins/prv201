@@ -1,0 +1,41 @@
+* Differential reference circuit - Block 2: triode gain stage (standalone)
+* ---------------------------------------------------------------------------
+* Original generic design written for this project. One 12AX7-class triode
+* section, cathode-biased common-cathode stage: 100k plate load, 1.5k cathode
+* resistor bypassed by 22 uF, 1 M grid leak, 2.2k grid stopper, 220 nF output
+* coupling capacitor. Triode: Koren behavioural model (circuits/lib/devices.lib).
+* Parameter nodes pv_v201 / mu_v201 / kg_v201 carry emission scale, MU and KG1.
+* Fixtures: 250 V bench supply, signal generator (600 ohm), 100k load that stands
+* in for the tone-control input.
+* Run standalone: ngspice -b circuits/triode/triode.cir
+* ---------------------------------------------------------------------------
+.include ../lib/devices.lib
+
+* ---- Fixtures ----
+VBPLUS_BENCH bplus 0 DC 250
+VIN sig_in 0 DC 0 AC 1 SIN(0 0.0424 1k)
+RSRC sig_in in_jack 600
+RLOAD_TONE tone_in 0 100k
+
+* ---- Triode stage ----
+C201 in_jack g_in 100n
+R201 g_in 0 1Meg
+R202 g_in grid 2.2k
+XV201 plate grid cath pv_v201 mu_v201 kg_v201 TRIODE_KOREN
+VPV_V201 pv_v201 0 DC 1
+VMU_V201 mu_v201 0 DC 100
+VKG_V201 kg_v201 0 DC 1060
+R203 bplus plate 100k
+R204 cath 0 1.5k
+C202 cath c202_esr 22u
+RESR_C202 c202_esr 0 8.44
+C203 plate tone_in 220n
+
+.control
+set noaskquit
+op
+print v(grid) v(cath) v(plate) v(tone_in) i(VBPLUS_BENCH)
+ac lin 1 1000 1000
+print mag(v(plate)) mag(v(tone_in))
+.endc
+.end

@@ -1,0 +1,53 @@
+id: tone
+name: "Block 3 - Passive Baxandall tone control"
+netlist: tone.cir
+description: >
+  Passive Baxandall bass/treble control with 100k audio-taper pots at
+  mid-rotation. About 27 dB mid-band insertion loss when driven from the triode
+  stage's ~43k output impedance; within +1.3/-0.8 dB of the 1 kHz level from
+  20 Hz to 20 kHz at the centre settings.
+stages:
+  - {id: tone, name: "Passive tone control"}
+signal:
+  source: VIN_T
+  output_node: tone_out
+  tran_amplitude: null
+  frequency: 1000
+hum: null
+fixtures: [VIN_T, RSRC_T, RLOAD_OP]
+infrastructure: []
+components:
+  - {ref: R301, kind: resistor, value: 47k, tolerance: 0.01, family: metal_film_1pct, stage: tone,
+     rating: "0.25 W", elements: {main: R301},
+     hint: "Bass-network input resistor from the tone input to the top of VR301"}
+  - {ref: VR301, kind: potentiometer, value: 100k, tolerance: 0.20, family: pot_carbon_20pct, stage: tone,
+     setting: 0.1, elements: {upper: RVR301A, lower: RVR301B, wiper: RVR301W},
+     hint: "BASS control, 100k audio taper (front-panel pot, centre pin is the wiper)"}
+  - {ref: C301, kind: film_cap, value: 10n, tolerance: 0.05, family: film_cap_5pct, stage: tone,
+     rating: "100 V", elements: {main: C301},
+     hint: "Bass capacitor from the top of VR301 to its wiper"}
+  - {ref: C302, kind: film_cap, value: 100n, tolerance: 0.05, family: film_cap_5pct, stage: tone,
+     rating: "100 V", elements: {main: C302},
+     hint: "Bass capacitor from the VR301 wiper to its bottom end"}
+  - {ref: R302, kind: resistor, value: 4.7k, tolerance: 0.01, family: metal_film_1pct, stage: tone,
+     rating: "0.25 W", elements: {main: R302},
+     hint: "Bass-network foot resistor from the bottom of VR301 to ground"}
+  - {ref: R303, kind: resistor, value: 33k, tolerance: 0.01, family: metal_film_1pct, stage: tone,
+     rating: "0.25 W", elements: {main: R303},
+     hint: "Isolating resistor from the VR301 wiper to the tone output"}
+  - {ref: C303, kind: film_cap, value: 1n, tolerance: 0.05, family: film_cap_5pct, stage: tone,
+     rating: "100 V", elements: {main: C303},
+     hint: "Treble capacitor from the tone input to the top of VR302"}
+  - {ref: VR302, kind: potentiometer, value: 100k, tolerance: 0.20, family: pot_carbon_20pct, stage: tone,
+     setting: 0.1, elements: {upper: RVR302A, lower: RVR302B, wiper: RVR302W},
+     hint: "TREBLE control, 100k audio taper (front-panel pot, centre pin is the wiper)"}
+  - {ref: C304, kind: film_cap, value: 10n, tolerance: 0.05, family: film_cap_5pct, stage: tone,
+     rating: "100 V", elements: {main: C304},
+     hint: "Treble capacitor from the bottom of VR302 to ground"}
+test_points:
+  - {id: TP10, node: tone_in, name: "Tone-control input", stage: tone, hv: false,
+     measurements: [dc, ac], hint: "Left end of R301 / C303 (output side of C203)"}
+  - {id: TP11, node: bass_w, name: "Bass control wiper", stage: tone, hv: false,
+     measurements: [dc, ac], hint: "Centre pin of VR301"}
+  - {id: TP12, node: tone_out, name: "Tone-control output", stage: tone, hv: false,
+     measurements: [dc, ac, ac20, ac20k], hint: "Centre pin of VR302, right end of R303"}

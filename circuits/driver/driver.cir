@@ -1,0 +1,51 @@
+* Differential reference circuit - Block 5: discrete BJT line driver (standalone)
+* ---------------------------------------------------------------------------
+* Original generic design written for this project. Two direct-coupled stages:
+* Q501 common-emitter voltage amplifier (divider bias R501/R502, 2.2k
+* unbypassed + 470R bypassed emitter resistance, 4.7k collector load; gain ~2)
+* driving Q502 as an emitter follower (1k emitter resistor, ~8.5 mA standing
+* current). C503 + R507 couple to the output; R508 keeps the output at 0 V DC.
+* R509/C504 decouple the stage from the shared +15 V rail.
+* Transistors: 2N3904-class manufacturer model (circuits/lib/devices.lib).
+* Fixtures: 15.3 V bench supply, low-impedance source, 10k external load.
+* Run standalone: ngspice -b circuits/driver/driver.cir
+* ---------------------------------------------------------------------------
+.include ../lib/devices.lib
+
+* ---- Fixtures ----
+VREG_BENCH vreg 0 DC 15.33
+VIN_D drv_src 0 DC 0 AC 1 SIN(0 0.69 1k)
+RSRC_D drv_src drv_in 100
+RLOAD_EXT out 0 10k
+
+* ---- Line driver ----
+C501 drv_in c501_esr 10u
+RESR_C501 c501_esr q1b 13.3
+R501 vcc_d q1b 39k
+R502 q1b 0 13k
+Q501 q1c q1b q1e Q2N3904
+R503 q1e q1e2 2.2k
+R504 q1e2 0 470
+C502 q1e2 c502_esr 100u
+RESR_C502 c502_esr 0 1.86
+R505 vcc_d q1c 4.7k
+Q502 vcc_d q1c q2e Q2N3904
+R506 q2e 0 1k
+C503 q2e c503_esr 100u
+RESR_C503 c503_esr out_c 1.86
+R507 out_c out 47
+R508 out 0 100k
+R509 vreg vcc_d 47
+C504 vcc_d c504_esr 220u
+RESR_C504 c504_esr 0 0.84
+
+.control
+set noaskquit
+op
+print v(q1b) v(q1e) v(q1c) v(q2e) v(out) v(vcc_d) i(VREG_BENCH)
+ac lin 1 1000 1000
+print mag(v(q1c)) mag(v(out))
+tran 10u 10m 5m 10u
+fourier 1k v(out)
+.endc
+.end

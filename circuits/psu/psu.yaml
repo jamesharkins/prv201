@@ -1,0 +1,77 @@
+id: psu
+name: "Block 1 - Power supply (LV regulator + HV B+ chain)"
+netlist: psu.cir
+description: >
+  Low-voltage rail: rectified 18 Vrms secondary into a 2200 uF reservoir, then a
+  discrete series regulator (16 V zener reference, BD139-class pass transistor)
+  giving +15.3 V. High-voltage rail: rectified ~200 Vrms secondary into a 47 uF
+  reservoir with a 220k bleeder, then a two-section RC filter chain giving about
+  254 V B+. Mains wiring, transformer, rectifier diodes and fuse are out of scope.
+stages:
+  - {id: psu_lv, name: "LV supply and regulator"}
+  - {id: psu_hv, name: "HV B+ supply and filter chain"}
+signal: null
+hum:
+  reference_source: VHUMREF
+  rectifiers:
+    - {id: lv, pk_source: VPK_LV, cres_source: VCRES_LV, reservoir: C101, pk_nominal: 24.06}
+    - {id: hv, pk_source: VPK_HV, cres_source: VCRES_HV, reservoir: C104, pk_nominal: 282.0}
+fixtures: [RLOAD_LV, RLOAD_HV]
+infrastructure: [VPK_LV, VCRES_LV, BRECT_LV, LRECT_LV, VSENS_LV, BRIP_LV, VHUMREF,
+                 VPK_HV, VCRES_HV, BRECT_HV, LRECT_HV, VSENS_HV, BRIP_HV]
+components:
+  - {ref: C101, kind: electrolytic, value: 2200u, tolerance: 0.20, family: alu_elec, stage: psu_lv,
+     rating: "35 V", elements: {main: C101, esr: RESR_C101},
+     hint: "LV reservoir capacitor: the large 2200 uF 35 V can beside the rectifier leads"}
+  - {ref: R102, kind: resistor, value: 1k, tolerance: 0.01, family: metal_film_1pct, stage: psu_lv,
+     rating: "0.5 W", elements: {main: R102},
+     hint: "Zener feed resistor between the unregulated rail and the D101 cathode"}
+  - {ref: D101, kind: zener, value: "16 V", tolerance: 0.05, family: zener_5pct, stage: psu_lv,
+     model: DZ1N4745A, elements: {main: D101},
+     hint: "16 V zener reference; banded (cathode) end joins R102 and the base of Q101"}
+  - {ref: C102, kind: electrolytic, value: 47u, tolerance: 0.20, family: alu_elec, stage: psu_lv,
+     rating: "25 V", elements: {main: C102, esr: RESR_C102},
+     hint: "Reference filter capacitor across D101"}
+  - {ref: Q101, kind: bjt, value: "BD139", family: bd139, stage: psu_lv, model: QBD139,
+     elements: {main: Q101},
+     hint: "Series pass transistor (TO-126, pins E-C-B from the left, printed face towards you)"}
+  - {ref: D102, kind: diode, value: "1N4148", family: diode_1n4148, stage: psu_lv, model: D1N4148,
+     elements: {main: D102},
+     hint: "Reverse-protection diode from the regulated rail (anode) to the unregulated rail (cathode)"}
+  - {ref: C103, kind: electrolytic, value: 220u, tolerance: 0.20, family: alu_elec, stage: psu_lv,
+     rating: "25 V", elements: {main: C103, esr: RESR_C103},
+     hint: "Regulated-rail output capacitor next to Q101"}
+  - {ref: R103, kind: resistor, value: 2.2k, tolerance: 0.05, family: carbon_film_5pct, stage: psu_lv,
+     rating: "0.5 W", elements: {main: R103},
+     hint: "Minimum-load bleeder across the regulated rail"}
+  - {ref: C104, kind: electrolytic, value: 47u, tolerance: 0.20, family: alu_elec, stage: psu_hv,
+     rating: "400 V", elements: {main: C104, esr: RESR_C104},
+     hint: "HV reservoir capacitor (47 uF 400 V can); stores a lethal charge"}
+  - {ref: R104, kind: resistor, value: 220k, tolerance: 0.05, family: metal_oxide_5pct, stage: psu_hv,
+     rating: "1 W", elements: {main: R104},
+     hint: "HV bleeder resistor across C104"}
+  - {ref: R105, kind: resistor, value: 10k, tolerance: 0.05, family: metal_oxide_5pct, stage: psu_hv,
+     rating: "1 W", elements: {main: R105},
+     hint: "First HV dropping resistor between C104 and C105"}
+  - {ref: C105, kind: electrolytic, value: 22u, tolerance: 0.20, family: alu_elec, stage: psu_hv,
+     rating: "400 V", elements: {main: C105, esr: RESR_C105},
+     hint: "First HV filter capacitor (22 uF 400 V)"}
+  - {ref: R106, kind: resistor, value: 22k, tolerance: 0.05, family: metal_oxide_5pct, stage: psu_hv,
+     rating: "1 W", elements: {main: R106},
+     hint: "Second HV dropping resistor between C105 and C106"}
+  - {ref: C106, kind: electrolytic, value: 22u, tolerance: 0.20, family: alu_elec, stage: psu_hv,
+     rating: "400 V", elements: {main: C106, esr: RESR_C106},
+     hint: "B+ decoupling capacitor at the triode stage (22 uF 400 V)"}
+test_points:
+  - {id: TP1, node: vunreg, name: "Unregulated LV rail", stage: psu_lv, hv: false,
+     measurements: [dc, hum], hint: "Positive terminal of C101"}
+  - {id: TP2, node: vz, name: "Zener reference", stage: psu_lv, hv: false,
+     measurements: [dc, hum], hint: "Banded end of D101 (also the base of Q101)"}
+  - {id: TP3, node: vreg, name: "Regulated +15 V rail", stage: psu_lv, hv: false,
+     measurements: [dc, hum], hint: "Emitter of Q101 (left pin), positive terminal of C103"}
+  - {id: TP4, node: hv1, name: "HV reservoir", stage: psu_hv, hv: true,
+     measurements: [dc, hum], hint: "Positive terminal of C104"}
+  - {id: TP5, node: hv2, name: "HV filter node", stage: psu_hv, hv: true,
+     measurements: [dc, hum], hint: "Junction of R105 and R106, positive terminal of C105"}
+  - {id: TP6, node: bplus, name: "B+ to triode stage", stage: psu_hv, hv: true,
+     measurements: [dc, hum], hint: "Junction of R106 and R203, positive terminal of C106"}

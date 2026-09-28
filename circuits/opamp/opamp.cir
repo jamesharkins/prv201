@@ -1,0 +1,52 @@
+* Differential reference circuit - Block 4: op-amp make-up gain stage (standalone)
+* ---------------------------------------------------------------------------
+* Original generic design written for this project. Single-supply non-inverting
+* amplifier (gain 1 + R404/R405 = 11) biased at half supply by R402/R403 with
+* C402 decoupling; R401 references the input to the bias node; C403 sets unity
+* DC gain; R406 isolates the output; C404 couples to the next stage; C405 is
+* the supply decoupling capacitor; R407 holds the output at 0 V DC. U401 is the behavioural op-amp in
+* circuits/lib/devices.lib (GBW 3 MHz, output within 1.5 V of each rail).
+* Parameter nodes: pgbw_u401 (MHz), pdead_u401, prail_u401.
+* Fixtures: 15.3 V bench supply, source with 20k output impedance (tone-control
+* output), 20k load (line-driver input).
+* Run standalone: ngspice -b circuits/opamp/opamp.cir
+* ---------------------------------------------------------------------------
+.include ../lib/devices.lib
+
+* ---- Fixtures ----
+VREG_BENCH vreg 0 DC 15.33
+VIN_O op_src 0 DC 0 AC 1 SIN(0 0.0636 1k)
+RSRC_O op_src tone_out 20k
+RLOAD_DRV drv_in 0 20k
+
+* ---- Op-amp stage ----
+C401 tone_out op_in 1u
+R401 op_in vref 100k
+R402 vreg vref 22k
+R403 vref 0 22k
+C402 vref c402_esr 47u
+RESR_C402 c402_esr 0 3.95
+XU401 op_in op_fb op_pin vreg 0 pgbw_u401 pdead_u401 prail_u401 OPAMP_BEH
+VPGBW_U401 pgbw_u401 0 DC 3
+VPDEAD_U401 pdead_u401 0 DC 0
+VPRAIL_U401 prail_u401 0 DC 1
+R404 op_pin op_fb 100k
+R405 op_fb r405_c 10k
+C403 r405_c c403_esr 22u
+RESR_C403 c403_esr 0 8.44
+R406 op_pin op_out 100
+C404 op_out c404_esr 10u
+RESR_C404 c404_esr drv_in 13.3
+C405 vreg 0 100n
+R407 drv_in 0 100k
+
+.control
+set noaskquit
+op
+print v(op_in) v(op_fb) v(op_pin) v(op_out) v(vref) v(drv_in)
+ac lin 1 1000 1000
+print mag(v(op_pin)) mag(v(drv_in))
+ac lin 1 20000 20000
+print mag(v(drv_in))
+.endc
+.end

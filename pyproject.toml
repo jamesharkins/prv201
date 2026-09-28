@@ -1,0 +1,99 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "differential"
+version = "0.1.0"
+description = "Simulation-grounded AI diagnosis for analog audio electronics (PRV 201 team project)"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [{ name = "Differential team (see team.yaml)" }]
+# Exact pins: every number in the reports must be reproducible from a clean install.
+dependencies = [
+    "numpy==2.4.6",
+    "scipy==1.17.1",
+    "pandas==3.0.6",
+    "pyarrow==25.0.1",
+    "scikit-learn==1.9.1",
+    "lightgbm==4.7.0",
+    "matplotlib==3.11.2",
+    "schemdraw==0.23",
+    "pyyaml==6.0.3",
+    "jinja2==3.1.6",
+    "pydantic==2.13.5",
+    "fastapi==0.141.1",
+    "starlette==1.7.0",
+    "uvicorn==0.54.0",
+    "python-multipart==0.0.32",
+    "httpx==0.28.1",
+    "anthropic==1.9.0",
+    "opencv-python-headless==5.0.0.93",
+    "pillow==12.3.0",
+    "pyvisa==1.16.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
+    "ruff==0.16.9",
+    "mypy==2.3.1",
+    "types-pyyaml==6.0.12.20260906",
+]
+docs = [
+    "typst==0.15.0",
+    "python-pptx==1.0.2",
+    "playwright==1.63.0",
+]
+
+[project.scripts]
+differential = "differential.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["differential*", "eval*"]
+
+[tool.setuptools.package-data]
+"differential.app" = ["static/**/*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["data", "results", "submissions", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501", "RUF001", "RUF002", "RUF003"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = ["^data/", "^results/", "^submissions/", "^tests/"]
+
+# Strict typing on the core packages (brief §2.11).
+[[tool.mypy.overrides]]
+module = [
+    "differential.circuits.*",
+    "differential.sim.*",
+    "differential.engine.*",
+    "differential.safety.*",
+    "differential.instruments.*",
+]
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "slow: tests that run ngspice over many draws",
+]
+
+[tool.coverage.run]
+source = ["differential"]
+omit = ["differential/app/static/*"]
+
+[tool.coverage.report]
+show_missing = false
+skip_covered = true

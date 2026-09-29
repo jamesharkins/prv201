@@ -12,31 +12,31 @@
 <% set P4 = "Part 4 — Preliminary AI approach, risks and ethics" %>
 This supplement accompanies the M1 problem statement. The statement stands on its own; nothing here is needed to read it.
 
-#heading(level: 1, numbering: none)[Industry watch, September 2026]
+#heading(level: 1, numbering: none)[Industry watch, September 2026: breakthroughs, launches, regulation and investment]
 
 - *Frontier models score highly on textbook analog questions.* The top Razavi-Bench model scored 95.50%, graded by another language model, and the benchmark has an experimental simulator-assisted mode << cite('razavi_bench_2026') >>. A bench tool must add what textbooks do not test: tolerances, ambiguity between faults, the cost of each measurement and safety. T5 compares the full system with such a model working alone.
 - *IBM Maximo 9.2 (June 2026)* adds agentic workflows and an MCP server through which customers can connect their own agents << cite('ibm_mas_92_2026') >>, a possible route for a diagnosis engine into industrial repair depots.
 - *EU AI Act transparency rules apply from 2 August 2026* << cite('ec_ip_26_1714') >>; the 2026 amendments moved the Annex III high-risk rules to 2 December 2027 << cite('eu_ai_omnibus_2026_1744') >> and keep a duty on providers and deployers to support their staff's AI literacy << cite('eu_ai_act_consolidated_2026') >>. They would bind Differential only once offered in the EU.
 - *Colorado re-enacted its AI law* as a regime for automated decision-making technology in consequential decisions, approved on 14 May 2026 and in force from 1 January 2027 << cite('co_sb26_189') >>. A shop that used repair tickets to decide about its staff could come within such rules; Differential's license forbids that use.
-- *Claude Sonnet 5.5 was released on 28 September 2026* << cite('claude_sonnet_5_5_overview') >>. Models change quickly, so Differential pins its model, caches responses and re-runs its safety and grounding targets (T15-T19) on any change.
+- *Investment is flowing to AI for the trades, starting with dispatch.* Probook announced \$40 million on 23 June 2026, a \$34 million Series A led by Andreessen Horowitz and a \$6 million seed round led by Sequoia, for an AI operating system for HVAC, plumbing and electrical contractors that it built dispatch-first << cite('probook_series_a_2026') >>. Our reading: investors are funding AI for scheduling and dispatch in repair businesses, while the diagnosis a technician does at the bench is not what this money buys; that is the gap Differential addresses, and repair businesses may meet AI first in their front office.
 
 #heading(level: 1, numbering: none)[Course coverage map]
 #figure(
   table(
     columns: (0.25fr, 1.0fr, 2.9fr, 0.62fr),
     table.header([Wk], [Topic], [Where the project uses it], [Depth]),
-    [2], [AI/ML algorithms], [Bayesian inference, Gaussian mixtures, boosted trees, information-gain measurement choice (<< P4 >>)], [Core],
-    [3], [Python], [The simulation, engine and evaluation code that produces every number in the statement (repository); no code appears in the statement itself], [Core (code)],
-    [4], [Large language models], [Chat-model benchmark scores (<< P1 >>); the language-model baselines (<< P3 >>; T5); why language models guess (<< P4 >>)], [Core],
-    [5], [LLM-enhanced agents], [An assistant whose tools act only on the diagnosis session; complaint reading and explanation (<< P4 >>)], [Supporting],
+    [2], [Introduction to AI/ML algorithms], [Bayesian inference, Gaussian mixtures, boosted trees, information-gain measurement choice (<< P4 >>)], [Core],
+    [3], [Python, the AI/ML lingua franca], [The simulation, engine and evaluation code that produces every number in the statement (repository); no code appears in the statement itself], [Core (code)],
+    [4], [Introduction to large language models], [Chat-model benchmark scores (<< P1 >>); the language-model baselines (<< P3 >>; T5); why language models guess (<< P4 >>)], [Core],
+    [5], [Building LLM-enhanced agents], [An assistant whose tools act only on the diagnosis session; complaint reading and explanation (<< P4 >>)], [Supporting],
     [6], [Building ML systems], [Pilots, locked targets with confidence bounds, stress sets, hardware protocol (<< P3 >>)], [Core],
-    [7], [NLP], [Complaint reading with noise; sealed paraphrase bank (<< P3 >>; T18)], [Supporting],
-    [8], [Image recognition], [Meter-photo reading scored on value, unit and mode (T19)], [Supporting],
-    [9], [Facial recognition (bias auditing)], [Error breakdown by who bears the errors: complaint writers, technicians, owners of undocumented gear (<< P4 >>)], [Supporting],
+    [7], [Introduction to natural language processing], [Complaint reading with noise; sealed paraphrase bank (<< P3 >>; T18)], [Supporting],
+    [8], [Image recognition systems], [Meter-photo reading scored on value, unit and mode (T19)], [Supporting],
+    [9], [Facial recognition systems (accuracy, bias, deployment)], [Error breakdown, as in face-recognition audits, by who bears the errors: complaint writers, technicians, owners of undocumented gear (<< P4 >>)], [Supporting],
     [10], [Autonomous transportation], [Five levels of diagnostic autonomy, L0 (the technician does everything) to L4 (an unattended fixture), defined by analogy to driving automation; Differential placed at L2 on safety and accountability grounds (<< P4 >>)], [Supporting],
-    [11], [Robotics], [Not covered. Reading bench instruments over SCPI is test automation, not robotics], [None],
-    [12], [Cybersecurity], [Prompt injection, untrusted data, session-only tools, adversarial prompts (<< P4 >>; T16)], [Core],
-    [13], [Ethics and governance], [Hazard audit, OSHA, liability, EU AI Act and product liability, research ethics, NIST AI RMF (<< P1 >>, << P4 >>)], [Core],
+    [11], [Introduction to robotics], [A sense-decide loop without actuation: instruments sense (SCPI on the 24 V boards), the engine decides the next measurement and a person acts; automated test fixtures (levels L3-L4) would add the actuation (<< P4 >>)], [Partial],
+    [12], [AI in cybersecurity and fraud detection], [Anomaly detection: the calibrated "no single fault fits" outcome flags units outside the catalog (<< P3 >>; T13, T22); prompt injection, untrusted data, session-only tools and adversarial prompts (<< P4 >>; T16)], [Core],
+    [13], [Ethics of AI: risks, responsibility and governance], [Hazard audit, OSHA, liability, EU AI Act and product liability, research ethics, NIST AI RMF (<< P1 >>, << P4 >>)], [Core],
   ),
   caption: [Course topics and where the project uses them, with parts named by title.],
 )

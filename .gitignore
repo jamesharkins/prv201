@@ -29,3 +29,8 @@ data/models/*/discriminative.txt
 # Smoke-test run cache (pilot splits, 8 units)
 data/eval/runs/*__8.parquet
 data/sim_old_rpk/
+
+# The official syllabus stays out of this public repository (it carries the
+# instructor's contact details); the team has it on Canvas. course/SYLLABUS_NOTES.md
+# summarises what the project uses from it.
+course/*.pdf

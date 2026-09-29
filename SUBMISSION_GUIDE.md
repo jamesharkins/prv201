@@ -5,6 +5,24 @@ hardware is done. This page lists what only the team can do, in the order that
 matters, with the exact commands. Each milestone folder (`submissions/M*/`) also
 has its own `SUBMIT.md`.
 
+## 0. When each milestone is due (from the syllabus)
+
+Work listed in a week is due by the start of the following class
+(`course/SYLLABUS_NOTES.md`).
+
+| Milestone | Listed in week | Due |
+|---|---|---|
+| M1 - Problem statement | 5 | start of week 6's class |
+| M2 - Design / approach | 7 | start of week 8's class |
+| M3 - Prototype / draft | 10 | start of week 11's class |
+| M4 - Peer review | 12 | start of week 13's class |
+| M5 - final milestone and video (non-finalist teams) | 13 | end of week 13; finalists present in week 14 |
+
+Each milestone is graded as a team, then per signed part (100% for a full, meaningful
+part, 50% for a partial one, 0% for none). An AI model reads each submission first,
+after names and emails are stripped; its read is a reference only, and a human grader
+enters the score that counts.
+
 ## 1. Before any submission
 
 1. **Put your names in `team.yaml`** (replace `MEMBER_1` ... `MEMBER_4`; keep the

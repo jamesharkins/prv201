@@ -1,9 +1,10 @@
 # Derived rubric
 
-Used because no official rubric was present in `course/` at build time
-(ADR-001). Built from the course outcomes and milestone descriptions in the
-brief; point totals match the syllabus. **Applies to every milestone:** each
-signed part must independently qualify as a full, meaningful contribution.
+Used because the course has published no per-line rubric (ADR-001). The
+official syllabus (received 2026-09-29; `course/SYLLABUS_NOTES.md`, ADR-038)
+confirms the point totals below and states the four course outcomes these lines
+are built from. **Applies to every milestone:** each signed part must independently
+qualify as a full, meaningful contribution (the syllabus's signed-part rule).
 
 ## M1 - Problem statement (25)
 

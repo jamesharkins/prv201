@@ -648,3 +648,27 @@ deleted.
   between the two engines is a comparison of the belief they hold and the names they give,
   with a shared way of choosing; M1 and M2 describe it that way. Decided before the lock
   and before any test unit was run.
+
+## ADR-038 - Official syllabus received
+
+- **Context.** On 2026-09-29 the team supplied the official PRV 201 syllabus (three
+  pages). Until then `course/` was empty and the project worked from the brief
+  (ADR-001). The repository is public and the syllabus carries the instructor's contact
+  details.
+- **Decision.** (1) The PDF is kept locally (`course/PRV201_Syllabus.pdf`, git-ignored);
+  `course/SYLLABUS_NOTES.md` now restates the syllabus: the four course outcomes
+  (quoted), the objectives, grading weights and points, the signed-part rule, the AI
+  preliminary read (a reference only; a human grader enters the score) and the weekly
+  schedule with milestone weeks. (2) The syllabus confirms the milestone point totals
+  (25, 45, 64, 22, 84) and gives no per-line rubric, so the derived line items stay in
+  use. (3) Reviewer kits from round 5 on carry the new notes, so the course-professor
+  persona judges against the four stated outcomes. (4) The course objectives name
+  "technological breakthroughs, regulatory actions and investment trends"; each
+  milestone's industry watch now covers all three (M1: an investment item replaces
+  the model-release item). (5) The coverage map uses the syllabus's week titles; week
+  12 ("AI in cybersecurity / fraud detection": threats, anomalies, fraud) now also maps
+  the "no single fault fits" detector as anomaly detection; week 11 is a partial link
+  (sensing and decision without actuation).
+- **Consequences.** Due weeks go into `SUBMISSION_GUIDE.md`: M1 at the start of week
+  6's class, M2 week 8, M3 week 11, M4 week 13, final milestone and videos
+  (non-finalists) at the end of week 13, presentations for finalists in week 14.

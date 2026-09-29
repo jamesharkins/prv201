@@ -1194,3 +1194,19 @@
     - claim: "BCG estimates applied AI and agents could deliver 15%+ revenue and 5+ point gross-margin impact in field service."
       quote: "There is an opportunity to drive 15%+ revenue impact and 5pp+ gross margin impact through applied AI and AI agents in field service."
   notes: "Consultancy estimate (not independently verified). Earlier edition (March 2025): https://media-publications.bcg.com/BCG-Executive-Perspectives-Future-of-Field-Service-with-AI-2025-EP13-18Mar2025.pdf"
+
+- key: probook_series_a_2026
+  type: press_release
+  authors: ["Probook"]
+  title: "Probook Raises $40M from Andreessen Horowitz and Sequoia to Scale the AI Operating System for Home Services"
+  publisher: "GlobeNewswire"
+  date: "2026-06-23"
+  url: "https://www.globenewswire.com/news-release/2026/6/23/3316215/0/en/Probook-Raises-40M-from-Andreessen-Horowitz-and-Sequoia-to-Scale-the-AI-Operating-System-for-Home-Services.html"
+  accessed: "2026-09-29"
+  verified: search_snippet_only
+  claims:
+    - claim: "Probook announced $40 million in funding on June 23, 2026: a $34 million Series A led by Andreessen Horowitz and a $6 million seed round led by Sequoia Capital."
+      quote: "Probook, the AI Operating System for home service businesses, announced $40 million in funding on June 23, 2026. The investment comprises a $34 million Series A led by Andreessen Horowitz (a16z) and a $6 million Seed round led by Sequoia Capital."
+    - claim: "Probook builds an AI operating system for HVAC, plumbing and electrical contractors, built dispatch first."
+      quote: "The company is building what is called an AI operating system for home service businesses—the HVAC shops, plumbing outfits, and electrical contractors that collectively power a $700 billion industry. Probook built dispatch first"
+  notes: "Page fetch blocked by the build network (GlobeNewswire, Crunchbase News); facts confirmed from search results that summarise the press release, Fortune's exclusive of 2026-06-23 (https://fortune.com/2026/06/23/exclusive-this-startup-wants-to-be-the-ai-brain-for-home-services-and-it-just-raised-40-million-from-sequoia-and-a16z/) and syndicated copies (HVAC Insider, National Law Review). The $700 billion industry figure is the company's own framing and is not quoted in our documents."

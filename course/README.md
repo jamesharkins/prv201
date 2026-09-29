@@ -1,11 +1,12 @@
 # Course materials
 
-Place the PRV 201 syllabus, the course-structure slides and (if the course
-publishes one) the official rubric in this folder. If a file matching
-`course/*rubric*` exists, it replaces `rubric/derived_rubric.md` everywhere the
-project refers to "the rubric".
+The official PRV 201 syllabus was received on 2026-09-29. It is kept locally as
+`course/PRV201_Syllabus.pdf` but is not committed (this repository is public and the
+syllabus carries the instructor's contact details); `SYLLABUS_NOTES.md` restates what
+the project uses from it: the course outcomes, the grading weights and points, the
+signed-part rule, the AI preliminary read and the weekly schedule.
 
-At build time (2026-09-28) this folder was empty in the repository, so the
-project used the derived rubric in `rubric/derived_rubric.md` (see
-`docs/DECISIONS.md`, ADR-001). `SYLLABUS_NOTES.md` records what the project
-brief states about the course; it is a stand-in, not the official syllabus.
+The syllabus confirms the milestone point totals but gives no per-line rubric, so the
+line items in `rubric/derived_rubric.md` stay in use (ADR-001, ADR-038). If the course
+publishes an official rubric, place it here as a file matching `course/*rubric*`; it
+then replaces the derived rubric everywhere the project refers to "the rubric".

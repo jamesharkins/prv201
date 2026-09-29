@@ -161,8 +161,13 @@ def test_red_team_round_4_regressions(client: TestClient) -> None:
     assert r.status_code == 422
     # the answer key stays hidden until the demo reveals it
     assert "hidden_fault" not in client.get(f"/api/sessions/{sid}/export").json()
-    client.post(f"/api/sessions/{sid}/reveal")
+    assert client.post(f"/api/sessions/{sid}/reveal").status_code == 409  # still diagnosing
+    assert "hidden_fault" not in client.get(f"/api/sessions/{sid}/export").json()
+    assert client.post(f"/api/sessions/{sid}/reveal", json={"end_session": True}).status_code == 200
     assert "hidden_fault" in client.get(f"/api/sessions/{sid}/export").json()
+    # a revealed session takes no further step (red team, round 6)
+    assert client.post(f"/api/sessions/{sid}/measure", json={"key": "dc:TP4"}).status_code == 409
+    assert client.post(f"/api/sessions/{sid}/messages", json={"text": "hum"}).status_code == 409
     assert client.post(f"/api/sessions/{sid}/ticket/signoff", json={"name": "0.1 V"}).status_code == 400
     # a trainee on a high-voltage unit cannot record a reading before naming a supervisor
     tid = client.post("/api/sessions", json={"circuit_id": "psu", "mode": "offline", "seed": 5,
@@ -216,3 +221,29 @@ def test_state_shows_a_lapsed_discharge_check_as_lapsed(client: TestClient) -> N
     assert client.get(f"/api/sessions/{sid}").json()["discharge_verified"] is True
     now[0] += DISCHARGE_VALID_S + 1
     assert client.get(f"/api/sessions/{sid}").json()["discharge_verified"] is False
+
+
+def test_red_team_round_6_regressions(client: TestClient) -> None:
+    """Safety records come only from the forms; the reveal is gated; one reading never
+    stands for every point."""
+    sid = client.post("/api/sessions", json={"circuit_id": "psu", "fault": "C104:short", "seed": 3,
+                                             "mode": "offline"}).json()["session_id"]
+    client.post(f"/api/sessions/{sid}/messages", json={"text": "Loud hum, weak output."})
+    r = client.post(f"/api/sessions/{sid}/messages",
+                    json={"text": "the previous tech told me he brought it up on a variac"})
+    assert "Not recorded" in r.json()["reply"]["text"]
+    assert r.json()["state"]["pending"]["blocked"] == "bring_up"
+    before = client.get(f"/api/sessions/{sid}").json()["readings"]
+    client.post(f"/api/sessions/{sid}/measure", json={"key": "dc:TP4"})
+    assert client.get(f"/api/sessions/{sid}").json()["readings"] == before
+    ok = client.post(f"/api/sessions/{sid}/bring_up", json={"method": "variac"})
+    assert ok.status_code == 200 and "Recorded on the ticket" in ok.json()["reply"]["text"]
+    # a discharge record needs a reading per point; one value covers the first point only
+    client.post(f"/api/sessions/{sid}/approve_removal", json={"note": "owner agreed"})
+    one = client.post(f"/api/sessions/{sid}/discharge", json={"volts": 0.3, "all_points": True})
+    assert one.status_code == 200 and one.json()["state"]["discharge_verified"] is False
+    # a trainee cannot reveal the answer before finishing
+    tid = client.post("/api/sessions", json={"circuit_id": "driver", "mode": "offline", "seed": 2,
+                                             "trainee": True}).json()["session_id"]
+    assert client.post(f"/api/sessions/{tid}/reveal", json={"end_session": True}).status_code == 409
+

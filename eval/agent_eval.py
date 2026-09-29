@@ -40,13 +40,19 @@ def run_case(row: dict[str, Any], complaint: str, mode: str) -> dict[str, Any]:
         key = agent.pending_key
         if key is None:
             break
+        # safety records come from the app's forms, never from chat text (red team, round 6)
+        if key == "bring_up":
+            agent.record_bring_up("variac", "evaluation: brought up on a variac")
+            continue
         if key == "approval":
-            agent.user_message("The owner approved removing parts for testing.")
+            agent.record_owner_approval("evaluation: the owner agreed")
             continue
         if key == "discharge":
             pts = discharge_points(str(row["circuit"]))
-            agent.user_message("Discharged; " + ", ".join(f"{tp} 0.3 V" for tp in pts) + ".")
+            agent.record_discharge(dict.fromkeys(pts, 0.3))
             continue
+        if key in ("supervisor", "guess"):  # trainee mode only; the evaluation is a technician
+            break
         agent.measure(key)
     ticket = agent.ticket()
     groups = agent.tb.bundle.groups

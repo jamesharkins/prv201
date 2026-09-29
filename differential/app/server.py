@@ -62,6 +62,15 @@ def _session(sid: str) -> dict[str, Any]:
     return s
 
 
+def _open(sid: str) -> dict[str, Any]:
+    """A session that can still take steps: once its hidden fault is revealed it is over
+    (red team, round 6), so the answer can never feed back into the diagnosis."""
+    s = _session(sid)
+    if s.get("revealed"):
+        raise HTTPException(409, "session ended: the hidden fault was revealed; start a new unit")
+    return s
+
+
 def _turn(t: Turn) -> dict[str, Any]:
     return {"role": t.role, "text": t.text, "t": t.t, "meta": t.meta}
 
@@ -181,9 +190,9 @@ class Measure(BaseModel):
 
 
 class Discharge(BaseModel):
-    volts: FiniteFloat | None = None
+    volts: FiniteFloat | None = None  # counts for the first point only
     readings: dict[str, FiniteFloat] | None = Field(None, max_length=40)
-    all_points: bool = False
+    bleeder: bool = False
 
 
 class Approval(BaseModel):
@@ -282,14 +291,14 @@ def get_state(sid: str) -> dict[str, Any]:
 
 @app.post("/api/sessions/{sid}/messages")
 def post_message(sid: str, msg: Message) -> dict[str, Any]:
-    s = _session(sid)
+    s = _open(sid)
     reply = s["agent"].user_message(msg.text)
     return {"reply": _turn(reply), "state": _state(s)}
 
 
 @app.post("/api/sessions/{sid}/measure")
 def measure(sid: str, req: Measure) -> dict[str, Any]:
-    s = _session(sid)
+    s = _open(sid)
     agent: DifferentialAgent = s["agent"]
     if req.key not in agent.tb.engine._obs:
         raise HTTPException(400, f"unknown measurement {req.key}")
@@ -299,37 +308,28 @@ def measure(sid: str, req: Measure) -> dict[str, Any]:
 
 @app.post("/api/sessions/{sid}/readings")
 def reading(sid: str, req: Reading) -> dict[str, Any]:
-    s = _session(sid)
+    s = _open(sid)
     reply = s["agent"].reading_event(req.key, req.value, source="technician")
     return {"reply": _turn(reply), "state": _state(s)}
 
 
 @app.post("/api/sessions/{sid}/discharge")
 def discharge(sid: str, req: Discharge) -> dict[str, Any]:
-    s = _session(sid)
+    s = _open(sid)
     agent: DifferentialAgent = s["agent"]
-    args: dict[str, Any] = {"all_points": req.all_points}
-    if req.readings:
-        args["readings"] = req.readings
-    if req.volts is not None:
-        args["volts"] = req.volts
-    if "readings" not in args and "volts" not in args:
-        raise HTTPException(400, "give readings per test point or one reading")
-    res = agent.tb.call("confirm_discharge", args)
-    if "error" in res:
-        raise HTTPException(400, res["error"])
-    text = res["message"]
-    if res.get("verified"):
-        agent.pending_key = None
-        text += "\n\n" + agent._next_step()
-    reply = agent._reply(text)
+    if not req.readings and req.volts is None:
+        raise HTTPException(400, "give a reading per test point")
+    try:
+        reply = agent.record_discharge(req.readings, req.volts, bleeder=req.bleeder)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
     return {"reply": _turn(reply), "state": _state(s)}
 
 
 @app.post("/api/sessions/{sid}/guess")
 def guess(sid: str, req: Guess) -> dict[str, Any]:
     """Trainee mode: the trainee's own choice of next measurement, before the tool's."""
-    s = _session(sid)
+    s = _open(sid)
     agent: DifferentialAgent = s["agent"]
     if req.key not in agent.tb.engine._obs:
         raise HTTPException(400, f"unknown measurement {req.key}")
@@ -339,7 +339,7 @@ def guess(sid: str, req: Guess) -> dict[str, Any]:
 
 @app.post("/api/sessions/{sid}/supervisor")
 def supervisor(sid: str, req: Supervisor) -> dict[str, Any]:
-    s = _session(sid)
+    s = _open(sid)
     try:
         reply = s["agent"].name_supervisor(req.name)
     except ValueError as exc:
@@ -351,36 +351,28 @@ def supervisor(sid: str, req: Supervisor) -> dict[str, Any]:
 def bring_up(sid: str, req: BringUp) -> dict[str, Any]:
     """How the unit was first powered: variac, series lamp, current-limited supply or
     already running normally (ADR-042); recorded on the ticket."""
-    s = _session(sid)
-    agent: DifferentialAgent = s["agent"]
-    res = agent.tb.call("confirm_bring_up", {"method": req.method, "note": req.note})
-    if "error" in res:
-        raise HTTPException(400, str(res["error"]))
-    text = res["message"]
-    if agent.pending_key == "bring_up":
-        agent.pending_key = None
-        text += "\n\n" + agent._next_step()
-    reply = agent._reply(text)
+    s = _open(sid)
+    try:
+        reply = s["agent"].record_bring_up(req.method, req.note)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
     return {"reply": _turn(reply), "state": _state(s)}
 
 
 @app.post("/api/sessions/{sid}/approve_removal")
 def approve_removal(sid: str, req: Approval) -> dict[str, Any]:
     """The owner has agreed that parts may be removed for testing (recorded on the ticket)."""
-    s = _session(sid)
-    agent: DifferentialAgent = s["agent"]
-    res = agent.tb.call("approve_part_removal", {"note": req.note})
-    text = res["message"]
-    if agent.pending_key == "approval":
-        agent.pending_key = None
-        text += "\n\n" + agent._next_step()
-    reply = agent._reply(text)
+    s = _open(sid)
+    try:
+        reply = s["agent"].record_owner_approval(req.note)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
     return {"reply": _turn(reply), "state": _state(s)}
 
 
 @app.post("/api/sessions/{sid}/photos")
 async def photo(sid: str, file: UploadFile = File(...)) -> dict[str, Any]:  # noqa: B008
-    s = _session(sid)
+    s = _open(sid)
     data = await file.read()
     if len(data) > MAX_PHOTO_BYTES:
         raise HTTPException(413, "photo too large")
@@ -398,7 +390,7 @@ async def photo(sid: str, file: UploadFile = File(...)) -> dict[str, Any]:  # no
 
 @app.post("/api/sessions/{sid}/photos/{pid}/confirm")
 def confirm_photo(sid: str, pid: str, req: Reading) -> dict[str, Any]:
-    s = _session(sid)
+    s = _open(sid)
     agent: DifferentialAgent = s["agent"]
     if pid not in agent.tb.photos:
         raise HTTPException(404, "unknown photo")
@@ -421,10 +413,22 @@ def signoff(sid: str, req: SignOff) -> dict[str, Any]:
     return dict(agent.ticket())
 
 
+class Reveal(BaseModel):
+    end_session: bool = False
+
+
 @app.post("/api/sessions/{sid}/reveal")
-def reveal(sid: str) -> dict[str, Any]:
-    """Demo only: show the hidden fault of the simulated unit after the diagnosis."""
+def reveal(sid: str, req: Reveal | None = None) -> dict[str, Any]:
+    """Demo only: show the hidden fault of the simulated unit. Before the diagnosis stops,
+    only with ``end_session`` (the session then takes no further step), and never in
+    trainee mode (red team, round 6)."""
     s = _session(sid)
+    agent: DifferentialAgent = s["agent"]
+    done = bool(agent.tb.t_get_belief().get("would_stop"))
+    if not done and agent.tb.trainee:
+        raise HTTPException(409, "finish the diagnosis before the fault is revealed (trainee mode)")
+    if not done and not (req and req.end_session):
+        raise HTTPException(409, "the diagnosis is still running: reveal with end_session to end it")
     bench: SimulatedBench = s["bench"]
     s["revealed"] = {"fault": bench.hypothesis, "label": fault_label(bench.hypothesis)}
     return _state(s)

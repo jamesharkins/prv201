@@ -37,6 +37,8 @@ NUMBER_RE = re.compile(
     flags=re.IGNORECASE,
 )
 IDENT_RE = re.compile(r"\b(?:[A-Za-z]{1,4}\d+[A-Za-z0-9]*|\d+[A-Za-z]{1,3}\d+[A-Za-z0-9]*)\b")
+# Dates and clock times (a record's timestamp) are not readings (red team, round 6).
+STAMP_RE = re.compile(r"\b\d{4}-\d{2}-\d{2}(?:[ T]\d{1,2}:\d{2}(?::\d{2})?)?\b|\b\d{1,2}:\d{2}(?::\d{2})?\b")
 SMALL_COUNT_MAX = 12
 
 
@@ -92,6 +94,7 @@ def _to_float(s: str) -> float | None:
 
 def find_numbers(text: str) -> list[NumberMention]:
     idents = [(m.start(), m.end()) for m in IDENT_RE.finditer(text)]
+    idents += [(m.start(), m.end()) for m in STAMP_RE.finditer(text)]
     out = []
     for m in NUMBER_RE.finditer(text):
         if any(a <= m.start() < b for a, b in idents):

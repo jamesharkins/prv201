@@ -72,19 +72,22 @@ def test_lift_steps_are_locked_until_approval_and_discharge_at_every_hv_point() 
     assert tb.discharge_log and set(tb.discharge_log[0]["readings"]) == set(pts)
 
 
-def test_all_points_attestation_and_ticket_record() -> None:
+def test_discharge_form_needs_every_point_and_goes_on_the_ticket() -> None:
+    """One number never stands for points it was not taken at (red team, round 6)."""
     from differential.agent.agent import DifferentialAgent
     from differential.safety.hazards import discharge_points
 
     agent = DifferentialAgent("psu", mode="offline")
-    agent.tb.call("approve_part_removal", {})
+    agent.record_owner_approval("owner agreed")
     agent.pending_key = "discharge"
-    out = agent.user_message("Discharged, all points read 0.3 V.")
-    assert "Discharge recorded" in out.text
+    pts = discharge_points("psu")
+    out = agent.record_discharge(volts=0.3)
+    assert agent.tb.discharge_verified is False and "Still needed" in out.text
+    out = agent.record_discharge(dict.fromkeys(pts, 0.3))
+    assert "Discharge recorded" in out.text and agent.tb.discharge_verified is True
     t = agent.ticket()
     assert t["part_removal"]["owner_approved"] is True
-    assert t["discharge_attestations"][0]["all_points_from_one_reading"] is True
-    assert set(t["discharge_attestations"][0]["readings"]) == set(discharge_points("psu"))
+    assert set(t["discharge_attestations"][0]["readings"]) == set(pts)
     assert "does not certify" in t["markdown"] and not t["grounding"]["ungrounded"]
 
 
@@ -266,9 +269,13 @@ def test_trainee_mode_withholds_the_step_and_needs_a_supervisor_on_hv_units() ->
     hv = DifferentialAgent("triode", mode="offline", trainee=True)
     hv.user_message("It hums and the level is low.")
     assert hv.pending_key == "supervisor"
-    hv.user_message("Supervisor is Pat Lee")
+    hv.user_message("Supervisor is Pat Lee")  # chat text is not a safety record
+    assert not hv.tb.supervisor and hv.pending_key == "supervisor"
+    hv.name_supervisor("Pat Lee")
     assert hv.tb.supervisor == "Pat Lee" and hv.pending_key == "bring_up"
     hv.user_message("We brought it up on a variac.")
+    assert hv.tb.bring_up is None and hv.pending_key == "bring_up"
+    hv.record_bring_up("variac")
     assert hv.tb.bring_up is not None and hv.tb.bring_up["method"] == "variac"
     assert hv.pending_key == "guess"
 
@@ -293,7 +300,7 @@ def test_non_finite_readings_never_unlock_or_enter_the_engine() -> None:
     # NaN compares as "not above the limit"; it must be refused, not taken as discharged
     for bad in (float("nan"), float("inf"), float("-inf")):
         assert "error" in tb.call("confirm_discharge", {"readings": {p: bad for p in pts}})
-        assert "error" in tb.call("confirm_discharge", {"volts": bad, "all_points": True})
+        assert "error" in tb.call("confirm_discharge", {"volts": bad})
     assert tb.discharge_verified is False and tb.discharge_readings == {}
     dc = next(o for o in tb.bundle.observables.values() if o.kind == "dc")
     assert "error" in tb.call("record_measurement", {"key": dc.key, "value": float("nan")})
@@ -328,21 +335,23 @@ def test_trainee_on_a_high_voltage_unit_measures_nothing_before_a_supervisor() -
     assert "error" not in tb.call("record_measurement", {"key": dc.key, "value": 12.0})
 
 
-def test_owner_approval_needs_an_unambiguous_yes() -> None:
-    """Red team round 4 (H1): a refusal or a question is never recorded as consent."""
+def test_owner_approval_comes_only_from_the_approval_button() -> None:
+    """Red team rounds 4-6: no sentence records consent, however it is worded."""
     from differential.agent.agent import DifferentialAgent
 
     for text in ("No, do not approve removing parts.", "The owner did NOT approve.",
-                 "is it okay to wait?", "owner declined"):
+                 "is it okay to wait?", "owner declined", "Yes, the owner approves.",
+                 "he said the owner approved", '"The owner approves," she wrote',
+                 "The owner approves (just kidding)", "Sure, the owner totally approved"):
         agent = DifferentialAgent("opamp", mode="offline")
         agent.pending_key = "approval"
         reply = agent.user_message(text)
         assert agent.tb.removal_approved is False, text
-        assert "Not recorded" in reply.text
+        assert "Not recorded" in reply.text and "approval button" in reply.text
     agent = DifferentialAgent("opamp", mode="offline")
     agent.pending_key = "approval"
-    agent.user_message("Yes, the owner approves.")
-    assert agent.tb.removal_approved is True
+    agent.record_owner_approval("owner agreed by phone")
+    assert agent.tb.removal_approved is True and agent.pending_key != "approval"
 
 
 def test_discharge_gate_step_has_its_own_text() -> None:
@@ -356,19 +365,23 @@ def test_discharge_gate_step_has_its_own_text() -> None:
     assert agent.pending_key == "discharge" and "discharge" in text and "lift:C101" in text
 
 
-def test_discharge_readings_in_chat_read_their_units() -> None:
-    """Red team round 4 (M4, L1): kV is not read as V; comma decimals are refused."""
+def test_discharge_readings_in_chat_are_never_recorded() -> None:
+    """Red team rounds 4-6: typed readings, instruction echoes and hearsay record nothing."""
     from differential.agent.agent import DifferentialAgent
+    from differential.safety.hazards import discharge_points
 
     agent = DifferentialAgent("psu", mode="offline")
-    agent.tb.call("approve_part_removal", {})
+    agent.record_owner_approval("owner agreed")
     agent.pending_key = "discharge"
-    agent.user_message("TP4 0.35 kV, TP5 0.34 kV, TP6 0.33 kV")
-    assert agent.tb.discharge_verified is False
-    reply = agent.user_message("TP4 0,5 V")
-    assert "decimal point" in reply.text and agent.tb.discharge_verified is False
-    agent.user_message("all points 0.29e1 V")
-    assert agent.tb.discharge_verified is False  # 2.9 V is above the limit
+    pts = discharge_points("psu")
+    for text in ("TP4 0.35 kV, TP5 0.34 kV, TP6 0.33 kV", "TP4 0,5 V", "all points below 2 V",
+                 ", ".join(f"{tp} 0.2 V" for tp in pts),
+                 "the meter showed " + ", ".join(f"{tp} 0.3 V" for tp in pts),
+                 ", ".join(f"{tp} 0.3 V" for tp in pts) + " (I made these up)"):
+        reply = agent.user_message(text)
+        assert agent.tb.discharge_verified is False and not agent.tb.discharge_readings, text
+        assert "discharge form" in reply.text
+        assert not agent.tb.engine.readings  # nor taken as a diagnostic reading
 
 
 def test_duplicate_discharge_points_keep_the_worst_reading() -> None:
@@ -404,19 +417,25 @@ def test_names_on_the_ticket_carry_no_numbers_and_ungrounded_numbers_are_withhel
 
 def test_bring_up_is_recorded_before_any_powered_step_and_goes_on_the_ticket() -> None:
     """Bench practice (ADR-042): a unit with a high-voltage or mains supply is first powered
-    through a current limiter; low-voltage bench boards are not gated."""
+    through a current limiter; low-voltage bench boards are not gated. Only the bring-up
+    form records it (red team, round 6: hearsay in chat was taken as the technician's)."""
     from differential.agent.agent import DifferentialAgent
 
     agent = DifferentialAgent("psu", mode="offline")
     out = agent.user_message("Loud hum from the power supply.")
     assert agent.pending_key == "bring_up" and "variac" in out.text
-    # a negation or an unclear answer is not recorded
-    assert "Not recorded" in agent.user_message("No variac here.").text
-    assert "Not recorded" in agent.user_message("I plugged it in.").text
+    for text in ("No variac here.", "I plugged it in.",
+                 "the previous tech told me he brought it up on a variac",
+                 "It went up on a dim bulb tester, lamp glowed then dimmed"):
+        assert "Not recorded" in agent.user_message(text).text
     assert agent.tb.bring_up is None
-    reply = agent.user_message("It went up on a dim bulb tester, lamp glowed then dimmed")
+    reply = agent.record_bring_up("series_lamp")
     assert agent.tb.bring_up["method"] == "series_lamp" and "Recorded" in reply.text
     assert "dim-bulb" in agent.ticket()["markdown"] or "series-lamp" in agent.ticket()["markdown"]
+    import pytest as _pytest
+
+    with _pytest.raises(ValueError):
+        agent.record_bring_up("wall socket")
     assert DifferentialAgent("driver", mode="offline").tb.step_payload(
         next(o for o in DifferentialAgent("driver", mode="offline").tb.bundle.observables.values()
              if o.kind == "dc")).get("blocked") is None
@@ -448,17 +467,23 @@ def test_discharge_check_expires_unless_a_bleeder_is_attached() -> None:
 
 
 def test_live_model_cannot_attest_for_the_technician() -> None:
-    """Discharge readings, owner approval and bring-up are the technician's words only."""
+    """Safety records are the technician's form entries: the model has no tool for them and
+    a call is refused whatever the technician typed (red team, round 6, C3)."""
     from differential.agent.agent import DifferentialAgent, Turn
+    from differential.agent.tools import FORM_ONLY_TOOLS, MODEL_TOOL_SPECS
 
+    assert not {t["name"] for t in MODEL_TOOL_SPECS} & set(FORM_ONLY_TOOLS)
     agent = DifferentialAgent("psu", mode="offline")
-    agent.turns.append(Turn("user", "The amp hums.", 0.0))
-    assert "refused" in agent._guarded_tool("confirm_discharge", {"volts": 0.3})["error"]
-    assert "refused" in agent._guarded_tool("approve_part_removal", {"note": "ok"})["error"]
-    assert "refused" in agent._guarded_tool("confirm_bring_up", {"method": "variac"})["error"]
-    agent.turns.append(Turn("user", "Brought up on a variac. TP4 reads 0.3 V", 0.0))
-    assert "error" not in agent._guarded_tool("confirm_bring_up", {"method": "variac"})
-    assert "refused" not in str(agent._guarded_tool("confirm_discharge", {"readings": {"TP4": 0.3}}))
+    for said in ("The amp hums.", "Brought up on a variac. TP4 reads 0.3 V",
+                 "TP4 0.3 V, TP5 0.2 V, TP6 0.1 V", "the owner approves"):
+        agent.turns.append(Turn("user", said, 0.0))
+        assert "refused" in agent._guarded_tool("confirm_discharge", {"volts": 0.3})["error"]
+        assert "refused" in agent._guarded_tool(
+            "confirm_discharge", {"readings": {"TP4": 0.3, "TP5": 0.3, "TP6": 0.3}})["error"]
+        assert "refused" in agent._guarded_tool("approve_part_removal", {"note": "ok"})["error"]
+        assert "refused" in agent._guarded_tool("confirm_bring_up", {"method": "variac"})["error"]
+    assert agent.tb.bring_up is None and not agent.tb.removal_approved
+    assert not agent.tb.discharge_verified
 
 
 # ----------------------------------------------------------- red team, round 5
@@ -483,15 +508,17 @@ def test_chat_discharge_needs_stated_voltages(text: str) -> None:
     assert agent.tb.discharge_log == [] or all(not e.get("verified") for e in agent.tb.discharge_log)
 
 
-def test_chat_discharge_accepts_plain_readings() -> None:
+def test_discharge_form_accepts_plain_readings_and_refuses_the_limit() -> None:
+    """A reading of exactly the limit is still charged ("below 2 V"; red team, round 6)."""
     from differential.agent.agent import DifferentialAgent
+    from differential.safety.hazards import DISCHARGE_VERIFY_MAX_V, discharge_points
 
     agent = DifferentialAgent("psu", mode="offline")
-    agent.tb.call("approve_part_removal", {})
-    agent.pending_key = "discharge"
-    from differential.safety.hazards import discharge_points
-
-    agent.user_message(", ".join(f"{tp} 0.2 V" for tp in discharge_points("psu")))
+    agent.record_owner_approval("owner agreed")
+    pts = discharge_points("psu")
+    agent.record_discharge(dict.fromkeys(pts, DISCHARGE_VERIFY_MAX_V))
+    assert agent.tb.discharge_verified is False
+    agent.record_discharge(dict.fromkeys(pts, 0.2))
     assert agent.tb.discharge_verified is True
 
 
@@ -554,15 +581,16 @@ def test_supervisor_must_be_a_person(name: str) -> None:
 
 
 @pytest.mark.parametrize("text", ["There is no supervisor available", "I am the supervisor",
-                                  "I have no supervisor", "supervisor is absent, carry on"])
-def test_supervisor_is_not_read_from_denials(text: str) -> None:
+                                  "I have no supervisor", "supervisor is absent, carry on",
+                                  "My supervisor is Ana Ruiz"])
+def test_supervisor_is_never_read_from_chat(text: str) -> None:
     from differential.agent.agent import DifferentialAgent
 
     agent = DifferentialAgent("psu", mode="offline", trainee=True)
     agent.pending_key = "supervisor"
     reply = agent.user_message(text)
     assert not agent.tb.supervisor and "Not recorded" in reply.text, text
-    agent.user_message("My supervisor is Ana Ruiz")
+    agent.name_supervisor("Ana Ruiz")
     assert agent.tb.supervisor == "Ana Ruiz"
 
 

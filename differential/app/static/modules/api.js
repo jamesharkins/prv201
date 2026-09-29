@@ -91,7 +91,8 @@ export const api = {
   ticket: (sid) => request("GET", `/api/sessions/${enc(sid)}/ticket`),
   signoff: (sid, name) => request("POST", `/api/sessions/${enc(sid)}/ticket/signoff`,
     { json: { name } }),
-  reveal: (sid) => request("POST", `/api/sessions/${enc(sid)}/reveal`, { json: {} }),
+  reveal: (sid, endSession = false) => request("POST", `/api/sessions/${enc(sid)}/reveal`,
+    { json: { end_session: endSession } }),
   replays: () => request("GET", "/api/replays"),
   replay: (name) => request("GET", `/api/replays/${enc(name)}`),
 };

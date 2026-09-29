@@ -140,8 +140,7 @@ TOOL_SPECS: list[dict[str, Any]] = [
                 "readings": {"type": "object", "additionalProperties": {"type": "number"},
                              "description": "test point id -> volts, e.g. {\"TP4\": 0.3}"},
                 "volts": {"type": "number",
-                          "description": "one reading that the technician says holds for every point"},
-                "all_points": {"type": "boolean"},
+                          "description": "one reading, for the first point (the main filter capacitor)"},
                 "bleeder": {"type": "boolean",
                             "description": "a bleeder resistor stays clipped across the main filter "
                                            "capacitor while the technician works"},
@@ -195,6 +194,11 @@ TOOL_SPECS: list[dict[str, Any]] = [
     },
 ]
 TOOL_NAMES = [t["name"] for t in TOOL_SPECS]
+# Safety records are the technician's own (red team, round 6): how the unit was first
+# powered, the owner's approval and the discharge readings come only from the app's forms
+# (the server's structured endpoints), never from chat text or the model's tool calls.
+FORM_ONLY_TOOLS = ("confirm_bring_up", "approve_part_removal", "confirm_discharge")
+MODEL_TOOL_SPECS: list[dict[str, Any]] = [t for t in TOOL_SPECS if t["name"] not in FORM_ONLY_TOOLS]
 
 
 
@@ -269,7 +273,10 @@ class ToolBox:
         return result
 
     def evidence(self) -> list[dict[str, Any]]:
-        return [c.result for c in self.calls]
+        # the safety rules' own limits are the tool's statements too, so a reply may quote them
+        rules = {"high_voltage_v": HV_THRESHOLD_V, "discharge_limit_v": DISCHARGE_VERIFY_MAX_V,
+                 "discharge_valid_min": DISCHARGE_VALID_S / 60}
+        return [rules, *(c.result for c in self.calls)]
 
     # --------------------------------------------------------------- tools
     def t_list_circuits(self) -> dict[str, Any]:
@@ -602,12 +609,13 @@ class ToolBox:
                            "measurements are unlocked."}
 
     def t_confirm_discharge(self, readings: dict[str, float] | None = None,
-                            volts: float | None = None, all_points: bool = False,
+                            volts: float | None = None,
                             bleeder: bool = False) -> dict[str, Any]:
         """Record discharge readings (ADR-034). Every point that can hold high voltage must
         read below the limit; the readings are the technician's attestation (the tool cannot
-        check them) and go on the ticket. One number without ``all_points`` counts for the
-        main filter capacitor, the first point, and the others are asked for."""
+        check them) and go on the ticket. One number counts for the main filter capacitor,
+        the first point, and the others are asked for: a reading never stands for a point
+        it was not taken at (red team, round 6)."""
         self._require_supervisor()
         pts = discharge_points(self.circuit_id)
         got: dict[str, float] = {}
@@ -620,10 +628,11 @@ class ToolBox:
             got[tp] = max(got.get(tp, 0.0), abs(finite(v)))
         if volts is not None:
             v = abs(finite(volts))
-            for tp in (pts if all_points else pts[:1]):
+            for tp in pts[:1]:
                 got.setdefault(tp, v)
         self.discharge_readings.update(got)
-        charged = {tp: v for tp, v in self.discharge_readings.items() if v > DISCHARGE_VERIFY_MAX_V}
+        # "below 2 V": a reading of exactly the limit is still charged (red team, round 6)
+        charged = {tp: v for tp, v in self.discharge_readings.items() if v >= DISCHARGE_VERIFY_MAX_V}
         missing = [tp for tp in pts if tp not in self.discharge_readings]
         base = {"points": pts, "readings": dict(self.discharge_readings), "missing": missing,
                 "limit_volts": DISCHARGE_VERIFY_MAX_V}
@@ -646,7 +655,6 @@ class ToolBox:
         self.bleeder_attached = bool(bleeder)
         self.discharge_log.append({"time": time.strftime("%Y-%m-%d %H:%M:%S"),
                                    "readings": dict(self.discharge_readings),
-                                   "all_points_from_one_reading": bool(all_points and not readings),
                                    "bleeder": bool(bleeder)})
         return {**base, "verified": True, "volts": max(self.discharge_readings.values(), default=0.0),
                 "message": ("Discharge recorded at " + ", ".join(

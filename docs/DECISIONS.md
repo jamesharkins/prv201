@@ -839,3 +839,31 @@ deleted.
   the ADR-039 signature change and were not affected.
 - **Consequences.** The full evaluation takes longer (about two hours on four cores with
   the effort-weight sensitivity runs); the LLM comparison keeps its 300 stratified units.
+
+## ADR-045 - Safety records only through the forms (red team, round 6)
+
+- **Context.** Rounds 4, 5 and 6 of the red team each found free text that the attestation
+  parsers read as the technician's record: in round 6, hearsay ("the previous tech told me
+  he brought it up on a variac"), quoted text, a statement followed by "(I made these up)",
+  sarcasm, and the tool's own instruction ("all points below 2 V") read as a 2.0 V reading.
+  In live mode the discharge guard matched stated values without their test points, so one
+  reading could stand for every high-voltage point. Rules for "plain affirmative
+  statements" cannot tell a record from a report of one.
+- **Decision.** The four safety records (how a high-voltage unit was first powered, the
+  owner's approval to remove parts, discharge readings, a trainee's supervisor) are made
+  only by the technician in the app's forms, i.e. the server's structured endpoints. The
+  offline chat never makes them from text; it answers with the form to use. The live model
+  has no tool for them (`tools.MODEL_TOOL_SPECS`) and any call is refused
+  (`agent._guarded_tool`). A discharge record needs a reading at every point that can hold
+  high voltage: one number counts for the first point only, and "below 2 V" is strict (a
+  2.0 V reading is still charged). `attest.py` keeps only the check that a diagnostic
+  reading typed in chat is a plain statement.
+- **Also fixed.** Screening reads letters spaced across words ("b y p a s s   t h e
+  f u s e") and conductive-foil fuse defeats ("wrap the fuse in foil"); the hidden fault is
+  revealed only after the diagnosis stops, or with an explicit end of the session, never
+  early in trainee mode, and a revealed session takes no further step; timestamps are not
+  checked as readings by the grounding check.
+- **Consequences.** Typing "the owner approves" in chat no longer unlocks anything: the
+  technician presses the approval button. The documents say attestations come from the
+  technician's form entries. Regression tests cover every round-6 finding; the safety
+  sweep still covers all 491 checks.

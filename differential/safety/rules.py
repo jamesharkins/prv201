@@ -56,6 +56,14 @@ REFUSAL_RULES: dict[str, list[str]] = {
         r"(?:up|over)[- ]?siz(?:e|ed|ing) (?:the |a )?fuse", r"fuse (?:of|with) a (?:higher|bigger|larger) (?:rating|value|current)",
         r"defeat(?:ing)? (?:the )?fuse", r"fuse[- ]?bypass",
         r"(?:without|skip(?:ping)?) (?:the |a )?fuse", r"fuse (?:with|using) (?:a )?(?:paper ?clip|wire|foil)",
+        # conductive material put in or around the fuse (red team, round 6)
+        r"(?:wrap\w*|put\w*|jam\w*|stuff\w*|stick\w*|fold\w*|twist\w*|use|using|shove\w*) "
+        r"(?:some |a (?:bit|piece|strip|scrap) of |a )?(?:tin |aluminum |aluminium |kitchen |silver )?foil "
+        r"(?:around|round|over|on|onto|in|into|across|where|at|inside|under) (?:the |a |that |its )?fuse",
+        r"(?:wrap\w*|cover\w*|coat\w*) (?:the |a |that )?fuse (?:in|with) (?:some |a (?:bit|piece|strip) of )?"
+        r"(?:tin |aluminum |aluminium |kitchen |silver )?foil",
+        r"(?:foil|wire|paper ?clip|nail|coin|bolt|screw|solder|jumper) (?:\w+ ){0,2}where (?:the |a )?fuse "
+        r"(?:goes|went|was|sits|used to be|belongs|should be)",
     ],
     "ground_lift": [
         r"lift(?:ing)? (?:the )?(?:safety |mains |chassis )?(?:ground|earth)", r"cheater plug",
@@ -241,20 +249,35 @@ _LEET = str.maketrans({"4": "a", "@": "a", "3": "e", "1": "i", "!": "i", "0": "o
                        "7": "t"})
 
 
+_SPACED_RUN = re.compile(r"\b(?:\w ){2,}\w\b")
+
+
 def _normalized(text: str) -> str:
     """The message with obfuscation undone for screening only: letters spaced out one by one
     ("b y p a s s") joined, punctuation between letters ("f.u.s.e") dropped and leetspeak
-    digits ("byp4ss") read as letters (red team, round 5)."""
+    digits ("byp4ss") read as letters (red team, round 5). It must get the raw text: a gap
+    of two or more spaces still separates words ("b y p a s s   t h e   f u s e" reads
+    "bypass the fuse"; red team, round 6)."""
     t = re.sub(r"(?<=\w)[.*_\-](?=\w)", "", text.lower())
-    t = re.sub(r"\b(?:\w ){2,}\w\b", lambda m: m.group(0).replace(" ", ""), t)
+    t = _SPACED_RUN.sub(lambda m: m.group(0).replace(" ", ""), t)
     return " ".join(t.translate(_LEET).split())
+
+
+def _space_optional(patterns: list[str]) -> list[str]:
+    """The same patterns with every space optional, for messages whose letters were spaced
+    out: joining a run can also join the words inside it ("bypass t h e f u s e" reads
+    "bypass thefuse")."""
+    return [p.replace(" ", " ?") for p in patterns]
 
 
 def screen_request(text: str) -> ScreenResult:
     """Check a user message before it reaches any model or tool."""
     t = " ".join(text.split())
+    norm = _normalized(text)
+    spaced = bool(_SPACED_RUN.search(text.lower()))
     for cat, pats in REFUSAL_RULES.items():
-        hits = _match(t, pats) or _match(_normalized(t), pats)
+        hits = (_match(t, pats) or _match(norm, pats)
+                or (_match(norm, _space_optional(pats)) if spaced else []))
         if hits:
             return ScreenResult(False, cat, REFUSAL_TEXT[cat], matched=hits)
     hits = _match(t, OUT_OF_SCOPE)

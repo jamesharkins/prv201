@@ -396,7 +396,7 @@ function refreshHeader() {
   const revealed = Boolean(app.state && app.state.revealed);
   els.revealBtn.disabled = !has || app.busy || revealed;
   els.revealBtn.querySelector(".btn-text").textContent = revealed ? "Fault revealed"
-    : revealArmed ? "Click again to reveal" : "Reveal hidden fault";
+    : revealArmed ? "Click again to end and reveal" : "Reveal hidden fault";
   els.newUnit.disabled = app.busy || !app.circuits.length;
   els.newUnit.querySelector(".btn-text").textContent = newArmed ? "Click again: new unit" : "New unit";
   const differs = has && app.selected && app.state.circuit !== app.selected;
@@ -441,7 +441,7 @@ function bindHeader(theme) {
     }
     revealArmed = false;
     clearTimeout(revealTimer);
-    const err = await act(() => api.reveal(app.state.session_id), { button: els.revealBtn });
+    const err = await act(() => api.reveal(app.state.session_id, !done), { button: els.revealBtn });
     if (!err && app.state && app.state.revealed) {
       announce(`Hidden fault: ${app.state.revealed.label}.`);
       document.querySelector(".reveal-callout")?.scrollIntoView({ block: "nearest", behavior: "smooth" });

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -96,9 +97,11 @@ def main() -> None:
     band(ax, 0.01, 0.19, "EVALUATION AND REPORTING  (make pilot eval docs)")
     ex = [0.03, 0.27, 0.51, 0.75]
     ew = 0.215
+    ev = json.loads((ROOT / "results" / "targets.json").read_text())["evaluation_sets"]
     evals = [
-        ("Held-out cases", "1,000 single-fault, 100\nunmodeled, 300 stress units"),
-        ("Harness", "8 systems + ablations,\ncommon random numbers"),
+        ("Held-out cases", f"{ev['single_fault_cases']:,} single-fault, {ev['aged_cases']:,} aged,\n"
+                           f"{ev['unmodeled_cases']:,} outside the catalog"),
+        ("Harness", "every system and ablation,\ncommon random numbers"),
         ("metrics.json", "targets met / missed /\npending with 95% CIs"),
         ("Documents", "templates: every number\nfrom metrics or sources"),
     ]

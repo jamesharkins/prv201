@@ -40,7 +40,7 @@ def sanitize(text: str) -> str:
 def main(argv: list[str]) -> int:
     rc = 0
     for a in argv:
-        pdf = Path(a)
+        pdf = Path(a).resolve()
         raw = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True,
                              text=True, check=True).stdout
         clean = sanitize(raw)

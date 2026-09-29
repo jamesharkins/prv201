@@ -190,3 +190,14 @@ def test_timestamps_are_not_readings() -> None:
 
     found = find_numbers("Bring-up recorded at 2026-09-29 13:02:47: variac. TP4 read 12.5 V at 13:05.")
     assert [m.text for m in found] == ["12.5 V"]
+
+
+def test_out_of_catalog_hazard_check_refuses_test_units_before_the_lock(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The hazard-map check on out-of-catalog units must not read a test unit before the
+    targets-locked tag (CLAUDE.md rule 8)."""
+    import eval.lock
+    from eval.hv_audit import out_of_catalog_check
+
+    monkeypatch.setattr(eval.lock, "targets_locked", lambda: False)
+    with pytest.raises(SystemExit, match="targets-locked"):
+        out_of_catalog_check(("unmodeled_test",))

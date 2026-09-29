@@ -57,7 +57,52 @@ def audit(cid: str) -> dict[str, object]:
     return out
 
 
+def out_of_catalog_check(splits: tuple[str, ...]) -> dict[str, object]:
+    """Units outside the catalog (double faults, wrong-value parts, solder bridges) with a
+    point above 50 V that the hazard map marks as low voltage (round-6 review). The map is
+    built from single catalog faults only, so this is where it could miss a hazard."""
+    from differential.safety.hazards import hazard
+    from eval.cases import load_cases
+    from eval.lock import require_lock
+
+    if any("test" in s for s in splits):
+        require_lock("check test units against the hazard map")
+    per: dict[str, object] = {}
+    units = misses = 0
+    for cid in CIRCUIT_IDS:
+        found: list[dict[str, object]] = []
+        n = 0
+        for split in splits:
+            df, _ = load_cases(cid, split)
+            df = df[df["ok"]]
+            n += len(df)
+            tps = [c.split(":", 1)[1] for c in df.columns if c.startswith("dc:")]
+            low = [tp for tp in tps if not hazard(cid, tp).high_voltage]
+            for _, row in df.iterrows():
+                for tp in low:
+                    cols = [f"dc:{tp}"] + ([f"open:{tp}"] if f"open:{tp}" in df.columns else [])
+                    v = max(abs(float(row[c])) for c in cols)
+                    if v > HV_THRESHOLD_V:
+                        found.append({"split": split, "seed": str(row["seed"]),
+                                      "hypothesis": str(row["hypothesis"]), "tp": tp, "volts": round(v, 1)})
+        units += n
+        misses += len({(f["split"], f["seed"]) for f in found})
+        per[cid] = {"units": n, "misses": found}
+    return {"splits": list(splits), "units": units, "units_with_miss": misses, "circuits": per}
+
+
 def main() -> None:
+    import sys
+
+    if "--out-of-catalog" in sys.argv:
+        splits = tuple(sys.argv[sys.argv.index("--out-of-catalog") + 1:]) or ("unmodeled_val",
+                                                                              "unmodeled_pilot")
+        res = out_of_catalog_check(splits)
+        key = "out_of_catalog_test" if any("test" in s for s in splits) else "out_of_catalog"
+        metrics_io.update(f"hv_audit_{key}", res)
+        print(f"{res['units_with_miss']} of {res['units']} out-of-catalog units put more than "
+              f"{HV_THRESHOLD_V:.0f} V on a point the hazard map calls low voltage ({', '.join(splits)})")
+        return
     result = {cid: audit(cid) for cid in CIRCUIT_IDS}
     HV_MAP.write_text(json.dumps(result, indent=1, sort_keys=True))
     summary = {}

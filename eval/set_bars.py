@@ -550,7 +550,7 @@ def main() -> None:
                                    f"95% lower bound clears {100 * float(t['value']):.0f}%")
             # Why 70%: with 60 faults a pass needs about 82% observed, which a system truly
             # 85-90% accurate on the boards reaches most of the time and one at 70% almost never.
-            t["pass_probability"] = {f"{q:.2f}": round(float(binom_dist.sf(t["pass_count"] - 1, n7, q)), 3)
+            t["pass_probability"] = {f"{q:.2f}": round(float(binom_dist.sf(t["pass_count"] - 1, n7, q)), 4)
                                      for q in (0.90, 0.85, 0.80, 0.70)}
     # What a zero-failure gate shows: none of n bounds the rate below the exact upper bound.
     tj["gate_bounds"] = {"T16": exact_upper(0, int(ev["red_team_min"]))}

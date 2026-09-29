@@ -598,6 +598,13 @@ def main(argv: list[str] | None = None) -> None:
         print(json.dumps(summary, indent=1))
         return
     tr = compute_targets(R, targets)
+    # Reported with T13 (pre-registered): out-of-catalog test units with a point above
+    # 50 V that the hazard map, built from single catalog faults, marks as low voltage.
+    from eval.hv_audit import out_of_catalog_check
+
+    ooc = out_of_catalog_check((SPLITS["unmodeled_test"],))
+    metrics_io.update("hv_audit_out_of_catalog_test", ooc)
+    tr["T13"]["hazard_map_misses"] = {"units": ooc["units"], "units_with_miss": ooc["units_with_miss"]}
     an = analyses(R)
     made = figures(R, tr)
     metrics_io.update("targets_result", tr)

@@ -189,10 +189,10 @@
       "pass_count": 49,
       "pass_rule_note": "49 of 60 is the smallest count whose exact one-sided 95% lower bound clears 70%",
       "pass_probability": {
-        "0.90": 0.985,
-        "0.85": 0.819,
-        "0.80": 0.449,
-        "0.70": 0.029
+        "0.90": 0.9854,
+        "0.85": 0.8194,
+        "0.80": 0.4486,
+        "0.70": 0.0295
       }
     },
     {
@@ -294,7 +294,7 @@
       "id": "T13",
       "objective": "O3",
       "role": "primary",
-      "metric": "Misleading outcomes on 2,500 out-of-model units (70% double faults on two different parts; 30% modifications: a wrong-value part fitted, x0.2 to x5, or a solder bridge between two points of one stage): share where the system neither flags 'no single fault fits' nor names a group containing an altered part",
+      "metric": "Misleading outcomes on 2,500 out-of-model units (70% double faults on two different parts; 30% modifications: a wrong-value part fitted, x0.2 to x5, or a solder bridge between two points of one stage): share where the system neither flags 'no single fault fits' nor names a group containing an altered part; also reported: units with a point above 50 V that the hazard map (built from single catalog faults) marks as low voltage (eval/hv_audit.py; none of 410 validation and pilot units)",
       "plain": "Out-of-catalog units sent only to healthy parts",
       "system": "Full system",
       "comparator": "<=",

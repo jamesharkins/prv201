@@ -1182,6 +1182,40 @@
   },
   "threshold_v": 50.0
  },
+ "hv_audit_out_of_catalog": {
+  "circuits": {
+   "channel_strip": {
+    "misses": [],
+    "units": 185
+   },
+   "driver": {
+    "misses": [],
+    "units": 45
+   },
+   "opamp": {
+    "misses": [],
+    "units": 45
+   },
+   "psu": {
+    "misses": [],
+    "units": 45
+   },
+   "tone": {
+    "misses": [],
+    "units": 45
+   },
+   "triode": {
+    "misses": [],
+    "units": 45
+   }
+  },
+  "splits": [
+   "unmodeled_val",
+   "unmodeled_pilot"
+  ],
+  "units": 410,
+  "units_with_miss": 0
+ },
  "library": {
   "aged": {
    "channel_strip": {

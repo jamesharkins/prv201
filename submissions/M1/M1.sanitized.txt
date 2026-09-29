@@ -200,7 +200,7 @@ tracing 24.6; the engine asked for 0.3 powered readings per diagnosis at points 
 Each bar is the pilot estimate moved 1.5 standard errors against the system (T1 1.0, T6 1.2, T13 2.0 points) and rounded,
 never past the estimate, with one bar per part (T4); counting the pilot’s own error, each primary is met with a chance of
 59-88%. T5 has no pilot (no API key): +10 points is the smallest margin we judged worth a per-circuit model. T7′s 70% is
-what 60 faults can show: a pass needs 49 right, which a system truly 90% accurate reaches 98% of the time, an 85% one 82%
+what 60 faults can show: a pass needs 49 right, which a system truly 90% accurate reaches 99% of the time, an 85% one 82%
 and a 70% one 3%, so a pass allows about a 10-point drop from simulation. Each primary is judged alone; if independent,
 all six pilot-estimable primaries would pass together with a chance near 25%, about one missing.
 Scope. In: single static faults (opens, shorts, drift, wear) and the symptoms they cause (no or low output, hum, distortion,

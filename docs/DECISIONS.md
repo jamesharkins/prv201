@@ -898,3 +898,22 @@ deleted.
   margins, as if independent, which understates it); the six pilot-estimable primaries are
   all met together with a chance near 25%, and about one miss is expected. The pilot
   summary and every bar were recomputed; no test unit has been run.
+
+## ADR-047 - Hazard map checked on units outside the catalog (M1 review, round 6)
+
+- **Context.** The hazard map is built from single catalog faults under tolerances and
+  aging (`eval/hv_audit.py`). The round-6 engineer judge pointed out that a double fault, a
+  wrong-value part or a solder bridge could put B+ on a point the map calls low voltage,
+  and asked how often that happens. In a unit with a high-voltage supply every powered step
+  already carries the high-voltage notice, the meter rating and the clip-with-the-power-off
+  instruction (T15), so a miss would lose only the point-specific hands-off and discharge
+  warnings; it is still a gap in the map.
+- **Decision.** `python -m eval.hv_audit --out-of-catalog` counts units outside the catalog
+  with a point above 50 V that the map marks as low voltage. On the validation and pilot
+  sets it found none of 410 units. The same count on the 2,500 out-of-catalog test units is
+  pre-registered as a quantity reported with T13, without a bar; `eval/run_eval.py` computes
+  it after the lock, and the check refuses test units before the `targets-locked` tag. A
+  miss found there is reported and the point added to the map.
+- **Also.** T7's pass probabilities are stored to four decimals: rounded to three and then
+  printed as a whole percent, 98.54% appeared as 98%.
+- **Consequences.** No bar, pilot estimate or test unit changes.

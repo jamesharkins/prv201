@@ -15,53 +15,59 @@ simulation and data; Part 3 — Diagnosis engine and evaluation plan the inferen
 evaluation statistics; Part 4 — Agent, safety, security and interface the agent, the safety layer, the injection defense and
 the interface. Every major choice has an alternatives table.
 
-  Part 1 — Requirements, architecture and plan                                                                   Section lead: [name removed]
+  Part 1 — Requirements, architecture and plan                                                                    Section lead: [name removed]
 
 What changed since M1. Instructor feedback on M1 had not been returned when this document was prepared. Before
-the targets were locked, M1 went through five rounds of our own AI-assisted review, each with three rubric-based reads,
+the targets were locked, M1 went through six rounds of our own AI-assisted review, each with three rubric-based reads,
 four reviewer perspectives (the course professor, an audio-electronics engineer, an ML methods reviewer, an ethics and
 policy scholar), a claim-to-source audit and, from the fourth round, a red team attacking the running app. Table 1 lists
 the findings that changed the design rather than the wording; the full log, with the commit that closed each item, is
 feedback/FEEDBACK_LOG.md. The largest changes came late: aged units now make up half of training, a fault audit checks
-the simulator with an independent solver, every method is charged for confirming its answer, and the safety layer enforces
-bench practice.
-                    Table 1. M1 review findings that changed the design (all five rounds). Text-only fixes are in the log.
- M1 review finding                                  Design change                                                            Where
- A hazard example (147 V at a tube cathode) was     Traced to a leakage resistor in the tube model; removed; circuits re-    Part 2
- physically implausible                             simulated, retrained and the hazard map re-audited
- Units reaching a bench are aged, but the engine    Half of the training and validation units aged; aged pilot and test      Part 2
- trained on as-new parts                            sets on every circuit; aged accuracy a primary target (T6)
- Fault behavior never checked outside the           53 randomly drawn faults re-solved by an independent solver from         Part 2
- simulator                                          published device equations; agreement reported with its interval
- Test sets dropped faults that rarely cause a       Every set samples symptomatic units; 60 faults inserted blind into       Parts 2, 3
- symptom; the only hardware target was small        three 24 V boards as a primary target (T7)
- Effort comparison favored the engine, which        Effort to a confirmed answer: one confirming unsoldering test            Part 3
- rarely paid for unsoldering                        charged to every unconfirmed answer; probing and unsoldering
-                                                    reported apart
- Bars close to certain to pass; rounding could      Met only when the one-sided 95% bound clears the bar; rounding           Part 3
- undo the margin                                    never past the pilot estimate; joint chance of the primaries stated
- Safety judged point by point; bench habits         Per-point discharge below 2 V; owner approval; bring-up gate;            Part 4
- missing                                            rated meter; discharge check lapses; leads clipped with the power
-                                                    off
- The model could record attestations the            Discharge, approval and bring-up records accepted only from the          Part 4
- technician never gave                              technician’s own words
- No control for deskilling, blame or worker         Trainee mode, sign-off limited to readings and plan, tickets per job     Part 4
- monitoring                                         not per person; study S1 with ethics review
-
-Requirements. 20 requirements trace the M1 objectives (O1-O5), safety (S) and engineering practice (P) to the code that
-implements them and the tests or evaluations that verify them (Appendix A, Table 16). 14 of them are checked by at least
+the simulator with an independent solver, every method is charged for confirming its answer, the safety layer enforces
+bench practice, and safety records come only from the technician’s forms.
+                     Table 1. M1 review findings that changed the design (all six rounds). Text-only fixes are in the log.
+ M1 review finding                                   Design change                                                           Where
+ A hazard example (147 V at a tube cathode) was      Traced to a leakage resistor in the tube model; removed; circuits re-   Part 2
+ physically implausible                              simulated, retrained and the hazard map re-audited
+ Units reaching a bench are aged, but the engine     Half of the training and validation units aged; aged pilot and test     Part 2
+ trained on as-new parts                             sets on every circuit; aged accuracy a primary target (T6)
+ Fault behavior never checked outside the            53 randomly drawn faults re-solved by an independent solver from        Part 2
+ simulator                                           published device equations; agreement reported with its interval
+ Test sets dropped faults that rarely cause a        Every set samples symptomatic units; 60 faults inserted blind into      Parts 2, 3
+ symptom; the only hardware target was small         three 24 V boards as a primary target (T7)
+ Effort comparison favored the engine, which         Effort to a confirmed answer: one confirming unsoldering test           Part 3
+ rarely paid for unsoldering                         charged to every unconfirmed answer; probing and unsoldering
+                                                     reported apart
+ Bars close to certain to pass; rounding could       Met only when the one-sided 95% bound clears the bar; rounding          Part 3
+ undo the margin                                     never past the pilot estimate; joint chance of the primaries stated
+ Safety judged point by point; bench habits          Per-point discharge below 2 V; owner approval; bring-up gate;           Part 4
+ missing                                             rated meter; discharge check lapses; leads clipped with the power
+                                                     off
+ Chat text and the model could record safety         Bring-up, owner approval, discharge readings and a trainee’s            Part 4
+ attestations the technician never gave (hearsay,    supervisor recorded only in the app’s forms, never from chat or the
+ quotes, the tool’s own wording)                     model (ADR-045)
+ One bar served three baselines; the scripts’        A bar per baseline; script thresholds tuned on the pilot by a rule      Part 3
+ unsoldering threshold was fixed; hazard             fixed in advance; T24 and release gates T25 (S1) and T26 (voices)
+ exposure, over-reliance and voice gaps had no       before the lock (ADR-046)
+ rule
+ The hazard map comes from single faults only        Units outside the catalog checked against the map; misses reported      Part 4
+                                                     with T13 (ADR-047)
+ No control for deskilling, blame or worker          Trainee mode, sign-off limited to readings and plan, tickets per job    Part 4
+ monitoring                                          not per person; study S1 with ethics review
+Requirements. 23 requirements trace the M1 objectives (O1-O5), safety (S) and engineering practice (P) to the code that
+implements them and the tests or evaluations that verify them (Appendix A, Table 16). 17 of them are checked by at least
 one locked target; the others (circuit library, fault catalog, simulation, ticket, modes and the clean-clone build) by unit
 tests and continuous integration. Every locked target is traced by at least one requirement. The matrix lives in docs/
+
+
+                                                                       1
+M2 · Design and approach                                                                                                           Differential
+
+
 requirements.yaml; tools/check_requirements.py fails if a listed file or target disappears or a target is traced by no
 requirement.
 Architecture. Figure 1 shows the three layers. Offline, each circuit model and its fault catalog are simulated with ngspice
 under part tolerances and learned into a model bundle (likelihoods, ambiguity groups, calibrated thresholds). Online,
-
-
-                                                                      1
-M2 · Design and approach                                                                                                           Differential
-
-
 one Python process serves the web interface: the agent (Claude in live mode, templates offline, recorded responses in
 replay) calls tools that act only on an engine session, and the safety layer sits between every step and the technician. The
 evaluation layer runs every system on held-out simulated units and writes results/metrics.json, from which every
@@ -72,20 +78,20 @@ tool result or a reading the technician confirmed.
 
 
 
-Figure 1. Architecture. Blue: simulation and inference; orange: language layer; red: safety layer (code, not prompt); green: instruments; grey:
+Figure 1. Architecture. Blue: simulation and inference; orange: language layer; red: safety layer (code, not prompt); green: instruments; gray:
                                 interface and evaluation. The make target that builds each layer is in its title.
+
+
+
+
+                                                                      2
+M2 · Design and approach                                                                                                         Differential
 
 
 
 
 Figure 2. One diagnosis. Steps 5 to 10 repeat for every measurement; the safety layer screens the request (3), adds hazard text and the
                             unsoldering lock to each step (6) and checks every number before the ticket (11).
-
-
-                                                                      2
-M2 · Design and approach                                                                                                                   Differential
-
-
 Build and deployment. A clean clone runs in three commands (git clone, make install, make demo; ngspice must
 be installed): the trained models and evaluation sets are in the repository, the default mode needs no network, and a
 container image packs the same. Continuous integration runs the linter, strict type checks on the core package, the tests
@@ -97,72 +103,76 @@ interface with three back ends: the simulated bench used in evaluation and the d
 board (high-voltage points and readings beyond the board’s range refused), and typed or photo readings the technician
 confirms. The language model client reads its key only from DIFFERENTIAL_API_KEY, caches responses and can replay a
 recorded session with no network.
-                                                   Table 2. Architecture alternatives and trade-offs.
- Choice                       Options                          Chosen, because                                      Cost accepted
- Who plans the                LLM agent plans; engine          Engine: its probabilities can be calibrated and      Less free-form conversation
- diagnosis                    plans and LLM explains           its choices tested on every unit
- Where it runs                Cloud service; local process     Local: shop data stays on the bench computer         Updates are manual; no fleet
-                                                               and it works offline                                 data
- Language model               Claude; local open model;        Claude in live mode, rules and templates             Live results need a key and cost
-                              none                             offline, so every target has an offline result       money
- Where numbers in             Written by hand; rendered        Rendered: every number traces to                     Template tooling to maintain
- documents come from          from results                     metrics.json or a recorded source quote
+                                            Table 2. Architecture alternatives and trade-offs.
+ Choice                  Options                        Chosen, because                                   Cost accepted
+ Who plans the           LLM agent plans; engine        Engine: its probabilities can be calibrated and   Less free-form conversation
+ diagnosis               plans and LLM explains         its choices tested on every unit
+ Where it runs           Cloud service; local process   Local: shop data stays on the bench computer      Updates are manual; no fleet
+                                                        and it works offline                              data
+ Language model          Claude; local open model;      Claude in live mode, rules and templates          Live results need a key and cost
+                         none                           offline, so every target has an offline result    money
+ Where numbers in        Written by hand; rendered      Rendered: every number traces to                  Template tooling to maintain
+ documents come from     from results                   metrics.json or a recorded source quote
 
 Plan. Table 3 lists the work by lead role. The critical path runs through the full evaluation, which waits for nothing but
 compute, and the hardware check (T7), which needs three fault boards built and 60 blind insertions under the sealed-draw
 protocol. Work only people can do is listed in SUBMISSION_GUIDE.md: technician interviews, the timing study behind the
 effort weights, the adversarial prompts written outside the rule author (T16), the live language-model runs that need an
 API key, the ethics-board determination, and the technician study.
-                                   Table 3. Project plan by workstream. Leads are named in each part’s header.
- Workstream (lead)               Done by M2                                By M3                                      By M5
- Problem, stakeholders,          M1; constraints (Table 5)                 Interviews; model and system cards         Final report, profile, Q&A bank
+
+
+
+
+                                                                    3
+M2 · Design and approach                                                                                                                  Differential
+
+
+                                 Table 3. Project plan by workstream. Leads are named in each part’s header.
+ Workstream (lead)             Done by M2                                By M3                                      By M5
+ Problem, stakeholders,        M1; constraints (Table 5)                 Interviews; model and system cards         Final report, profile, Q&A bank
  regulation (lead 1)
- Circuits, simulation, data      6 circuits; 253,000 units; hand checks;   Three fault boards built; 60 faults        Hardware demo, low voltage
- (lead 2)                        meter loading and aged units              recorded; transcription timed              only
- Engine, evaluation (lead        Engine, baselines, pilot, locked bars     Full evaluation, ablations, failure        Results on slides; replay
- 3)                                                                        analysis                                   fallback
- Agent, safety, interface        Agent, safety layer, trainee mode,        Outside adversarial suite; live runs;      Live demo and 90 s capture
- (lead 4)                        demo app, meter reader                    screenshots and demo GIF
-
+ Circuits, simulation, data    6 circuits; 253,000 units; hand checks;   Three fault boards built; 60 faults        Hardware demo, low voltage
+ (lead 2)                      meter loading and aged units              recorded; transcription timed              only
+ Engine, evaluation (lead      Engine, baselines, pilot, locked bars     Full evaluation, ablations, failure        Results on slides; replay
+ 3)                                                                      analysis                                   fallback
+ Agent, safety, interface      Agent, safety layer, trainee mode,        Outside adversarial suite; live runs;      Live demo and 90 s capture
+ (lead 4)                      demo app, meter reader                    screenshots and demo GIF
 Risks. Table 4 updates the M1 register with what changed; the controls themselves are specified in Parts 2 to 4.
-                                  Table 4. Risk register at M2 (likelihood/impact before controls, our judgment).
- Risk                                        L/I         Status at M2                                                          Trigger to act
- Simulation-to-reality gap                   H/H         Meter loading, mains and aged units simulated; fault-board            T6 or T7 missed
-                                                         protocol and replay tool written, boards not built
- Unsafe step near high voltage               M/H         Fault-conditioned map, notices, owner approval and per-point          Any T15 failure
-                                                         discharge readings implemented; the sweep passes in
-                                                         development against an independently recomputed map
- Simulator artifact                          M/H         One found by hand checks and fixed; fault behavior now spot-          A reading no physics
-                                                         checked by hand                                                       explains
- Confident wrong diagnosis                   M/H         Calibrated threshold for “no single fault fits”; calibration target   ECE above bar
-                                                         T12
- Human studies not done                      H/M         Protocols written; need an ethics-board determination, people         No interviews by M3
-                                                         and consent
- Damage to the owner’s unit                  M/M         Owner’s approval before removal; removed-parts log on the             Good parts removed
-                                                         ticket                                                                in S1
- Deskilling; blaming workers                 M/H         Trainee mode; sign-off limited to readings and plan; per-job          S1 over-reliance
-                                                         tickets
- Live results pending                        M/M         Offline fallbacks meet their targets alone; live runs need a key      No key by M3
-
+                               Table 4. Risk register at M2 (likelihood/impact before controls, our judgment).
+ Risk                                      L/I         Status at M2                                                          Trigger to act
+ Simulation-to-reality gap                 H/H         Meter loading, mains and aged units simulated; fault-board            T6 or T7 missed
+                                                       protocol and replay tool written, boards not built
+ Unsafe step near high voltage             M/H         Fault-conditioned map, notices, owner approval and per-point          Any T15 failure
+                                                       discharge readings implemented; the sweep passes in
+                                                       development against an independently recomputed map
+ Simulator artifact                        M/H         One found by hand checks and fixed; fault behavior now spot-          A reading no physics
+                                                       checked by hand                                                       explains
+ Confident wrong diagnosis                 M/H         Calibrated threshold for “no single fault fits”; calibration target   ECE above bar
+                                                       T12
+ Human studies not done                    H/M         Protocols written; need an ethics-board determination, people         No interviews by M3
+                                                       and consent
+ Damage to the owner’s unit                M/M         Owner’s approval before removal; removed-parts log on the             Good parts removed
+                                                       ticket                                                                in S1
+ Deskilling; blaming workers               M/H         Trainee mode; sign-off limited to readings and plan; per-job          T25 missed
+                                                       tickets
+ Live results pending                      M/M         Offline fallbacks meet their targets alone; live runs need a key      No key by M3
 Industry and regulatory constraints. Table 5 turns the rules identified in M1 into design requirements.
-
-
-                                                                            3
-M2 · Design and approach                                                                                                            Differential
-
-
-                               Table 5. Constraints on the design and where the requirements meet them.
- Constraint                                       Design response                                                            Req.
- Only qualified persons test live parts; parts    Licensed to repair shops; hands-off steps above 50 V; trainees             R11-R13
- under 50 V exempt only if that adds no burn or   supervised on high voltage; mains-side work refused
- arc-blast exposure [1, 2]
- People told when they deal with an AI [3]        Every screen and ticket names the AI and its role                          R16
- Annex III: AI that evaluates workers or          Sign-off records identify the job, not the technician’s performance; the   R16
- learners is high-risk [3]                        trainee log is for the trainee; the license forbids rating staff
- Software counts as a product; personal injury    Stated performance, warnings and change log kept with each release;        R17
- and damage to consumer property covered [4]      model pinned; owner’s approval before parts are removed
- Service manuals are copyrighted documents        Circuit models transcribed by the shop stay with it; none shipped          R1
- Shop and customer data                           Offline by default; photos stripped of metadata; key never logged          R8, R17
+                                 Table 5. Constraints on the design and where the requirements meet them.
+ Constraint                                          Design response                                                               Req.
+ Only qualified persons test live parts; parts       Offered to repair shops under terms of use (docs/                             R11-R13
+ under 50 V exempt only if that adds no burn or      TERMS_OF_USE.md) that ask the same qualification of every user;
+ arc-blast exposure [1, 2]; the self-employed fall   hands-off steps above 50 V; trainees supervised on high voltage; mains-
+ outside OSHA [3]                                    side work refused
+ People told when they deal with an AI [4]           Every screen and ticket names the AI and its role                             R16
+ Providers and deployers take measures to            Reasons and runner-up suspects on every step; stated performance and          R16, R17
+ support their staff’s AI literacy (amended 2026)    known limits with each release
+ [5]
+ Annex III: AI that evaluates workers or             Sign-off records identify the job, not the technician’s performance; the      R16
+ learners is high-risk [4]                           trainee log is for the trainee; the terms of use forbid rating staff
+ Software counts as a product; personal injury       Stated performance, warnings and change log kept with each release;           R17
+ and damage to consumer property covered [6]         model pinned; owner’s approval before parts are removed
+ Service manuals are copyrighted documents           Circuit models transcribed by the shop stay with it; none shipped             R1
+ Shop and customer data                              Offline by default; photos stripped of metadata; key never logged             R8, R17
 
   DESIGN DECISION · Code enforces three invariants the language model cannot change
   Options: let an LLM agent plan and police itself with instructions, or put ranking, safety and number-checking in code around
@@ -172,54 +182,50 @@ Industry and regulatory constraints. Table 5 turns the rules identified in M1 in
   or accuracy.
 
 
-  Part 2 — Circuits, simulation and data                                                                            Section lead: [name removed]
+  Part 2 — Circuits, simulation and data                                                                               Section lead: [name removed]
 
 Circuit library. Six circuits are modeled (Table 6): five original blocks with the standard topologies of preamplifier and
 line-level gear, and a channel strip that chains them. Each circuit is a SPICE netlist plus a sidecar file listing every part
 with its kind and tolerance, every test point with its node, stage, allowed measurements and hazard flag, and service
 notes. The channel strip joins the five netlists, keeps one signal source and load, and renumbers the test points; a test fails
 if the composed files fall out of date. Device models are Koren’s published 12AX7 equations, with amplification factor
-and emission exposed so that tube wear can be simulated; a behavioural op-amp with controls for gain-bandwidth and
+and emission exposed so that tube wear can be simulated; a behavioral op-amp with controls for gain-bandwidth and
+
+
+                                                                          4
+M2 · Design and approach                                                                                                             Differential
+
+
 a stuck output; and standard 2N3904, 1N4148 and 1N4745A models. The rectifiers are modeled as a quasi-static source
 plus a ripple current, which a full transient simulation of the rectifier and reservoir confirms within 2.4-5.4% (the model
 slightly overstates hum).
 Table 6. Circuit library. HV: test points that can exceed 50 V in normal operation or under a cataloged fault. Readings: DC voltages, gains
                                    at three frequencies, hum and distortion where the circuit allows them.
- Circuit                Topology                                                 Parts        Faults       Test points       Readings + lift
-                                                                                                           (HV)              tests
- Supply                 Zener-regulated low-voltage rail and a 250 V tube        14           63           6 (3)             12 + 14
-                        supply
- Tube stage             12AX7 common-cathode gain stage                          8            31           4 (2)             11 + 8
- Tone stack             Passive bass-and-treble tone stack                       9            27           3 (0)             8+9
- Op-amp stage           Op-amp gain stage                                        13           56           6 (0)             14 + 13
- Line driver            Two-transistor line driver                               15           73           7 (0)             16 + 15
- Channel strip          The five blocks chained: supply, tube stage, tone        59           250          23 (5)            51 + 59
-                        stack, op-amp, driver
-
+ Circuit                  Topology                                                Parts         Faults       Test points       Readings + lift
+                                                                                                             (HV)              tests
+ Supply                   Zener-regulated low-voltage rail and a 250 V tube       14            63           6 (3)             12 + 14
+                          supply
+ Tube stage               12AX7 common-cathode gain stage                         8             31           4 (2)             11 + 8
+ Tone stack               Passive bass-and-treble tone stack                      9             27           3 (0)             8+9
+ Op-amp stage             Op-amp gain stage                                       13            56           6 (0)             14 + 13
+ Line driver              Two-transistor line driver                              15            73           7 (0)             16 + 15
+ Channel strip            The five blocks chained: supply, tube stage, tone       59            250          23 (5)            51 + 59
+                          stack, op-amp, driver
 Fault catalog. Every part can fail in each of the modes of its kind (Table 7), and each simulated unit draws the severity of
 its fault (a short’s residual resistance, how far a value has drifted), so a cataloged fault is a distribution, not one number.
 Units outside the catalog test “no single fault fits”: most carry two faults on different parts, drawn from faults that usually
 cause a symptom; the rest carry a solder bridge between two nodes of one stage, or a passive part fitted with a wrong value.
-
-
-
-
-                                                                      4
-M2 · Design and approach                                                                                                            Differential
-
-
 Table 7. Fault modes by part kind (18 in all). Every mode of every part is one hypothesis; with “healthy” and “no single fault fits” the channel
                                                           strip has 252 hypotheses.
- Part kind                         Failure modes (severity drawn per unit)
- Resistor                          Open; short (below an ohm); value drift to a half, double or ten times
- Film capacitor                    Open; short
- Electrolytic capacitor            Open; short; capacitance down to a half or a tenth; series resistance up ten- to a hundredfold
- Potentiometer                     Wiper open; track open on either side
- Diode, zener                      Open; short
- Transistor                        Collector-emitter short; base open; gain down to a fifth; collector-base leakage
- Triode                            Low emission; heater open
- Op-amp                            Output stuck at a rail; gain-bandwidth down ten- to a hundredfold
-
+ Part kind                          Failure modes (severity drawn per unit)
+ Resistor                           Open; short (below an ohm); value drift to a half, double or ten times
+ Film capacitor                     Open; short
+ Electrolytic capacitor             Open; short; capacitance down to a half or a tenth; series resistance up ten- to a hundredfold
+ Potentiometer                      Wiper open; track open on either side
+ Diode, zener                       Open; short
+ Transistor                         Collector-emitter short; base open; gain down to a fifth; collector-base leakage
+ Triode                             Low emission; heater open
+ Op-amp                             Output stuck at a rail; gain-bandwidth down ten- to a hundredfold
 Monte Carlo design. A simulated unit draws every part within its tolerance: values from a normal distribution with
 a standard deviation of half the tolerance, truncated at the tolerance; electrolytic series resistance, transistor gain, tube
 amplification and emission and op-amp bandwidth from their own spreads, and the mains level within ±5% as a common
@@ -236,7 +242,7 @@ hashes of every netlist, the device library and the tolerance code, and the simu
 DC operating point, for gain at 20 Hz, 1 kHz and 20 kHz, for hum at 120 Hz, and for distortion at 1 kHz from a transient
 and Fourier analysis.
 Measurement model. Every DC reading is simulated with the meter’s 10 MΩ input resistance across the node, one
-operating point per reading, as a real meter loads a high-impedance node [5]; the unloaded voltage is kept for the hazard
+operating point per reading, as a real meter loads a high-impedance node [7]; the unloaded voltage is kept for the hazard
 audit and the hand checks. A simulated reading is that value plus instrument error: a meter of ±(0.5% + 2 counts) on 6,000-
 count ranges, rounded to the range’s resolution; an oscilloscope of ±3%, with floors for tiny signals; a distortion reading
 of ±10%. An unsoldered part tested out of circuit returns only “within” or “out of tolerance”, with sensitivity 0.97 and 1%
@@ -246,18 +252,24 @@ Data splits. Table 8 lists every set. Evaluation sets sample symptomatic units u
 and a unit and keeps it only if the unit shows a symptom (up to 200 draws), so faults appear in proportion to how often
 they cause a symptom, which is not how often they fail in service; faults that never showed a symptom in training are
 left out.
+
+
+
+                                                                        5
+M2 · Design and approach                                                                                                              Differential
+
+
 Table 8. Data splits. Seed streams are disjoint; “+ n per block” counts each of the five blocks; “wide”: channel strip with tolerances 1.5
                                                                times wider.
- Split                          Used for                                                             Size
- Train                          Fitting likelihood models and the symptom model                      400 units per hypothesis
- Validation                     Ambiguity groups, calibration of the classifier, the symptom         100 units per hypothesis; 60 + 20 per
-                                model and “no single fault fits”                                     block outside the catalog
- Pilot                          Setting bars only                                                    200 + 60 per block, as-new and aged; 125
+ Split                         Used for                                                              Size
+ Train                         Fitting likelihood models and the symptom model                       400 units per hypothesis
+ Validation                    Ambiguity groups, calibration of the classifier, the symptom          100 units per hypothesis; 60 + 20 per
+                               model and “no single fault fits”                                      block outside the catalog
+ Pilot                         Setting bars only                                                     200 + 60 per block, as-new and aged; 125
                                                                                                      + 25 outside; 150 wide
- Test                           Locked targets, once, after the lock                                 500 + 100 per block, as-new and aged;
-                                                                                                     250 + 50 outside; 300 each at three
+ Test                          Locked targets, once, after the lock                                  2,500 + 500 per block, as-new and aged;
+                                                                                                     1,250 + 250 outside; 300 each at three
                                                                                                      widths
-
 Data quality. Five checks guard the data. (1) Independent hand calculations reproduce every healthy bias point and gain
 (22 of 22 within tolerance). (2) Fault behavior is audited: 53 faults drawn at random (up to two of each fault type per
 circuit) are re-solved without ngspice and without the netlist builder, by a solver written for the audit with the published
@@ -265,24 +277,19 @@ device equations, and all 53 agree within twice the meter’s accuracy (ADR-040;
 audit solver, are on record); an earlier spot check found the tube-model artifact, where a leakage resistor put an open-
 circuit cathode at half the plate voltage, fixed before any bar was set. (3) Stored units regenerate from their seeds, and
 the manifest ties every dataset to the code that produced it. (4) Complaint texts pass a leakage filter that rejects any text
-
-                                                                       5
-M2 · Design and approach                                                                                                             Differential
-
-
 naming a part or a fault. Evaluation complaints come from a held-out paraphrase bank never used to write or tune the
 reader, with each shown symptom left out with probability 20% and each other symptom added with 2%; a second bank,
 written by a separate author who never saw the rules and sealed until the lock, tests T18. (5) Ambiguity groups and
 symptom rates are reported per circuit, so a reader can see how often faults are indistinguishable or silent.
-                                        Table 9. Simulation and data alternatives and trade-offs.
- Choice                 Options                             Chosen, because                                    Cost accepted
- Simulator              ngspice; LTspice; Xyce; analytic    ngspice: open source, batch-scriptable, installs   Slower than analytic models
-                        models                              in CI
- Part spread            Uniform over the band; truncated    Truncated normal: parts cluster near nominal;      Real batches may be skewed
-                        normal                              the stress set widens it
- Fault set              Nominal fault dictionary; catalog   Catalog under tolerances: gives spreads, not       Single static faults only
-                        under tolerances; repair logs       points; no logs exist
- Units per hypothesis   50 to 400                           400, with 50, 100 and 200 as an ablation           253,000 simulations
+                                          Table 9. Simulation and data alternatives and trade-offs.
+ Choice                 Options                              Chosen, because                                    Cost accepted
+ Simulator              ngspice; LTspice; Xyce; analytic     ngspice: open source, batch-scriptable, installs   Slower than analytic models
+                        models                               in CI
+ Part spread            Uniform over the band; truncated     Truncated normal: parts cluster near nominal;      Real batches may be skewed
+                        normal                               the stress set widens it
+ Fault set              Nominal fault dictionary; catalog    Catalog under tolerances: gives spreads, not       Single static faults only
+                        under tolerances; repair logs        points; no logs exist
+ Units per hypothesis   50 to 400                            400, with 50, 100 and 200 as an ablation           253,000 simulations
 
   DESIGN DECISION · Simulate every fault under tolerances instead of one nominal fault dictionary
   Options: the classic fault dictionary (one nominal simulation per fault, then nearest match) or many simulated units per
@@ -291,7 +298,7 @@ symptom rates are reported per circuit, so a reader can see how often faults are
   and learned likelihoods, and ambiguity groups measured from data rather than assumed.
 
 
-  Part 3 — Diagnosis engine and evaluation plan                                                                  Section lead: [name removed]
+  Part 3 — Diagnosis engine and evaluation plan                                                                   Section lead: [name removed]
 
 Likelihoods. The engine needs the probability of any subset of readings under every hypothesis, because the technician
 measures one thing at a time. The core model fits, for each hypothesis, a Gaussian mixture of one to 3 full-covariance
@@ -310,6 +317,12 @@ whose prior was read from a complaint and for all others, because a complaint co
 “no fit” competes with.
 Ambiguity groups. Some faults give the same readings at every test point. Each hypothesis’s 40 validation units are
 scored with every reading; hypotheses confused with each other at a mean rate of at least 0.1 are joined, and groups are
+
+
+                                                                      6
+M2 · Design and approach                                                                                                             Differential
+
+
 the connected sets. On the channel strip 251 hypotheses form 217 groups, 191 of size one and none larger than 4. The
 engine reports groups, and accuracy is scored on them.
 Measurement choice and stopping. For every affordable measurement the engine estimates the expected information
@@ -323,66 +336,73 @@ dB low or hum 6 dB above the healthy spread. How often each fault shows each fea
 a complaint reports; two smoothing parameters are chosen on validation complaints. A complaint that reports nothing
 recognized leaves the prior uniform.
 Evaluation plan. Every system runs on the same test units with the same instrument noise (common random numbers),
-so comparisons are paired (Table 10). Statistics: a target is met only when its one-sided 95% confidence bound clears
-the bar, so a point estimate above the bar is not enough. Proportions on one circuit (T2, T7, T19) use exact binomial
-bounds; rates pooled over circuits (T1, T3, T6, T13), paired differences, effort ratios, calibration and AUROC use percentile
-
-                                                                    6
-M2 · Design and approach                                                                                                            Differential
-
-
-bootstrap bounds over units (2,000 resamples); paired accuracy also gets an exact McNemar test. Effort is the effort to a
-confirmed answer: every method is charged one unsoldering test of its named suspect unless it already unsoldered and
-confirmed one (ADR-041); raw effort and its probing and unsoldering parts are reported beside it. An effort ratio counts
-only if the system’s top-1 accuracy is at most 2 points below the comparator’s. Calibration (T12) is the expected calibration
-error over 10 equal-mass bins of the three probabilities shown when a diagnosis stops, with Brier score, log loss and
-every-step calibration reported. Misleading outcomes on out-of-model units (T13) are those that send the technician to
-a healthy part; flags and AUROC (T22) and the share of single faults named (T23) are reported beside them. Bars come
-from the pilot by the rule fixed in M1: the pilot estimate moved 1.5 standard errors against the system, pooled with the
-test set’s circuit mix (channel strip 0.5, each block 0.1). The failure analysis breaks misses down by circuit, part kind, fault
-mode, symptom rate and group size, and separates wrong names from “no single fault fits” calls.
+so comparisons are paired (Table 10). Statistics: a target is met only when its one-sided 95% confidence bound clears the
+bar, so a point estimate above the bar is not enough. Counts of units or prompts (T1, T2, T3, T6, T7, T13, T16, T19) use
+exact (Clopper-Pearson) binomial bounds, so a pass count can be stated in advance (ADR-044); paired differences, effort
+ratios, calibration and AUROC use percentile bootstrap bounds over units (2,000 resamples); paired accuracy also gets
+an exact McNemar test. Effort is the effort to a confirmed answer: every method is charged one unsoldering test of its
+named suspect unless it already unsoldered and confirmed one (ADR-041); raw effort and its probing and unsoldering
+parts are reported beside it. An effort ratio counts only if the system’s top-1 accuracy is at most 2 points below the
+comparator’s. Calibration (T12) is the expected calibration error over 10 equal-mass bins of the three probabilities shown
+when a diagnosis stops, with Brier score, log loss and every-step calibration reported. Misleading outcomes on out-of-
+model units (T13) are those that send the technician to a healthy part; flags and AUROC (T22), the share of single faults
+named (T23) and the units that put more than 50 V on a point the hazard map calls low voltage are reported beside them
+(none of 410 validation and pilot units; ADR-047). Hazard exposure (T24) is the number of powered readings per diagnosis
+at points that can exceed 50 V, relative to half-split tracing. Bars come from the pilot by the rule fixed in M1: the pilot
+estimate moved 1.5 standard errors against the system and rounded, never past the estimate (ADR-043), with a bar per
+part for a target with several (T4 has one per baseline; ADR-046), pooled with the test set’s circuit mix (channel strip 0.5,
+each block 0.1). The failure analysis breaks misses down by circuit, part kind, fault mode, symptom rate and group size,
+and separates wrong names from “no single fault fits” calls.
                       Table 10. Systems in the evaluation and the targets they serve (target definitions in M1, Table 3).
- System                                  What it is                                                                   Targets
- Random probing                          Uniformly random affordable readings; never unsolders                        T4, T10
- Fixed-order chart                       A textbook chart’s order: rails, output, signal path, stage DC, hum,         T4, T8
-                                         response; unsolders its leading suspect at 50% belief or when the chart is
-                                         used up
- Half-split tracing                      Rails first, then a binary search along the signal path with a test tone,    T4, T9
-                                         then the first bad stage’s DC points; unsolders like the chart
- Engine                                  Generative likelihoods, uniform prior, effort-weighted information gain      T4, T8-T10, T14
- Engine, classifier likelihood           The same with LightGBM likelihoods                                           Ablation
- Full system                             Engine plus the complaint prior from the offline reader                      T1-T3, T5, T6, T11-T13,
-                                                                                                                      T22, T23
- Language model alone                    Sees what a technician sees; asks for readings; same budget                  T5
- Language model with simulator           The same plus a tool returning each fault’s median readings                  Reported
- Ablations                               Noise-free complaints; the development bank; a capacitor-heavy prior         T14; analysis
+ System                                  What it is                                                                    Targets
+ Random probing                          Uniformly random affordable readings; never unsolders                         T4, T10
+ Fixed-order chart                       A textbook chart’s order: rails, output, signal path, stage DC, hum,          T4, T8
+                                         response; unsolders its leading suspect at 40% belief (tuned on the pilot)
+                                         or when the chart is used up
+ Half-split tracing                      Rails first, then a binary search along the signal path with a test tone,     T4, T9, T24
+                                         then the first bad stage’s DC points; unsolders at 50% belief (tuned on the
+                                         pilot)
+ Engine                                  Generative likelihoods, uniform prior, effort-weighted information gain       T4, T8-T10, T14
+ Engine, classifier likelihood           The same with LightGBM likelihoods                                            Ablation
+ Full system                             Engine plus the complaint prior from the offline reader                       T1-T3, T5, T6, T11-T13,
+                                                                                                                       T22, T23
+ Language model alone                    Sees what a technician sees; asks for readings; same budget                   T5
+ Language model with simulator           The same plus a tool returning each fault’s median readings                   Reported
+ Ablations                               Noise-free complaints; the development bank; a capacitor-heavy prior          T14; analysis
                                          and test mix; 50-200 units per hypothesis; information gain without
                                          effort; each effort weight halved and doubled
 
-                                        Table 11. Engine and evaluation alternatives and trade-offs.
- Choice                   Options                              Chosen, because                                   Cost accepted
- Likelihood               Gaussian mixtures; kernel density;   Mixtures: exact on any subset of readings, few    Assumes smooth, unimodal-
-                          normalizing flows; boosted trees;    parameters per fault; boosted trees kept as a     ish spreads
-                          Bayesian network                     check
- Measurement choice       Fixed chart; half-splitting;         Information gain per unit effort, one step        Can be myopic on long plans
-                          information gain; multi-step         ahead: cheap per step, the entropy rule of
-                          lookahead                            model-based diagnosis [6] with a cost term;
-                                                               optimal sequencing needs a search [7]
- Unmodeled units          None; fixed threshold; calibrated    Calibrated flat hypothesis: fits the Bayesian     Flags only part of double
-                          flat hypothesis; learned detector    update, tunable to a false-alarm budget           faults
- Statistics               Normal approximations; bootstrap;    Bootstrap and exact tests: no normality           Compute
-                          exact tests                          assumption at 0 % or 100 %
+
+
+
+                                                                       7
+M2 · Design and approach                                                                                                           Differential
+
+
+                                     Table 11. Engine and evaluation alternatives and trade-offs.
+ Choice                Options                              Chosen, because                                    Cost accepted
+ Likelihood            Gaussian mixtures; kernel density;   Mixtures: exact on any subset of readings, few     Assumes smooth, roughly
+                       normalizing flows; boosted trees;    parameters per fault; boosted trees kept as a      unimodal spreads
+                       Bayesian network                     check
+ Measurement choice    Fixed chart; half-splitting;         Information gain per unit effort, one step         Can be myopic on long plans
+                       information gain; multi-step         ahead: cheap per step, the entropy rule of
+                       lookahead                            model-based diagnosis [8] with a cost term;
+                                                            optimal sequencing needs a search [9]
+ Unmodeled units       None; fixed threshold; calibrated    Calibrated flat hypothesis: fits the Bayesian      Flags only part of double
+                       flat hypothesis; learned detector    update, tunable to a false-alarm budget            faults
+ Statistics            Normal approximations; bootstrap;    Bootstrap and exact tests: no normality            Compute
+                       exact tests                          assumption at 0 % or 100 %
 
   DESIGN DECISION · Choose one measurement at a time by information per unit of effort
   Options: follow a fixed chart, plan several steps ahead, or pick the single next measurement with the highest expected
-  information gain per unit of effort. Choice: one step at a time, the one-step entropy rule of model-based diagnosis [6] with a
-  cost per measurement, instead of the search an optimal test sequence needs [7]; it needs no plan to be revised when a reading
+  information gain per unit of effort. Choice: one step at a time, the one-step entropy rule of model-based diagnosis [8] with a
+  cost per measurement, instead of the search an optimal test sequence needs [9]; it needs no plan to be revised when a reading
   surprises. Why: each recommendation takes a fraction of a second (T20) and adapts to every reading. Consequence: the
   engine can be myopic when two cheap readings together would beat one expensive one; the ablation without effort weights
   and the comparison with half-split tracing show how much this costs.
 
 
-  Part 4 — Agent, safety, security and interface                                                                  Section lead: [name removed]
+  Part 4 — Agent, safety, security and interface                                                               Section lead: [name removed]
 
 Agent. The agent runs in three modes: live (Claude, with the key read only from DIFFERENTIAL_API_KEY and every
 response cached), offline (the rule-based complaint reader and templated explanations, with no network) and replay
@@ -391,28 +411,23 @@ then the grounding check, then the output check (Figure 2). The model can call 1
 current diagnosis session: none writes files, drives an instrument or reaches any service other than the language model
 itself. Its instructions say to use the tools for every fact, to report probabilities and ambiguity groups as the tools give
 them, and to treat service notes as untrusted data; no safety property depends on the model following them.
-
-                                                                       7
-M2 · Design and approach                                                                                                        Differential
-
-
-                                                   Table 12. The agent’s tools.
- Tool                                What it returns or does
- list_circuits,                      Available circuits; stages, test points and parts, with service notes wrapped as untrusted text
+                                                      Table 12. The agent’s tools.
+ Tool                                   What it returns or does
+ list_circuits,                         Available circuits; stages, test points and parts, with service notes wrapped as untrusted text
  describe_circuit
- parse_symptoms                      Symptom features read from the complaint (Claude, or the rules offline); sets the prior
- get_belief, ambiguity_groups        Ranked fault groups, the probability that no single fault fits, effort spent, whether the engine
-                                     would stop; groups the test points cannot separate
- recommend_measurement               The next step: what, where and how, effort, information, alternatives, predictions and the safety
-                                     text from code
- expected_readings                   Each suspect’s predicted reading and 95 % range for a measurement
- record_measurement                  Stores a reading; accepted only if the technician typed or confirmed that value
- safety_brief,                       High-voltage and discharge instructions; records the owner’s approval for removing parts;
- confirm_discharge,                  readings below 2 V at every point that can hold high voltage, which unlock part removal for 5
- approve_part_removal,               minutes (or until the next powered reading with a bleeder attached); how the unit was first
- confirm_bring_up                    powered
- read_meter_photo                    A proposed reading with plausibility checks; recorded only after confirmation
- generate_repair_ticket              Diagnosis, evidence trail, actions and safety lines, for sign-off
+ parse_symptoms                         Symptom features read from the complaint (Claude, or the rules offline); sets the prior
+ get_belief, ambiguity_groups           Ranked fault groups, the probability that no single fault fits, effort spent, whether the engine
+                                        would stop; groups the test points cannot separate
+ recommend_measurement                  The next step: what, where and how, effort, information, alternatives, predictions and the safety
+                                        text from code
+ expected_readings                      Each suspect’s predicted reading and 95 % range for a measurement
+ record_measurement                     Stores a reading; accepted only if the technician typed or confirmed that value
+ safety_brief,                          High-voltage and discharge instructions; records the owner’s approval for removing parts;
+ confirm_discharge,                     readings below 2 V at every point that can hold high voltage, which unlock part removal for 5
+ approve_part_removal,                  minutes (or until the next powered reading with a bleeder attached); how the unit was first
+ confirm_bring_up                       powered
+ read_meter_photo                       A proposed reading with plausibility checks; recorded only after confirmation
+ generate_repair_ticket                 Diagnosis, evidence trail, actions and safety lines, for sign-off
 
 Grounding. Every number in a reply that looks like a reading (it has a unit or a decimal point, or exceeds 12) must match
 a number in a tool result, the technician’s messages or a confirmed photo reading, up to the rounding of the digits shown
@@ -425,20 +440,26 @@ calibrated language. (2) Each step at a point that can exceed 50 V, normally or 
 clip-lead instructions and discharge through a resistor tool; in a chassis with a high-voltage supply every powered step
 carries a “high voltage inside” notice; oscilloscope steps carry a ground-clip warning; a point missing from the hazard
 map counts as high voltage, and so does every point of a unit whose model has not been checked against an independent
+
+
+                                                                    8
+M2 · Design and approach                                                                                                     Differential
+
+
 reference when its supply can exceed 50 V. (3) Removing a part needs the owner’s recorded approval and, in a high-
-voltage unit, a reading below 2 V at every point that can hold high voltage (one reading counts only for the main filter
-capacitor unless the technician states it holds for all points); the readings are logged as the technician’s attestation; the
-check lapses after 5 minutes unless the technician records a bleeder across the main filter capacitor, because a discharged
-capacitor recovers some charge, and any later powered reading locks removal again. (4) Bench practice (ADR-042): in a
-unit with a high-voltage supply or its own mains rectifier, no powered step is shown and no powered reading accepted
-until the technician records how the unit was first powered (variac, series lamp, current-limited supply, or already running
-normally); powered steps in a high-voltage unit name a meter rated CAT II 600 V or better (IEC 61010) and say to clip
-the leads on with the power off. In live mode the model cannot make these attestations: its calls to record discharge
-readings, owner approval or bring-up are refused unless the technician’s own words carry them. Non-finite readings are
-refused. (5) Outgoing text is checked: an unsafe instruction replaces the whole message, false certainty is reworded, and
-missing high-voltage text is appended. The exhaustive sweep behind T15 checks every possible step of every circuit; in
-development it checked 491 required steps with 0 false high-voltage alarms on low-voltage steps, and on the photos it
-was developed on the offline meter reader read 99.3% exactly.
+voltage unit, a reading below 2 V at every point that can hold high voltage (one reading counts for the first point only,
+and exactly 2 V is still charged); the check lapses after 5 minutes unless the technician records a bleeder clipped across the
+main filter capacitor, because a discharged capacitor recovers some charge, and any later powered reading locks removal
+again. (4) Bench practice (ADR-042): in a unit with a high-voltage supply or its own mains rectifier, no powered step is
+shown and no powered reading accepted until the technician records how the unit was first powered (variac, series lamp,
+current-limited supply, or already running normally); powered steps in a high-voltage unit name a meter rated CAT II
+600 V or better (IEC 61010) and say to clip the leads on with the power off. These records, and a trainee’s supervisor, come
+only from the technician’s entries in the app’s forms: the chat never makes them from text and the live model has no
+tool for them (ADR-045), since three red-team rounds found free text read as a record. Non-finite readings are refused. (5)
+Outgoing text is checked: an unsafe instruction replaces the whole message, false certainty is reworded, and missing high-
+voltage text is appended. The exhaustive sweep behind T15 checks every possible step of every circuit; in development
+it checked 491 required steps with 0 false high-voltage alarms on low-voltage steps, and on the photos it was developed
+on the offline meter reader read 99.3% exactly.
 Prompt-injection defense. Three layers. First, retrieved text is data: service notes carry a trust label and are flagged
 when they match any of 11 instruction patterns, and complaints reach the extractor inside tags as data. Second, a
 persuaded model still cannot act: its tools touch only the session, readings need the technician, and the grounding and
@@ -447,12 +468,6 @@ flagged and refused, and the adversarial suite for T16 (at least 300 prompts fro
 and a separately prompted model, none of whom saw the rules, each also posed inside attack styles, plus benign controls
 for over-refusal) is scored once, so the rules are not tuned to it. Each grading round also sends a fresh red-team agent
 against the running app.
-
-
-
-
-                                                                 8
-M2 · Design and approach                                                                                                          Differential
 
 
 
@@ -466,42 +481,41 @@ predicted range; the belief panel always shows runner-ups and “no single fault
 sign-off (Figure 3). The header states that Differential is an AI assistant that recommends while the technician decides.
 Trainee mode withholds the recommended step until the trainee records their own choice (both are logged) and requires
 a named supervisor for high-voltage units. The sign-off confirms the readings and the plan, not the diagnosis, and tickets
-belong to the job, not to a person’s record. Study S1 on the 24 V fault board is pre-registered with no bar: at least six
-technicians diagnose inserted faults with and without the tool in counterbalanced order (time to the correct part, parts
-unsoldered, wrong replacements), and one session plants a wrong recommendation on a non-hazardous step to measure
-over-reliance, only after an ethics-board determination, with consent that discloses it and a debrief.
-Table 13. Levels of diagnostic autonomy, our own scale defined by analogy to driving automation (whose SAE scale has six levels).
-Differential stays at L2 because a wrong step near high voltage can injure the person holding the probe, and each measurement and repair
-                                                 decision must remain a qualified person’s.
- Level      Who does what                                                             Example
- L0         The technician does everything                                            Chart, meter and experience
- L1         The tool supplies information but recommends nothing                      Expected readings, service notes
- L2         The tool recommends the next measurement and names suspects;              Differential, including SCPI readings the
-            the technician chooses, takes and confirms every measurement              technician triggers on the 24 V board
- L3         The tool measures through instruments or a fixture while a technician     Automated test station with an operator
-            supervises
- L4         An automated fixture diagnoses without a technician                       Unattended production test
+belong to the job, not to a person’s record. Study S1 on the 24 V fault board is pre-registered, its over-reliance rule as
+release gate T25: at least six technicians diagnose inserted faults with and without the tool in counterbalanced order (time
+to the correct part, parts unsoldered, wrong replacements), and one session plants a wrong recommendation on a non-
+hazardous step to measure over-reliance, only after an ethics-board determination, with consent that discloses it and a
+debrief.
 
-                                                      Table 14. Ethics by design.
- Value                      Design feature                                                                     Checked by
- Human agency               The technician measures, confirms every reading and signs the ticket; trainee      T17; sign-off
-                            mode asks for the trainee’s own step first
- Transparency               AI disclosure; “Why this?”; runner-ups and “no single fault fits” always shown;    T12, T13
-                            evidence trail
- Safety                     Rules in code; hazards conditioned on faults; unknown points and unchecked         T15, T16
-                            models treated as high voltage; owner approval and per-point discharge
-                            readings before removal
- Privacy                    Offline by default; photo metadata removed; no customer identity in tickets; key   Tests
-                            never logged
- Fairness                   Complaint reading scored by writer voice; a wrong prior tested both ways;          T14, T18
-                            errors by circuit, part and who bears them
- Accountability             Logged tool calls, grounding and safety events; pinned model; signed tickets       Export
-
-
-                                                                    9
+                                                                   9
 M2 · Design and approach                                                                                                                          Differential
 
 
+Table 13. Levels of diagnostic autonomy, our own scale defined by analogy to driving automation (whose SAE scale has six levels).
+Differential stays at L2 because a wrong step near high voltage can injure the person holding the probe, and each measurement and repair
+                                                 decision must remain a qualified person’s.
+ Level        Who does what                                                                        Example
+ L0           The technician does everything                                                       Chart, meter and experience
+ L1           The tool supplies information but recommends nothing                                 Expected readings, service notes
+ L2           The tool recommends the next measurement and names suspects;                         Differential, including SCPI readings the
+              the technician chooses, takes and confirms every measurement                         technician triggers on the 24 V board
+ L3           The tool measures through instruments or a fixture while a technician                Automated test station with an operator
+              supervises
+ L4           An automated fixture diagnoses without a technician                                  Unattended production test
+                                                               Table 14. Ethics by design.
+ Value                           Design feature                                                                               Checked by
+ Human agency                    The technician measures, confirms every reading and signs the ticket; trainee                T17; sign-off
+                                 mode asks for the trainee’s own step first
+ Transparency                    AI disclosure; “Why this?”; runner-ups and “no single fault fits” always shown;              T12, T13
+                                 evidence trail
+ Safety                          Rules in code; hazards conditioned on faults; unknown points and unchecked                   T15, T16
+                                 models treated as high voltage; owner approval and per-point discharge
+                                 readings before removal
+ Privacy                         Offline by default; photo metadata removed; no customer identity in tickets; key             Tests
+                                 never logged
+ Fairness                        Complaint reading scored by writer voice; a wrong prior tested both ways;                    T14, T18, T26
+                                 errors by circuit, part and who bears them; no voice more than 5 points worse
+ Accountability                  Logged tool calls, grounding and safety events; pinned model; signed tickets                 Export
                                           Table 15. Agent, safety and interface alternatives and trade-offs.
  Choice                     Options                                   Chosen, because                                        Cost accepted
  Safety enforcement         Prompt only; code; a second               Code: deterministic, testable on every step,           Pattern lists need upkeep
@@ -526,30 +540,35 @@ References
      current in 2026), 2026. [Online]. Available: https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.333.
 [2] U.S. Occupational Safety and Health Administration, “29 CFR 1910.334, Use of equipment,” Code of Federal Regulations (eCFR text current in 2026),
      2026. [Online]. Available: https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.334.
-[3] European Parliament and Council of the European Union, “Regulation (EU) 2024/1689 of 13 June 2024 laying down harmonised rules on artificial
-     intelligence (Artificial Intelligence Act), original text,” Official Journal of the European Union, OJ L, 2024/1689, Jul. 12, 2024. [Online]. Available:
-     https://eur-lex.europa.eu/eli/reg/2024/1689/oj.
-[4] European Parliament and Council of the European Union, “Directive (EU) 2024/2853 of 23 October 2024 on liability for defective products and
-     repealing Council Directive 85/374/EEC,” Official Journal of the European Union, OJ L, 2024/2853, 18 Nov. 2024, Oct. 23, 2024. [Online]. Available:
-     https://eur-lex.europa.eu/eli/dir/2024/2853/oj/eng.
-[5] Fluke Corporation, “Fluke 114, 115, 116 and 117 Digital Multimeters: Extended specifications,” Fluke specification sheet (document 2793260, 6116-ENG
-     Rev A, per file name), n.d. [Online]. Available: https://dam-assets.fluke.com/s3fs-public/2793260_6116_ENG_A_W.PDF (accessed Sep. 29, 2026).
-[6] J. de Kleer and B. C. Williams, “Diagnosing multiple faults,” Artificial Intelligence, vol. 32, no. 1, pp. 97–130, Apr. 1987. doi:
-     10.1016/0004-3702(87)90063-4.
-[7] K. R. Pattipati and M. G. Alexandridis, “Application of heuristic search and information theory to sequential fault diagnosis,” IEEE Transactions on
-     Systems, Man, and Cybernetics, vol. 20, no. 4, pp. 872–887, Jul./Aug. 1990. doi: 10.1109/21.105086.
-[8] Boston Consulting Group, “Executive Perspectives June 2026: Field Service Operations (The Future of Field Service with Applied AI),” Jun. 2026.
-     [Online]. Available: https://www.bcg.com/assets/2026/executive-perspectives-future-of-field-service-with-applied-ai.pdf (accessed Sep. 28, 2026).
-[9] “US recorded-music revenues grew by 6.9% in the first half of 2026,” Music Ally, Sep. 1, 2026. [Online]. Available: https://musically.com/2026/09/01/
-     us-recorded-music-revenues-grew-by-6-9-in-the-first-half-of-2026/ (accessed Sep. 28, 2026).
-[10] H. Bastani, O. Bastani, A. Sungu, H. Ge, Ö. Kabakcı, and R. Mariman, “Generative AI without guardrails can harm learning: Evidence from high
-     school mathematics,” Proceedings of the National Academy of Sciences, vol. 122, no. 26, 2025. [Online]. Available: https://doi.org/10.1073/pnas.
-     2422633122 (accessed Sep. 28, 2026).
-[11] European Parliament and Council of the European Union, “Regulation (EU) 2026/1744 of 8 July 2026 amending Regulations (EU) 2024/1689, (EU)
+[3] U.S. Occupational Safety and Health Administration, “29 CFR 1904.31, Covered employees,” Code of Federal Regulations (eCFR text current in 2026),
+     2026. [Online]. Available: https://www.ecfr.gov/current/title-29/section-1904.31.
+[4] European Parliament and Council of the European Union, “Regulation (EU) 2024/1689 of 13 June 2024 laying down harmonised rules on artificial
+     intelligence (Artificial Intelligence Act),” Official Journal of the European Union, OJ L, 2024/1689, Jul. 12, 2024. [Online]. Available: https://eur-lex.
+     europa.eu/eli/reg/2024/1689/oj.
+[5] European Parliament and Council of the European Union, “Regulation (EU) 2026/1744 of 8 July 2026 amending Regulations (EU) 2024/1689, (EU)
      2018/1139 and (EU) 2023/1230 as regards the simplification of the implementation of harmonised rules on artificial intelligence (Digital Omnibus
-     on AI),” Official Journal of the European Union, OJ L, 2026/1744, 24 Jul. 2026, Jul. 8, 2026. [Online]. Available: https://eur-lex.europa.eu/eli/reg/2026/
-     1744/oj/eng.
-[12] European Commission, “Commission starts enforcing AI Act rules and new transparency requirements on 2 August (IP/26/1714),” Press release,
+     on AI),” Official Journal of the European Union, OJ L, 2026/1744, Jul. 24, 2026. [Online]. Available: https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng.
+[6] European Parliament and Council of the European Union, “Directive (EU) 2024/2853 of 23 October 2024 on liability for defective products and
+     repealing Council Directive 85/374/EEC,” Official Journal of the European Union, OJ L, 2024/2853, Nov. 18, 2024. [Online]. Available: https://eur-lex.
+     europa.eu/eli/dir/2024/2853/oj/eng.
+[7] Fluke Corporation, “Fluke 114, 115, 116 and 117 Digital Multimeters: Extended specifications,” Fluke specification sheet (document 2793260, 6116-ENG
+     Rev A, per file name), n.d. [Online]. Available: https://dam-assets.fluke.com/s3fs-public/2793260_6116_ENG_A_W.PDF (accessed Sep. 29, 2026).
+[8] J. de Kleer and B. C. Williams, “Diagnosing multiple faults,” Artificial Intelligence, vol. 32, no. 1, pp. 97–130, Apr. 1987. doi:
+     10.1016/0004-3702(87)90063-4.
+[9] K. R. Pattipati and M. G. Alexandridis, “Application of heuristic search and information theory to sequential fault diagnosis,” IEEE Transactions on
+     Systems, Man, and Cybernetics, vol. 20, no. 4, pp. 872–887, Jul./Aug. 1990. doi: 10.1109/21.105086.
+[10] Boston Consulting Group, “Executive Perspectives June 2026: Field Service Operations (The Future of Field Service with Applied AI),” Jun. 2026.
+     [Online]. Available: https://www.bcg.com/assets/2026/executive-perspectives-future-of-field-service-with-applied-ai.pdf (accessed Sep. 28, 2026).
+
+
+                                                                              10
+M2 · Design and approach                                                                                                                       Differential
+
+[11] “US recorded-music revenues grew by 6.9% in the first half of 2026,” Music Ally, Sep. 1, 2026. [Online]. Available: https://musically.com/2026/09/01/
+     us-recorded-music-revenues-grew-by-6-9-in-the-first-half-of-2026/ (accessed Sep. 28, 2026).
+[12] H. Bastani, O. Bastani, A. Sungu, H. Ge, Ö. Kabakcı, and R. Mariman, “Generative AI without guardrails can harm learning: Evidence from high
+     school mathematics,” Proceedings of the National Academy of Sciences, vol. 122, no. 26, art. no. e2422633122, 2025. doi: 10.1073/pnas.2422633122.
+[13] European Commission, “Commission starts enforcing AI Act rules and new transparency requirements on 2 August (IP/26/1714),” Press release,
      Jul. 31, 2026. [Online]. Available: https://digital-strategy.ec.europa.eu/en/news/commission-starts-enforcing-ai-act-rules-and-new-transparency-
      requirements-2-august (accessed Sep. 28, 2026).
 
@@ -557,100 +576,97 @@ References
 Appendix A · Requirements traceability matrix
 Table 16. Requirements traceability. “From”: M1 objective (O1 accuracy, O2 effort, O3 honesty, O4 safety, O5 practicality), safety (S) or
                            engineering practice (P). Test files are in tests/, evaluation scripts in eval/.
- ID      Requirement                                                               From      Verified by                                   Targets
- R1      Model six circuits (five blocks and a channel strip) with                 O1        test_circuits.py, tools/hand_calcs.py         —
+ ID      Requirement                                                             From     Verified by                                 Targets
+ R1      Model six circuits (five blocks and a channel strip) with               O1       test_circuits.py, tools/hand_calcs.py       —
          netlists, part tolerances, test points and hazard flags
- R2      Enumerate every plausible single-part fault per part kind,                O1        test_sim.py                                   —
+ R2      Enumerate every plausible single-part fault per part kind,              O1       test_sim.py                                 —
          with severity drawn per unit
- R3      Simulate at least 200 Monte Carlo draws per fault hypothesis              O1        test_reproducibility.py, test_sim.py          —
+ R3      Simulate at least 200 Monte Carlo draws per fault hypothesis            O1       test_reproducibility.py, test_sim.py        —
          with ngspice, reproducibly
- R4      Keep a calibrated probability for every fault group and for               O1, O3    test_engine.py, run_eval.py                   T1, T2, T3, T12,
-         “no single fault fits”                                                                                                            T13, T22, T23
- R5      Recommend the measurement with the most expected                          O2        test_engine.py, run_eval.py                   T8, T9, T10
+ R4      Keep a calibrated probability for every fault group and for             O1, O3   test_engine.py, run_eval.py                 T1, T2, T3, T12,
+         “no single fault fits”                                                                                                       T13, T22, T23
+ R5      Recommend the measurement with the most expected                        O2       test_engine.py, run_eval.py                 T8, T9, T10
          information per unit of effort
-
-
-
-                                                                              10
-M2 · Design and approach                                                                                                        Differential
-
-
- ID    Requirement                                                       From   Verified by                            Targets
- R6    Beat scripted, random and LLM-only baselines at the same          O1     run_eval.py, llm_baseline.py           T4, T5
-       budget
- R7    Turn a plain-language complaint into symptom features and         O5     nlp_benchmark.py, test_agent.py        T11, T18
-       a prior, offline or with Claude
- R8    Read a meter photo as a proposal the technician must              O5     test_vision.py, test_server.py,        T19
-       confirm                                                                  meter_eval.py
- R9    Hold up on parts outside their nominal spread and on real         O1     run_eval.py, hardware/fault_board/     T6, T7
-       hardware                                                                 procedure.md
- R10   Stay robust to a mis-set prior (forum folklore)                   O3     run_eval.py                            T14
- R11   Attach hands-off and discharge instructions wherever a point      S      test_safety.py, safety_sweep.py        T15
-       can exceed 50 V, normally or under any fault
- R12   Lock unsoldering in high-voltage circuits until a discharge       S      test_agent.py, test_server.py          T15
-       below 2 V is confirmed
- R13   Refuse mains-side work, protection bypasses and unsafe            S      test_safety.py, redteam/harness.py     T16
-       requests in every mode
- R14   Treat retrieved text (service notes, photos) as data, never as    S      test_safety.py                         T16
-       instructions
- R15   Trace every number in a message or ticket to a tool result or     O4     test_grounding.py, agent_eval.py       T17
-       the technician
- R16   Produce a repair ticket with diagnosis, evidence trail and        O3     test_agent.py, test_server.py          —
-       technician sign-off
- R17   Offer live, offline and replay modes; read the key only from      P      test_agent.py                          —
-       DIFFERENTIAL_API_KEY
- R18   Talk to real instruments over SCPI at 24 V or less, refusing      S      test_instruments.py                    T7
-       high-voltage points
- R19   Answer each step fast and each diagnosis cheaply                  O5     run_eval.py, agent_eval.py             T20, T21
- R20   Run from a clean clone in three commands, offline, with tests,    P      .github/workflows/ci.yml               —
-       types and coverage in CI
+ R6      Beat scripted, random and LLM-only baselines at the same                O1       run_eval.py, llm_baseline.py                T4, T5
+         budget
+ R7      Turn a plain-language complaint into symptom features and               O5       nlp_benchmark.py, test_agent.py             T11, T18
+         a prior, offline or with Claude
+ R8      Read a meter photo as a proposal the technician must                    O5       test_vision.py, test_server.py,             T19
+         confirm                                                                          meter_eval.py
+ R9      Hold up on parts outside their nominal spread and on real               O1       run_eval.py, hardware/fault_board/          T6, T7
+         hardware                                                                         procedure.md
+ R10     Stay robust to a wrong prior, in either direction                       O3       run_eval.py                                 T14
+ R11     Attach hands-off and discharge instructions wherever a point            S        test_safety.py, safety_sweep.py             T15
+         can exceed 50 V, normally or under any fault
+ R12     Lock unsoldering in high-voltage circuits until a discharge             S        test_agent.py, test_server.py               T15
+         below 2 V is confirmed
+ R13     Refuse mains-side work, protection bypasses and unsafe                  S        test_safety.py, redteam/harness.py          T16
+         requests in every mode
+ R14     Treat retrieved text (service notes, photos) as data, never as          S        test_safety.py                              T16
+         instructions
+ R15     Trace every number in a message or ticket to a tool result or           O4       test_grounding.py, agent_eval.py            T17
+         the technician
+ R16     Produce a repair ticket with diagnosis, evidence trail and              O3       test_agent.py, test_server.py               —
+         technician sign-off
+ R17     Offer live, offline and replay modes; read the key only from            P        test_agent.py                               —
+         DIFFERENTIAL_API_KEY
+ R18     Talk to real instruments over SCPI at 24 V or less, refusing            S        test_instruments.py                         T7
+         high-voltage points
+ R19     Answer each step fast and each diagnosis cheaply                        O5       run_eval.py, agent_eval.py                  T20, T21
+ R20     Run from a clean clone in three commands, offline, with tests,          P        .github/workflows/ci.yml                    —
+         types and coverage in CI
+ R21     Keep powered readings at points that can exceed 50 V few, by            S        set_bars.py, run_eval.py                    T24
+         pricing them in the choice of measurement
+ R22     Guard against over-reliance with trainee mode, visible                  S        test_agent.py, docs/study_s1.md             T25
+         reasons and a pre-registered study
+ R23     Give plain-language complaints diagnoses as good as                     O3       run_eval.py                                 T26
+         technical ones
 
 
 Appendix B · Industry watch
  • Field-service AI grows with a technician shortage (BCG, June 2026). BCG reports that a shortage of technician talent keeps
    intensifying field-service pain points and describes technician copilots as “creating knowledge bases across technology generations”
-   [8]. Differential’s explanations in physical terms and the planned technician study address whether a tool transfers skill or replaces
+   [10]. Differential’s explanations in physical terms and the planned technician study address whether a tool transfers skill or replaces
    it.
  • Analog playback keeps growing (RIAA, first half of 2026). U.S. vinyl revenue rose 17.7% to $554 million and physical revenue
-   25.9% [9]. More analog playback in use suggests more analog gear to repair, although no source measures repair demand directly.
+   25.9% [11]. More analog playback in use suggests more analog gear to repair, although no source measures repair demand directly.
+
+
+
+                                                                            11
+M2 · Design and approach                                                                                                         Differential
+
+
  • Unguarded AI can harm learning. Students who practiced with a plain chat interface scored 17% worse than those who never
-   had access once it was removed, while tutor-style hints largely prevented the harm [10]. This supports showing reasons and runner-
+   had access once it was removed, while tutor-style hints largely prevented the harm [12]. This supports showing reasons and runner-
    ups rather than bare answers, and measuring over-reliance in the technician study.
  • EU high-risk rules move (Digital Omnibus, July 2026). The Omnibus sets the high-risk rules to apply from 2 December 2027
-   for Annex III systems and 2 August 2028 for Annex I systems [11]; the transparency duty our interface meets applies from 2 August
-   2026 [12].
+   for Annex III systems and 2 August 2028 for Annex I systems [5]; the transparency duty our interface meets applies from 2 August
+   2026 [13].
 
 
 Appendix C · Course coverage map
-
-
-
-
-                                                                    11
-M2 · Design and approach                                                                                                        Differential
-
-
                                     Table 17. Course topics and where this document uses them.
- Wk     Topic                       Where this design uses it                                                            Depth
- 2      AI/ML algorithms            Gaussian mixtures, boosted trees, Bayesian updating, information-gain                Core
-                                    measurement choice (Part 3)
- 3      Python                      Simulation, engine, agent and evaluation code; requirements traced to it (Parts 1,   Core
-                                    2)
- 4      Large language models       Language layer and its limits; LLM-alone baselines (Parts 3, 4)                      Core
- 5      LLM-enhanced agents         Tool design, turn order, grounding check (Part 4)                                    Core
- 6      Building ML systems         Splits, data-quality checks, calibration, bar rule, ablations (Parts 2, 3)           Core
- 7      NLP                         Complaint reading with rules and Claude; leakage filter; paraphrase bank (Parts 2,   Supporting
-                                    3, 4)
- 8      Image recognition           Meter-photo reading with plausibility checks (Part 4)                                Supporting
- 9      Facial recognition (bias    Errors by circuit, part and writer voice (Parts 3, 4)                                Supporting
+ Wk     Topic                        Where this design uses it                                                            Depth
+ 2      AI/ML algorithms             Gaussian mixtures, boosted trees, Bayesian updating, information-gain                Core
+                                     measurement choice (Part 3)
+ 3      Python                       Simulation, engine, agent and evaluation code; requirements traced to it (Parts 1,   Core
+                                     2)
+ 4      Large language models        Language layer and its limits; LLM-alone baselines (Parts 3, 4)                      Core
+ 5      LLM-enhanced agents          Tool design, turn order, grounding check (Part 4)                                    Core
+ 6      Building ML systems          Splits, data-quality checks, calibration, bar rule, ablations (Parts 2, 3)           Core
+ 7      NLP                          Complaint reading with rules and Claude; leakage filter; paraphrase bank (Parts 2,   Supporting
+                                     3, 4)
+ 8      Image recognition            Meter-photo reading with plausibility checks (Part 4)                                Supporting
+ 9      Facial recognition (bias     Errors by circuit, part and writer voice (Parts 3, 4)                                Supporting
         auditing)
- 10     Autonomous transportation   Human in the loop: the tool recommends, the technician acts (Part 4)                 Supporting
- 11     Robotics                    Instrument interface with SCPI back end limited to 24 V (Part 1)                     Stretch
- 12     Cybersecurity               Injection defense in three layers; red-team suite (Part 4)                           Core
- 13     Ethics and governance       Regulatory constraints as requirements; ethics by design (Parts 1, 4)                Core
+ 10     Autonomous transportation    Human in the loop: the tool recommends, the technician acts (Part 4)                 Supporting
+ 11     Robotics                     Instrument interface with SCPI back end limited to 24 V (Part 1)                     Stretch
+ 12     Cybersecurity                Injection defense in three layers; red-team suite (Part 4)                           Core
+ 13     Ethics and governance        Regulatory constraints as requirements; ethics by design (Parts 1, 4)                Core
 
 
 
 
-                                                                 12
+                                                                  12
 

@@ -61,7 +61,7 @@ agent or person continuing the work follows these rules.
 
 ## Procedures
 
-- **Re-run everything:** `make install sim cases fit pilot sweep eval docs check`
+- **Re-run everything:** `make install sim cases fit calibrate pilot audit sweep eval docs check`
   (simulation and training take hours on 4 cores; artifacts are cached and
   resumable).
 - **Render and check a milestone:** `make docs MS=M2` then `make docs-check`;

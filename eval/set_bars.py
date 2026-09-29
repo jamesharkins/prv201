@@ -156,12 +156,31 @@ def bar(est: float, se: float, higher_is_better: bool, step: float) -> float:
 
 def chance_met(est: float, se_pilot: float, b: float, higher_is_better: bool,
                n_pilot: float, n_test: float) -> float:
-    """P(one-sided 95% bound clears the bar) if the test behaves like the pilot."""
+    """Predictive probability that the test's one-sided 95% bound clears the bar.
+
+    The test estimate is taken as normal around the pilot estimate with variance
+    SE_pilot^2 + SE_test^2: the pilot's own error is counted, not only the test's
+    (round-4 review), with SE_test the pilot standard error scaled by sqrt(n_pilot / n_test).
+    The target is met when the test estimate exceeds the bar by 1.645 SE_test."""
     se_t = se_pilot * math.sqrt(n_pilot / n_test)
     gap = (est - b) if higher_is_better else (b - est)
-    if se_t <= 0:
+    spread = math.hypot(se_pilot, se_t)
+    if spread <= 0:
         return 1.0 if gap > 0 else 0.0
-    return float(0.5 * (1 + math.erf((gap / se_t - Z_ONE_SIDED) / math.sqrt(2))))
+    return float(0.5 * (1 + math.erf(((gap - Z_ONE_SIDED * se_t) / spread) / math.sqrt(2))))
+
+
+def pass_count(bar_value: float, n: int, higher_is_better: bool = True) -> int:
+    """Smallest (or, for an 'at most' target, largest) count of n units whose normal
+    one-sided 95% bound clears the bar: what a pass needs, in units."""
+    def bound(k: int) -> float:
+        q = k / n
+        half = Z_ONE_SIDED * math.sqrt(max(q * (1 - q), 1e-12) / n)
+        return q - half if higher_is_better else q + half
+
+    if higher_is_better:
+        return next(k for k in range(n + 1) if bound(k) >= bar_value)
+    return max(k for k in range(n + 1) if bound(k) <= bar_value)
 
 
 def pts(x: float) -> str:
@@ -371,10 +390,24 @@ def main() -> None:
         "T23": f"≥ {round(100 * b23n)}% named; ≥ {round(100 * b23a)}% right when naming",
         "T14": f"≥ {pts(d['T14']['bar'])} each",
     }
+    # What a pass needs, in units, for the count targets (the bound must clear the bar).
+    counts = {"T1": (n_single, True), "T2": (n_cs, True), "T3": (n_single, True),
+              "T6": (ev["aged_cases"], True), "T13": (ev["unmodeled_cases"], False)}
+    for tid, (n_units, hib) in counts.items():
+        d[tid]["pass_count"] = pass_count(d[tid]["bar"], int(n_units), hib)
+        d[tid]["n_units"] = int(n_units)
+    for tid, v in d.items():
+        if "estimate" in v and "se" in v and tid not in ("T4", "T14", "T22", "T23"):
+            v["raw_bar"] = (v["estimate"] - K * v["se"] if v.get("direction") == ">="
+                            else v["estimate"] + K * v["se"])
     for t in tj["targets"]:
         if t["id"] in d:
             v = d[t["id"]]
             t["value"] = v["bar"]
+            if "pass_count" in v:
+                t["pass_count"], t["n_units"] = v["pass_count"], v["n_units"]
+            if "raw_bar" in v:
+                t["raw_bar"] = round(float(v["raw_bar"]), 4)
             t["text"] = text[t["id"]]
             t["pilot_dependent"] = True
             t["derivation"] = derivation(t["id"], v)
@@ -415,7 +448,7 @@ def main() -> None:
 def derivation(tid: str, v: dict[str, Any]) -> str:
     """One sentence stating the pilot estimate and how the bar follows from it."""
     rule = (f"bar = estimate moved {K} standard errors against the system, rounded (ADR-029); "
-            f"chance of meeting it if the test behaves like the pilot about {100 * v['chance_met']:.0f}%")
+            f"chance of meeting it (counting the pilot's own error) about {100 * v['chance_met']:.0f}%")
     pct = {"T1", "T2", "T3", "T6", "T13"}
     if tid == "T4":
         return ("Pilot margins of the engine alone: "
@@ -446,8 +479,8 @@ def pilot_text(tid: str, v: dict[str, Any]) -> str:
     if tid in ("T1", "T2", "T3", "T6", "T13"):
         return f"{100 * v['estimate']:.1f}%"
     if tid == "T4":
-        return (f"{100 * v['estimate_vs_fixed_order']:+.0f} / {100 * v['estimate_vs_random']:+.0f} / "
-                f"{100 * v['estimate_vs_half_split']:+.0f} pts").replace("-", "−")
+        return (f"{100 * v['estimate_vs_fixed_order']:+.1f} / {100 * v['estimate_vs_random']:+.1f} / "
+                f"{100 * v['estimate_vs_half_split']:+.1f} pts").replace("-", "−")
     if tid == "T14":
         return (f"{100 * v['wrong_prior_catalog_mix']:+.1f} / "
                 f"{100 * v['uniform_prior_capacitor_mix']:+.1f} pts").replace("-", "−")

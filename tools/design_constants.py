@@ -112,6 +112,9 @@ def collect() -> dict[str, Any]:
             "hv_threshold_v": rules.HV_THRESHOLD_V,
             "discharge_verify_max_v": hazards.DISCHARGE_VERIFY_MAX_V,
             "scpi_max_v": scpi.MAX_BENCH_VOLTS,
+            "discharge_valid_min": rules.DISCHARGE_VALID_S / 60,
+            "meter_rating": rules.METER_RATING,
+            "bring_up_methods": len(rules.BRING_UP_METHODS),
         },
     }
 

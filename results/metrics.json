@@ -230,6 +230,92 @@
    "triode": 0.1
   }
  },
+ "fault_audit": {
+  "agree_rate": 1.0,
+  "by_block": {
+   "channel_strip": {
+    "agree": 11,
+    "faults": 11
+   },
+   "driver": {
+    "agree": 10,
+    "faults": 10
+   },
+   "opamp": {
+    "agree": 9,
+    "faults": 9
+   },
+   "psu": {
+    "agree": 9,
+    "faults": 9
+   },
+   "tone": {
+    "agree": 6,
+    "faults": 6
+   },
+   "triode": {
+    "agree": 8,
+    "faults": 8
+   }
+  },
+  "by_type": {
+   "dead": {
+    "agree": 2,
+    "faults": 2
+   },
+   "degradation": {
+    "agree": 10,
+    "faults": 10
+   },
+   "drift": {
+    "agree": 12,
+    "faults": 12
+   },
+   "leakage": {
+    "agree": 5,
+    "faults": 5
+   },
+   "open": {
+    "agree": 12,
+    "faults": 12
+   },
+   "short": {
+    "agree": 12,
+    "faults": 12
+   }
+  },
+  "ci95": [
+   0.932765,
+   1.0
+  ],
+  "faults": 53,
+  "faults_agree": 53,
+  "first_run": {
+   "disagreeing": [
+    "R202:open",
+    "U401:dead",
+    "R402:drift_x10",
+    "R403:open",
+    "R402:short",
+    "Q501:ce_short"
+   ],
+   "faults": 42,
+   "faults_agree": 36,
+   "readings": 1379,
+   "readings_agree": 1368
+  },
+  "n_disagreements": 0,
+  "per_type": 2,
+  "readings": 3159,
+  "readings_agree": 3159,
+  "rule": {
+   "ac_hum_db": 0.5,
+   "dc": "|diff| <= 2 x meter accuracy (0.5 % + 2 counts)",
+   "gain_floor": 0.001,
+   "hum_floor_v": 0.0001
+  },
+  "seed": 20260929
+ },
  "hand_calcs": {
   "abs_tol_db": 0.1,
   "hum_model_overstatement_max_pct": 5.40924,

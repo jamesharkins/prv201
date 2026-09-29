@@ -2,7 +2,7 @@
  "agent": {
   "grounding_small_count_max": 12,
   "modes": 3,
-  "tools": 13
+  "tools": 14
  },
  "calibration": {
   "false_alarm_budget": 0.05,
@@ -31,7 +31,12 @@
     "triode": 60
    },
    "pilot_aged": {
-    "channel_strip": 150
+    "channel_strip": 200,
+    "driver": 60,
+    "opamp": 60,
+    "psu": 60,
+    "tone": 60,
+    "triode": 60
    },
    "pilot_wide": {
     "channel_strip": 150
@@ -45,7 +50,12 @@
     "triode": 100
    },
    "test_aged": {
-    "channel_strip": 300
+    "channel_strip": 500,
+    "driver": 100,
+    "opamp": 100,
+    "psu": 100,
+    "tone": 100,
+    "triode": 100
    },
    "test_wide": {
     "channel_strip": 300
@@ -117,9 +127,12 @@
   "thd_pct": 10.0
  },
  "safety": {
+  "bring_up_methods": 4,
+  "discharge_valid_min": 5.0,
   "discharge_verify_max_v": 2.0,
   "hv_threshold_v": 50.0,
   "injection_markers": 11,
+  "meter_rating": "CAT II 600 V or better (IEC 61010)",
   "refusal_categories": 5,
   "scpi_max_v": 24.0
  },
@@ -133,10 +146,16 @@
     1.2,
     3.0
    ],
+   "mixed_splits": [
+    "train",
+    "unmodeled_val",
+    "val"
+   ],
    "resistor": [
     1.0,
     1.1
    ],
+   "training_share_pct": 50.0,
    "triode_emission": [
     0.7,
     1.0

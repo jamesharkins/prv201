@@ -2541,6 +2541,126 @@
   },
   "seconds": 17.052242
  },
+ "twin_pilot": {
+  "engine_gen": {
+   "confirmed_effort": 16.885,
+   "effort": 7.215,
+   "hv_reads": 0.15,
+   "n": 200,
+   "top1": 0.93,
+   "top1_part": 0.93
+  },
+  "fixed_order": {
+   "confirmed_effort": 31.655,
+   "effort": 24.785,
+   "hv_reads": 3.145,
+   "n": 200,
+   "top1": 0.78,
+   "top1_part": 0.795
+  },
+  "half_split": {
+   "confirmed_effort": 30.07,
+   "effort": 23.4,
+   "hv_reads": 2.94,
+   "n": 200,
+   "top1": 0.805,
+   "top1_part": 0.825
+  },
+  "random": {
+   "confirmed_effort": 34.38,
+   "effort": 24.14,
+   "hv_reads": 1.97,
+   "n": 200,
+   "top1": 0.84,
+   "top1_part": 0.85
+  },
+  "twin": {
+   "confirmed_effort": 34.23,
+   "effort": 28.73,
+   "hv_reads": 0.765,
+   "n": 200,
+   "top1": 0.72,
+   "top1_part": 0.735
+  },
+  "twin_model_free": {
+   "confirmed_effort": 47.94,
+   "effort": 38.76,
+   "hv_reads": 2.295,
+   "n": 200,
+   "top1": 0.145,
+   "top1_part": 0.145
+  },
+  "twin_one_cost": {
+   "confirmed_effort": 28.18,
+   "effort": 23.32,
+   "hv_reads": 1.33,
+   "n": 200,
+   "top1": 0.77,
+   "top1_part": 0.785
+  }
+ },
+ "twin_tuning": {
+  "confirm_at": 0.4,
+  "rule": "lowest effort to a confirmed answer within 1 point of the best top-1 (ADR-046)",
+  "sweep": {
+   "0.3": {
+    "confirmed_effort": 34.43,
+    "effort": 29.19,
+    "hv_reads": 0.74,
+    "n": 200,
+    "top1": 0.705,
+    "top1_part": 0.72
+   },
+   "0.4": {
+    "confirmed_effort": 34.23,
+    "effort": 28.73,
+    "hv_reads": 0.765,
+    "n": 200,
+    "top1": 0.72,
+    "top1_part": 0.735
+   },
+   "0.5": {
+    "confirmed_effort": 35.435,
+    "effort": 28.845,
+    "hv_reads": 0.84,
+    "n": 200,
+    "top1": 0.725,
+    "top1_part": 0.745
+   },
+   "0.6": {
+    "confirmed_effort": 36.205,
+    "effort": 28.435,
+    "hv_reads": 0.87,
+    "n": 200,
+    "top1": 0.715,
+    "top1_part": 0.74
+   },
+   "0.7": {
+    "confirmed_effort": 36.475,
+    "effort": 28.505,
+    "hv_reads": 0.885,
+    "n": 200,
+    "top1": 0.725,
+    "top1_part": 0.745
+   },
+   "0.8": {
+    "confirmed_effort": 36.85,
+    "effort": 28.53,
+    "hv_reads": 0.89,
+    "n": 200,
+    "top1": 0.725,
+    "top1_part": 0.745
+   },
+   "0.9": {
+    "confirmed_effort": 37.21,
+    "effort": 28.58,
+    "hv_reads": 0.895,
+    "n": 200,
+    "top1": 0.725,
+    "top1_part": 0.745
+   }
+  }
+ },
  "vision": {
   "protocol": "exact match = normalised display text, unit and mode all correct; no answer counts as wrong; 95 % CI from 2000 bootstrap resamples. The offline reader was developed on synthetic sets with seeds [20260928, 7, 20260929]; the pilot set (seed 20261001) was scored before the targets were locked; T19 is judged on the test set (seed 20261028), scored only after the lock. Every reading is confirmed by the technician before it is recorded.",
   "real": {

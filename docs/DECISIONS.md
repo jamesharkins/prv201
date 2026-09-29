@@ -917,3 +917,34 @@ deleted.
 - **Also.** T7's pass probabilities are stored to four decimals: rounded to three and then
   printed as a whole percent, 98.54% appeared as 98%.
 - **Consequences.** No bar, pilot estimate or test unit changes.
+
+## ADR-048 - Healthy-channel comparison baseline on twin units (promised in M1)
+
+- **Context.** M1 promised a healthy-channel comparison, the usual reference in stereo and
+  multichannel gear, for M2 without a bar (round-5 and round-6 reviews). It needs twin
+  units: a faulty channel and a healthy one on the same supply.
+- **Decision.** `eval/twin.py` simulates channel B for every channel-strip unit: its own
+  tolerance draw and aging, with every supply part's value, and any supply fault, copied
+  from channel A. Each channel is simulated with its own copy of that supply, so a fault
+  that loads a rail in channel A does not pull channel B's rail down with it, as one shared
+  supply would; this favors the comparison and is stated with every result. The baseline is
+  a script like the chart and half-split tracing (the session's `twin` policy): the same
+  inference, stopping rule and unsoldering rule, differing only in where it measures next.
+  It compares the two outputs with the test tone; if they differ, it half-splits the stage
+  outputs by comparison, traces the signal inside the first stage that differs and compares
+  that stage's DC points (the next stage's if they all agree, then the one before); with the
+  outputs alike it follows the chart, supply first. "Differs" is fixed in advance
+  (`differential/engine/compare.py`: 10% and 50 mV for DC, 0.83 dB for signals). Both
+  channels' readings are charged except at the shared supply; `twin_one_cost` charges a
+  comparison once, as a two-channel instrument would take it. The unsoldering threshold was
+  tuned on the pilot by the scripts' rule (ADR-046): 40%. `twin_model_free` makes the same
+  comparisons with no model: the parts on the nodes that differ, ranked by the DC difference
+  on their nodes, where the signal first differs and how often the kind fails, unsoldered in
+  turn.
+- **Pilot (200 channel-strip units, development only).** Right group first and effort to a
+  confirmed answer: twin 72.0% at 34.2; twin_one_cost 77.0% at 28.2; twin_model_free 14.5%
+  at 47.9; half-split tracing 80.5% at 30.1; the engine 93.0% at 16.9. Comparing channels
+  finds the stage quickly, but paying for both readings leaves less for the diagnosis; with
+  no model, part-by-part unsoldering runs out of budget.
+- **Consequences.** Reported without a bar on the 2,500 channel-strip test units (twins
+  simulated after the lock). No locked target changes.

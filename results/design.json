@@ -114,7 +114,8 @@
   "scripts_confirm_at": 0.5,
   "scripts_confirm_at_by": {
    "fixed_order": 0.4,
-   "half_split": 0.5
+   "half_split": 0.5,
+   "twin": 0.4
   },
   "stop_threshold": 0.9,
   "tie_tolerance": 0.001,

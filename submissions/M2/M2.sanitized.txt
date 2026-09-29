@@ -24,7 +24,9 @@ policy scholar), a claim-to-source audit and, from the fourth round, a red team 
 the findings that changed the design rather than the wording; the full log, with the commit that closed each item, is
 feedback/FEEDBACK_LOG.md. The largest changes came late: aged units now make up half of training, a fault audit checks
 the simulator with an independent solver, every method is charged for confirming its answer, the safety layer enforces
-bench practice, and safety records come only from the technician’s forms.
+bench practice, and safety records come only from the technician’s forms. After the sixth round the targets were locked
+(git tag targets-locked) before any test unit was scored; since then analyses have been added only as reported quantities,
+never as bars: the hazard check on units outside the catalog (ADR-047) and the healthy-channel comparison (ADR-048).
                      Table 1. M1 review findings that changed the design (all six rounds). Text-only fixes are in the log.
  M1 review finding                                   Design change                                                           Where
  A hazard example (147 V at a tube cathode) was      Traced to a leakage resistor in the tube model; removed; circuits re-   Part 2
@@ -52,18 +54,22 @@ bench practice, and safety records come only from the technician’s forms.
  rule
  The hazard map comes from single faults only        Units outside the catalog checked against the map; misses reported      Part 4
                                                      with T13 (ADR-047)
+ No healthy-channel comparison, the usual            Twin units on a shared supply and a comparison script, reported         Part 3
+ reference in stereo gear                            without a bar (ADR-048)
  No control for deskilling, blame or worker          Trainee mode, sign-off limited to readings and plan, tickets per job    Part 4
  monitoring                                          not per person; study S1 with ethics review
-Requirements. 23 requirements trace the M1 objectives (O1-O5), safety (S) and engineering practice (P) to the code that
-implements them and the tests or evaluations that verify them (Appendix A, Table 16). 17 of them are checked by at least
-one locked target; the others (circuit library, fault catalog, simulation, ticket, modes and the clean-clone build) by unit
-tests and continuous integration. Every locked target is traced by at least one requirement. The matrix lives in docs/
+
+
 
 
                                                                        1
 M2 · Design and approach                                                                                                           Differential
 
 
+Requirements. 23 requirements trace the M1 objectives (O1-O5), safety (S) and engineering practice (P) to the code that
+implements them and the tests or evaluations that verify them (Appendix A, Table 16). 17 of them are checked by at least
+one locked target; the others (circuit library, fault catalog, simulation, ticket, modes and the clean-clone build) by unit
+tests and continuous integration. Every locked target is traced by at least one requirement. The matrix lives in docs/
 requirements.yaml; tools/check_requirements.py fails if a listed file or target disappears or a target is traced by no
 requirement.
 Architecture. Figure 1 shows the three layers. Offline, each circuit model and its fault catalog are simulated with ngspice
@@ -352,7 +358,11 @@ at points that can exceed 50 V, relative to half-split tracing. Bars come from t
 estimate moved 1.5 standard errors against the system and rounded, never past the estimate (ADR-043), with a bar per
 part for a target with several (T4 has one per baseline; ADR-046), pooled with the test set’s circuit mix (channel strip 0.5,
 each block 0.1). The failure analysis breaks misses down by circuit, part kind, fault mode, symptom rate and group size,
-and separates wrong names from “no single fault fits” calls.
+and separates wrong names from “no single fault fits” calls. The healthy-channel comparison runs on twin units of the
+channel strip (ADR-048; each channel keeps its own copy of the supply, which favors the comparison). On the pilot’s 200
+channel-strip units it named the right group first on 72.0% at 34.2 effort units to a confirmed answer (77.0% at 28.2 when
+one reading pays for both channels; with no model at all, 14.5%), against half-split tracing’s 80.5% at 30.1: comparing
+channels finds the stage quickly, but paying for both readings leaves less for the diagnosis.
                       Table 10. Systems in the evaluation and the targets they serve (target definitions in M1, Table 3).
  System                                  What it is                                                                    Targets
  Random probing                          Uniformly random affordable readings; never unsolders                         T4, T10
@@ -362,6 +372,10 @@ and separates wrong names from “no single fault fits” calls.
  Half-split tracing                      Rails first, then a binary search along the signal path with a test tone,     T4, T9, T24
                                          then the first bad stage’s DC points; unsolders at 50% belief (tuned on the
                                          pilot)
+ Healthy-channel comparison              On a twin unit (the other channel healthy, same supply): compares the         Reported
+                                         outputs, half-splits the stage outputs by comparison, then that stage’s DC
+                                         points; both readings charged except at the supply; unsolders at 40%
+                                         belief (tuned on the pilot)
  Engine                                  Generative likelihoods, uniform prior, effort-weighted information gain       T4, T8-T10, T14
  Engine, classifier likelihood           The same with LightGBM likelihoods                                            Ablation
  Full system                             Engine plus the complaint prior from the offline reader                       T1-T3, T5, T6, T11-T13,
@@ -587,8 +601,8 @@ Table 16. Requirements traceability. “From”: M1 objective (O1 accuracy, O2 e
          “no single fault fits”                                                                                                       T13, T22, T23
  R5      Recommend the measurement with the most expected                        O2       test_engine.py, run_eval.py                 T8, T9, T10
          information per unit of effort
- R6      Beat scripted, random and LLM-only baselines at the same                O1       run_eval.py, llm_baseline.py                T4, T5
-         budget
+ R6      Beat scripted, random and LLM-only baselines at the same                O1       run_eval.py, llm_baseline.py,               T4, T5
+         budget                                                                           test_twin.py
  R7      Turn a plain-language complaint into symptom features and               O5       nlp_benchmark.py, test_agent.py             T11, T18
          a prior, offline or with Claude
  R8      Read a meter photo as a proposal the technician must                    O5       test_vision.py, test_server.py,             T19

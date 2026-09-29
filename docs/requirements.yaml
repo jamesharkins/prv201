@@ -36,8 +36,8 @@ requirements:
   - id: R6
     text: Beat scripted, random and LLM-only baselines at the same budget
     source: O1
-    components: [eval/harness.py, eval/llm_baseline.py]
-    verification: [eval/run_eval.py, eval/llm_baseline.py]
+    components: [eval/harness.py, eval/llm_baseline.py, eval/twin.py]
+    verification: [eval/run_eval.py, eval/llm_baseline.py, tests/test_twin.py]
     targets: [T4, T5]
   - id: R7
     text: Turn a plain-language complaint into symptom features and a prior, offline or with Claude

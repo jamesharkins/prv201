@@ -23,6 +23,7 @@ import numpy as np
 from scipy.special import logsumexp
 
 from differential.engine.bundle import EngineBundle
+from differential.engine.compare import DIFFER_REL, channels_differ
 from differential.engine.selection import (
     Candidate,
     UnmodeledTerm,
@@ -40,8 +41,8 @@ from differential.sim.measurement import (
 )
 from differential.sim.observables import ObservableSpec, scaled_cost
 
-POLICIES = ("eig_per_cost", "eig", "fixed_order", "half_split", "random")
-SCRIPTED = ("fixed_order", "half_split")
+POLICIES = ("eig_per_cost", "eig", "fixed_order", "half_split", "random", "twin")
+SCRIPTED = ("fixed_order", "half_split", "twin")
 # Scripted procedures end the way technicians do: once one suspect stands out (this
 # share of the belief) they unsolder it to test it, and when their chart is used up
 # they test the leading suspect (ADR-033). Random probing never unsolders.
@@ -49,7 +50,7 @@ CONFIRM_AT = 0.5
 # Tuned for each script on the pilot by a rule fixed before the sweep (ADR-046,
 # eval/tune_scripts.py): the lowest effort to a confirmed answer within 1 point of the
 # script's best top-1.
-SCRIPT_CONFIRM_AT = {"fixed_order": 0.4, "half_split": 0.5}
+SCRIPT_CONFIRM_AT = {"fixed_order": 0.4, "half_split": 0.5, "twin": 0.4}
 NORMAL_BAND_SD = 3.0
 LIKELIHOODS = ("generative", "discriminative")
 DEFAULT_BUDGET = 40.0
@@ -122,6 +123,8 @@ class DiagnosisSession:
         cost_scale: tuple[float, float, float] = (1.0, 1.0, 1.0),
         complaint_prior: bool | None = None,
         confirm_at: float | None = None,
+        twin_reading: Callable[[ObservableSpec], float] | None = None,
+        twin_charge_both: bool = True,
     ) -> None:
         if likelihood not in LIKELIHOODS:
             raise ValueError(likelihood)
@@ -155,6 +158,19 @@ class DiagnosisSession:
             # Sensitivity analysis: scale the scope, lift and high-voltage effort weights.
             self._obs = {k: replace(o, cost=scaled_cost(o, *cost_scale))
                          for k, o in self._obs.items()}
+        # Healthy-channel comparison (a baseline for stereo units, eval/twin.py): the same
+        # reading in the other, healthy channel guides the next measurement; the inference
+        # still sees only the faulty channel. Both readings are charged unless a
+        # two-channel instrument takes them at once (``twin_charge_both``).
+        self.twin_reading = twin_reading
+        self._twin: dict[str, float] = {}
+        if policy == "twin":
+            if twin_reading is None:
+                raise ValueError("the twin policy needs the healthy channel's readings")
+            if twin_charge_both:  # the supply is shared: its points are read once
+                shared = {t.id for t in bundle.circuit.test_points if t.stage.startswith("psu")}
+                self._obs = {k: o if o.is_lift or o.tp in shared else replace(o, cost=2.0 * o.cost)
+                             for k, o in self._obs.items()}
         self._order = bundle.order()
         self._hyp_refs = [h.split(":")[0] if ":" in h else "" for h in self.gen.hypotheses]
         self._post: np.ndarray | None = None
@@ -309,6 +325,8 @@ class DiagnosisSession:
             nxt = self._confirm_lift(avail, self.confirm_at)
             if nxt is None and self.policy == "half_split":
                 nxt = self._half_split_next(avail)
+            if nxt is None and self.policy == "twin":
+                nxt = self._twin_next(avail)
             if nxt is None:
                 taken = self.taken()
                 nxt = next((k for k in self._order if k not in taken and k in avail), None)
@@ -490,6 +508,72 @@ class DiagnosisSession:
         stage_dc = [f"dc:{tp.id}" for tp in c.test_points
                     if tp.stage in stages and "dc" in tp.measurements]
         return next((k for k in stage_dc if k not in got and k in avail), None)
+
+    def _twin_differs(self, key: str) -> bool | None:
+        """Whether the faulty channel's reading of ``key`` differs from the healthy
+        channel's (None: not measured yet)."""
+        got = next((r for r in self.readings if r.key == key), None)
+        if got is None or self.twin_reading is None:
+            return None
+        if key not in self._twin:
+            self._twin[key] = float(self.twin_reading(self._obs[key]))
+        return channels_differ(got.kind, got.value, self._twin[key], DIFFER_REL)[0]
+
+    def _twin_next(self, avail: set[str]) -> str | None:
+        """Scripted practice on stereo gear: compare the outputs of the two channels with
+        the test tone; if they differ, half-split the stage outputs by comparison, trace
+        the signal inside the first stage that differs, then compare that stage's DC
+        points (and, if they all agree, the next stage's, which may be loading it, then
+        the one before). With the outputs alike the fault is shared or leaves the gain
+        alone: None falls back to the chart order, supply first."""
+        c = self.bundle.circuit
+        chan = [s for s, _ in c.stages if not s.startswith("psu")]
+        outs = [k for k in (next((f"ac:{t.id}" for t in reversed(c.test_points)
+                                  if t.stage == st and "ac" in t.measurements), None)
+                            for st in chan) if k]
+        if not outs:
+            return None
+
+        def need(key: str) -> str | None:
+            return key if key in avail else None
+
+        d = self._twin_differs(outs[-1])
+        if d is None:
+            return need(outs[-1])
+        if not d:
+            return None
+        lo, hi = 0, len(outs) - 1
+        while lo < hi:
+            mid = (lo + hi) // 2
+            dm = self._twin_differs(outs[mid])
+            if dm is None:
+                return need(outs[mid])
+            if dm:
+                hi = mid
+            else:
+                lo = mid + 1
+        first = chan.index(c.test_point(outs[hi][3:]).stage)
+        pts = [f"ac:{t.id}" for t in c.test_points if t.stage == chan[first] and "ac" in t.measurements]
+        a, b = 0, len(pts) - 1
+        while a < b:
+            m = (a + b) // 2
+            dm = self._twin_differs(pts[m])
+            if dm is None:
+                return need(pts[m])
+            if dm:
+                b = m
+            else:
+                a = m + 1
+        for i in (first, first + 1, first - 1):
+            if not 0 <= i < len(chan):
+                continue
+            dcs = [f"dc:{t.id}" for t in c.test_points if t.stage == chan[i] and "dc" in t.measurements]
+            nxt = next((k for k in dcs if self._twin_differs(k) is None and k in avail), None)
+            if nxt is not None:
+                return nxt
+            if any(self._twin_differs(k) for k in dcs):
+                return None  # this stage's DC differs: the chart order and the belief take over
+        return None
 
     # --------------------------------------------------------- predictions
     def expected_reading(self, key: str, hypothesis: str) -> tuple[float, float, float] | None:

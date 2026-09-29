@@ -19,4 +19,10 @@ make demo           # http://localhost:8000 - offline mode, no API key needed
 
 Set `DIFFERENTIAL_API_KEY` to run the live Claude agent (`DIFFERENTIAL_MODE=live`).
 
+## Terms of use
+
+The code is MIT-licensed (`LICENSE`). A running Differential is meant for qualified bench
+technicians in repair businesses; the conditions under which the team would offer one (no rating
+of staff, no mains-side work, trainees supervised) are in `docs/TERMS_OF_USE.md`.
+
 This README is regenerated with results by `make docs` once the evaluation has run.

@@ -917,6 +917,8 @@
   accessed: '2026-09-29'
   verified: mirror_checked
   claims:
+    - claim: "The pipeline reaches 97.59% on 83 undergraduate circuit problems against a Gemini 2.5 Pro baseline of 79.52% (v2, 16 April 2026; search-result text of the abstract)."
+      quote: "the proposed pipeline achieves 97.59% accuracy on 83 undergraduate circuit problems, substantially outperforming Gemini's baseline of 79.52%"
   - claim: The system combines a fine-tuned YOLO source detector and OpenCV processing with an ngspice-driven verification
       loop (with optional human feedback) and reaches 97.59%, against 79.52% for its Gemini baseline.
     quote: "we integrate a fine-tuned YOLO detector and OpenCV-based processing ... we introduce an ngspice-driven verification
@@ -1049,6 +1051,10 @@
   accessed: "2026-09-28"
   verified: search_snippet_only
   claims:
+    - claim: "In the published version (QJE 2025), access to the AI assistant raised issues resolved per hour by 15% on average, with substantial heterogeneity across workers."
+      quote: "Access to AI assistance increases worker productivity, as measured by issues resolved per hour, by 15% on average, with substantial heterogeneity across workers."
+    - claim: "In the published version, less experienced and lower-skilled workers gained in both speed and quality, while the most experienced saw small speed gains and small quality declines."
+      quote: "Less experienced and lower-skilled workers improve both the speed and quality of their output, while the most experienced and highest-skilled workers see small gains in speed and small declines in quality."
     - claim: "In a field study of 5,179 customer-support agents, access to a generative-AI assistant was introduced in staggered fashion."
       quote: "The research examined the staggered introduction of a generative AI-based conversational assistant using data from 5,179 customer support agents."
     - claim: "The AI tool raised productivity 14% on average and 34% for novice and low-skilled workers, with minimal impact on experienced, highly skilled workers."
@@ -1091,8 +1097,10 @@
     - claim: "When access was removed, students who had used the plain chat interface scored 17% worse than students who never had access."
       quote: "when access is subsequently taken away, students actually perform worse than those who never had access, with a 17% reduction in grades for GPT Base"
     - claim: "Safeguards such as giving teacher-designed hints instead of answers largely mitigated the learning harm."
+      quote: "These negative learning effects are largely mitigated by the safeguards in GPT Tutor."
+    - claim: "The significance statement names teacher-designed hints, instead of answers, as the key safeguard."
       quote: "carefully designed safeguards, especially asking the AI tutor to provide teacher-designed hints instead of giving away answers, can mitigate these negative effects"
-  notes: "A correction was published (doi:10.1073/pnas.2518204122); check it before quoting numbers."
+  notes: "A correction was published (doi:10.1073/pnas.2518204122); it fixes an author affiliation only (checked 2026-09-29, search results). The abstract sentence 'largely mitigated by the safeguards in GPT Tutor' is from search-result text; one variant reads 'safeguards included in GPT Tutor'."
 
 - key: lee_critical_thinking_2025
   type: paper

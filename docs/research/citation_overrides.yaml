@@ -18,6 +18,7 @@ stenbakken_souders_stewart_1989:
 pattipati_alexandridis_1990:
   container: "IEEE Transactions on Systems, Man, and Cybernetics"
   volume: "vol. 20, no. 4, pp. 872-887"
+  date: "Jul./Aug. 1990"
 dekleer_williams_1987:
   authors: ["J. de Kleer", "B. C. Williams"]
   container: "Artificial Intelligence"
@@ -36,7 +37,8 @@ zadrozny_elkan_2002:
   container: "Proceedings of the 8th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining"
 ke_2017_lightgbm:
   container: "Advances in Neural Information Processing Systems 30 (NIPS 2017)"
-  url: ""
+  volume: "pp. 3146-3154"
+  url: "https://proceedings.neurips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html"
 friedman_2001_gbm:
   container: "The Annals of Statistics"
   volume: "vol. 29, no. 5, pp. 1189-1232"
@@ -62,13 +64,6 @@ buolamwini_gebru_2018:
   container: "Proceedings of the 1st Conference on Fairness, Accountability and Transparency (PMLR 81)"
   volume: "pp. 77-91"
   url: "https://proceedings.mlr.press/v81/buolamwini18a.html"
-greshake_2023:
-  container: "Proceedings of the 16th ACM Workshop on Artificial Intelligence and Security (AISec ’23)"
-  doi: "10.1145/3605764.3623985"
-brynjolfsson_genai_at_work_2023:
-  container: "National Bureau of Economic Research, Working Paper 31161"
-dellacqua_jagged_frontier_2023:
-  container: "Harvard Business School Working Paper (SSRN 4573321)"
 bastani_genai_learning_2025:
   container: "Proceedings of the National Academy of Sciences"
   volume: "vol. 122, no. 26"
@@ -78,9 +73,6 @@ kalai_why_hallucinate_2025:
 skelic_circuit_2025:
   authors: ["L. Skelic et al."]
   container: "arXiv preprint arXiv:2502.07980"
-e2e_circuit_analysis_2025:
-  authors: ["L. Chen", "W. Sun", "H. Xie", "Y. Cai", "Y. Zhang"]
-  container: "arXiv preprint arXiv:2512.10159v2"
 akbari_circuitsense_2025:
   authors: []
   container: "arXiv preprint arXiv:2509.22339 (ICLR 2026)"
@@ -185,8 +177,6 @@ msft_copilot_field_service_2023:
   authors: ["Microsoft"]
 tsia_field_services_2026:
   authors: ["Technology & Services Industry Association"]
-lee_critical_thinking_2025:
-  authors: ["H.-P. Lee et al."]
 
 # ---- vendor documents ----------------------------------------------------------
 rates_studio_doctors:
@@ -257,3 +247,39 @@ eu_ai_omnibus_2026_1744:
 fluke_117_input_characteristics:
   title: "Fluke 110/113/114/115/117 True-rms Multimeter Users Manual, Table 7 (input characteristics, Fluke 117)"
   container: "Fluke Corporation"
+
+# ---- round-5 bibliographic check (scratchpad biblio.md, 2026-09-29) --------------
+dellacqua_jagged_frontier_2023:
+  title: "Navigating the Jagged Technological Frontier: Field Experimental Evidence of the Effects of Artificial Intelligence on Knowledge Worker Productivity and Quality"
+  container: "Organization Science"
+  volume: "vol. 37, no. 2, pp. 403-423"
+  date: "2026"
+  doi: "10.1287/orsc.2025.21838"
+brynjolfsson_genai_at_work_2023:
+  authors: ["E. Brynjolfsson", "D. Li", "L. Raymond"]
+  container: "The Quarterly Journal of Economics"
+  volume: "vol. 140, no. 2, pp. 889-942"
+  date: "2025-05"
+  doi: "10.1093/qje/qjae044"
+lee_critical_thinking_2025:
+  authors: ["H.-P. Lee et al."]
+  container: "Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems (CHI '25)"
+  volume: "Art. no. 1121, pp. 1-22"
+  date: "2025-04"
+  doi: "10.1145/3706598.3713778"
+e2e_circuit_analysis_2025:
+  authors: ["L. Chen", "W. Sun", "H. Xie", "Y. Cai", "Y. Zhang"]
+  container: "arXiv preprint arXiv:2512.10159v2"
+  date: "2026-04"
+greshake_2023:
+  container: "Proceedings of the 16th ACM Workshop on Artificial Intelligence and Security (AISec '23)"
+  volume: "pp. 79-90"
+  date: "2023-11"
+  doi: "10.1145/3605764.3623985"
+ivanov_vaeac_2019:
+  url: "https://openreview.net/forum?id=SyxtJh0qYm"
+li_acflow_2020:
+  url: "https://proceedings.mlr.press/v119/li20a.html"
+ma_eddi_2019:
+  url: "https://proceedings.mlr.press/v97/ma19c.html"
+

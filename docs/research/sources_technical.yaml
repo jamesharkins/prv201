@@ -942,8 +942,11 @@
   verified: fetched
   claims:
   - claim: Bibliographic record with DOI (ACM Digital Library reference list mirrored on GitHub; secondary). The paper's minimum-entropy
-      probe selection could NOT be verified from a fetched source (paper not reachable).
+      probe selection could NOT be verified from a fetched source (paper not reachable); see the next claim.
     quote: J de Kleer , B C Williams, Diagnosing multiple faults, Artificial Intelligence, v.32 n.1, p.97-130, April 1987[doi>10.1016/0004-3702(87)90063-4]
+  - claim: "The paper's diagnostic engine chooses the next measurement to minimize the expected entropy of the candidate probabilities (search-result text attributed to the authors' reprint, 2026-09-29; not fetched)."
+    quote: "the best measurement is the one which minimizes the expected entropy of candidate probabilities resulting from the measurement"
+
 - key: guo_2017_calibration
   type: paper
   authors:
@@ -1514,3 +1517,66 @@
     quote: "locator: Table 7, Volts DC excerpt: <100 pF"
   notes: Same repository and commit as fluke_117_dcv_accuracy. The simulator models the meter as 10 MOhm from the
     measured node to ground.
+
+# ---- round 5 (2026-09-29): automation levels, arbitrary-subset deep models ----------------
+- key: parasuraman_sheridan_wickens_2000
+  type: paper
+  authors: ["R. Parasuraman", "T. B. Sheridan", "C. D. Wickens"]
+  title: "A model for types and levels of human interaction with automation"
+  container: "IEEE Transactions on Systems, Man, and Cybernetics - Part A: Systems and Humans"
+  volume: "vol. 30, no. 3, pp. 286-297"
+  publisher: "IEEE"
+  date: "2000-05"
+  doi: "10.1109/3468.844354"
+  url: "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/3468/2000.json"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+    - claim: "Automation can be applied to four classes of functions: information acquisition, information analysis, decision and action selection, and action implementation."
+      quote: "We propose that automation can be applied to four broad classes of functions: 1) information acquisition; 2) information analysis; 3) decision and action selection; and 4) action implementation."
+  notes: "IEEE Xplore record (abstract, volume, pages, date) read from a GitHub mirror of IEEE metadata (commit d9ac67f); ieeexplore.ieee.org was blocked."
+
+- key: ivanov_vaeac_2019
+  type: paper
+  authors: ["O. Ivanov", "M. Figurnov", "D. Vetrov"]
+  title: "Variational Autoencoder with Arbitrary Conditioning"
+  container: "International Conference on Learning Representations (ICLR)"
+  date: "2019"
+  url: "https://github.com/tigvarts/vaeac"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+    - claim: "VAEAC is a deep generative model that can be conditioned on an arbitrary subset of observed features and sample the rest."
+      quote: "a neural probabilistic model based on variational autoencoder that can be conditioned on an arbitrary subset of observed features and then sample the remaining features."
+  notes: "Authors' repository README with BibTeX (ICLR 2019; OpenReview id SyxtJh0qYm; arXiv:1806.02382)."
+
+- key: li_acflow_2020
+  type: paper
+  authors: ["Y. Li", "S. Akbar", "J. Oliva"]
+  title: "ACFlow: Flow Models for Arbitrary Conditional Likelihoods"
+  container: "Proceedings of the 37th International Conference on Machine Learning (PMLR 119)"
+  volume: "pp. 5831-5841"
+  date: "2020-07"
+  url: "https://github.com/mlresearch/v119"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+    - claim: "ACFlow is a normalizing-flow model that conditions on arbitrary subsets of observed covariates."
+      quote: "ACFlow can be conditioned on arbitrary subsets of observed covariates, which was previously infeasible."
+  notes: "PMLR's own site source on GitHub (mlresearch/v119); proceedings.mlr.press was blocked."
+
+- key: ma_eddi_2019
+  type: paper
+  authors: ["C. Ma", "S. Tschiatschek", "K. Palla", "J. M. Hernández-Lobato", "S. Nowozin", "C. Zhang"]
+  title: "EDDI: Efficient Dynamic Discovery of High-Value Information with Partial VAE"
+  container: "Proceedings of the 36th International Conference on Machine Learning (PMLR 97)"
+  volume: "pp. 4234-4243"
+  date: "2019-06"
+  url: "https://github.com/mlresearch/v97"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+    - claim: "EDDI combines a partial VAE, which predicts missing entries from any subset of observed ones, with an acquisition function that maximizes expected information gain."
+      quote: "combine it with an acquisition function that maximizes expected information gain on a set of target variables."
+  notes: "PMLR's own site source on GitHub (mlresearch/v97). The abstract's word 'problematically' is as printed."
+

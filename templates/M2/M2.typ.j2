@@ -236,7 +236,7 @@
     columns: (1.0fr, 1.55fr, 2.0fr, 1.3fr),
     table.header([Choice], [Options], [Chosen, because], [Cost accepted]),
     [Likelihood], [Gaussian mixtures; kernel density; normalizing flows; boosted trees; Bayesian network], [Mixtures: exact on any subset of readings, few parameters per fault; boosted trees kept as a check], [Assumes smooth, unimodal-ish spreads],
-    [Measurement choice], [Fixed chart; half-splitting; information gain; multi-step lookahead], [Information gain per unit effort, one step ahead: cheap per step, the standard heuristic of sequential fault diagnosis << cite('pattipati_alexandridis_1990') >>], [Can be myopic on long plans],
+    [Measurement choice], [Fixed chart; half-splitting; information gain; multi-step lookahead], [Information gain per unit effort, one step ahead: cheap per step, the entropy rule of model-based diagnosis << cite('dekleer_williams_1987') >> with a cost term; optimal sequencing needs a search << cite('pattipati_alexandridis_1990') >>], [Can be myopic on long plans],
     [Unmodeled units], [None; fixed threshold; calibrated flat hypothesis; learned detector], [Calibrated flat hypothesis: fits the Bayesian update, tunable to a false-alarm budget], [Flags only part of double faults],
     [Statistics], [Normal approximations; bootstrap; exact tests], [Bootstrap and exact tests: no normality assumption at 0 % or 100 %], [Compute],
   ),
@@ -244,7 +244,7 @@
 ) <tab:engine-alt>
 
 #decision("Choose one measurement at a time by information per unit of effort")[
-*Options:* follow a fixed chart, plan several steps ahead, or pick the single next measurement with the highest expected information gain per unit of effort. *Choice:* one step at a time, the greedy rule of sequential fault diagnosis << cite('pattipati_alexandridis_1990') >>, which needs no plan to be revised when a reading surprises. *Why:* each recommendation takes a fraction of a second (T20) and adapts to every reading. *Consequence:* the engine can be myopic when two cheap readings together would beat one expensive one; the ablation without effort weights and the comparison with half-split tracing show how much this costs.
+*Options:* follow a fixed chart, plan several steps ahead, or pick the single next measurement with the highest expected information gain per unit of effort. *Choice:* one step at a time, the one-step entropy rule of model-based diagnosis << cite('dekleer_williams_1987') >> with a cost per measurement, instead of the search an optimal test sequence needs << cite('pattipati_alexandridis_1990') >>; it needs no plan to be revised when a reading surprises. *Why:* each recommendation takes a fraction of a second (T20) and adapts to every reading. *Consequence:* the engine can be myopic when two cheap readings together would beat one expensive one; the ablation without effort weights and the comparison with half-split tracing show how much this costs.
 ]
 
 << part(4, "Agent, safety, security and interface") >>

@@ -27,7 +27,9 @@ def collect() -> dict[str, Any]:
     from differential.engine import symptom_prior as sp
     from differential.engine.bundle import DEFAULT_UNMODELED_PRIOR
     from differential.instruments import scpi
+    from differential.nlp.benchmark import COMPLAINT_NOISE as noise
     from differential.safety import hazards, rules
+    from differential.sim import draws as draws_mod
     from differential.sim import measurement as meas
     from differential.sim import montecarlo as mc
     from eval import cases, recalibrate_unmodeled, run_eval, set_bars, stats
@@ -39,6 +41,12 @@ def collect() -> dict[str, Any]:
             "train_draws": 400, "val_draws": 100,  # cli/Makefile defaults, checked below
             "chunk_draws": mc.CHUNK, "base_seed": mc.BASE_SEED,
             "stress_tolerance_scale": mc.TOL_SCALE["test_wide"],
+            "tolerance_curve": sorted({v for k, v in mc.TOL_SCALE.items() if k.startswith("test_")}),
+            "mains_tol_pct": 100 * draws_mod.MAINS_TOL,
+            "aging": {"electrolytic_c": list(draws_mod.AGE_ELECTROLYTIC_C),
+                      "electrolytic_esr": list(draws_mod.AGE_ELECTROLYTIC_ESR),
+                      "resistor": list(draws_mod.AGE_RESISTOR),
+                      "triode_emission": list(draws_mod.AGE_TRIODE_EMISSION)},
         },
         "measurement": {
             "dmm_pct": 100 * meas.DMM_PCT, "dmm_counts": meas.DMM_DIGITS,
@@ -46,6 +54,7 @@ def collect() -> dict[str, Any]:
             "lift_sensitivity": meas.LIFT_SENSITIVITY,
             "lift_false_positive_pct": round(100 * (1 - meas.LIFT_SPECIFICITY), 6),
             "hum_floor_uv": round(meas.HUM_FLOOR * 1e6, 6),
+            "dmm_input_mohm": meas.DMM_INPUT_OHMS / 1e6,
         },
         "engine": {
             "gmm_max_components": default(generative.GenerativeModel.fit, "max_components"),
@@ -66,6 +75,7 @@ def collect() -> dict[str, Any]:
             "max_steps": default(session.DiagnosisSession.run, "max_steps"),
             "unmodeled_prior": DEFAULT_UNMODELED_PRIOR,
             "half_split_band_sd": session.NORMAL_BAND_SD,
+            "scripts_confirm_at": session.CONFIRM_AT,
         },
         "symptoms": {
             "no_output_db": sp.NO_OUTPUT_DB, "low_gain_db": sp.LOW_GAIN_DB,
@@ -82,7 +92,8 @@ def collect() -> dict[str, Any]:
             "provisional_grid_max": max(train_mod.OFFSETS),
         },
         "cases": {"n": {k: dict(v) for k, v in cases.N_CASES.items()},
-                  "max_attempts": cases.MAX_ATTEMPTS},
+                  "max_attempts": cases.MAX_ATTEMPTS,
+                  "complaint_omit_pct": 100 * noise.p_omit, "complaint_add_pct": 100 * noise.p_add},
         "statistics": {
             "bootstrap_resamples": stats.N_BOOT, "seed": stats.SEED,
             "ece_bins": default(stats.ece, "n_bins"),

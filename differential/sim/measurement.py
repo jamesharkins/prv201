@@ -5,6 +5,10 @@ Instruments (brief §2.2):
     (600 mV / 6 V / 60 V / 600 V / 1000 V ranges). The +- figure is a specification
     limit, so the noise is modelled as Gaussian with sigma = limit / 2 (about 95 % of
     readings inside the limit), and readings are rounded to the display resolution.
+    The meter's 10 MOhm input resistance loads the node it reads: the simulator
+    solves a separate operating point with that resistance from the node to ground
+    for every DC reading (``builder.control_lines``), so a floating or high-impedance
+    node reads what a real meter shows. The noise here is added on top.
   * Oscilloscope amplitude: +-3 % -> sigma 1.5 %, with an amplitude noise floor.
   * Distortion (THD): +-10 % relative (sigma 5 %), floor 0.01 %; with less than
     10 mV of fundamental the analyser cannot lock and reads 100 %.
@@ -25,6 +29,9 @@ import numpy as np
 DMM_RANGES = ((0.6, 1e-4), (6.0, 1e-3), (60.0, 1e-2), (600.0, 0.1), (1000.0, 1.0))
 DMM_PCT = 0.005
 DMM_DIGITS = 2
+# DC input impedance of the reference meter (Fluke 117 manual, Table 7: "> 10 MOhm",
+# "< 100 pF"); the simulated meter uses 10 MOhm.
+DMM_INPUT_OHMS = 10e6
 SCOPE_REL = 0.03
 GAIN_FLOOR = 1e-3  # gains below -60 dB re the generator read at the floor
 HUM_FLOOR = 1e-4  # 100 uV rms ripple floor

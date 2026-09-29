@@ -4,7 +4,7 @@ import { h, icon, clear, replaceChildren, nextId } from "./dom.js";
 import {
   KIND_SHORT, capitalize, fmtCost, fmtNum, kindOf, pct, sourceLabel, sourceTitle, stageName, targetOf,
 } from "./format.js";
-import { dischargeForm, liftForm, readingForm } from "./forms.js";
+import { approvalForm, dischargeForm, guessForm, liftForm, readingForm, supervisorForm } from "./forms.js";
 
 /** Bold the "Label:" lead of a safety line ("Hands-off measurement: ..."). */
 function leadEmphasis(line) {
@@ -15,8 +15,8 @@ function leadEmphasis(line) {
 
 // ------------------------------------------------------------------ banner
 export class SafetyBanner {
-  /** handlers.discharge(volts, button) -> Promise<string> (error text or "").
-   *  update() returns true when the banner appeared or changed. */
+  /** handlers.discharge(readings, button) and handlers.approve(note, button)
+   *  -> Promise<string> (error text or ""). update() returns true when the banner changed. */
   constructor(slot, handlers) {
     this.slot = slot;
     this.handlers = handlers;
@@ -27,12 +27,15 @@ export class SafetyBanner {
     const b = state && state.banner;
     const pending = state && state.pending;
     const blocked = Boolean(pending && pending.blocked === "discharge_verification");
+    const approval = Boolean(pending && pending.blocked === "owner_approval");
+    const supervised = Boolean(pending && pending.blocked === "supervisor");
     if (!b) {
       this.sig = null;
       clear(this.slot);
       return false;
     }
-    const sig = JSON.stringify([b.title, b.lines, blocked, pending && pending.key]);
+    const sig = JSON.stringify([b.title, b.lines, blocked, approval, pending && pending.key,
+      state.discharge_readings]);
     if (sig === this.sig) return false;
     this.sig = sig;
     const titleId = nextId("banner-title");
@@ -41,16 +44,27 @@ export class SafetyBanner {
       h("h2", { class: "banner-title", id: titleId }, b.title || "High voltage"),
       lines.length ? h("ul", { class: "banner-list" }, lines.map((l) => h("li", {}, leadEmphasis(l)))) : null);
     if (blocked) {
-      const f = dischargeForm({ onSubmit: (v, btn) => this.handlers.discharge(v, btn) });
+      const f = dischargeForm({
+        points: pending.discharge_points || [], readings: state.discharge_readings || {},
+        onSubmit: (v, btn) => this.handlers.discharge(v, btn),
+      });
       body.append(h("div", { class: "banner-lock" },
         h("p", { class: "banner-lock-text" }, icon("lock"),
-          h("span", {}, `The out-of-circuit test of ${pending.part || "this part"} stays locked until the discharge reading is confirmed.`)),
+          h("span", {}, `Removing ${pending.part || "this part"} stays locked until every listed point reads below 2 V. The readings are recorded on the ticket as your attestation; the tool cannot check them.`)),
         f.form));
+    }
+    if (approval) {
+      const f = approvalForm({ part: pending.part, onSubmit: (n, btn) => this.handlers.approve(n, btn) });
+      body.append(h("div", { class: "banner-lock" }, f.form));
+    }
+    if (supervised) {
+      const f = supervisorForm({ onSubmit: (n, btn) => this.handlers.supervisor(n, btn) });
+      body.append(h("div", { class: "banner-lock" }, f.form));
     }
     const level = b.level === "danger" ? "danger" : "warning";
     replaceChildren(this.slot,
       h("section", { class: `banner banner-${level}`, "aria-labelledby": titleId },
-        h("div", { class: "banner-icon", "aria-hidden": "true" }, icon(blocked ? "lock" : "bolt")),
+        h("div", { class: "banner-icon", "aria-hidden": "true" }, icon(blocked || approval || supervised ? "lock" : "bolt")),
         body));
     return true; // a new or changed banner
   }
@@ -84,7 +98,8 @@ export class NextCard {
     const pending = state.pending;
     const b = state.belief || {};
     const started = (state.history || []).length > 0 || (state.readings || []).length > 0;
-    const key = pending ? `${pending.key}|${pending.blocked || ""}` : `none|${b.would_stop}|${started}`;
+    const key = pending ? `${pending.key}|${pending.blocked || ""}|${pending.withheld ? "w" : ""}`
+      : `none|${b.would_stop}|${started}`;
     if (key !== this.key) {
       this.key = key;
       this.whyOpen = false;
@@ -141,6 +156,35 @@ export class NextCard {
       ? h("span", { class: "chip num", title: "Expected information from this measurement" }, `${fmtNum(bits, 2)} bits`)
       : null;
 
+    if (pending.withheld) {
+      const f = guessForm({ options: pending.options || [], onSubmit: (k, btn) => this.handlers.guess(k, btn) });
+      replaceChildren(this.root,
+        head(h("div", { class: "chips" }, h("span", { class: "chip" }, icon("pencil"), "Trainee mode"))),
+        h("p", { class: "next-how" }, "The recommendation stays hidden until you commit your own choice; then both are shown and recorded."),
+        f.form);
+      return;
+    }
+    if (pending.blocked === "supervisor") {
+      this.root.classList.add("is-locked");
+      replaceChildren(this.root,
+        head(h("div", { class: "chips" }, h("span", { class: "chip chip-danger" }, icon("lock"), "Needs a supervisor"))),
+        h("p", { class: "next-how" }, String(pending.next_step || "")),
+        h("div", { class: "next-actions" },
+          h("button", { type: "button", class: "btn btn-danger-outline", onclick: () => this.handlers.focusDischarge() },
+            icon("unlock"), h("span", {}, "Name the supervisor"))));
+      return;
+    }
+    if (pending.blocked === "owner_approval") {
+      this.root.classList.add("is-locked");
+      replaceChildren(this.root,
+        head(h("div", { class: "chips" }, h("span", { class: "chip chip-danger" }, icon("lock"), "Needs approval"), cost)),
+        h("p", { class: "next-what" }, `${capitalize(pending.what)}: `, h("b", {}, pending.part || targetOf(pending.key))),
+        h("p", { class: "next-how" }, String(pending.next_step || "").replace(/\s*\(approve_part_removal\)/g, "")),
+        h("div", { class: "next-actions" },
+          h("button", { type: "button", class: "btn btn-secondary", onclick: () => this.handlers.focusDischarge() },
+            icon("pencil"), h("span", {}, "Record the owner's approval"))));
+      return;
+    }
     if (pending.blocked === "discharge_verification") {
       this.root.classList.add("is-locked");
       replaceChildren(this.root,
@@ -150,7 +194,7 @@ export class NextCard {
         h("p", { class: "next-how" }, String(pending.next_step || "").replace(/\s*\(confirm_discharge\)/g, "")),
         h("div", { class: "next-actions" },
           h("button", { type: "button", class: "btn btn-danger-outline", onclick: () => this.handlers.focusDischarge() },
-            icon("unlock"), h("span", {}, "Enter the discharge reading"))));
+            icon("unlock"), h("span", {}, "Enter the discharge readings"))));
       return;
     }
 

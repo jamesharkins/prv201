@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 
-import peer_review as pr  # noqa: E402
+import peer_review as pr
 
 
 def test_criteria_split_covers_every_criterion_with_balanced_points() -> None:

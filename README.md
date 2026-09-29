@@ -5,9 +5,9 @@ Simulation-grounded AI diagnosis for analog audio electronics (PRV 201 team proj
 Differential helps a qualified bench technician find the failed part in analog audio
 equipment. It simulates the circuit under every plausible single-part fault with
 realistic part tolerances, keeps a probability for every suspect, recommends the
-measurement that rules out the most suspects per unit of effort, and explains each step.
-A language model reads the complaint and writes the explanations; it never produces a
-reading. Safety rules and a numeric grounding check run in code.
+measurement expected to narrow the suspects most per unit of effort, and explains each step.
+A language model reads the complaint and writes the explanations; it never supplies a
+reading the technician has not confirmed. Safety rules and a numeric grounding check run in code.
 
 ## Quickstart
 

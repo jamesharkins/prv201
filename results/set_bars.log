@@ -1,0 +1,50 @@
+T1 ≥ 90% {'estimate': 0.9208, 'se': 0.013, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.9, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.7343}
+T2 ≥ 90% {'estimate': 0.925, 'se': 0.0194, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.9, 'n_pilot': 200, 'n_test': 500, 'chance_met': 0.6546}
+T3 ≥ 98% {'estimate': 0.9908, 'se': 0.0074, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.98, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.6617}
+T4 ≥ +6 points each {'estimate_vs_fixed_order': 0.17, 'se_vs_fixed_order': 0.0341, 'bar_vs_fixed_order': 0.12, 'estimate_vs_random': 0.135, 'se_vs_random': 0.0298, 'bar_vs_random': 0.09, 'estimate_vs_half_split': 0.105, 'se_vs_half_split': 0.0304, 'bar_vs_half_split': 0.06, 'chance_met': 0.7489, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.06, 'n_pilot': 200, 'n_test': 500, 'rule': "the smallest of the three margin bars, met when every margin's lower bound clears it"}
+T6 ≤ 32 points {'estimate': 0.2583, 'se': 0.0427, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.32, 'n_pilot': 150, 'n_test': 300, 'chance_met': 0.6538, 'aged_flag_rate': 0.22, 'aged_wrong_name_rate': 0.1133, 'n_aged': 150}
+T8 ≤ 0.30× {'estimate': 0.2999, 'se': 0.0098, 'k': 1.5, 'direction': '<=', 'step': 0.05, 'bar': 0.3, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.0521, 'accuracy_gap': 0.0867}
+T9 ≤ 0.35× {'estimate': 0.3156, 'se': 0.0104, 'k': 1.5, 'direction': '<=', 'step': 0.05, 'bar': 0.35, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.9988, 'accuracy_gap': 0.0558}
+T10 ≤ 0.35× {'estimate': 0.3447, 'se': 0.0122, 'k': 1.5, 'direction': '<=', 'step': 0.05, 'bar': 0.35, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.1509, 'accuracy_gap': 0.0958}
+T11 ≤ 1.00× {'estimate': 0.9516, 'se': 0.0191, 'k': 1.5, 'direction': '<=', 'step': 0.05, 'bar': 1.0, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.9738, 'accuracy_gap': -0.0175}
+T12 ≤ 0.04 {'estimate': 0.0299, 'se': 0.0077, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.04, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.5796, 'brier': 0.1426, 'log_loss': 0.3385, 'step_ece_equal_width': 0.0636}
+T13 ≤ 11% {'estimate': 0.08, 'se': 0.0196, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.11, 'n_pilot': 250.0, 'n_test': 500, 'chance_met': 0.6998}
+T22 ≥ 48% flagged; AUROC ≥ 0.72 {'flagged_estimate': 0.524, 'flagged_se': 0.0287, 'flagged_bar': 0.48, 'estimate': 0.7484, 'se': 0.0211, 'bar': 0.72, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'n_pilot': 250.0, 'n_test': 500, 'chance_met': 0.4202}
+T23 ≥ 91% named; ≥ 98% right when naming {'estimate': 0.9317, 'se': 0.0112, 'bar': 0.91, 'accuracy_estimate': 0.9882, 'accuracy_se': 0.0052, 'accuracy_bar': 0.98, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.6269}
+T14 ≥ −3 points each {'wrong_prior_catalog_mix': -0.0192, 'wrong_prior_catalog_mix_se': 0.0074, 'uniform_prior_capacitor_mix': 0.0133, 'uniform_prior_capacitor_mix_se': 0.0071, 'bar': -0.03, 'bar_catalog_mix': -0.03, 'bar_capacitor_mix': 0.0, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.6674}
+{
+ "accuracy_weighted": {
+  "engine": 0.9383333333333334,
+  "fixed_order": 0.8516666666666667,
+  "half_split": 0.8825000000000001,
+  "random": 0.8425000000000001,
+  "hybrid": 0.9208333333333334
+ },
+ "engine_disc_top1_weighted": 0.9283333333333335,
+ "engine_disc_top1_cs": 0.93,
+ "cs_top1": {
+  "hybrid": 0.925,
+  "engine": 0.94,
+  "engine_disc": 0.93,
+  "fixed_order": 0.77,
+  "half_split": 0.835,
+  "random": 0.805
+ },
+ "cs_mean_effort": {
+  "hybrid": 6.21,
+  "engine": 6.695,
+  "fixed_order": 24.115,
+  "half_split": 22.88,
+  "random": 22.965
+ },
+ "n_pilot": {
+  "channel_strip": 200,
+  "psu": 60,
+  "triode": 60,
+  "tone": 60,
+  "opamp": 60,
+  "driver": 60
+ },
+ "complaint_accuracy_change_pts": -1.749999999999996,
+ "complaint_effort_saving_pct": 4.837144837144836
+}

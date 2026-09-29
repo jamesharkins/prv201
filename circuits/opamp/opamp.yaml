@@ -1,6 +1,10 @@
 id: opamp
 name: "Block 4 - Op-amp make-up gain stage"
 netlist: opamp.cir
+declared_supply_v: 15.33
+model_validation:
+  status: validated
+  evidence: "docs/hand_calcs.md: hand calculations agree with every simulated healthy bias point and gain within the stated tolerances"
 description: >
   Single-supply non-inverting stage (gain 11) biased at half supply (7.67 V).
   Behavioural FET-input op-amp with 3 MHz gain-bandwidth and outputs limited to

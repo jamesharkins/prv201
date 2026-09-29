@@ -1,0 +1,98 @@
+F.........F..F.......................................................... [ 29%]
+........................................................................ [ 58%]
+.........................................F.............................. [ 87%]
+................................                                         [100%]
+=================================== FAILURES ===================================
+________________ test_offline_session_reaches_a_grounded_ticket ________________
+
+    def test_offline_session_reaches_a_grounded_ticket() -> None:
+        from differential.agent.agent import DifferentialAgent
+    
+        agent = DifferentialAgent("driver", mode="offline", instrument=_bench("driver", "R503:open"))
+        agent.user_message("Output is dead, nothing passes with a tone in.")
+        for _ in range(30):
+            if agent.pending_key is None:
+                break
+            agent.measure(agent.pending_key)
+        ticket = agent.ticket()
+>       assert ticket["grounding"]["ungrounded"] == []
+E       AssertionError: assert ['2.2k'] == []
+E         
+E         Left contains one more item: '2.2k'
+E         Use -v to get more diff
+
+tests/test_agent.py:32: AssertionError
+___ test_trainee_mode_withholds_the_step_and_needs_a_supervisor_on_hv_units ____
+
+    def test_trainee_mode_withholds_the_step_and_needs_a_supervisor_on_hv_units() -> None:
+        from differential.agent.agent import DifferentialAgent
+    
+        # a low-voltage block: no supervisor needed, the recommendation waits for the trainee's choice
+        agent = DifferentialAgent("driver", mode="offline", trainee=True)
+        out = agent.user_message("Output is quiet and a bit distorted.")
+        assert agent.pending_key == "guess" and agent.withheld is not None
+>       assert "Trainee mode" in out.text and agent.withheld["key"] not in out.text
+E       assert ('Trainee mode' in "I understood: low gain, distortion (mild).\n\nMost likely before measuring: R501 value drifted to 10x (21%); R502 ope...ould you take next, and why? Reply with its key (for example dc:TP18) or a test point, and I'll show mine and compare." and 'dc:TP18' not in 'I understoo...and compare.'
+E        +  where "I understood: low gain, distortion (mild).\n\nMost likely before measuring: R501 value drifted to 10x (21%); R502 ope...ould you take next, and why? Reply with its key (for example dc:TP18) or a test point, and I'll show mine and compare." = Turn(role='assistant', text="I understood: low gain, distortion (mild).\n\nMost likely before measuring: R501 value dr...st point, and I'll show mine and compare.", t=1790649564.2858796, meta={'grounding': {'checked': 3, 'ungrounded': []}}).text
+E         
+E         'dc:TP18' is contained here:
+E           r example dc:TP18) or a test point, and I'll show mine and compare.
+E         ?           +++++++)
+
+tests/test_agent.py:248: AssertionError
+_____________________ test_ticket_text_fields_are_cleaned ______________________
+
+    def test_ticket_text_fields_are_cleaned() -> None:
+        from differential.agent.agent import DifferentialAgent
+    
+>       agent = DifferentialAgent("psu", mode="offline", instrument=_bench("psu", "R101:open"))
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_agent.py:297: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_agent.py:19: in _bench
+    return SimulatedBench.simulate(cid, fault, unit_index=3)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+differential/instruments/simulated.py:57: in simulate
+    _, rows, failures = run_job(Job(circuit_id, split, hypothesis, 200000 + unit_index,
+differential/sim/montecarlo.py:119: in run_job
+    batch_draws = [
+differential/sim/montecarlo.py:120: in <listcomp>
+    (i, make_draw(job.circuit_id, job.split, job.hyp_index, job.hypothesis, i))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+differential/sim/montecarlo.py:107: in make_draw
+    apply_fault(circuit, d, parse_fault_id(fid), rng)
+differential/sim/draws.py:211: in apply_fault
+    comp = circuit.component(fault.ref)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = CircuitSpec(id='psu', name='Block 1 - Power supply (LV regulator + HV B+ chain)', description='Low-voltage rail: recti...ulations agree with every simulated healthy bias point and gain within the stated tolerances', declared_supply_v=282.0)
+ref = 'R101'
+
+    def component(self, ref: str) -> ComponentSpec:
+        for c in self.components:
+            if c.ref == ref:
+                return c
+>       raise KeyError(ref)
+E       KeyError: 'R101'
+
+differential/circuits/model.py:120: KeyError
+______________________ test_bad_input_is_refused_cleanly _______________________
+
+client = <starlette.testclient.TestClient object at 0x7f3f47d7a250>
+
+    def test_bad_input_is_refused_cleanly(client: TestClient) -> None:
+        assert client.post("/api/sessions", json={"circuit_id": "nope"}).status_code == 404
+        assert client.post("/api/sessions", json={"circuit_id": "psu", "fault": "Z9:open"}).status_code == 400
+        assert client.post("/api/sessions", json={"circuit_id": "psu", "mode": "root"}).status_code == 400
+>       sid = client.post("/api/sessions", json={"circuit_id": "psu", "mode": "offline", "seed": 1}).json()["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests/test_server.py:141: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_agent.py::test_offline_session_reaches_a_grounded_ticket - ...
+FAILED tests/test_agent.py::test_trainee_mode_withholds_the_step_and_needs_a_supervisor_on_hv_units
+FAILED tests/test_agent.py::test_ticket_text_fields_are_cleaned - KeyError: '...
+FAILED tests/test_server.py::test_bad_input_is_refused_cleanly - KeyError: 'id'

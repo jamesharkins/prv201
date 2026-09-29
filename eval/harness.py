@@ -49,9 +49,14 @@ SYSTEMS: dict[str, SystemSpec] = {
     "engine_gen": SystemSpec("engine_gen"),
     "engine_disc": SystemSpec("engine_disc", likelihood="discriminative"),
     "hybrid": SystemSpec("hybrid", prior="symptoms_rules"),
-    # ablations
-    "hybrid_paraphrase": SystemSpec("hybrid_paraphrase", prior="symptoms_rules",
-                                    text_field="paraphrase"),
+    # ablations: the same reported symptoms written without complaint noise
+    # (hybrid_clean), in the development bank the rules were written against
+    # (hybrid_devbank), and in the sealed bank B (hybrid_bank_b); true symptoms
+    # with no reading step at all (hybrid_oracle)
+    "hybrid_clean": SystemSpec("hybrid_clean", prior="symptoms_rules", text_field="clean_complaint"),
+    "hybrid_devbank": SystemSpec("hybrid_devbank", prior="symptoms_rules", text_field="dev_complaint"),
+    "hybrid_bank_b": SystemSpec("hybrid_bank_b", prior="symptoms_rules",
+                                text_field="bank_b_complaint"),
     "hybrid_oracle": SystemSpec("hybrid_oracle", prior="symptoms_oracle"),
     "recap_prior": SystemSpec("recap_prior", prior="recap_folklore"),
     "engine_eig_nocost": SystemSpec("engine_eig_nocost", policy="eig"),
@@ -145,6 +150,9 @@ def run_one(args: tuple[SystemSpec, str, dict[str, Any], dict[str, Any]]) -> dic
     truth_group = int(groups.group_of[bundle.hypotheses.index(truth)]) if single else -1
     ranked = [g for g, _ in res.ranked_groups]
     top_hyp = s.top_hypotheses(1)[0][0]
+    gpost = s.group_posterior()
+    # probability the stopped session gives the true group (single faults) or U (others)
+    p_truth = float(gpost[truth_group]) if single else float(gpost[-1])
     return {
         "system": spec.name,
         "case_id": case_id,
@@ -156,7 +164,10 @@ def run_one(args: tuple[SystemSpec, str, dict[str, Any], dict[str, Any]]) -> dic
         "top_hypothesis": top_hyp,
         "correct": res.top_group == truth_group,
         "top3": truth_group in ranked[:3],
+        # the three groups shown at the stop, with their probabilities (T12 calibration)
+        "ranked3": json.dumps([[int(g), round(float(p), 5)] for g, p in res.ranked_groups[:3]]),
         "confidence": res.top_mass,
+        "p_truth": p_truth,
         "unmodeled_prob": res.unmodeled_prob,
         "cost": res.cost,
         "steps": res.steps,
@@ -200,13 +211,18 @@ def run_system(spec: SystemSpec, cid: str, split: str = "test", workers: int | N
         return pd.read_parquet(out)
     df, meta = load_split(cid, split)
     meta_by_id = {m["case_id"]: m for m in meta}
-    paraphrases = _paraphrases(cid, split)
+    extra = _extra_texts(cid, split)
+    if spec.text_field not in ("complaint", "clean_complaint") and spec.prior == "symptoms_rules":
+        missing = [cid_ for cid_ in meta_by_id if spec.text_field not in extra.get(cid_, {})]
+        if missing:
+            raise RuntimeError(f"{spec.name}: no {spec.text_field} for {len(missing)} {cid} {split} "
+                               "units (run python -m eval.nlp_benchmark --render-only)")
     rows = []
     for _, r in df.iterrows():
         if not r["ok"]:
             continue
         m = dict(meta_by_id[r["case_id"]])
-        m["paraphrase"] = paraphrases.get(r["case_id"], m.get("complaint"))
+        m.update(extra.get(r["case_id"], {}))
         rows.append((spec, cid, r.to_dict(), m))
         if limit is not None and len(rows) >= limit:
             break
@@ -221,15 +237,16 @@ def run_system(spec: SystemSpec, cid: str, split: str = "test", workers: int | N
     return res
 
 
-def _paraphrases(cid: str, split: str) -> dict[str, str]:
-    p = EVAL_DATA_DIR / f"paraphrases__{cid}__{split}.jsonl"
+def _extra_texts(cid: str, split: str) -> dict[str, dict[str, str]]:
+    """Alternative complaint texts per unit (eval/nlp_benchmark.py --render-only)."""
+    p = EVAL_DATA_DIR / f"complaints__{cid}__{split}.jsonl"
     if not p.exists():
         return {}
     out = {}
     for line in p.read_text().splitlines():
         if line.strip():
             d = json.loads(line)
-            out[d["case_id"]] = d["text"]
+            out[d["case_id"]] = {k: v for k, v in d.items() if k.endswith("_complaint")}
     return out
 
 

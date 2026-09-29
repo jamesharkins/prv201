@@ -1,0 +1,65 @@
+[00:27:54] start
+[00:55:59] sim train done
+[01:03:04] sim val done
+channel_strip unmodeled_val: 60 cases (4 rejected draws)
+psu unmodeled_val: 20 cases (3 rejected draws)
+triode unmodeled_val: 20 cases (3 rejected draws)
+tone unmodeled_val: 20 cases (3 rejected draws)
+opamp unmodeled_val: 20 cases (1 rejected draws)
+driver unmodeled_val: 20 cases (2 rejected draws)
+channel_strip unmodeled_pilot: 125 cases (19 rejected draws)
+psu unmodeled_pilot: 25 cases (3 rejected draws)
+triode unmodeled_pilot: 25 cases (1 rejected draws)
+tone unmodeled_pilot: 25 cases (8 rejected draws)
+opamp unmodeled_pilot: 25 cases (5 rejected draws)
+driver unmodeled_pilot: 25 cases (7 rejected draws)
+channel_strip pilot: 200 cases (31 rejected draws)
+psu pilot: 60 cases (65 rejected draws)
+triode pilot: 60 cases (3 rejected draws)
+tone pilot: 60 cases (22 rejected draws)
+opamp pilot: 60 cases (1 rejected draws)
+driver pilot: 60 cases (3 rejected draws)
+channel_strip test: 500 cases (82 rejected draws)
+psu test: 100 cases (111 rejected draws)
+triode test: 100 cases (6 rejected draws)
+tone test: 100 cases (28 rejected draws)
+opamp test: 100 cases (1 rejected draws)
+driver test: 100 cases (8 rejected draws)
+channel_strip unmodeled_test: 250 cases (43 rejected draws)
+psu unmodeled_test: 50 cases (9 rejected draws)
+triode unmodeled_test: 50 cases (13 rejected draws)
+tone unmodeled_test: 50 cases (14 rejected draws)
+opamp unmodeled_test: 50 cases (11 rejected draws)
+driver unmodeled_test: 50 cases (6 rejected draws)
+channel_strip pilot_wide: 150 cases (24 rejected draws)
+channel_strip test_wide: 300 cases (43 rejected draws)
+channel_strip pilot_aged: 150 cases (22 rejected draws)
+channel_strip test_aged: 300 cases (54 rejected draws)
+channel_strip test_wide2: 300 cases (41 rejected draws)
+channel_strip test_wide3: 300 cases (14 rejected draws)
+[01:08:51] cases done
+[01:58:10] train done
+psu {'test_points': 6, 'hv_normal': 3, 'hv_under_fault': 0, 'low_voltage': 3}
+   TP4   hv              normal   295.5 V  worst   295.8 V  faults>50V: 61  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP5   hv              normal   286.6 V  worst   295.7 V  faults>50V: 59  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP6   hv              normal   267.6 V  worst   286.0 V  faults>50V: 57  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+triode {'test_points': 4, 'hv_normal': 1, 'hv_under_fault': 1, 'low_voltage': 2, 'showcase': {'tp': 'TP10', 'name': 'Triode stage output / tone input', 'normal_max_v': 0.0, 'worst_case_v': 105.09, 'fault': 'C203:short', 'fault_label': 'C203 short circuit'}}
+   TP9   hv              normal   178.0 V  worst   250.0 V  faults>50V: 30  e.g. ['C201:open', 'C201:short', 'C202:cap_loss_50']
+   TP10  hv_under_fault  normal     0.0 V  worst   105.1 V  faults>50V: 1  e.g. ['C203:short']
+tone {'test_points': 3, 'hv_normal': 0, 'hv_under_fault': 0, 'low_voltage': 3}
+opamp {'test_points': 6, 'hv_normal': 0, 'hv_under_fault': 0, 'low_voltage': 6}
+driver {'test_points': 7, 'hv_normal': 0, 'hv_under_fault': 0, 'low_voltage': 7}
+channel_strip {'test_points': 23, 'hv_normal': 4, 'hv_under_fault': 1, 'low_voltage': 18, 'showcase': {'tp': 'TP10', 'name': 'Tone-control input (triode stage output)', 'normal_max_v': 0.0, 'worst_case_v': 125.4, 'fault': 'C203:short', 'fault_label': 'C203 short circuit'}}
+   TP4   hv              normal   295.5 V  worst   295.8 V  faults>50V: 248  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP5   hv              normal   287.4 V  worst   295.8 V  faults>50V: 246  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP6   hv              normal   269.6 V  worst   295.8 V  faults>50V: 244  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP9   hv              normal   188.5 V  worst   295.7 V  faults>50V: 243  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP10  hv_under_fault  normal     0.0 V  worst   125.4 V  faults>50V: 1  e.g. ['C203:short']
+[01:58:12] hv_audit done
+[01:58:14] library_stats done
+complaint texts written (bank B present; 0 bank-B texts with leakage); nothing scored
+[01:58:15] complaint texts done
+[02:05:06] calibration done
+Terminated
+[02:37:38] pilot done
+[02:37:43] REBUILD_OK

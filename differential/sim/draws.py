@@ -17,6 +17,14 @@ Tolerance distributions (documented in docs/DECISIONS.md, ADR-006):
   * triode: MU x U(0.9, 1.1); KG1 x log-uniform(0.8, 1.25)
   * op-amp gain-bandwidth: 3 MHz x U(0.7, 1.3)
   * mains: +-5 % (common factor on both rectifier peak voltages)
+
+Aged units (stress splits only, ``age_draw``; ADR-032): after the tolerance draw every
+part of an ageing kind drifts in the direction parts age, independently per part:
+  * electrolytic: capacitance x U(0.70, 0.95) and ESR x log-uniform(1.2, 3.0), inside
+    the usual end-of-life limits (capacitance down 30 %, ESR up 3x)
+  * fixed resistor: value x U(1.00, 1.10) (carbon resistors drift up with age)
+  * triode: emission (perveance scale) x U(0.70, 1.00), above the worn-tube fault range
+Film capacitors, transistors, diodes, zeners, potentiometers and op-amps do not age here.
 """
 
 from __future__ import annotations
@@ -49,6 +57,11 @@ TRIODE_MU = 100.0
 TRIODE_KG1 = 1060.0
 OPAMP_GBW_MHZ = 3.0
 MAINS_TOL = 0.05
+
+AGE_ELECTROLYTIC_C = (0.70, 0.95)
+AGE_ELECTROLYTIC_ESR = (1.2, 3.0)
+AGE_RESISTOR = (1.00, 1.10)
+AGE_TRIODE_EMISSION = (0.70, 1.00)
 
 
 @dataclass
@@ -150,6 +163,35 @@ def healthy_draw(circuit: CircuitSpec, rng: np.random.Generator, tol_scale: floa
         for rect in circuit.hum.rectifiers:
             d.alters[rect.pk_source] = rect.pk_nominal * mains
     return d
+
+
+def age_draw(circuit: CircuitSpec, draw: Draw, rng: np.random.Generator) -> Draw:
+    """Age a healthy draw in place (aged-unit stress splits); returns the draw.
+
+    Applied after ``healthy_draw`` and before the fault, so a catalogued fault acts on
+    an aged unit. Out-of-circuit readings follow the aged values.
+    """
+    net = circuit.netlist
+    for comp in circuit.components:
+        if comp.kind == "electrolytic":
+            main = comp.main_element
+            draw.alters[main] *= float(rng.uniform(*AGE_ELECTROLYTIC_C))
+            draw.lift[comp.ref] = draw.alters[main]
+            esr_el = comp.elements["esr"]
+            esr = draw.alters.get(esr_el, net.element(esr_el).numeric_value)
+            assert esr is not None
+            draw.alters[esr_el] = esr * _log_uniform(rng, *AGE_ELECTROLYTIC_ESR)
+        elif comp.kind == "resistor":
+            main = comp.main_element
+            draw.alters[main] *= float(rng.uniform(*AGE_RESISTOR))
+            draw.lift[comp.ref] = draw.alters[main]
+        elif comp.kind == "triode":
+            k = float(rng.uniform(*AGE_TRIODE_EMISSION))
+            draw.alters[comp.params["pv"]] *= k
+            draw.lift[comp.ref] *= k
+    draw.severity["aged"] = 1.0
+    _sync_rectifiers(circuit, draw)
+    return draw
 
 
 def apply_fault(

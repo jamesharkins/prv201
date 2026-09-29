@@ -1,0 +1,93 @@
+[22:39:22] simulation done
+channel_strip {"circuit": "channel_strip", "train_rows": 100400, "val_rows": 25100, "components_total": 257, "groups": 216, "symptom_eps": 0.005, "symptom_lambda": 1.0, "disc_temperature": 0.9853595691070718, "unmodeled_calibration": {"chosen": {"offset": 3.0, "fpr": 0.05, "tpr": 0.3333333333333333}, "grid": [{"offset": 0.0, "fpr": 0.0, "tpr": 0.18333333333333332}, {"offset": 0.5, "fpr": 0.0, "tpr": 0.16666666666666666}, {"offset": 1.0, "fpr": 0.0, "tpr": 0.15}, {"offset": 1.5, "fpr": 0.0, "tpr": 0.21666666666666667}, {"offset": 2.0, "fpr": 0.008333333333333333, "tpr": 0.23333333333333334}, {"offset": 2.5, 
+triode {"circuit": "triode", "train_rows": 12800, "val_rows": 3200, "components_total": 38, "groups": 27, "symptom_eps": 0.005, "symptom_lambda": 1.0, "disc_temperature": 0.9332030829057721, "unmodeled_calibration": {"chosen": {"offset": 4.0, "fpr": 0.025, "tpr": 0.5}, "grid": [{"offset": 0.0, "fpr": 0.0, "tpr": 0.3}, {"offset": 0.5, "fpr": 0.0, "tpr": 0.2}, {"offset": 1.0, "fpr": 0.0, "tpr": 0.3}, {"offset": 1.5, "fpr": 0.0, "tpr": 0.3}, {"offset": 2.0, "fpr": 0.0, "tpr": 0.35}, {"offset": 2.5, "fpr": 0.0, "tpr": 0.3}, {"offset": 3.0, "fpr": 0.0, "tpr": 0.4}, {"offset": 3.5, "fpr": 0.0, "tpr": 0.4},
+[23:25:22] train done
+psu {'test_points': 6, 'hv_normal': 3, 'hv_under_fault': 0, 'low_voltage': 3}
+   TP4   hv              normal   295.5 V  worst   295.8 V  faults>50V: 61  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP5   hv              normal   286.6 V  worst   295.7 V  faults>50V: 59  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP6   hv              normal   267.6 V  worst   286.0 V  faults>50V: 57  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+triode {'test_points': 4, 'hv_normal': 1, 'hv_under_fault': 1, 'low_voltage': 2, 'showcase': {'tp': 'TP10', 'name': 'Triode stage output / tone input', 'normal_max_v': 0.0, 'worst_case_v': 105.09, 'fault': 'C203:short', 'fault_label': 'C203 short circuit'}}
+   TP9   hv              normal   178.0 V  worst   250.0 V  faults>50V: 30  e.g. ['C201:open', 'C201:short', 'C202:cap_loss_50']
+   TP10  hv_under_fault  normal     0.0 V  worst   105.1 V  faults>50V: 1  e.g. ['C203:short']
+tone {'test_points': 3, 'hv_normal': 0, 'hv_under_fault': 0, 'low_voltage': 3}
+opamp {'test_points': 6, 'hv_normal': 0, 'hv_under_fault': 0, 'low_voltage': 6}
+driver {'test_points': 7, 'hv_normal': 0, 'hv_under_fault': 0, 'low_voltage': 7}
+channel_strip {'test_points': 23, 'hv_normal': 4, 'hv_under_fault': 1, 'low_voltage': 18, 'showcase': {'tp': 'TP10', 'name': 'Tone-control input (triode stage output)', 'normal_max_v': 0.0, 'worst_case_v': 125.4, 'fault': 'C203:short', 'fault_label': 'C203 short circuit'}}
+   TP4   hv              normal   295.5 V  worst   295.8 V  faults>50V: 248  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP5   hv              normal   287.4 V  worst   295.8 V  faults>50V: 246  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP6   hv              normal   269.6 V  worst   295.8 V  faults>50V: 244  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP9   hv              normal   188.5 V  worst   295.7 V  faults>50V: 243  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP10  hv_under_fault  normal     0.0 V  worst   125.4 V  faults>50V: 1  e.g. ['C203:short']
+[23:25:24] hv_audit done
+[23:25:26] library_stats done
+channel_strip unmodeled_val: 60 cases (3 rejected draws)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/user/prv201/eval/cases.py", line 224, in <module>
+    main()
+  File "/home/user/prv201/eval/cases.py", line 208, in main
+    n, redraws = write_split(cid, split)
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/prv201/eval/cases.py", line 190, in write_split
+    df, meta = build_split(cid, split)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/prv201/eval/cases.py", line 152, in build_split
+    facts = derive_facts(circ, sm.reference, row) if bool(row["ok"]) else None
+                                                     ^^^^^^^^^^^^^^^
+  File "/home/user/prv201/.venv/lib/python3.11/site-packages/pandas/core/generic.py", line 1501, in __bool__
+    raise ValueError(
+ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+--- resumed 23:28:03 ---
+channel_strip unmodeled_val: 60 cases (3 rejected draws)
+psu unmodeled_val: 20 cases (3 rejected draws)
+triode unmodeled_val: 20 cases (3 rejected draws)
+tone unmodeled_val: 20 cases (3 rejected draws)
+opamp unmodeled_val: 20 cases (1 rejected draws)
+driver unmodeled_val: 20 cases (2 rejected draws)
+channel_strip unmodeled_pilot: 60 cases (8 rejected draws)
+psu unmodeled_pilot: 20 cases (2 rejected draws)
+triode unmodeled_pilot: 20 cases (1 rejected draws)
+tone unmodeled_pilot: 20 cases (6 rejected draws)
+opamp unmodeled_pilot: 20 cases (4 rejected draws)
+driver unmodeled_pilot: 20 cases (6 rejected draws)
+channel_strip pilot: 200 cases (26 rejected draws)
+psu pilot: 60 cases (65 rejected draws)
+triode pilot: 60 cases (3 rejected draws)
+tone pilot: 60 cases (22 rejected draws)
+opamp pilot: 60 cases (0 rejected draws)
+driver pilot: 60 cases (3 rejected draws)
+channel_strip test: 500 cases (87 rejected draws)
+psu test: 100 cases (111 rejected draws)
+triode test: 100 cases (6 rejected draws)
+tone test: 100 cases (28 rejected draws)
+opamp test: 100 cases (1 rejected draws)
+driver test: 100 cases (8 rejected draws)
+channel_strip unmodeled_test: 50 cases (7 rejected draws)
+psu unmodeled_test: 10 cases (1 rejected draws)
+triode unmodeled_test: 10 cases (2 rejected draws)
+tone unmodeled_test: 10 cases (1 rejected draws)
+opamp unmodeled_test: 10 cases (4 rejected draws)
+driver unmodeled_test: 10 cases (0 rejected draws)
+channel_strip pilot_wide: 150 cases (22 rejected draws)
+channel_strip test_wide: 300 cases (37 rejected draws)
+[23:31:39] cases done
+paraphrases written; 0 texts with leakage (nothing scored)
+[23:31:40] paraphrases done
+[23:37:33] calibration done
+[23:39:31] pilot done
+T1 ≥ 93% {'estimate': 0.9475, 'se': 0.0111, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.93}
+T2 ≥ 93% {'estimate': 0.955, 'se': 0.0158, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.93}
+T3 ≥ 99% {'estimate': 1.0, 'se': 0.006, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.99}
+T4 ≥ +8 points each {'estimate_vs_fixed_order': 0.17, 'estimate_vs_random': 0.13, 'bar_vs_fixed_order': 0.12, 'bar_vs_random': 0.08, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.08, 'rule': 'the smaller of the two margin bars'}
+T6 ≤ 15 points {'estimate': 0.1017, 'se': 0.0332, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.15}
+T8 ≤ 0.35× {'estimate': 0.335, 'se': 0.0118, 'k': 1.5, 'direction': '<=', 'step': 0.05, 'bar': 0.35}
+T9 ≤ 0.40× {'estimate': 0.3798, 'se': 0.0133, 'k': 1.5, 'direction': '<=', 'step': 0.05, 'bar': 0.4}
+T10 ≤ 0.35× {'estimate': 0.3351, 'se': 0.0127, 'k': 1.5, 'direction': '<=', 'step': 0.05, 'bar': 0.35}
+T11 ≤ 0.80× {'estimate': 0.7711, 'se': 0.0306, 'k': 1.5, 'direction': '<=', 'step': 0.05, 'bar': 0.8}
+T12 ≤ 0.05 {'estimate': 0.034, 'se': 0.0108, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.05}
+T13 AUROC ≥ 0.76; ≥ 47% flagged; ≤ 14% misleading {'estimate': 0.7973, 'se': 0.0238, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.76, 'flagged_estimate': 0.5267, 'flagged_se': 0.0379, 'flagged_bar': 0.47, 'misleading_estimate': 0.0983, 'misleading_se': 0.0282, 'misleading_bar': 0.14, 'n_unmodeled': 160.0}
+T14 ≥ −2 points {'estimate': -0.0092, 'se': 0.0055, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': -0.02}
+[23:39:47] bars done
+[23:39:51] safety sweep done
+[23:41:16] REBUILD_OK

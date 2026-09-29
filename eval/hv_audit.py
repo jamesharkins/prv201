@@ -3,8 +3,11 @@
 A unit on the bench is faulted by definition, and a fault can put high voltage on
 a node that is low-voltage in normal operation (a leaky coupling capacitor puts
 B+ on the next grid; a cut-off tube lets its plate rise to B+). For every test
-point we therefore take the largest |DC| reading over every catalog fault and
-every tolerance draw in the training simulations.
+point we therefore take the largest |DC| voltage over every catalog fault and
+every tolerance draw in the training simulations. The audit uses the unloaded node
+voltage (``open:`` columns: what a finger would touch), not the meter reading,
+which a 10 MOhm meter pulls down at high-impedance nodes; the larger of the two
+is taken, so the audit never sees less than either.
 
 Outputs
   differential/safety/hv_map.json  used at runtime by the safety layer
@@ -30,20 +33,21 @@ def audit(cid: str) -> dict[str, object]:
     c = get_circuit(cid)
     df = load_dataset(cid, "train")
     df = df[df["ok"]]
-    healthy = df[df["hypothesis"] == "healthy"]
     out: dict[str, object] = {}
     for tp in c.test_points:
         col = f"dc:{tp.id}"
         if col not in df.columns:
             continue
-        v = np.abs(df[col].to_numpy(dtype=float))
-        hv_rows = df[np.abs(df[col]) > HV_THRESHOLD_V]
+        cols = [col] + ([f"open:{tp.id}"] if f"open:{tp.id}" in df.columns else [])
+        mag = df[cols].abs().max(axis=1)
+        v = mag.to_numpy(dtype=float)
+        hv_rows = df[mag > HV_THRESHOLD_V]
         faults = sorted(set(hv_rows["hypothesis"]) - {"healthy"})
         worst_row = df.iloc[int(np.nanargmax(v))]
         out[tp.id] = {
             "name": tp.name,
             "flag_hv": tp.hv,
-            "normal_max_v": round(float(np.abs(healthy[col]).max()), 2),
+            "normal_max_v": round(float(mag[df["hypothesis"] == "healthy"].max()), 2),
             "worst_case_v": round(float(np.nanmax(v)), 2),
             "faults_above_threshold": len(faults),
             "example_faults": faults[:6],

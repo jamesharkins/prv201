@@ -30,6 +30,30 @@ def body_pages(pdf: Path) -> tuple[int, int]:
     return total, total
 
 
+NO_APPENDIX = {"M1"}  # "at most 5 pages plus references": nothing but references may follow
+
+
+def appendix_after_references(pdf: Path) -> bool:
+    txt = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True,
+                         check=True).stdout
+    tail = txt.split("References")[-1]
+    return bool(re.search(r"^\s*Appendix\b", tail, flags=re.M))
+
+
+def floats_after_references(pdf: Path) -> list[str]:
+    """Body figures or tables that floated past the reference heading (they would sit
+    outside the page count). Captions inside an appendix that follows are fine."""
+    txt = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True,
+                         check=True).stdout
+    m = re.search(r"^\s*References\s*$", txt, flags=re.M)
+    if not m:
+        return []
+    tail = txt[m.end():]
+    appendix = re.search(r"^\s*Appendix\b", tail, flags=re.M)
+    refs = tail[: appendix.start()] if appendix else tail
+    return re.findall(r"^\s*((?:Table|Figure) \d+)[.:]", refs, flags=re.M)
+
+
 def main(argv: list[str]) -> int:
     rc = 0
     for ms in argv or list(LIMITS):
@@ -39,7 +63,14 @@ def main(argv: list[str]) -> int:
             continue
         body, total = body_pages(pdf)
         ok = body <= LIMITS[ms]
-        print(f"{ms}: {body} body page(s) (limit {LIMITS[ms]}), {total} total -> {'OK' if ok else 'OVER'}")
+        extra = ""
+        if ms in NO_APPENDIX and appendix_after_references(pdf):
+            ok, extra = False, "; an appendix follows the references"
+        stray = floats_after_references(pdf)
+        if stray:
+            ok, extra = False, extra + f"; {', '.join(stray)} placed after the references"
+        print(f"{ms}: {body} body page(s) (limit {LIMITS[ms]}), {total} total{extra} -> "
+              f"{'OK' if ok else 'OVER'}")
         rc |= 0 if ok else 1
     return rc
 

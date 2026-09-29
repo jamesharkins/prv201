@@ -67,6 +67,32 @@ def group_stats() -> dict[str, object]:
     return out
 
 
+def setup_cost() -> dict[str, dict[str, float]]:
+    """Machine time to build one circuit model: Monte Carlo simulation (from the sim logs'
+    elapsed-time marks) and fitting (training summary), 4-core machine."""
+    import re
+
+    from differential.config import MODELS_DIR
+
+    sim_s: dict[str, float] = {}
+    for log in ("sim_train.log", "sim_val.log"):
+        p = SIM_DIR / log
+        if not p.exists():
+            continue
+        for m in re.finditer(r"(\w+)__(?:train|val): \d+/\d+ jobs \((\d+)s\)", p.read_text()):
+            key = f"{m.group(1)}|{log}"
+            sim_s[key] = max(sim_s.get(key, 0.0), float(m.group(2)))
+    summary_p = MODELS_DIR / "training_summary.json"
+    train = json.loads(summary_p.read_text()) if summary_p.exists() else {}
+    out = {}
+    for cid in CIRCUIT_IDS:
+        sim = sum(v for k, v in sim_s.items() if k.startswith(cid + "|"))
+        fit = float((train.get(cid) or {}).get("seconds") or 0.0)
+        out[cid] = {"simulation_minutes": round(sim / 60, 1), "fitting_minutes": round(fit / 60, 1),
+                    "total_minutes": round((sim + fit) / 60, 1)}
+    return out
+
+
 def main() -> None:
     circuits = {}
     for cid in CIRCUIT_IDS:
@@ -78,6 +104,7 @@ def main() -> None:
             "test_points": len(c.test_points),
             "hv_test_points": sum(tp.hv for tp in c.test_points),
             "spice_observables": len(spice_observables(c)),
+            "observables_by_kind": dict(Counter(o.kind for o in spice_observables(c))),
             "lift_tests": len(lift_observables(c)),
             "kinds": dict(Counter(comp.kind for comp in c.components)),
         }
@@ -107,10 +134,23 @@ def main() -> None:
     if sym:
         data["symptoms"] = sym
     data["groups"] = group_stats()
-    from differential.sim.measurement import DMM_DIGITS, DMM_PCT, SCOPE_REL
+    from differential.engine.session import CONFIRM_AT
+    from differential.nlp.benchmark import COMPLAINT_NOISE
+    from differential.sim import draws as dr
+    from differential.sim.measurement import DMM_DIGITS, DMM_INPUT_OHMS, DMM_PCT, SCOPE_REL
 
     data["instrument"] = {"dmm_pct": 100 * DMM_PCT, "dmm_counts": DMM_DIGITS,
-                          "scope_pct": 100 * SCOPE_REL}
+                          "scope_pct": 100 * SCOPE_REL, "dmm_input_mohm": DMM_INPUT_OHMS / 1e6,
+                          "mains_tol_pct": 100 * dr.MAINS_TOL}
+    data["aging"] = {"electrolytic_c_loss_max_pct": 100 * (1 - dr.AGE_ELECTROLYTIC_C[0]),
+                     "electrolytic_c_loss_min_pct": 100 * (1 - dr.AGE_ELECTROLYTIC_C[1]),
+                     "electrolytic_esr_max_x": dr.AGE_ELECTROLYTIC_ESR[1],
+                     "resistor_drift_max_pct": 100 * (dr.AGE_RESISTOR[1] - 1),
+                     "triode_emission_loss_max_pct": 100 * (1 - dr.AGE_TRIODE_EMISSION[0])}
+    data["complaint_noise"] = {"p_omit_pct": 100 * COMPLAINT_NOISE.p_omit,
+                               "p_add_pct": 100 * COMPLAINT_NOISE.p_add}
+    data["design"]["confirm_at"] = CONFIRM_AT
+    data["setup_cost"] = setup_cost()
     metrics_io.update("library", data)
     hc_path = SIM_DIR.parent.parent / "results" / "hand_calcs.json"
     if hc_path.exists():

@@ -104,6 +104,13 @@ class CircuitSpec:
     test_points: list[TestPointSpec]
     service_notes: list[dict[str, Any]] = field(default_factory=list)
     blocks: list[str] = field(default_factory=list)
+    # A circuit model is trusted for hazard decisions only once its simulated healthy
+    # readings have been checked against an independent reference (hand calculations or
+    # the service manual's voltage chart). Until then every point of a unit with a
+    # high-voltage supply is treated as high voltage (safety/hazards.py, ADR-034).
+    model_validated: bool = False
+    validation_evidence: str = ""
+    declared_supply_v: float | None = None
 
     # ---- lookups -------------------------------------------------------
     def component(self, ref: str) -> ComponentSpec:
@@ -221,4 +228,8 @@ def load_circuit(yaml_path: Path) -> CircuitSpec:
         test_points=[_test_point_from_dict(t) for t in raw["test_points"]],
         service_notes=list(raw.get("service_notes", [])),
         blocks=[str(b) for b in raw.get("blocks", [])],
+        model_validated=str((raw.get("model_validation") or {}).get("status", "")) == "validated",
+        validation_evidence=str((raw.get("model_validation") or {}).get("evidence", "")),
+        declared_supply_v=(float(raw["declared_supply_v"]) if raw.get("declared_supply_v") is not None
+                           else None),
     )

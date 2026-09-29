@@ -1496,3 +1496,21 @@
       5, and
   - claim: Up to 4 cache breakpoints; 5-minute default TTL, optional 1-hour TTL at 2x base input price.
     quote: 'You can define up to 4 cache breakpoints if you want to:'
+- key: fluke_117_input_characteristics
+  type: docs
+  authors:
+  - Fluke Corporation
+  title: 110/113/114/115/117 True-rms Multimeter Users Manual (March 2020), Table 7 - Fluke 117 input characteristics
+  container: calibration-atlas repository (structured transcription of the manual), data/gold_standards/digital_multimeter/fluke-117/tables/input_characteristics.yaml
+  publisher: Fluke Corporation (text); GitHub corpus by N. Bouldin
+  date: 2020-03
+  url: https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/digital_multimeter/fluke-117/tables/input_characteristics.yaml
+  accessed: '2026-09-29'
+  verified: fetched
+  claims:
+  - claim: On DC volts the Fluke 117 has an input impedance above 10 MOhm.
+    quote: "locator: Table 7, Volts DC excerpt: '>10 MΩ'"
+  - claim: Input capacitance on DC volts is below 100 pF.
+    quote: "locator: Table 7, Volts DC excerpt: <100 pF"
+  notes: Same repository and commit as fluke_117_dcv_accuracy. The simulator models the meter as 10 MOhm from the
+    measured node to ground.

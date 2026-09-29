@@ -2,6 +2,11 @@
 id: channel_strip
 name: Reference Channel Strip
 netlist: channel_strip.cir
+declared_supply_v: 282
+model_validation:
+  status: validated
+  evidence: 'docs/hand_calcs.md: hand calculations agree with every simulated healthy bias point and gain
+    within the stated tolerances'
 generated_by: differential/circuits/compose.py
 description: 'Composite hero circuit: the power supply block powers a 12AX7-class triode stage, a passive
   Baxandall tone control, an op-amp make-up gain stage and a discrete BJT line driver. About 1 V rms at

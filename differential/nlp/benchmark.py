@@ -13,11 +13,12 @@ or a part kind.
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass, replace
 from typing import Any
 
 import numpy as np
 
-from differential.engine.symptom_prior import SymptomFacts
+from differential.engine.symptom_prior import FEATURES, SymptomFacts
 
 PERSONAS = ("bench_tech", "hobbyist", "studio_client")
 STAGE_WORDS = {
@@ -102,6 +103,44 @@ LEAK_WORDS = re.compile(
     r"op-?amps?|triodes?|valves?|tubes?|12ax7|2n3904|1n4148|1n4745a?)\b",
     flags=re.IGNORECASE,
 )
+
+
+@dataclass(frozen=True)
+class ComplaintNoise:
+    """How a written complaint departs from what the unit shows (ADR-032).
+
+    Owners and technicians leave symptoms out and describe some that are not there.
+    Each symptom the unit shows is left out with probability ``p_omit``; each symptom
+    it does not show is added with probability ``p_add``. "No output" is never
+    dropped or invented (nobody misses a dead unit), and nothing is added to a dead
+    unit. The same process renders the validation complaints the symptom model is
+    calibrated on and every evaluation complaint.
+    """
+
+    p_omit: float = 0.2
+    p_add: float = 0.02
+
+
+COMPLAINT_NOISE = ComplaintNoise()
+NO_NOISE = ComplaintNoise(0.0, 0.0)
+
+
+def noisy_facts(facts: SymptomFacts, rng: np.random.Generator,
+                noise: ComplaintNoise = COMPLAINT_NOISE) -> SymptomFacts:
+    """The symptoms a complaint reports: ``facts`` with omissions and additions.
+    Draws one uniform number per feature, so the stream is stable."""
+    dead = bool(facts.features.get("no_output"))
+    out: dict[str, bool] = {}
+    for f in FEATURES:
+        u = float(rng.uniform())
+        present = bool(facts.features.get(f))
+        if f == "no_output":
+            out[f] = present
+        elif present:
+            out[f] = u >= noise.p_omit
+        else:
+            out[f] = (not dead) and u < noise.p_add
+    return replace(facts, features=out)
 
 
 def leakage(text: str) -> list[str]:

@@ -607,6 +607,14 @@ select.input, .field-inline select {
 .banner-lock-text { display: flex; gap: 6px; align-items: flex-start; font-size: 13px; color: var(--ink); margin-bottom: var(--sp-2); }
 .banner-lock-text .icon-svg { width: 16px; height: 16px; margin-top: 1px; color: var(--danger-ink); }
 .discharge-label { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink-2); margin-bottom: 4px; }
+.discharge-form .dc-row { margin-bottom: 4px; }
+.discharge-form .dc-tp { min-width: 11em; font-size: 12.5px; color: var(--ink-2); }
+.discharge-form .dc-name { color: var(--ink-3, var(--ink-2)); font-weight: 400; }
+.approval-form label { font-size: 12.5px; color: var(--ink-2); max-width: 40em; }
+.approval-form .approval-box { width: 16px; height: 16px; flex: none; }
+.trainee-row { display: flex; align-items: flex-start; gap: 8px; margin: 10px 0 12px; font-size: 13px; color: var(--ink-2); }
+.trainee-row input { width: 16px; height: 16px; margin-top: 2px; flex: none; }
+.guess-form .guess-select { min-width: 16em; max-width: 100%; }
 
 /* ------------------------------------------------------------- next card */
 .next-card { border-left: 4px solid var(--accent-bar); }
@@ -1042,3 +1050,13 @@ tr.is-new td { animation: row-flash 1.8s ease-out; }
   .bar-fill, .meter-fill, .opt-fill { background: Highlight; }
   .bar-fill-hatch { background: repeating-linear-gradient(135deg, CanvasText 0 2px, transparent 2px 5px); }
 }
+
+/* ------------------------------------------------------------ replay caption */
+.replay-caption {
+  position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+  max-width: min(760px, calc(100vw - 32px)); padding: 8px 14px;
+  border-radius: 8px; border: 1px solid var(--border-strong);
+  background: var(--surface); color: var(--ink); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  font-size: 13.5px; line-height: 1.35; z-index: 50;
+}
+.replay-caption[hidden] { display: none; }

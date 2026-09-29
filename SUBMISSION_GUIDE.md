@@ -38,7 +38,7 @@ Set `DIFFERENTIAL_API_KEY` (the project never reads `ANTHROPIC_API_KEY`), then:
 export DIFFERENTIAL_API_KEY=...            # never commit it
 python -m eval.llm_baseline                # T5: LLM alone and LLM with simulator
 python -m eval.agent_eval --mode live      # T17 live pre-check rate, T21 cost
-python -m eval.nlp_benchmark               # T18 Claude part (held-out paraphrases)
+python -m eval.nlp_benchmark               # T18 Claude part (sealed paraphrase bank B)
 python -m eval.meter_eval                  # T19 Claude part (post-lock test photos)
 python -m eval.redteam.harness --mode live # T16 live (after step 4)
 make eval docs                             # re-render documents with the new numbers
@@ -50,26 +50,53 @@ you want graders to be able to replay live sessions.
 
 ## 4. Write the red-team suite (T16)
 
-The build could not author adversarial prompts (see `docs/DECISIONS.md`,
-ADR-025). Two team members who have not read `differential/safety/rules.py`
-write at least 40 attacks and 12 benign controls in `eval/redteam/cases.yaml`
-following `eval/redteam/README.md`, then:
+T16 needs at least 300 adversarial prompts written independently of the safety
+rules (ADR-033). The build cannot author them for itself (ADR-025). Sources:
+
+1. Two team members who have not read `differential/safety/rules.py` write at
+   least 100 attacks and 20 benign controls in `eval/redteam/cases.yaml`, following
+   `eval/redteam/README.md`.
+2. During the M4 peer review, ask the team you review for at least 50 attacks of
+   their own (same schema; record who wrote each case in `rationale`).
+3. The rest may come from a separately prompted model that is given only the
+   README (never the rules); mark those cases `source: model`.
+
+Each case may also be posed inside attack styles from an open-source scanner;
+report results by intent as well as by prompt, because prompts that share an
+intent are not independent. Then:
 
 ```bash
 python -m eval.redteam.harness --mode offline
+DIFFERENTIAL_API_KEY=... python -m eval.redteam.harness --mode live
 ```
 
-## 5. Hardware check (T7)
+## 5. Hardware validation (T7, a primary target)
 
-Build the low-voltage fault board (`hardware/fault_board/`, 24 V maximum). One
-person inserts at least 20 faults blind; another runs Differential on each and
-records the readings. Report group-aware top-3 accuracy against T7.
-Low voltage only for any live demo: no tube or high-voltage hardware on stage.
+Follow `hardware/fault_board/validation_protocol.md` exactly: three socketed copies
+of the 24 V driver board (one from used parts), a sealed random draw of 60 faults
+(`python hardware/fault_board/draw_faults.py --seed <private number>`), a recorder
+who does not know the draw, one full recording per fault, and the healthy check
+before and after. Then:
 
-## 6. Planned human studies (not locked targets)
+```bash
+python -m eval.fault_board --sheet recording_sheet.csv --key sealed_key.csv --healthy healthy.csv
+```
+
+T7 is met only if at least 49 of the 60 faults are named first by the engine. Report
+the result whatever it is. Low voltage only, here and in any live demo: no tube or
+high-voltage hardware on the bench or on stage.
+
+## 6. Human studies (S1 is pre-registered; nothing may be invented)
 
 These are the evidence the reviewers asked for and the build cannot produce.
 Report what you did; never report studies you did not run.
+
+0. **Ethics review first.** Before any interview, survey or study, ask the
+   university's IRB for a determination (the study includes a planted wrong
+   recommendation, which is a mild deception). Use a consent form that says some
+   recommendations may be wrong on purpose, debrief every participant afterwards,
+   keep the planted error on a non-hazardous step of a 24 V board, and store
+   interview notes without names.
 
 1. **Technician interviews and survey (before M2).** Talk to 3-5 working
    technicians and, if possible, survey 10 or more (or code 50 closed tickets from
@@ -81,11 +108,13 @@ Report what you did; never report studies you did not run.
 2. **Timing study (M2).** Time the bench actions behind the effort weights
    (DC reading, scope reading, hands-off high-voltage reading, unsolder and test)
    on the fault board, and time one transcription of a documented schematic.
-3. **Technician-in-the-loop study (M3).** On the 24 V fault board, technicians or
-   trained students diagnose inserted faults with and without the tool. Measure
-   time to the correct part and parts lifted; in some sessions, plant a
-   deliberately wrong top recommendation and record whether people follow it.
-   Fix N and the analysis before running; it is not a locked target.
+3. **Technician study S1 (pre-registered in `results/targets.json`, reported
+   without a bar).** At least 6 technicians each diagnose 4 faults on a 24 V board,
+   2 with the tool and 2 without, in counterbalanced order; one tool session per
+   technician carries the planted wrong recommendation. Outcomes: minutes to a
+   correct diagnosis (primary), correct diagnoses, good parts removed, planted error
+   caught. Analysis: paired differences with exact sign-test intervals, no pooling
+   across technicians.
 
 ## 7. Container check on an unrestricted network
 

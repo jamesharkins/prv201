@@ -5,6 +5,13 @@ A test point is treated as high voltage when it exceeds 50 V in normal operation
 ("hv_under_fault"). A reading never downgrades a point: a low reading at a
 point that can carry B+ under a fault is not evidence that it is safe to touch.
 Unknown points fail closed (treated as high voltage).
+
+The map is only as good as the circuit model it was simulated from. A model that
+has not been validated against an independent reference (hand calculations, or the
+service manual's voltage chart for a transcribed product) could be wrong in exactly
+the way that hides a hazard, so in a unit whose declared supply reaches 50 V every
+point of an unvalidated model is treated as high voltage ("unvalidated_model",
+ADR-034).
 """
 
 from __future__ import annotations
@@ -17,6 +24,7 @@ from typing import Any
 
 HV_MAP_PATH = Path(__file__).resolve().parent / "hv_map.json"
 DISCHARGE_VERIFY_MAX_V = 2.0
+HV_THRESHOLD = 50.0
 
 
 @dataclass(frozen=True)
@@ -39,8 +47,25 @@ def _map() -> dict[str, Any]:
     return dict(json.loads(HV_MAP_PATH.read_text()))
 
 
+def _unvalidated_hv(circuit_id: str) -> bool:
+    """True when the circuit model is unvalidated and its declared supply is high voltage
+    (or undeclared): every point is then treated as high voltage."""
+    from differential.circuits.library import get_circuit
+
+    try:
+        c = get_circuit(circuit_id)
+    except (KeyError, FileNotFoundError):
+        return True
+    if c.model_validated:
+        return False
+    return c.declared_supply_v is None or c.declared_supply_v >= HV_THRESHOLD
+
+
 def hazard(circuit_id: str, tp: str) -> Hazard:
     info = _map().get(circuit_id, {}).get(tp)
+    if _unvalidated_hv(circuit_id):
+        return Hazard(tp, "unvalidated_model", None if info is None else float(info["normal_max_v"]),
+                      None if info is None else float(info["worst_case_v"]), ())
     if info is None:
         return Hazard(tp, "unknown", None, None, ())
     return Hazard(tp, str(info["hazard"]), float(info["normal_max_v"]),
@@ -56,4 +81,15 @@ def supply_voltage(circuit_id: str) -> float | None:
 
 
 def circuit_has_hv(circuit_id: str) -> bool:
-    return any(v.get("hazard") != "lv" for v in _map().get(circuit_id, {}).values())
+    return _unvalidated_hv(circuit_id) or any(
+        v.get("hazard") != "lv" for v in _map().get(circuit_id, {}).values())
+
+
+def discharge_points(circuit_id: str) -> list[str]:
+    """Test points that must read below the discharge limit before hands-in work: every
+    point that can hold high voltage in normal operation or under a fault (every point of
+    an unvalidated high-voltage model)."""
+    from differential.circuits.library import get_circuit
+
+    c = get_circuit(circuit_id)
+    return [tp.id for tp in c.test_points if hazard(circuit_id, tp.id).high_voltage]

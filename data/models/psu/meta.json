@@ -1,7 +1,7 @@
 {
   "circuit": "psu",
   "components_total": 83,
-  "disc_temperature": 0.9619229523746556,
+  "disc_temperature": 0.955024512334163,
   "groups": 47,
   "nontrivial_groups": [
     [
@@ -61,9 +61,9 @@
       "C106:high_esr"
     ]
   ],
-  "seconds": 77.85150623321533,
+  "seconds": 83.70146679878235,
   "symptom_eps": 0.005,
-  "symptom_lambda": 1.0,
+  "symptom_lambda": 0.25,
   "train_rows": 25600,
   "unmodeled_calibration": {
     "fpr_budget": 0.05,
@@ -79,53 +79,53 @@
         "chosen": {
           "fpr": 0.025,
           "offset": 4.0,
-          "tpr": 0.45
+          "tpr": 0.5
         },
         "grid": [
           {
             "fpr": 0.0,
             "offset": 0.0,
-            "tpr": 0.05
+            "tpr": 0.2
           },
           {
             "fpr": 0.0,
             "offset": 1.0,
-            "tpr": 0.05
+            "tpr": 0.2
           },
           {
             "fpr": 0.0,
             "offset": 2.0,
-            "tpr": 0.15
+            "tpr": 0.25
           },
           {
             "fpr": 0.025,
             "offset": 4.0,
-            "tpr": 0.45
+            "tpr": 0.5
           },
           {
-            "fpr": 0.0625,
+            "fpr": 0.0375,
             "offset": 4.1,
             "tpr": 0.5
           },
           {
-            "fpr": 0.0625,
+            "fpr": 0.0875,
             "offset": 4.2,
-            "tpr": 0.45
+            "tpr": 0.55
           },
           {
-            "fpr": 0.2625,
+            "fpr": 0.2375,
             "offset": 4.5,
-            "tpr": 0.65
+            "tpr": 0.6
           },
           {
-            "fpr": 0.6125,
+            "fpr": 0.6625,
             "offset": 5.0,
-            "tpr": 0.9
+            "tpr": 0.7
           },
           {
             "fpr": 1.0,
             "offset": 6.0,
-            "tpr": 1.0
+            "tpr": 0.75
           }
         ],
         "system": "hybrid"
@@ -145,12 +145,12 @@
           {
             "fpr": 0.0,
             "offset": 1.0,
-            "tpr": 0.25
+            "tpr": 0.3
           },
           {
             "fpr": 0.0,
             "offset": 2.0,
-            "tpr": 0.35
+            "tpr": 0.3
           },
           {
             "fpr": 0.0375,
@@ -181,64 +181,64 @@
         "system": "engine_gen"
       }
     },
-    "seconds": 12.5
+    "seconds": 13.6
   },
   "unmodeled_calibration_v1": {
     "chosen": {
-      "fpr": 0.05,
-      "offset": 2.0,
+      "fpr": 0.0,
+      "offset": 1.5,
       "tpr": 0.3
     },
     "grid": [
       {
-        "fpr": 0.008333333333333333,
+        "fpr": 0.0,
         "offset": 0.0,
         "tpr": 0.2
       },
       {
-        "fpr": 0.008333333333333333,
+        "fpr": 0.0,
         "offset": 0.5,
         "tpr": 0.25
       },
       {
-        "fpr": 0.008333333333333333,
+        "fpr": 0.0,
         "offset": 1.0,
-        "tpr": 0.25
-      },
-      {
-        "fpr": 0.03333333333333333,
-        "offset": 1.5,
-        "tpr": 0.25
-      },
-      {
-        "fpr": 0.05,
-        "offset": 2.0,
         "tpr": 0.3
       },
       {
-        "fpr": 0.075,
+        "fpr": 0.0,
+        "offset": 1.5,
+        "tpr": 0.3
+      },
+      {
+        "fpr": 0.008333333333333333,
+        "offset": 2.0,
+        "tpr": 0.25
+      },
+      {
+        "fpr": 0.041666666666666664,
         "offset": 2.5,
         "tpr": 0.3
       },
       {
-        "fpr": 0.08333333333333333,
+        "fpr": 0.058333333333333334,
         "offset": 3.0,
-        "tpr": 0.45
+        "tpr": 0.55
       },
       {
-        "fpr": 0.19166666666666668,
+        "fpr": 0.075,
         "offset": 3.5,
-        "tpr": 0.6
+        "tpr": 0.65
       },
       {
-        "fpr": 0.43333333333333335,
+        "fpr": 0.18333333333333332,
         "offset": 4.0,
-        "tpr": 0.7
+        "tpr": 0.75
       },
       {
-        "fpr": 0.9583333333333334,
+        "fpr": 0.975,
         "offset": 5.0,
-        "tpr": 1.0
+        "tpr": 0.95
       },
       {
         "fpr": 1.0,

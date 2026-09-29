@@ -3,7 +3,8 @@
 For a stratified sample of test units, a scripted technician talks to the agent
 exactly as a user of the demo would: sends the unit's complaint, takes every
 recommended measurement on the simulated bench (same noise seeds as the engine
-evaluation), reports a discharged filter capacitor whenever a lift is locked,
+evaluation), records the owner's approval and a discharge reading at every
+high-voltage point whenever a part removal is locked,
 and finally asks for the repair ticket. Every assistant message and the ticket go
 through the grounding check; the numbers it could not trace are counted.
 In live or replay mode the same script drives Claude (needs a key or a cache).
@@ -21,6 +22,7 @@ import numpy as np
 from differential.agent.agent import DifferentialAgent
 from differential.circuits.library import BLOCK_IDS, COMPOSITE_ID
 from differential.instruments.simulated import SimulatedBench
+from differential.safety.hazards import discharge_points
 from eval import metrics_io
 from eval.cases import load_cases
 from eval.lock import require_lock
@@ -38,8 +40,12 @@ def run_case(row: dict[str, Any], complaint: str, mode: str) -> dict[str, Any]:
         key = agent.pending_key
         if key is None:
             break
+        if key == "approval":
+            agent.user_message("The owner approved removing parts for testing.")
+            continue
         if key == "discharge":
-            agent.user_message("Discharged; the filter capacitor reads 0.3 V.")
+            pts = discharge_points(str(row["circuit"]))
+            agent.user_message("Discharged; " + ", ".join(f"{tp} 0.3 V" for tp in pts) + ".")
             continue
         agent.measure(key)
     ticket = agent.ticket()

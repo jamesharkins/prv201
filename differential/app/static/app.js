@@ -25,6 +25,7 @@ const app = {
   state: null,
   circuit: null,
   busy: false,
+  replay: null, // {name, frames, i, ticket} while a recorded session is being played back
 };
 
 const $ = (id) => document.getElementById(id);
@@ -62,7 +63,7 @@ function storedSession() {
 }
 
 // ------------------------------------------------------------------- helpers
-const canAct = () => Boolean(app.state) && !app.busy;
+const canAct = () => Boolean(app.state) && !app.busy && !app.replay;
 
 async function getCircuit(cid) {
   if (app.circuitCache.has(cid)) return app.circuitCache.get(cid);
@@ -85,7 +86,9 @@ function setMode(mode) {
   const help = {
     offline: "Offline: deterministic templates built from tool results; no model calls.",
     live: `Live: Claude (${(app.health && app.health.model) || "model"}) chooses tools and writes the explanations.`,
-    replay: "Replay: the live code path served from recorded responses; no API key needed.",
+    replay: app.replay
+      ? "Replay: a recorded session played back with no engine or network call. Right arrow or space: next step; left arrow: back; Escape: leave."
+      : "Replay: the live code path served from recorded responses; no API key needed.",
   }[m] || "";
   els.modeBadge.dataset.mode = m;
   els.modeBadge.querySelector(".mode-text").textContent = label;
@@ -151,8 +154,8 @@ const schematic = new SchematicView($("schematic"), {
 });
 
 const banner = new SafetyBanner($("banner-slot"), {
-  discharge: async (volts, btn) => {
-    const err = await act(() => api.discharge(app.state.session_id, volts), { button: btn });
+  discharge: async (readings, btn) => {
+    const err = await act(() => api.discharge(app.state.session_id, readings), { button: btn });
     if (err) return err;
     if (app.state && !app.state.discharge_verified) {
       const last = [...(app.state.transcript || [])].reverse().find((t) => t.role === "assistant");
@@ -160,6 +163,8 @@ const banner = new SafetyBanner($("banner-slot"), {
     }
     return "";
   },
+  approve: async (note, btn) => act(() => api.approveRemoval(app.state.session_id, note), { button: btn }),
+  supervisor: async (name, btn) => act(() => api.supervisor(app.state.session_id, name), { button: btn }),
 });
 
 const nextCard = new NextCard($("next-card"), {
@@ -168,8 +173,10 @@ const nextCard = new NextCard($("next-card"), {
   enterReading: (key, value, btn) => act(() => api.reading(app.state.session_id, key, value), { button: btn }),
   openTicket: () => openTicket(),
   focusChat: () => chat.focusInput(),
+  guess: (key, btn) => act(() => api.guess(app.state.session_id, key), { button: btn }),
   focusDischarge: () => {
-    const input = document.querySelector(".banner .discharge-form input");
+    const input = document.querySelector(
+      ".banner .discharge-form input, .banner .approval-form input, .banner .supervisor-form input");
     if (input) {
       input.scrollIntoView({ block: "center", behavior: "smooth" });
       input.focus({ preventScroll: true });
@@ -192,7 +199,7 @@ const chat = new ChatPanel($("chat"), {
 });
 
 const ticket = new TicketDialog($("ticket-dialog"), {
-  load: () => api.ticket(app.state.session_id),
+  load: () => (app.replay ? Promise.resolve(app.replay.ticket) : api.ticket(app.state.session_id)),
   signoff: async (name) => {
     const t = await api.signoff(app.state.session_id, name);
     announce(`Ticket signed off by ${name}.`);
@@ -213,6 +220,10 @@ function renderStart(error = "") {
   const startBtn = h("button", { type: "button", class: "btn btn-primary btn-lg start-btn" },
     icon("probe"), h("span", {}, "Start with a simulated unit"));
   startBtn.addEventListener("click", () => startSession(startBtn));
+  const traineeBox = h("input", { type: "checkbox", id: "trainee-box", checked: Boolean(app.trainee) });
+  traineeBox.addEventListener("change", () => { app.trainee = traineeBox.checked; });
+  const traineeRow = h("div", { class: "trainee-row" }, traineeBox,
+    h("label", { for: "trainee-box" }, "Trainee mode: commit your own next step before the tool shows its choice; high-voltage units need a named supervisor"));
   const facts = c ? [
     h("span", { class: "fact" }, h("b", { class: "num" }, String(c.components)), " parts"),
     h("span", { class: "fact" }, h("b", { class: "num" }, String(c.test_points)), " test points"),
@@ -225,7 +236,7 @@ function renderStart(error = "") {
       h("p", { class: "kicker" }, "Simulated bench demo"),
       h("h1", { id: "start-title", class: "start-title" }, "Find the failed part, one measurement at a time"),
       h("p", { class: "lede" },
-        "Differential helps a qualified bench technician find the failed part in analog audio equipment. It simulates the circuit under every plausible single-part fault with realistic part tolerances, keeps a probability for every suspect and recommends the measurement that rules out the most suspects per unit of effort."),
+        "Differential helps a qualified bench technician find the failed part in analog audio equipment. It simulates the circuit under every plausible single-part fault with realistic part tolerances, keeps a probability for every suspect and recommends the measurement expected to narrow the suspects most per unit of effort."),
       h("ol", { class: "how-list" },
         h("li", {}, h("b", {}, "Start a unit. "), "A hidden fault is drawn and the unit is simulated with ngspice."),
         h("li", {}, h("b", {}, "Describe the complaint "), `in the chat, for example “${EXAMPLE_COMPLAINT}”.`),
@@ -235,6 +246,7 @@ function renderStart(error = "") {
         h("p", { class: "mini-title" }, "Circuit"),
         h("p", { class: "start-circuit-name" }, c ? c.name : cid || "–"),
         h("p", { class: "facts" }, facts)),
+      traineeRow,
       startBtn,
       error ? h("div", { class: "start-error", role: "alert" }, icon("alert"), h("div", {}, error)) : null,
       h("p", { class: "fine" }, icon("info"),
@@ -290,11 +302,12 @@ async function startSession(button) {
   if (app.busy) return;
   const cid = app.selected;
   const c = circuitSummary(cid);
-  const body = { circuit_id: cid };
+  const body = { circuit_id: cid, trainee: Boolean(app.trainee) };
   // Scripted demos (tools/screenshots.py) may fix the hidden fault and the unit seed.
   if (params.get("fault")) body.fault = params.get("fault");
   if (params.get("seed") && Number.isFinite(Number(params.get("seed")))) body.seed = Number(params.get("seed"));
   if (params.get("mode")) body.mode = params.get("mode");
+  if (params.get("trainee") === "1") body.trainee = true;
   app.busy = true;
   const restore = busyButton(button);
   els.newUnit.disabled = true;
@@ -331,7 +344,7 @@ async function startSession(button) {
 function setState(st) {
   const prev = app.state;
   app.state = st;
-  storeSession(st.session_id);
+  if (!app.replay) storeSession(st.session_id);
   if (!app.circuit || app.circuit.id !== st.circuit) {
     app.circuit = app.circuitCache.get(st.circuit) || app.circuit;
   }
@@ -488,7 +501,76 @@ async function init() {
   showStart();
 }
 
-init().catch((err) => {
+// ------------------------------------------------------------------ replay
+// Demo fallback (M5 runbook): Shift+R plays a recorded session frame by frame, with
+// no engine, simulator or network call (recorded by tools/record_replay.py).
+async function startReplay(name = "demo") {
+  if (app.busy) return;
+  let data;
+  try {
+    data = await api.replay(name);
+  } catch (err) {
+    toast(`No recorded session "${name}" (run tools/record_replay.py): ${err.message || err}`);
+    return;
+  }
+  const frames = [...(data.frames || [])];
+  if (data.reveal) frames.push({ caption: "The hidden fault is revealed.", state: data.reveal });
+  if (!frames.length) return;
+  app.circuit = await getCircuit(data.circuit);
+  app.replay = { name, frames, i: 0, ticket: data.ticket };
+  showReplayFrame();
+}
+
+function showReplayFrame() {
+  const r = app.replay;
+  const f = r.frames[r.i];
+  setState({ ...f.state, mode: "replay" });
+  setMode("replay");
+  announce(`Replay ${r.i + 1} of ${r.frames.length}: ${f.caption}`);
+  let bar = document.getElementById("replay-caption");
+  if (!bar) {
+    bar = h("div", { id: "replay-caption", class: "replay-caption", role: "status" });
+    document.body.append(bar);
+  }
+  bar.hidden = false;
+  bar.textContent = `Replay ${r.i + 1}/${r.frames.length} · ${f.caption}  (→ next · ← back · Esc leave)`;
+}
+
+function stepReplay(delta) {
+  const r = app.replay;
+  const i = Math.min(r.frames.length - 1, Math.max(0, r.i + delta));
+  if (i === r.i) return;
+  r.i = i;
+  showReplayFrame();
+}
+
+function leaveReplay() {
+  const bar = document.getElementById("replay-caption");
+  if (bar) bar.hidden = true;
+  app.replay = null;
+  app.state = null;
+  showStart();
+  setMode(null);
+  refreshHeader();
+}
+
+document.addEventListener("keydown", (e) => {
+  const typing = e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
+  if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.shiftKey && (e.key === "R" || e.key === "r")) {
+    e.preventDefault();
+    if (!app.replay) startReplay(params.get("replay") || "demo");
+    return;
+  }
+  if (!app.replay) return;
+  if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); stepReplay(1); }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); stepReplay(-1); }
+  else if (e.key === "Escape") { e.preventDefault(); leaveReplay(); }
+});
+
+init().then(() => {
+  if (params.get("replay")) startReplay(params.get("replay"));
+}).catch((err) => {
   toast(`The app failed to start: ${err.message || err}`);
 });
 

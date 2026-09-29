@@ -13,12 +13,23 @@ SEED = 20260928
 
 @dataclass(frozen=True)
 class Estimate:
+    """A point estimate with its two-sided 95% interval (lo, hi) and the one-sided 95%
+    bounds (lo1: lower, hi1: upper) that decide whether a bar is met (ADR-033)."""
+
     value: float
     lo: float
     hi: float
+    lo1: float = float("nan")
+    hi1: float = float("nan")
 
     def as_dict(self) -> dict[str, float]:
-        return {"value": self.value, "lo": self.lo, "hi": self.hi}
+        return {"value": self.value, "lo": self.lo, "hi": self.hi, "lo1": self.lo1, "hi1": self.hi1}
+
+
+def from_boots(value: float, boots: np.ndarray | list[float]) -> Estimate:
+    """Percentile-bootstrap estimate: 2.5/97.5 (two-sided) and 5/95 (one-sided) points."""
+    lo, lo1, hi1, hi = np.percentile(np.asarray(boots, float), [2.5, 5.0, 95.0, 97.5])
+    return Estimate(float(value), float(lo), float(hi), float(lo1), float(hi1))
 
 
 def exact_binomial(k: int, n: int, alpha: float = 0.05) -> Estimate:
@@ -27,8 +38,10 @@ def exact_binomial(k: int, n: int, alpha: float = 0.05) -> Estimate:
     the exact one-sided (1 - alpha/2) bound, e.g. 0 of 200 gives an upper bound of 1.8 %."""
     if n <= 0:
         return Estimate(float("nan"), float("nan"), float("nan"))
-    ci = binomtest(int(k), int(n)).proportion_ci(confidence_level=1 - alpha, method="exact")
-    return Estimate(k / n, float(ci.low), float(ci.high))
+    t = binomtest(int(k), int(n))
+    ci = t.proportion_ci(confidence_level=1 - alpha, method="exact")
+    one = t.proportion_ci(confidence_level=1 - 2 * alpha, method="exact")  # one-sided 1 - alpha
+    return Estimate(k / n, float(ci.low), float(ci.high), float(one.low), float(one.high))
 
 
 def bootstrap_mean(x: np.ndarray, n_boot: int = N_BOOT, seed: int = SEED,
@@ -39,8 +52,7 @@ def bootstrap_mean(x: np.ndarray, n_boot: int = N_BOOT, seed: int = SEED,
     rng = np.random.default_rng(seed)
     idx = rng.integers(0, len(x), size=(n_boot, len(x)))
     boots = stat(x[idx], axis=1)
-    lo, hi = np.percentile(boots, [2.5, 97.5])
-    return Estimate(float(stat(x)), float(lo), float(hi))
+    return from_boots(float(stat(x)), boots)
 
 
 def bootstrap_ratio_of_means(a: np.ndarray, b: np.ndarray, n_boot: int = N_BOOT,
@@ -50,8 +62,7 @@ def bootstrap_ratio_of_means(a: np.ndarray, b: np.ndarray, n_boot: int = N_BOOT,
     rng = np.random.default_rng(seed)
     idx = rng.integers(0, len(a), size=(n_boot, len(a)))
     boots = a[idx].mean(axis=1) / b[idx].mean(axis=1)
-    lo, hi = np.percentile(boots, [2.5, 97.5])
-    return Estimate(float(a.mean() / b.mean()), float(lo), float(hi))
+    return from_boots(float(a.mean() / b.mean()), boots)
 
 
 def paired_diff(a: np.ndarray, b: np.ndarray, n_boot: int = N_BOOT, seed: int = SEED) -> Estimate:
@@ -98,6 +109,53 @@ def ece(confidence: np.ndarray, correct: np.ndarray, n_bins: int = 10) -> tuple[
     return float(total), bins
 
 
+def ece_equal_mass(confidence: np.ndarray, correct: np.ndarray,
+                   n_bins: int = 10) -> tuple[float, list[dict[str, float]]]:
+    """Expected calibration error with equal-mass bins (each bin holds the same number
+    of predictions, so sparse regions do not get noisy bins), plus the bin table."""
+    conf = np.asarray(confidence, float)
+    corr = np.asarray(correct, float)
+    order = np.argsort(conf, kind="stable")
+    total, bins = 0.0, []
+    for idx in np.array_split(order, n_bins):
+        if len(idx) == 0:
+            continue
+        c, a = float(conf[idx].mean()), float(corr[idx].mean())
+        total += len(idx) / len(conf) * abs(c - a)
+        bins.append({"lo": float(conf[idx].min()), "hi": float(conf[idx].max()), "n": len(idx),
+                     "confidence": c, "accuracy": a})
+    return float(total), bins
+
+
+def shown_calibration(ranked3: list[list[tuple[int, float]]], truth: list[int]) -> tuple[
+        np.ndarray, np.ndarray]:
+    """(probability, correct) pairs for every group shown at the stop: one pair per shown
+    group, correct when that group holds the fault (T12)."""
+    conf, corr = [], []
+    for shown, t in zip(ranked3, truth, strict=True):
+        for g, p in shown:
+            conf.append(float(p))
+            corr.append(float(int(g) == int(t)))
+    return np.asarray(conf), np.asarray(corr)
+
+
+def brier_shown(ranked3: list[list[tuple[int, float]]], truth: list[int]) -> float:
+    """Multi-class Brier score over the shown groups plus the remaining mass as one
+    'other' class (the truth counts as 'other' when it is not shown)."""
+    out = []
+    for shown, t in zip(ranked3, truth, strict=True):
+        ps = [float(p) for _, p in shown]
+        ys = [float(int(g) == int(t)) for g, _ in shown]
+        rest = max(0.0, 1.0 - sum(ps))
+        out.append(sum((p - y) ** 2 for p, y in zip(ps, ys, strict=True)) + (rest - (1.0 - sum(ys))) ** 2)
+    return float(np.mean(out))
+
+
+def log_loss(p_truth: np.ndarray, floor: float = 1e-6) -> float:
+    """Mean negative log probability given to the true group when a diagnosis stops."""
+    return float(np.mean(-np.log(np.maximum(np.asarray(p_truth, float), floor))))
+
+
 def ece_ci(confidence: np.ndarray, correct: np.ndarray, n_boot: int = N_BOOT,
            seed: int = SEED) -> Estimate:
     conf, corr = np.asarray(confidence, float), np.asarray(correct, float)
@@ -106,8 +164,7 @@ def ece_ci(confidence: np.ndarray, correct: np.ndarray, n_boot: int = N_BOOT,
     for _ in range(n_boot // 4):
         idx = rng.integers(0, len(conf), len(conf))
         vals.append(ece(conf[idx], corr[idx])[0])
-    lo, hi = np.percentile(vals, [2.5, 97.5])
-    return Estimate(ece(conf, corr)[0], float(lo), float(hi))
+    return from_boots(ece(conf, corr)[0], vals)
 
 
 def auroc(scores_pos: np.ndarray, scores_neg: np.ndarray) -> float:
@@ -134,8 +191,7 @@ def auroc_ci(pos: np.ndarray, neg: np.ndarray, n_boot: int = N_BOOT, seed: int =
     for _ in range(n_boot):
         vals.append(auroc(pos[rng.integers(0, len(pos), len(pos))],
                           neg[rng.integers(0, len(neg), len(neg))]))
-    lo, hi = np.percentile(vals, [2.5, 97.5])
-    return Estimate(auroc(pos, neg), float(lo), float(hi))
+    return from_boots(auroc(pos, neg), vals)
 
 
 def roc_curve(pos: np.ndarray, neg: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

@@ -23,6 +23,7 @@ EVAL_DATA_DIR = DATA_DIR / "eval"
 MODELS_DIR = DATA_DIR / "models"
 LLM_CACHE_DIR = DATA_DIR / "llm_cache"
 SESSIONS_DIR = DATA_DIR / "sessions"
+REPLAY_DIR = DATA_DIR / "demo" / "replays"  # recorded sessions for the demo fallback
 METER_DIR = DATA_DIR / "meter_photos"
 RESULTS_DIR = REPO_ROOT / "results"
 FIGURES_DIR = RESULTS_DIR / "figures"

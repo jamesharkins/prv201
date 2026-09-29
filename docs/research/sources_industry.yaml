@@ -904,22 +904,32 @@
 
 - key: e2e_circuit_analysis_2025
   type: paper
-  authors: ["Authors as listed on arXiv:2512.10159 (not captured)"]
-  title: "Enhancing Large Language Model-Based Systems for End-to-End Circuit Analysis Problem Solving"
-  container: "arXiv:2512.10159"
-  date: "2025-12"
-  url: "https://arxiv.org/abs/2512.10159"
-  accessed: "2026-09-28"
-  verified: search_snippet_only
+  authors:
+  - L. Chen
+  - W. Sun
+  - H. Xie
+  - Y. Cai
+  - Y. Zhang
+  title: Enhancing Large Language Model-Based Systems for End-to-End Circuit Analysis Problem Solving
+  container: arXiv:2512.10159 (v2)
+  date: 2025-12
+  url: https://arxiv.org/abs/2512.10159
+  accessed: '2026-09-29'
+  verified: mirror_checked
   claims:
-    - claim: "Even Gemini 2.5 Pro struggles to solve circuit problems consistently when given text plus a circuit diagram."
-      quote: "Although Gemini 2.5 Pro shows improved capabilities in diagram interpretation and analog-circuit reasoning, it still struggles to consistently produce correct solutions when given both textual problem descriptions and circuit diagrams."
-    - claim: "Adding a vision detector plus a simulation loop that flags mismatches and makes the model revise corrects most errors."
-      quote: "The errors can be largely corrected by inserting a vision detector that isolates and correctly labels sources, followed by a simulation loop that flags mismatches and prompts the model to revise its work."
-    - claim: "The simulation-verified system reaches 97.59% accuracy on standard undergraduate problems and above 93% on hand-drawn variants."
-      quote: "The resulting system reaches 97.59 percent accuracy on standard undergraduate problems and stays above 93 percent on hand-drawn variants."
-  notes: "Closest published analogue to Differential's simulation-grounding. The second and third quotes may come from a secondary summary (Pith/Lacuna) rather than the abstract; confirm on arXiv. Date from arXiv identifier."
-
+  - claim: The system combines a fine-tuned YOLO source detector and OpenCV processing with an ngspice-driven verification
+      loop (with optional human feedback) and reaches 97.59%, against 79.52% for its Gemini baseline.
+    quote: "we integrate a fine-tuned YOLO detector and OpenCV-based processing ... we introduce an ngspice-driven verification
+      loop, in which simulation discrepancies trigger iterative solution refinement with optional HITL feedback ... achieves
+      97.59% accuracy, substantially outperforming Gemini's baseline of 79.52%"
+  - claim: Even Gemini 2.5 Pro struggles to solve circuit problems consistently when given text plus a circuit diagram.
+    quote: Although Gemini 2.5 Pro shows improved capabilities in diagram interpretation and analog-circuit reasoning, it
+      still struggles to consistently produce correct solutions when given both textual problem descriptions and circuit
+      diagrams.
+  notes: The v2 abstract and author list were checked on 2026-09-29 by the claim-to-source audit through GitHub mirrors of
+    the arXiv listing and RSS feed (arxiv.org itself was blocked); v1 lists Chen, Sun and Zhang and has a different title.
+    The earlier snippet wording ("flags mismatches", "above 93 percent") came from a secondary summary and is no longer
+    used.
 - key: razavi_ai_analog_part1_2025
   type: article
   authors: ["Behzad Razavi"]

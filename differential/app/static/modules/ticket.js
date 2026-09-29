@@ -118,6 +118,7 @@ export class TicketDialog {
         h("p", { class: `tk-verdict-text${String(t.verdict || "").length > 110 ? " is-long" : ""}` }, t.verdict),
         h("p", { class: "tk-verdict-sub num" },
           `${confident ? "Confident" : "Not conclusive"} · stop reason: ${t.stop_reason || "–"} · effort ${fmtNum(t.effort_spent, 1)}`))));
+    if (t.ai_disclosure) out.push(h("p", { class: "muted tk-ai" }, String(t.ai_disclosure)));
     if ((t.complaint_symptoms || []).length) {
       out.push(h("p", { class: "tk-symptoms" }, h("span", { class: "mini-title" }, "Reported symptoms"),
         t.complaint_symptoms.map((sy) => h("span", { class: "chip" }, String(sy).replace(/_/g, " ")))));

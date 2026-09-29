@@ -1,7 +1,7 @@
 {
   "circuit": "triode",
   "components_total": 38,
-  "disc_temperature": 0.9332030829057721,
+  "disc_temperature": 0.9299924178036356,
   "groups": 27,
   "nontrivial_groups": [
     [
@@ -19,36 +19,36 @@
       "C202:short"
     ]
   ],
-  "seconds": 34.227991580963135,
-  "symptom_eps": 0.005,
-  "symptom_lambda": 1.0,
+  "seconds": 35.81141209602356,
+  "symptom_eps": 0.01,
+  "symptom_lambda": 0.25,
   "train_rows": 12800,
   "unmodeled_calibration": {
     "fpr_budget": 0.05,
     "n_single": 80,
     "n_unmodeled": 20,
     "offsets": {
-      "unmod_offset": 4.7,
-      "unmod_offset_nocomplaint": 4.2
+      "unmod_offset": 3.5,
+      "unmod_offset_nocomplaint": 3.2
     },
     "protocol": "eval/recalibrate_unmodeled.py; negatives: uniform sample of symptomatic single-fault validation units; positives: unmodeled_val split",
     "regimes": {
       "complaint": {
         "chosen": {
-          "fpr": 0.0375,
-          "offset": 4.7,
-          "tpr": 0.55
+          "fpr": 0.0125,
+          "offset": 3.5,
+          "tpr": 0.65
         },
         "grid": [
           {
             "fpr": 0.0,
             "offset": 0.0,
-            "tpr": 0.45
+            "tpr": 0.5
           },
           {
             "fpr": 0.0,
             "offset": 1.0,
-            "tpr": 0.45
+            "tpr": 0.55
           },
           {
             "fpr": 0.0,
@@ -57,161 +57,141 @@
           },
           {
             "fpr": 0.0,
-            "offset": 4.0,
-            "tpr": 0.45
+            "offset": 3.0,
+            "tpr": 0.6
           },
           {
             "fpr": 0.0125,
-            "offset": 4.5,
-            "tpr": 0.5
+            "offset": 3.5,
+            "tpr": 0.65
           },
           {
             "fpr": 0.0375,
-            "offset": 4.6,
-            "tpr": 0.5
+            "offset": 3.8,
+            "tpr": 0.65
           },
           {
-            "fpr": 0.0375,
-            "offset": 4.7,
-            "tpr": 0.55
+            "fpr": 0.0625,
+            "offset": 3.9,
+            "tpr": 0.65
           },
           {
-            "fpr": 0.0875,
-            "offset": 4.8,
-            "tpr": 0.55
-          },
-          {
-            "fpr": 0.3,
-            "offset": 5.0,
-            "tpr": 0.7
-          },
-          {
-            "fpr": 0.8125,
-            "offset": 6.0,
-            "tpr": 0.85
+            "fpr": 0.1375,
+            "offset": 4.0,
+            "tpr": 0.65
           }
         ],
         "system": "hybrid"
       },
       "no_complaint": {
         "chosen": {
-          "fpr": 0.0375,
-          "offset": 4.2,
-          "tpr": 0.5
+          "fpr": 0.0125,
+          "offset": 3.2,
+          "tpr": 0.55
         },
         "grid": [
           {
             "fpr": 0.0,
             "offset": 0.0,
-            "tpr": 0.3
+            "tpr": 0.4
           },
           {
             "fpr": 0.0,
             "offset": 1.0,
-            "tpr": 0.35
+            "tpr": 0.45
           },
           {
             "fpr": 0.0,
             "offset": 2.0,
-            "tpr": 0.35
-          },
-          {
-            "fpr": 0.0375,
-            "offset": 4.0,
             "tpr": 0.45
           },
           {
+            "fpr": 0.0,
+            "offset": 3.0,
+            "tpr": 0.5
+          },
+          {
+            "fpr": 0.0125,
+            "offset": 3.2,
+            "tpr": 0.55
+          },
+          {
             "fpr": 0.0375,
-            "offset": 4.2,
-            "tpr": 0.5
+            "offset": 3.4,
+            "tpr": 0.55
           },
           {
-            "fpr": 0.05,
-            "offset": 4.3,
-            "tpr": 0.5
+            "fpr": 0.1375,
+            "offset": 3.5,
+            "tpr": 0.7
           },
           {
-            "fpr": 0.125,
-            "offset": 4.4,
-            "tpr": 0.6
-          },
-          {
-            "fpr": 0.2,
-            "offset": 4.5,
-            "tpr": 0.65
-          },
-          {
-            "fpr": 0.7375,
-            "offset": 5.0,
-            "tpr": 0.85
-          },
-          {
-            "fpr": 1.0,
-            "offset": 6.0,
-            "tpr": 1.0
+            "fpr": 0.6,
+            "offset": 4.0,
+            "tpr": 0.9
           }
         ],
         "system": "engine_gen"
       }
     },
-    "seconds": 7.5
+    "seconds": 6.2
   },
   "unmodeled_calibration_v1": {
     "chosen": {
-      "fpr": 0.025,
-      "offset": 4.0,
-      "tpr": 0.5
+      "fpr": 0.0,
+      "offset": 1.5,
+      "tpr": 0.55
     },
     "grid": [
       {
         "fpr": 0.0,
         "offset": 0.0,
-        "tpr": 0.3
+        "tpr": 0.45
       },
       {
         "fpr": 0.0,
         "offset": 0.5,
-        "tpr": 0.2
+        "tpr": 0.45
       },
       {
         "fpr": 0.0,
         "offset": 1.0,
-        "tpr": 0.3
+        "tpr": 0.5
       },
       {
         "fpr": 0.0,
         "offset": 1.5,
-        "tpr": 0.3
+        "tpr": 0.55
       },
       {
         "fpr": 0.0,
         "offset": 2.0,
-        "tpr": 0.35
+        "tpr": 0.5
       },
       {
         "fpr": 0.0,
         "offset": 2.5,
-        "tpr": 0.3
+        "tpr": 0.45
       },
       {
-        "fpr": 0.0,
+        "fpr": 0.03333333333333333,
         "offset": 3.0,
-        "tpr": 0.4
+        "tpr": 0.55
       },
       {
-        "fpr": 0.0,
+        "fpr": 0.175,
         "offset": 3.5,
-        "tpr": 0.4
+        "tpr": 0.7
       },
       {
-        "fpr": 0.025,
+        "fpr": 0.625,
         "offset": 4.0,
-        "tpr": 0.5
+        "tpr": 0.95
       },
       {
-        "fpr": 0.7166666666666667,
+        "fpr": 0.9833333333333333,
         "offset": 5.0,
-        "tpr": 0.9
+        "tpr": 1.0
       },
       {
         "fpr": 1.0,

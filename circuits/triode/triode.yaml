@@ -1,6 +1,10 @@
 id: triode
 name: "Block 2 - Triode gain stage (12AX7 class)"
 netlist: triode.cir
+declared_supply_v: 250
+model_validation:
+  status: validated
+  evidence: "docs/hand_calcs.md: hand calculations agree with every simulated healthy bias point and gain within the stated tolerances"
 description: >
   Cathode-biased common-cathode triode stage (one 12AX7 section): 100k plate
   load, 1.5k cathode resistor with 22 uF bypass, 1 M grid leak, 2.2k grid

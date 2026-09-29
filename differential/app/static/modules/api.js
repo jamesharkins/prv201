@@ -73,8 +73,12 @@ export const api = {
   measure: (sid, key) => request("POST", `/api/sessions/${enc(sid)}/measure`, { json: { key } }),
   reading: (sid, key, value) => request("POST", `/api/sessions/${enc(sid)}/readings`,
     { json: { key, value } }),
-  discharge: (sid, volts) => request("POST", `/api/sessions/${enc(sid)}/discharge`,
-    { json: { volts } }),
+  discharge: (sid, readings) => request("POST", `/api/sessions/${enc(sid)}/discharge`,
+    { json: { readings } }),
+  approveRemoval: (sid, note) => request("POST", `/api/sessions/${enc(sid)}/approve_removal`,
+    { json: { note } }),
+  guess: (sid, key) => request("POST", `/api/sessions/${enc(sid)}/guess`, { json: { key } }),
+  supervisor: (sid, name) => request("POST", `/api/sessions/${enc(sid)}/supervisor`, { json: { name } }),
   photo: (sid, file) => {
     const form = new FormData();
     form.append("file", file, file.name || "meter.jpg");
@@ -86,4 +90,6 @@ export const api = {
   signoff: (sid, name) => request("POST", `/api/sessions/${enc(sid)}/ticket/signoff`,
     { json: { name } }),
   reveal: (sid) => request("POST", `/api/sessions/${enc(sid)}/reveal`, { json: {} }),
+  replays: () => request("GET", "/api/replays"),
+  replay: (name) => request("GET", `/api/replays/${enc(name)}`),
 };

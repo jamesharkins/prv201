@@ -42,6 +42,10 @@ from differential.sim.observables import ObservableSpec, scaled_cost
 
 POLICIES = ("eig_per_cost", "eig", "fixed_order", "half_split", "random")
 SCRIPTED = ("fixed_order", "half_split")
+# Scripted procedures end the way technicians do: once one suspect stands out (this
+# share of the belief) they unsolder it to test it, and when their chart is used up
+# they test the leading suspect (ADR-033). Random probing never unsolders.
+CONFIRM_AT = 0.5
 NORMAL_BAND_SD = 3.0
 LIKELIHOODS = ("generative", "discriminative")
 DEFAULT_BUDGET = 40.0
@@ -123,6 +127,7 @@ class DiagnosisSession:
         self.bundle = bundle
         self.gen = bundle.gen
         self.likelihood = likelihood
+        self.disc_exact_eig = False  # True: score sampled readings with the classifier (slow)
         self.policy = policy
         H = self.gen.n_hyp
         p = np.full(H, 1.0 / H) if prior is None else np.asarray(prior, dtype=float)
@@ -269,7 +274,7 @@ class DiagnosisSession:
         for key, o in self._obs.items():
             if key in taken or o.cost > self.remaining + 1e-9:
                 continue
-            if o.is_lift and (not self.allow_lifts or self.policy in (*SCRIPTED, "random")):
+            if o.is_lift and (not self.allow_lifts or self.policy == "random"):
                 continue
             out.append(o)
         return out
@@ -280,7 +285,7 @@ class DiagnosisSession:
             return True, "confident"
         cands = self.candidates()
         if self.policy in SCRIPTED:
-            cands = [c for c in cands if c.key in self._order]
+            cands = [c for c in cands if c.key in self._order or c.is_lift]
         if not cands:
             return True, "budget" if self.remaining < max(o.cost for o in self._obs.values()) \
                 else "exhausted"
@@ -293,10 +298,14 @@ class DiagnosisSession:
             return None
         if self.policy in SCRIPTED:
             avail = {c.key for c in cands}
-            nxt = self._half_split_next(avail) if self.policy == "half_split" else None
+            nxt = self._confirm_lift(avail, CONFIRM_AT)
+            if nxt is None and self.policy == "half_split":
+                nxt = self._half_split_next(avail)
             if nxt is None:
                 taken = self.taken()
                 nxt = next((k for k in self._order if k not in taken and k in avail), None)
+            if nxt is None:
+                nxt = self._confirm_lift(avail, 0.0)
             return None if nxt is None else Recommendation(self._obs[nxt], 0.0, 0.0,
                                                            policy=self.policy)
         if self.policy == "random":
@@ -332,11 +341,15 @@ class DiagnosisSession:
                 post_fn = None
             else:
                 # Hypothesis masses from the classifier, within-hypothesis
-                # component responsibilities from the generative evidence.
+                # component responsibilities from the generative evidence. The trees give
+                # no distribution over readings not yet taken, so a hypothetical reading's
+                # update uses the mixtures' predictive from the classifier's current belief
+                # (ADR-037); scoring every sampled reading with the classifier costs about
+                # 45 s per step on the channel strip, too slow to evaluate.
                 hyp_ll = self.gen.loglik_fast(cl)
                 within = cl - hyp_ll[comp_h]
                 comp_lp = np.log(np.maximum(modeled[comp_h], 1e-300)) + within
-                post_fn = self._disc_posterior_fn(x, idx, cidx)
+                post_fn = self._disc_posterior_fn(x, idx, cidx) if self.disc_exact_eig else None
             # U enters on the posterior's scale: modeled components share 1 - p_U.
             p_u = float(post[-1])
             comp_lp = comp_lp - logsumexp(comp_lp) + math.log(max(1.0 - p_u, 1e-300))
@@ -413,6 +426,22 @@ class DiagnosisSession:
             return True
         lo, hi = self._healthy_band(r.key)
         return lo <= r.engine_value <= hi
+
+    def _confirm_lift(self, avail: set[str], threshold: float) -> str | None:
+        """The unsoldering test a technician would do next: the part of the most
+        probable single fault, once that fault holds at least ``threshold`` of the
+        belief; parts already tested are skipped. None if no such test is affordable."""
+        post = self.posterior()[:-1]
+        post = post / max(float(post.sum()), 1e-300)
+        for h in np.argsort(-post):
+            if post[h] < threshold:
+                return None
+            ref = self._hyp_refs[int(h)]
+            if ref and f"lift:{ref}" in avail:
+                return f"lift:{ref}"
+            if threshold > 0.0:
+                return None  # the leading suspect's part is tested or unaffordable
+        return None
 
     def _half_split_next(self, avail: set[str]) -> str | None:
         """Scripted expert practice: supply rails first; then, if the output is wrong,

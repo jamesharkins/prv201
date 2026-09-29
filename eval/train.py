@@ -4,8 +4,9 @@ Steps (all seeds fixed):
  1. Generative model: GMMs on all training draws.
  2. Ambiguity groups: confusion on validation draws.
  3. Symptom model: P(feature | fault) from training draws; eps/lambda calibrated on
-    validation cases whose complaints are rendered from the main template bank
-    and parsed by the offline extractor (the same path the hybrid uses offline).
+    validation units whose complaints carry the complaint noise (symptoms left out
+    or added, ADR-032), are rendered from the development template bank and are
+    parsed by the offline extractor (the same path the hybrid uses offline).
  4. Discriminative model: LightGBM on masked, noise-augmented training draws,
     temperature-scaled on validation.
  5. Unmodeled threshold, provisional: an offset chosen on random validation units.
@@ -31,7 +32,7 @@ from differential.engine.discriminative import DiscriminativeModel
 from differential.engine.generative import GenerativeModel
 from differential.engine.session import DiagnosisSession
 from differential.engine.symptom_prior import SymptomModel, derive_facts
-from differential.nlp.benchmark import MAIN_BANK, PERSONAS, render
+from differential.nlp.benchmark import COMPLAINT_NOISE, MAIN_BANK, PERSONAS, noisy_facts, render
 from differential.nlp.symptoms import extract_rules
 from differential.sim.measurement import simulate_lift, simulate_reading
 from differential.sim.montecarlo import BASE_SEED, load_dataset
@@ -78,7 +79,8 @@ def calibrate_unmodeled(bundle: EngineBundle, val: pd.DataFrame, unmod: pd.DataF
 
 def fit_symptom_model(cid: str, tr_df: pd.DataFrame, va_df: pd.DataFrame) -> SymptomModel:
     """P(feature | fault) from training draws; eps/lambda calibrated on validation
-    complaints rendered from the main bank and read by the offline extractor."""
+    complaints (with complaint noise) rendered from the development bank and read by
+    the offline extractor. Evaluation complaints come from the held-out bank."""
     circ = get_circuit(cid)
     sm = SymptomModel.fit(cid, tr_df)
     rng = np.random.default_rng([BASE_SEED, 5, len(cid)])
@@ -92,7 +94,7 @@ def fit_symptom_model(cid: str, tr_df: pd.DataFrame, va_df: pd.DataFrame) -> Sym
         if not facts.any:
             continue
         persona = PERSONAS[int(rng.integers(len(PERSONAS)))]
-        text = render(facts, persona, rng, tp_stage, MAIN_BANK)
+        text = render(noisy_facts(facts, rng, COMPLAINT_NOISE), persona, rng, tp_stage, MAIN_BANK)
         reports.append(extract_rules(text).features())
         truths.append(sm.hypotheses.index(r.hypothesis))
     sm.calibrate(reports, truths)

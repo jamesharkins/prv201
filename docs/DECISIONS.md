@@ -498,3 +498,153 @@ deleted.
   checkpoints were deleted before the rebuild, so no set mixes old and new models.
 - **Consequences.** No bar changes. T19's pre-lock numbers stay in `metrics.json`
   as the pilot; the test set's result is new at the full evaluation.
+
+## ADR-032 - Meter loading, aged units, noisy held-out complaints, larger out-of-model set
+
+- **Context.** M1 review round 3 (`docs/grading/M1_round3.md`): the reading model
+  left out the meter, the one stress set widened tolerances symmetrically although
+  parts age in one direction, the test complaints came from the template bank the
+  rule-based reader was written against and always matched the unit's symptoms, and
+  100 out-of-model units could not bound the misleading rate usefully.
+- **Decision.** (1) *Meter loading.* Every DC observable is solved with the meter's
+  10 MOhm input resistance from the node to ground (Fluke 117 manual, Table 7:
+  "> 10 MOhm"), one operating point per reading, because a meter only ever loads the
+  node it touches. The unloaded node voltages are kept (`open:` columns); the hazard
+  audit takes the larger of the two, so it never sees less than a finger would.
+  Oscilloscope loading is not modelled (a x10 probe presents about 10 MOhm; checked
+  on hardware by T7). The mains level was already drawn per unit (+-5 %). (2)
+  *Ageing.* Stress splits `pilot_aged`/`test_aged` age every part of an ageing kind
+  before the fault: electrolytics lose 5-30 % capacitance and gain 1.2-3x ESR (inside
+  the usual end-of-life limits), fixed resistors drift up 0-10 %, tube emission falls
+  0-30 % (above the worn-tube fault range). Tolerance curves at 1.5x, 2x and 3x are
+  simulated for reporting. (3) *Complaints.* Evaluation complaints are rendered from
+  the held-out paraphrase bank after complaint noise (each shown symptom left out
+  with probability 0.2, each other symptom added with probability 0.02; a dead unit is
+  never misreported); the symptom model is calibrated on validation complaints with
+  the same noise rendered from the development bank. A third bank (B), written by a
+  separate model instance that never saw the reader, its rules or the other banks,
+  is sealed for T18. (4) *Out-of-model units.* The test set grows to 500 (250 channel
+  strip, 50 per block), the pilot set to 250.
+- **Consequences.** Everything is re-simulated, retrained and recalibrated; the pilot
+  and all pilot-derived bars are redone before the lock. Simulation checkpoints now
+  also hash the deck builder and output parser.
+
+## ADR-033 - Targets v3: one-sided bounds, fair comparators, hardware primary, release gates
+
+- **Context.** Round 3 found the in-simulation primaries close to certain to pass
+  (bars 1.5 pilot SE below the pilot, met on the point estimate), T4 omitting the
+  strongest script and comparing a complaint-reading system with scripts that cannot
+  read it, the only hardware target small and secondary, calibration measured on the
+  top probability pooled over steps, T15/T17 scored by the code they check, and the
+  pilot numbers not reconciled with the weights.
+- **Decision.** (1) A target is met only when its one-sided 95 % confidence bound
+  clears the bar (exact for one proportion, a stratified bootstrap otherwise). Bars
+  keep the 1.5-SE pilot rule, so none is lowered; `eval/set_bars.py` reports each
+  bar's chance of being met if the test behaves like the pilot. (2) T4 compares the
+  engine alone (same inputs as the scripts) with the chart, random probing and
+  half-split tracing; the scripts may unsolder their leading suspect once it holds
+  half the belief, and when their chart is used up, as technicians do. (3) T7 is
+  primary: at least 60 faults inserted blind into three copies of the 24 V driver
+  board, every test point recorded once per fault and every method replayed on the
+  recordings; met when the exact lower bound clears 70 % (49 of 60). (4) Primaries:
+  T1, T4, T5, T7, T9 (half-split effort), T12 (equal-mass ECE of the probabilities
+  shown for the top three groups at the stop; Brier score and log loss reported) and
+  T13 (misleading outcomes on 500 out-of-model units). New secondaries T22 (flag rate
+  and AUROC) and T23 (share named and accuracy when naming); T6 moves to aged units;
+  T14 tests a wrong prior in both directions by reweighting units to a
+  capacitor-heavy mix. (5) T15-T17 become release gates with independent checks (a
+  hazard set recomputed from raw simulations; at least 300 prompts written
+  independently of the rules; an independent grounding checker and a human audit).
+  (6) The technician study is pre-registered as S1, reported without a bar.
+- **Consequences.** More targets can fail. A miss is reported as one; nothing is
+  re-drafted after the lock.
+
+## ADR-034 - Discharge readings at every high-voltage point, owner approval, unvalidated models, trainee mode
+
+- **Context.** Round 3: the unsoldering lock trusted one reading at one filter
+  capacitor, although a failed-open dropping resistor can leave a later capacitor
+  charged; "guarantees" overstated what software can do; "live chassis" means a
+  mains-connected chassis in vintage repair; damage to the customer's unit was not
+  in the register; nothing controlled deskilling; the ticket's grounding check
+  counted the ticket's own output as evidence.
+- **Decision.** (1) Part removal in a high-voltage unit needs a reading below 2 V at
+  every test point that can hold high voltage; one number counts for the main filter
+  capacitor only, unless the technician says it holds for all points; any powered
+  measurement clears the readings. The readings are logged on the ticket as the
+  technician's attestation. (2) Every part removal first needs the owner's recorded
+  approval; removed parts and their verdicts go on the ticket. (3) The chassis notice
+  is renamed "high voltage inside". (4) A circuit model is trusted for hazard
+  decisions only once validated against an independent reference; until then every
+  point of a unit whose declared supply reaches 50 V is treated as high voltage. (5)
+  Trainee mode: the recommendation is withheld until the trainee commits their own
+  next measurement (both are logged), and in a high-voltage unit every step needs a
+  named supervisor. (6) The ticket is grounded against the session's tool results
+  without any generated ticket, the technician's messages and the engine's state at
+  close. (7) The sign-off states that it confirms the readings and the plan, not the
+  diagnosis, and that the record belongs to the job.
+- **Consequences.** T15's sweep checks approval, per-point discharge and re-locking
+  on every removal step, and compares the runtime hazard map with one recomputed
+  from the raw simulations. The demo scripts, replay recorder and agent evaluation
+  record approval and per-point readings.
+
+## ADR-035 - M1 round 4 layout: five pages, supplement, regulation in Part 1
+
+- **Context.** The round-3 fixes (one-sided bounds, fair comparators, hardware
+  primary, safety and human-factors controls, U.S. liability, human-subjects plan)
+  pushed the rewritten M1 to seven body pages against a limit of five, and a floated
+  table could land after the reference heading, outside the page count.
+- **Decision.** (1) The industry watch and course coverage map move to a separate
+  `M1_supplement.pdf`; nothing but references follows M1's body. (2) Every paragraph
+  is cut to its claim and evidence; no fix from `feedback/FEEDBACK_LOG.md` rows 35-50
+  is dropped. (3) The EU AI Act classification, transparency date, amendments and
+  AI-literacy duty move to Part 1 as regulatory context; Part 4 keeps accountability
+  and liability. (4) Secondary targets become one full-width row of Table 3 (ID,
+  target, bar), so every locked bar stays visible. (5) A circuit-library table gives
+  Part 2 its own table and replaces several prose counts. (6) The methods table
+  drops the "names the part" column (the caption states it once). (7)
+  `tools/check_pages.py` now fails if any figure or table caption appears after the
+  reference heading outside an appendix.
+- **Consequences.** M1 is five body pages with the same targets and evidence; the
+  supplement is optional background. Parts stay within the balance gate (each within
+  20% of the mean length).
+
+## ADR-036 - Levels of diagnostic autonomy (brief section 7)
+
+- **Context.** The brief asks for levels of diagnostic autonomy L0-L4 defined by analogy
+  to driving automation, with Differential placed and justified on safety and
+  accountability grounds, for use in M2, M3 and M5. Round 3 criticised the earlier text
+  for mapping our levels onto the SAE driving scale, which has six levels (0-5); the
+  M1 rewrite then dropped the scale altogether.
+- **Decision.** Our own five-level scale, stated as an analogy and not as SAE J3016:
+  L0 the technician does everything (manual, chart, meter); L1 the tool supplies
+  information (expected readings, the chart, service notes) but no recommendation;
+  L2 the tool recommends the next measurement and names suspects, and the technician
+  chooses, takes and confirms every measurement; L3 the tool takes measurements itself
+  through instruments or a fixture while a technician supervises and can intervene;
+  L4 an automated fixture diagnoses without a technician. Differential is L2. On the
+  24 V fault board it can trigger an SCPI reading, but only after the technician has
+  placed the probe and asked for it, so it stays L2 there too.
+- **Why L2.** A wrong step near high voltage can injure the person holding the probe,
+  and the measurements, precautions and repair decision must remain a qualified
+  person's (OSHA qualified-person rules; accountability section of M1 Part 4). L3 would
+  need fixtures that make contact safely and a different allocation of responsibility.
+- **Consequences.** M1 Part 4 states the scale and the placement in two sentences; M2
+  carries the full table; the coverage map lists it under autonomous transportation.
+
+## ADR-037 - The tree engine chooses measurements with the mixtures' predictive update
+
+- **Context.** The comparison engine (boosted trees, `engine_disc`) scored every sampled
+  reading of every candidate measurement with the classifier: 128 samples times about 45
+  candidates per step, through 33,383 trees for 251 classes on the channel strip, about
+  45 s per step and several minutes per unit. The pilot could not finish in hours, and the
+  1,000-unit test run would take days. No locked target depends on this engine; it is
+  the comparison for the choice of likelihood model.
+- **Decision.** The tree engine keeps the classifier's posterior for the belief, the
+  naming and the stopping rule. To choose the next measurement it computes the expected
+  information gain from the classifier's current belief with the Gaussian mixtures'
+  predictive distribution and update, since the trees give no distribution over readings
+  not yet taken. The exact variant stays available (`DiagnosisSession.disc_exact_eig`).
+- **Consequences.** About 0.6 s per channel-strip unit on four workers. The comparison
+  between the two engines is a comparison of the belief they hold and the names they give,
+  with a shared way of choosing; M1 and M2 describe it that way. Decided before the lock
+  and before any test unit was run.

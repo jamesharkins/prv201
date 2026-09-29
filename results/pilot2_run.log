@@ -1,9 +1,9 @@
-channel_strip done 52 s
-psu done 55 s
-triode done 57 s
-tone done 58 s
-opamp done 60 s
-driver done 63 s
+channel_strip done 123 s
+psu done 127 s
+triode done 130 s
+tone done 131 s
+opamp done 135 s
+driver done 139 s
 {
  "protocol": "pilot split: symptomatic units simulated from their own seed stream with the test protocol; never test data",
  "n_cases": {
@@ -16,104 +16,117 @@ driver done 63 s
  },
  "pooled": {
   "engine_gen": {
-   "top1": 0.95,
-   "top3": 1.0,
-   "mean_cost": 5.872
+   "top1": 0.938,
+   "top3": 0.998,
+   "mean_cost": 5.876
+  },
+  "engine_disc": {
+   "top1": 0.928,
+   "top3": 0.994,
+   "mean_cost": 9.052
   },
   "hybrid": {
-   "top1": 0.946,
-   "top3": 1.0,
-   "mean_cost": 4.68
+   "top1": 0.92,
+   "top3": 0.992,
+   "mean_cost": 5.624
   },
   "fixed_order": {
-   "top1": 0.872,
-   "top3": 0.956,
-   "mean_cost": 16.512
+   "top1": 0.868,
+   "top3": 0.958,
+   "mean_cost": 19.238
   },
   "half_split": {
-   "top1": 0.898,
-   "top3": 0.964,
-   "mean_cost": 14.572
+   "top1": 0.892,
+   "top3": 0.968,
+   "mean_cost": 18.288
   },
   "random": {
-   "top1": 0.856,
-   "top3": 0.958,
-   "mean_cost": 16.732
+   "top1": 0.85,
+   "top3": 0.966,
+   "mean_cost": 16.338
   },
   "recap_prior": {
-   "top1": 0.938,
+   "top1": 0.918,
    "top3": 1.0,
-   "mean_cost": 6.13
+   "mean_cost": 6.05
   }
  },
  "n_total": 500,
- "hybrid_misses": 27,
- "hybrid_false_flags": 25,
+ "hybrid_misses": 40,
+ "hybrid_false_flags": 35,
  "channel_strip": {
   "engine_gen": {
-   "top1": 0.97,
-   "mean_cost": 6.505
+   "top1": 0.94,
+   "mean_cost": 6.695
+  },
+  "engine_disc": {
+   "top1": 0.93,
+   "mean_cost": 12.995
   },
   "hybrid": {
-   "top1": 0.955,
-   "mean_cost": 4.255
+   "top1": 0.925,
+   "mean_cost": 6.21
   },
   "fixed_order": {
-   "top1": 0.785,
-   "mean_cost": 24.495
+   "top1": 0.77,
+   "mean_cost": 24.115
   },
   "half_split": {
-   "top1": 0.855,
-   "mean_cost": 21.58
+   "top1": 0.835,
+   "mean_cost": 22.88
   },
   "random": {
-   "top1": 0.825,
-   "mean_cost": 23.365
+   "top1": 0.805,
+   "mean_cost": 22.965
   },
   "recap_prior": {
-   "top1": 0.975,
-   "mean_cost": 6.385
+   "top1": 0.925,
+   "mean_cost": 6.535
   }
  },
- "effort_ratio_vs_fixed_order": 0.35562015503875966,
- "effort_ratio_vs_half_split": 0.40296458962393633,
- "effort_ratio_vs_random": 0.3509442983504662,
- "hybrid_vs_engine_effort_ratio": 0.7970027247956403,
- "cs_margin_vs_fixed_order": 0.16999999999999993,
- "cs_margin_vs_random": 0.13,
- "cs_margin_vs_half_split": 0.09999999999999998,
- "hybrid_step_ece": 0.03395434314429291,
- "hybrid_stop_ece": 0.009549909292136591,
- "recap_prior_top1_delta": -0.01200000000000001,
- "cs_step_seconds_p95": 0.12822899999999995,
- "wide_top1": 0.8533333333333334,
- "wide_top1_drop": 0.10166666666666657,
+ "effort_ratio_vs_fixed_order": 0.3054371556294833,
+ "effort_ratio_vs_half_split": 0.32130358705161854,
+ "effort_ratio_vs_random": 0.3596523442281797,
+ "hybrid_vs_engine_effort_ratio": 0.9571136827773995,
+ "cs_margin_vs_fixed_order": 0.15500000000000003,
+ "cs_margin_vs_random": 0.12,
+ "cs_margin_vs_half_split": 0.09000000000000008,
+ "hybrid_step_ece": 0.06359043321299637,
+ "hybrid_stop_ece": 0.038696804647253114,
+ "recap_prior_top1_delta": -0.019999999999999907,
+ "cs_step_seconds_p95": 0.1366829999999999,
+ "wide_top1": 0.84,
+ "wide_top1_drop": 0.08500000000000008,
  "wide_n": 150,
- "hybrid_unmodeled_auroc": 0.7973125,
- "hybrid_unmodeled_flag_rate": 0.55,
- "hybrid_unmodeled_faulty_part_rate": 0.36875,
- "hybrid_unmodeled_misleading_rate": 0.08125,
- "hybrid_unmodeled_n": 160,
- "hybrid_single_false_flag_rate": 0.05,
- "engine_gen_unmodeled_auroc": 0.783225,
- "engine_gen_unmodeled_flag_rate": 0.5375,
- "engine_gen_unmodeled_faulty_part_rate": 0.36875,
- "engine_gen_unmodeled_misleading_rate": 0.09375,
- "engine_gen_unmodeled_n": 160,
- "engine_gen_single_false_flag_rate": 0.044,
+ "aged_top1": 0.6666666666666666,
+ "aged_top1_drop": 0.2583333333333334,
+ "aged_flag_rate": 0.22,
+ "aged_n": 150,
+ "hybrid_unmodeled_auroc": 0.748352,
+ "hybrid_unmodeled_flag_rate": 0.524,
+ "hybrid_unmodeled_faulty_part_rate": 0.396,
+ "hybrid_unmodeled_misleading_rate": 0.08,
+ "hybrid_unmodeled_n": 250,
+ "hybrid_single_false_flag_rate": 0.07,
+ "engine_gen_unmodeled_auroc": 0.7592,
+ "engine_gen_unmodeled_flag_rate": 0.512,
+ "engine_gen_unmodeled_faulty_part_rate": 0.404,
+ "engine_gen_unmodeled_misleading_rate": 0.084,
+ "engine_gen_unmodeled_n": 250,
+ "engine_gen_single_false_flag_rate": 0.056,
  "hybrid_by_symptom_rate": {
   "0.00-0.25": {
-   "n": 6,
-   "top1": 0.8333333333333334
+   "n": 5,
+   "top1": 0.8
   },
   "0.25-0.50": {
-   "n": 9,
-   "top1": 0.8888888888888888
+   "n": 10,
+   "top1": 0.9
   },
   "0.50-1.00": {
    "n": 485,
-   "top1": 0.9484536082474226
+   "top1": 0.9216494845360824
   }
  },
- "seconds": 115.44272565841675
+ "seconds": 222.00465297698975
 }

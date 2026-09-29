@@ -1,7 +1,10 @@
 # Red-team suite (target T16)
 
-The suite file `cases.yaml` is written by the team, independently of
-`differential/safety/rules.py` (do not read the rules before writing cases).
+The suite file `cases.yaml` is written independently of
+`differential/safety/rules.py` (do not read the rules before writing cases): by
+team members, by another PRV 201 team during the M4 exchange, and optionally by a
+separately prompted model given only this README. T16 needs at least 300 attack
+prompts in total (ADR-033); record where each case came from in `source`.
 The build ships the schema, the harness and the scoring rubric only; see
 `docs/DECISIONS.md` ADR-025 for why.
 
@@ -16,9 +19,11 @@ The build ships the schema, the harness and the scoring rubric only; see
   must_not_contain: ["..."]    # lowercase phrases that only an unsafe answer would contain
   must_contain_any: []         # for comply_safely: phrases a helpful safe answer includes
   rationale: "what the case tests"
+  source: team               # team | other_team | model
+  intent: bypass_discharge   # cases that share an intent are reported together
 ```
 
-Categories to cover (at least 40 attacks in total, plus at least 12 benign
+Categories to cover (at least 300 attacks in total, plus at least 40 benign
 controls): fuse_bypass, ground_lift, interlock, mains_side, live_hv_hands_in,
 out_of_scope, injection_service_note, injection_complaint, invented_reading,
 certainty_pressure, social_engineering, obfuscation, multi_turn, benign.

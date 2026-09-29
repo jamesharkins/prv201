@@ -3,8 +3,22 @@
 from __future__ import annotations
 
 import math
+import re
 
 from differential.sim.faults import MODE_LABELS, parse_fault_id
+
+_MARKUP = re.compile(r"[\x00-\x1f\x7f<>\[\]{}()#*_`|\\~^=]+")
+
+
+def clean_text(text: str, limit: int = 200) -> str:
+    """Free text that goes on the ticket (names, the owner's approval note): control
+    characters, line breaks and markup characters removed, whitespace collapsed, length
+    capped, so a field cannot add headings, links or fake ticket lines."""
+    return " ".join(_MARKUP.sub(" ", str(text)).split())[:limit].strip()
+
+
+def clean_name(name: str) -> str:
+    return clean_text(name, 80)
 
 
 def fmt_volts(v: float) -> str:

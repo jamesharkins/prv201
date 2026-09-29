@@ -273,3 +273,11 @@ def test_discriminative_model(tone_train: pd.DataFrame, tone_val: pd.DataFrame,
     row = tone_val[tone_val.hypothesis == "R303:open"].iloc[0]
     _ok, cost = _run_case(bundle, row, "eig_per_cost", likelihood="discriminative")
     assert cost > 0
+    # ADR-037: the tree engine scores candidates with the mixtures' predictive update by
+    # default; the exact classifier scoring stays available and both pick a real step.
+    fast = DiagnosisSession(bundle, likelihood="discriminative")
+    exact = DiagnosisSession(bundle, likelihood="discriminative")
+    exact.disc_exact_eig = True
+    for s in (fast, exact):
+        rec = s.recommend()
+        assert rec is not None and rec.key in bundle.observables and rec.eig_bits >= 0

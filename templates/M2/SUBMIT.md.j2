@@ -8,7 +8,7 @@
 | `M2.typ`, `base.typ` | Typst source generated from `templates/M2/M2.typ.j2` and `templates/base.typ` |
 | `M2.parts.json` | Evidence use per signed part (read by `tools/check_balance.py`) |
 | `M2.cites.json` | Cited source keys in reference order (read by `tools/check_citations.py`) |
-| `M2.sanitized.txt` | What an anonymising pre-reader sees (names and emails stripped) |
+| `M2.sanitized.txt` | What an anonymizing pre-reader sees (names and emails stripped) |
 
 ## Signed parts
 

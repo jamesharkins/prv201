@@ -67,7 +67,6 @@ greshake_2023:
   doi: "10.1145/3605764.3623985"
 brynjolfsson_genai_at_work_2023:
   container: "National Bureau of Economic Research, Working Paper 31161"
-  note: "Published in The Quarterly Journal of Economics, vol. 140, no. 2, 2025."
 dellacqua_jagged_frontier_2023:
   container: "Harvard Business School Working Paper (SSRN 4573321)"
 bastani_genai_learning_2025:
@@ -80,8 +79,8 @@ skelic_circuit_2025:
   authors: ["L. Skelic et al."]
   container: "arXiv preprint arXiv:2502.07980"
 e2e_circuit_analysis_2025:
-  authors: []
-  container: "arXiv preprint arXiv:2512.10159"
+  authors: ["L. Chen", "W. Sun", "H. Xie", "Y. Cai", "Y. Zhang"]
+  container: "arXiv preprint arXiv:2512.10159v2"
 akbari_circuitsense_2025:
   authors: []
   container: "arXiv preprint arXiv:2509.22339 (ICLR 2026)"
@@ -136,9 +135,9 @@ gdpr:
   date: "2016-04-27"
   url: "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
 eu_ai_act_text_mirror:
-  title: "Regulation (EU) 2024/1689 (Artificial Intelligence Act)"
-  container: "Official Journal of the European Union"
-  date: "2024-06-13"
+  title: "Regulation (EU) 2024/1689 of 13 June 2024 laying down harmonised rules on artificial intelligence (Artificial Intelligence Act), original text"
+  container: "Official Journal of the European Union, OJ L, 2024/1689"
+  date: "2024-07-12"
   url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
 eu_r2r_directive_2024_1799:
   title: "Directive (EU) 2024/1799 on common rules promoting the repair of goods"
@@ -232,9 +231,8 @@ rigol_ds1000z_user_guide_2014:
   container: "RIGOL Technologies"
 siegen_pedc_lecture08_capacitors:
   authors: ["University of Siegen, Institute of Automatic Control"]
-  title: "Power Electronics Devices and Components, Lecture 08: Capacitors (course slides)"
-  container: "Course repository IAS-Uni-Siegen/PEDC_course"
-  url: "https://github.com/IAS-Uni-Siegen/PEDC_course"
+  title: "Power Electronics Devices and Components, Lecture 08: Passive components - Capacitors (course slides, CC BY 4.0)"
+  container: "Course repository IAS-Uni-Siegen/PEDC_course, file lecture/tex/Lecture08.tex"
   url_is_canonical: true
 ngspice_manual_v47:
   container: "ngspice project"
@@ -250,3 +248,12 @@ ec_r2r_qa_2024:
   date: "2024-07"
 ifixit_fixbot_2025:
   container: "9to5Mac"
+gao_yang_jiang_2021_incipient_tim:
+  container: "IEEE Transactions on Instrumentation and Measurement"
+  volume: "vol. 70, pp. 1-15"
+eu_ai_omnibus_2026_1744:
+  container: "Official Journal of the European Union, OJ L, 2026/1744"
+  date: "2026-07-24"
+fluke_117_input_characteristics:
+  title: "Fluke 110/113/114/115/117 True-rms Multimeter Users Manual, Table 7 (input characteristics, Fluke 117)"
+  container: "Fluke Corporation"

@@ -23,7 +23,10 @@ from differential.sim.builder import RETRY_OPTIONS, build_deck
 from differential.sim.draws import Draw
 from differential.sim.faults import Fault
 
-PLOT_PREFIX = {"op": "op", "ac": "ac", "ac20": "ac", "ac20k": "ac", "hum": "ac", "thd": "tran"}
+PLOT_PREFIX = {"op": "op", "dcm": "op", "ac": "ac", "ac20": "ac", "ac20k": "ac", "hum": "ac",
+               "thd": "tran"}
+# Tags whose values are unloaded node voltages (kept apart from the observables).
+OPEN_TAGS = ("op",)
 FAIL_PATTERNS = re.compile(
     r"(simulation\(s\) aborted|DC solution failed|Timestep too small|singular matrix|"
     r"doAnalyses|no convergence|Error:)",
@@ -36,8 +39,9 @@ HARM_RE = re.compile(r"^\s*1\s+([0-9.eE+-]+)\s+([0-9.eE+-]+)\s+")
 @dataclass
 class DrawResult:
     draw_id: int
-    values: np.ndarray  # SPICE observables, NaN where missing
+    values: np.ndarray  # SPICE observables (DC as the meter reads it), NaN where missing
     fundamental: float = math.nan  # output fundamental amplitude (V peak) from Fourier
+    open_dc: np.ndarray | None = None  # unloaded DC node voltages at the DC observables' indices
     ok: bool = False
     attempt: int = 0
     reason: str = ""
@@ -87,9 +91,13 @@ def parse_output(
 ) -> dict[int, DrawResult]:
     """Parse tagged ngspice output into per-draw results.
 
-    ``expected`` maps analysis tag -> observable indices that tag must produce.
+    ``expected`` maps analysis tag -> observable indices that tag must produce. Values
+    tagged ``op`` (unloaded node voltages) go to ``open_dc``; every other tag fills the
+    observables. Without a ``dcm`` tag (meter loading off) the unloaded DC values are
+    also the observables.
     """
-    results = {d: DrawResult(d, np.full(n_obs, np.nan)) for d in draw_ids}
+    results = {d: DrawResult(d, np.full(n_obs, np.nan), open_dc=np.full(n_obs, np.nan))
+               for d in draw_ids}
     seen: dict[int, set[str]] = {d: set() for d in draw_ids}
     problems: dict[int, list[str]] = {d: [] for d in draw_ids}
     current: tuple[int, str] | None = None
@@ -145,12 +153,14 @@ def parse_output(
             did = int(parts[1])
             if did not in results:
                 continue
+            target = results[did].open_dc if parts[2] in OPEN_TAGS else results[did].values
+            assert target is not None
             for item in parts[3:]:
                 if "=" not in item:
                     continue
                 k, v = item.split("=", 1)
                 try:
-                    results[did].values[int(k)] = float(v)
+                    target[int(k)] = float(v)
                 except ValueError:
                     problems[did].append(f"unparseable value {item}")
             continue
@@ -159,9 +169,14 @@ def parse_output(
     close_block()
 
     for did, res in results.items():
+        assert res.open_dc is not None
+        if "dcm" not in expected:
+            for i in expected.get("op", []):
+                res.values[i] = res.open_dc[i]
         missing_tags = [t for t in expected if t not in seen[did]]
         missing_vals = [
-            i for idxs in expected.values() for i in idxs if not math.isfinite(res.values[i])
+            i for tag, idxs in expected.items() for i in idxs
+            if not math.isfinite((res.open_dc if tag in OPEN_TAGS else res.values)[i])
         ]
         if missing_tags:
             problems[did].append("missing analyses: " + ",".join(missing_tags))
@@ -178,6 +193,7 @@ def simulate_draws(
     draws: list[tuple[int, Draw]],
     with_thd: bool = True,
     base_timeout: float = 120.0,
+    meter_loading: bool = True,
 ) -> BatchResult:
     """Simulate a batch of draws for one hypothesis with the retry ladder."""
     batch = BatchResult()
@@ -189,13 +205,18 @@ def simulate_draws(
         groups = [pending] if attempt == 0 else [[d] for d in pending]
         next_pending: list[tuple[int, Draw]] = []
         for group in groups:
-            deck = build_deck(circuit, fault, group, retry=attempt, with_thd=with_thd)
+            deck = build_deck(circuit, fault, group, retry=attempt, with_thd=with_thd,
+                              meter_loading=meter_loading)
             expected: dict[str, list[int]] = {}
             for i, o in enumerate(deck.observables):
-                tag = "op" if o.kind == "dc" else o.kind
                 if o.kind == "thd" and not with_thd:
                     continue
-                expected.setdefault(tag, []).append(i)
+                if o.kind == "dc":
+                    expected.setdefault("op", []).append(i)
+                    if meter_loading:
+                        expected.setdefault("dcm", []).append(i)
+                    continue
+                expected.setdefault(o.kind, []).append(i)
             timeout = base_timeout + 1.5 * len(group)
             text, timed_out = _run_ngspice(deck.text, timeout)
             parsed = parse_output(text, len(deck.observables), deck.draw_ids, expected)

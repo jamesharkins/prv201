@@ -3,7 +3,7 @@ PY      ?= .venv/bin/python
 PIP     ?= .venv/bin/pip
 MS      ?= all
 
-.PHONY: help install test lint types check sim cases fit calibrate pilot eval eval-smoke sweep \
+.PHONY: help install test lint types check sim cases fit calibrate pilot eval eval-smoke sweep replay \
         demo docs docs-check citations screenshots deck clean-runs
 
 help:        ## list targets
@@ -60,13 +60,17 @@ docs:        ## render milestone documents (MS=M1 ... or all)
 	$(PY) tools/design_constants.py
 	$(PY) tools/render_docs.py $(MS)
 
-docs-check:  ## page limits, claims, balance and anonymised preview for rendered documents
+docs-check:  ## page limits, balance, claims and spelling for rendered documents
 	$(PY) tools/check_pages.py
 	for f in submissions/M*/M*.typ; do $(PY) tools/check_balance.py $$f || exit 1; done
 	for f in submissions/M*/M*.pdf; do $(PY) tools/check_claims.py "$$PWD/$$f" || exit 1; done
+	$(PY) tools/check_spelling.py submissions/M*/M*.pdf
 
 citations:   ## probe every cited URL (run on an unrestricted network)
 	$(PY) tools/check_citations.py --used-only submissions/M*/M*.typ
+
+replay:      ## record the demo session played back by Shift+R (demo fallback)
+	$(PY) tools/record_replay.py
 
 screenshots: ## Playwright screenshots of the demo app (needs a running `make demo`)
 	$(PY) tools/screenshots.py

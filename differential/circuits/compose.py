@@ -121,6 +121,10 @@ def compose_netlist(blocks: list[CircuitSpec]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _num(v: float) -> float | int:
+    return int(v) if float(v).is_integer() else v
+
+
 def compose_sidecar(blocks: list[CircuitSpec]) -> dict[str, Any]:
     by_id = {b.id: b for b in blocks}
     stages: list[dict[str, str]] = []
@@ -145,10 +149,18 @@ def compose_sidecar(blocks: list[CircuitSpec]) -> dict[str, Any]:
         base["measurements"] = meas
         tps.append(base)
     psu_raw = yaml.safe_load((by_id["psu"].netlist_path.parent / "psu.yaml").read_text())
+    # The composite's highest supply is its blocks' highest; its model counts as validated
+    # only if every block's model is (ADR-034).
+    supplies = [b.declared_supply_v for b in blocks if b.declared_supply_v is not None]
+    evidence = sorted({b.validation_evidence for b in blocks if b.model_validated})
+    validation = ({"status": "validated", "evidence": "; ".join(evidence)}
+                  if all(b.model_validated for b in blocks) else {"status": "not validated"})
     return {
         "id": COMPOSITE_ID,
         "name": "Reference Channel Strip",
         "netlist": f"{COMPOSITE_ID}.cir",
+        **({"declared_supply_v": _num(max(supplies))} if supplies else {}),
+        "model_validation": validation,
         "generated_by": "differential/circuits/compose.py",
         "description": (
             "Composite hero circuit: the power supply block powers a 12AX7-class triode "

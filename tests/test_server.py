@@ -67,6 +67,9 @@ def test_session_flow(client: TestClient) -> None:
     assert typed.status_code == 200
     d = client.post(f"/api/sessions/{sid}/discharge", json={"volts": 0.5}).json()
     assert "reply" in d
+    a = client.post(f"/api/sessions/{sid}/approve_removal", json={"note": "owner agreed"}).json()
+    assert a["state"]["removal_approved"] is True
+    assert client.post(f"/api/sessions/{sid}/discharge", json={}).status_code == 400
     t = client.get(f"/api/sessions/{sid}/ticket").json()
     assert t["status"].startswith("draft") and t["markdown"]
     signed = client.post(f"/api/sessions/{sid}/ticket/signoff", json={"name": "Bench tech"}).json()
@@ -100,3 +103,48 @@ def test_photo_upload_is_a_proposal_until_confirmed(client: TestClient) -> None:
     big = client.post(f"/api/sessions/{sid}/photos",
                       files={"file": ("big.jpg", b"0" * (10 * 1024 * 1024 + 1), "image/jpeg")})
     assert big.status_code == 413
+
+
+def test_recorded_sessions_replay_without_a_session(client: TestClient, tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    from differential.app import server
+
+    monkeypatch.setattr(server, "REPLAY_DIR", tmp_path)
+    (tmp_path / "demo.json").write_text(json.dumps({"circuit": "tone", "frames": [{"caption": "c",
+                                                                                      "state": {}}]}))
+    assert client.get("/api/replays").json() == {"replays": ["demo"]}
+    assert client.get("/api/replays/demo").json()["circuit"] == "tone"
+    assert client.get("/api/replays/missing").status_code == 404
+    assert client.get("/api/replays/..%2Fsecrets").status_code == 404
+
+
+def test_trainee_session_flow() -> None:
+    from fastapi.testclient import TestClient
+
+    from differential.app.server import app
+
+    client = TestClient(app)
+    st = client.post("/api/sessions", json={"circuit_id": "driver", "fault": "R505:open", "seed": 3,
+                                             "trainee": True}).json()
+    sid = st["session_id"]
+    st = client.post(f"/api/sessions/{sid}/messages", json={"text": "No output at all."}).json()["state"]
+    assert st["pending"]["withheld"] is True and st["pending"]["options"]
+    key = st["pending"]["options"][0]["key"]
+    assert client.post(f"/api/sessions/{sid}/guess", json={"key": "nope"}).status_code == 400
+    st = client.post(f"/api/sessions/{sid}/guess", json={"key": key}).json()["state"]
+    assert st["pending"].get("withheld") is None and st["trainee"]["log"][0]["guess"] == key
+
+
+def test_bad_input_is_refused_cleanly(client: TestClient) -> None:
+    assert client.post("/api/sessions", json={"circuit_id": "nope"}).status_code == 404
+    assert client.post("/api/sessions", json={"circuit_id": "psu", "fault": "Z9:open"}).status_code == 400
+    assert client.post("/api/sessions", json={"circuit_id": "psu", "mode": "root"}).status_code == 400
+    sid = client.post("/api/sessions", json={"circuit_id": "psu", "mode": "offline", "seed": 1}).json()["session_id"]
+    body = '{"key": "dc:TP4", "value": NaN}'
+    r = client.post(f"/api/sessions/{sid}/readings", content=body,
+                    headers={"content-type": "application/json"})
+    assert r.status_code == 422
+    r = client.post(f"/api/sessions/{sid}/discharge", content='{"volts": Infinity, "all_points": true}',
+                    headers={"content-type": "application/json"})
+    assert r.status_code == 422
+    assert client.post(f"/api/sessions/{sid}/messages", json={"text": "x" * 5000}).status_code == 422
+    assert client.get(f"/api/sessions/{sid}").json()["discharge_verified"] is False

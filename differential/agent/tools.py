@@ -8,13 +8,14 @@ messages) as the only admissible source of numbers.
 
 from __future__ import annotations
 
+import math
 import time
 from dataclasses import dataclass, field
 from typing import Any
 
 import numpy as np
 
-from differential.agent.format import fault_label, fmt_reading
+from differential.agent.format import clean_name, clean_text, fault_label, fmt_reading
 from differential.circuits.library import BLOCK_IDS, COMPOSITE_ID, get_circuit
 from differential.engine.bundle import EngineBundle, cached_bundle
 from differential.engine.session import DiagnosisSession
@@ -23,14 +24,15 @@ from differential.nlp.symptoms import SymptomReport, extract_llm, extract_rules
 from differential.safety.hazards import (
     DISCHARGE_VERIFY_MAX_V,
     circuit_has_hv,
+    discharge_points,
     hazard,
     supply_voltage,
 )
 from differential.safety.rules import (
     HV_THRESHOLD_V,
     SCOPE_GROUND_NOTE,
+    hv_inside_notice,
     hv_warning,
-    live_chassis_notice,
     wrap_untrusted,
 )
 from differential.sim.faults import parse_fault_id
@@ -122,13 +124,31 @@ TOOL_SPECS: list[dict[str, Any]] = [
     {
         "name": "confirm_discharge",
         "description": (
-            "Record the technician's meter reading across the main filter capacitor after "
-            "switching off, unplugging and discharging. Lift (desolder) steps in a high-voltage "
-            "circuit stay locked until a reading below 2 V is confirmed."),
+            "Record the technician's meter readings after switching off, unplugging and "
+            "discharging: one reading per point that can hold high voltage (the list is in the "
+            "blocked step). Part removal in a high-voltage circuit stays locked until every "
+            "point reads below 2 V; the readings are logged on the ticket as the technician's "
+            "attestation."),
         "input_schema": {
             "type": "object",
-            "properties": {"volts": {"type": "number"}},
-            "required": ["volts"],
+            "properties": {
+                "readings": {"type": "object", "additionalProperties": {"type": "number"},
+                             "description": "test point id -> volts, e.g. {\"TP4\": 0.3}"},
+                "volts": {"type": "number",
+                          "description": "one reading that the technician says holds for every point"},
+                "all_points": {"type": "boolean"},
+            },
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "approve_part_removal",
+        "description": (
+            "Record that the owner has agreed that parts may be removed from the unit for "
+            "testing (a destructive step on old boards). Part removal stays locked until then."),
+        "input_schema": {
+            "type": "object",
+            "properties": {"note": {"type": "string"}},
             "additionalProperties": False,
         },
     },
@@ -154,6 +174,15 @@ TOOL_SPECS: list[dict[str, Any]] = [
 ]
 TOOL_NAMES = [t["name"] for t in TOOL_SPECS]
 
+
+
+def finite(value: Any) -> float:
+    """A reading as a finite float; NaN or infinity is refused, never recorded (a NaN
+    discharge reading would otherwise compare as 'not above the limit')."""
+    v = float(value)
+    if not math.isfinite(v):
+        raise ValueError("a reading must be a finite number")
+    return v
 
 @dataclass
 class ToolCall:
@@ -181,6 +210,15 @@ class ToolBox:
     photo_proposals: dict[str, dict[str, Any]] = field(default_factory=dict)
     calls: list[ToolCall] = field(default_factory=list)
     discharge_verified: bool = False
+    discharge_readings: dict[str, float] = field(default_factory=dict)
+    discharge_log: list[dict[str, Any]] = field(default_factory=list)
+    removal_approved: bool = False
+    removal_note: str = ""
+    # Trainee mode (ADR-034): the trainee commits their own next step before the
+    # recommendation is shown, and a named supervisor is required in a high-voltage unit.
+    trainee: bool = False
+    supervisor: str = ""
+    trainee_log: list[dict[str, Any]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.bundle = cached_bundle(self.circuit_id)
@@ -334,13 +372,37 @@ class ToolBox:
     def step_payload(self, o: ObservableSpec, eig_bits: float = 0.0,
                      alternatives: list[Any] | None = None, policy: str = "") -> dict[str, Any]:
         """Everything the agent says about one recommended step (also used by the T15 sweep)."""
+        if self.trainee and not self.supervisor and circuit_has_hv(self.circuit_id):
+            return {"stop": False, "key": o.key, "blocked": "supervisor",
+                    "what": KIND_LABEL[o.kind], "part": o.ref, "test_point": o.tp, "cost": o.cost,
+                    "expected_information_bits": round(eig_bits, 3),
+                    "next_step": ("Trainee mode: this unit has a high-voltage supply, so every step "
+                                  "needs a qualified technician supervising in person. Name the "
+                                  "supervisor to continue."),
+                    "safety": {"target": o.tp or o.ref, "high_voltage": True,
+                               "lines": [hv_inside_notice(supply_voltage(self.circuit_id) or 50.0)]}}
+        if o.is_lift and not self.removal_approved:
+            return {"stop": False, "key": o.key, "blocked": "owner_approval",
+                    "what": KIND_LABEL[o.kind], "part": o.ref, "cost": o.cost,
+                    "expected_information_bits": round(eig_bits, 3),
+                    "next_step": (f"Testing {o.ref} means unsoldering it from the board, which can "
+                                  "damage an old board. Record that the owner agrees to parts being "
+                                  "removed for testing (approve_part_removal) to continue."),
+                    "safety": {"target": o.ref, "high_voltage": False, "lines": []}}
         if o.is_lift and circuit_has_hv(self.circuit_id) and not self.discharge_verified:
+            pts = discharge_points(self.circuit_id)
             return {"stop": False, "key": o.key, "blocked": "discharge_verification",
                     "what": KIND_LABEL[o.kind], "part": o.ref, "cost": o.cost,
                     "expected_information_bits": round(eig_bits, 3),
-                    "next_step": ("Switch off, unplug, discharge the filter capacitors through a "
-                                  "resistor tool and measure across the main filter capacitor. "
-                                  "Report that reading (confirm_discharge) to unlock this lift."),
+                    "discharge_points": [{"tp": t, "name": self.bundle.circuit.test_point(t).name}
+                                         for t in pts],
+                    "discharge_readings": dict(self.discharge_readings),
+                    "next_step": ("Switch off, unplug and discharge through a resistor tool, then "
+                                  f"measure {', '.join(pts)} and record each reading "
+                                  "(confirm_discharge). Every one must be below "
+                                  f"{DISCHARGE_VERIFY_MAX_V:g} V to unlock this part removal; "
+                                  "leave a bleeder clip across the main filter capacitor while "
+                                  "you work."),
                     "safety": self.t_safety_brief(o.ref or "")}
         out: dict[str, Any] = {
             "stop": False,
@@ -365,8 +427,8 @@ class ToolBox:
         elif o.is_lift and circuit_has_hv(self.circuit_id):
             out["safety"] = self.t_safety_brief(o.ref or "")
         elif supply is not None and not o.is_lift:
-            out["safety"] = {"target": o.tp, "high_voltage": False, "live_chassis": True,
-                             "lines": [live_chassis_notice(supply)]}
+            out["safety"] = {"target": o.tp, "high_voltage": False, "hv_inside": True,
+                             "lines": [hv_inside_notice(supply)]}
         if not o.is_lift and o.kind != "dc":  # oscilloscope measurement
             safety = out.setdefault("safety", {"target": o.tp, "high_voltage": False, "lines": []})
             safety["lines"] = [*safety["lines"], SCOPE_GROUND_NOTE]
@@ -377,7 +439,7 @@ class ToolBox:
         o = self._obs(key)
         if key in self.engine.taken():
             raise ValueError(f"{key} is already recorded")
-        v = float(value)
+        v = finite(value)
         if o.kind in ("ac", "ac20", "ac20k", "hum") and v < 0:
             raise ValueError("amplitudes and gains cannot be negative")
         if o.kind == "thd" and not 0 <= v <= 100:
@@ -386,11 +448,15 @@ class ToolBox:
             raise ValueError("lift results are 1 (out of tolerance) or 0 (within tolerance)")
         if o.kind == "dc" and abs(v) > 1000:
             raise ValueError("reading outside the meter's range")
+        if o.kind == "lift" and not self.removal_approved:
+            raise ValueError("part removal needs the owner's approval first (approve_part_removal)")
         if o.kind == "lift" and circuit_has_hv(self.circuit_id) and not self.discharge_verified:
             raise ValueError("lift results can only be recorded after the discharge check "
-                             "(confirm_discharge below 2 V)")
+                             "(confirm_discharge below 2 V at every high-voltage point)")
         if o.kind != "lift":
-            self.discharge_verified = False  # a powered measurement re-energises the unit
+            # a powered measurement re-energises the unit: discharge must be re-checked
+            self.discharge_verified = False
+            self.discharge_readings = {}
         before = self.engine.ranked_groups(1)[0]
         self.engine.record(key, v, source)
         after = self.t_get_belief()
@@ -444,26 +510,96 @@ class ToolBox:
                                         worst_case=hz.worst_case_v, example_fault=example)}
         if target in c.refs:
             hv = circuit_has_hv(c.id)
+            pts = discharge_points(c.id)
             lines = ([f"Before lifting {target}: switch off, unplug, discharge "
                       f"{', '.join(caps) or 'the filter capacitors'} through a resistor tool and "
-                      "confirm below 2 V with the meter (the discharge check unlocks lift steps)."]
+                      f"confirm below 2 V with the meter at {', '.join(pts)} (every point that can "
+                      "hold high voltage; a failed-open dropping resistor can leave a later "
+                      "capacitor charged). Re-check after any power cycle: capacitors can recover "
+                      "charge."]
                      if hv else [f"{target} sits in a low-voltage circuit. Switch off and unplug "
                                  "before lifting it."])
             return {"target": target, "high_voltage": hv, "lines": lines,
                     "discharge_verified": self.discharge_verified}
         raise KeyError(f"unknown test point or part '{target}'")
 
-    def t_confirm_discharge(self, volts: float) -> dict[str, Any]:
-        v = abs(float(volts))
-        if v > DISCHARGE_VERIFY_MAX_V:
+    def t_confirm_discharge(self, readings: dict[str, float] | None = None,
+                            volts: float | None = None, all_points: bool = False) -> dict[str, Any]:
+        """Record discharge readings (ADR-034). Every point that can hold high voltage must
+        read below the limit; the readings are the technician's attestation (the tool cannot
+        check them) and go on the ticket. One number without ``all_points`` counts for the
+        main filter capacitor, the first point, and the others are asked for."""
+        pts = discharge_points(self.circuit_id)
+        got: dict[str, float] = {}
+        for tp, v in (readings or {}).items():
+            tp = str(tp).upper()
+            if tp not in pts:
+                raise ValueError(f"{tp} is not a point that needs a discharge reading "
+                                 f"({', '.join(pts) or 'none in this circuit'})")
+            got[tp] = abs(finite(v))
+        if volts is not None:
+            v = abs(finite(volts))
+            for tp in (pts if all_points else pts[:1]):
+                got.setdefault(tp, v)
+        self.discharge_readings.update(got)
+        charged = {tp: v for tp, v in self.discharge_readings.items() if v > DISCHARGE_VERIFY_MAX_V}
+        missing = [tp for tp in pts if tp not in self.discharge_readings]
+        base = {"points": pts, "readings": dict(self.discharge_readings), "missing": missing,
+                "limit_volts": DISCHARGE_VERIFY_MAX_V}
+        if charged:
             self.discharge_verified = False
-            return {"verified": False, "volts": v,
-                    "message": f"{v:g} V is still present. Discharge again through a resistor "
-                               "and re-measure; do not touch the circuit."}
+            worst = ", ".join(f"{tp} {v:g} V" for tp, v in charged.items())
+            for tp in charged:
+                self.discharge_readings.pop(tp, None)
+            return {**base, "verified": False, "volts": max(charged.values()),
+                    "message": f"Still charged: {worst}. Discharge again through a resistor and "
+                               "re-measure; do not touch the circuit."}
+        if missing:
+            self.discharge_verified = False
+            return {**base, "verified": False,
+                    "message": ("Recorded. Still needed before part removal: a reading at "
+                                f"{', '.join(missing)} (each below {DISCHARGE_VERIFY_MAX_V:g} V).")}
         self.discharge_verified = True
-        return {"verified": True, "volts": v,
-                "message": "Discharge confirmed. Lift steps are unlocked until the unit is "
-                           "powered again."}
+        self.discharge_log.append({"time": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                   "readings": dict(self.discharge_readings),
+                                   "all_points_from_one_reading": bool(all_points and not readings)})
+        return {**base, "verified": True, "volts": max(self.discharge_readings.values(), default=0.0),
+                "message": ("Discharge recorded at " + ", ".join(
+                    f"{tp} {v:g} V" for tp, v in self.discharge_readings.items())
+                    + ". Part removal is unlocked until the unit is powered again. These readings "
+                      "are your attestation: the tool cannot check them.")}
+
+    def name_supervisor(self, name: str) -> dict[str, Any]:
+        """Trainee mode: record the qualified technician supervising in person."""
+        name = clean_name(name)
+        if not name:
+            raise ValueError("give the supervising technician's name")
+        self.supervisor = name
+        return {"supervisor": self.supervisor,
+                "message": f"Supervisor recorded: {self.supervisor}. High-voltage steps are shown "
+                           "from now on; they must be done with the supervisor present."}
+
+    def record_trainee_step(self, guess: str, recommended: str) -> dict[str, Any]:
+        """Trainee mode: log the trainee's own choice of next measurement before the
+        engine's recommendation is revealed (think first, then compare)."""
+        if guess not in self.bundle.observables:
+            raise KeyError(f"unknown measurement '{guess}'")
+        entry = {"step": len(self.engine.readings) + 1, "guess": guess, "recommended": recommended,
+                 "match": guess == recommended}
+        self.trainee_log.append(entry)
+        return entry
+
+    def trainee_options(self) -> list[dict[str, Any]]:
+        """Measurements the trainee can choose from (affordable, not yet taken)."""
+        return [{"key": o.key, "what": KIND_LABEL[o.kind], "test_point": o.tp, "part": o.ref}
+                for o in self.engine.candidates()]
+
+    def t_approve_part_removal(self, note: str = "") -> dict[str, Any]:
+        self.removal_approved = True
+        self.removal_note = clean_text(note) or "owner agreed that parts may be removed for testing"
+        return {"approved": True, "note": self.removal_note,
+                "message": "Recorded on the ticket: the owner agreed to parts being removed for "
+                           "testing."}
 
     def t_read_meter_photo(self, photo_id: str, key: str | None = None) -> dict[str, Any]:
         if photo_id not in self.photos:

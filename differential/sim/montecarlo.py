@@ -33,9 +33,11 @@ import pandas as pd
 
 from differential.circuits.library import CIRCUIT_IDS, DEVICE_LIBRARY, get_circuit
 from differential.config import SIM_DIR, n_workers
+from differential.sim import builder as builder_module
 from differential.sim import draws as draws_module
+from differential.sim import runner as runner_module
 from differential.sim.builder import fault_netlist
-from differential.sim.draws import Draw, apply_fault, healthy_draw
+from differential.sim.draws import Draw, age_draw, apply_fault, healthy_draw
 from differential.sim.faults import HEALTHY_FAULT, Fault, fault_catalog, parse_fault_id
 from differential.sim.observables import lift_observables, spice_observables
 from differential.sim.runner import ngspice_version, simulate_draws
@@ -52,9 +54,15 @@ SPLIT_INDEX = {
     "pilot_wide": 7,
     "unmodeled_pilot": 8,
     "pilot": 9,
+    "pilot_aged": 10,
+    "test_aged": 11,
+    "test_wide2": 12,
+    "test_wide3": 13,
 }
-# Stress splits: every tolerance spread widened (target T18, sim-to-real proxy).
-TOL_SCALE = {"test_wide": 1.5, "pilot_wide": 1.5}
+# Stress splits: every tolerance spread widened (a sensitivity curve, reported without bars).
+TOL_SCALE = {"test_wide": 1.5, "pilot_wide": 1.5, "test_wide2": 2.0, "test_wide3": 3.0}
+# Aged-unit splits: every part drifts the way parts age (draws.age_draw) before the fault.
+AGED_SPLITS = frozenset({"pilot_aged", "test_aged"})
 CHUNK = 50
 log = logging.getLogger("differential.sim")
 
@@ -93,6 +101,8 @@ def make_draw(circuit_id: str, split: str, hyp_index: int, hypothesis: str, draw
     circuit = get_circuit(circuit_id)
     rng = draw_rng(circuit_id, split, hyp_index, draw)
     d = healthy_draw(circuit, rng, TOL_SCALE.get(split, 1.0))
+    if split in AGED_SPLITS:
+        age_draw(circuit, d, rng)
     for fid in hypothesis.split("+"):
         apply_fault(circuit, d, parse_fault_id(fid), rng)
     return d
@@ -132,6 +142,10 @@ def run_job(job: Job) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]]]:
         }
         for o, v in zip(obs, r.values, strict=True):
             row[o.key] = float(v)
+        assert r.open_dc is not None
+        for j, o in enumerate(obs):
+            if o.kind == "dc":
+                row[f"open:{o.tp}"] = float(r.open_dc[j])
         for lo in lifts:
             assert lo.ref is not None
             row[f"liftval:{lo.ref}"] = float(d.lift.get(lo.ref, np.nan))
@@ -296,7 +310,8 @@ def tolerance_spec_hash() -> str:
 
 def simulation_signature(circuit_ids: Sequence[str]) -> str:
     """Hash of everything a simulated row depends on besides its seed."""
-    parts = [DEVICE_LIBRARY.read_bytes(), Path(draws_module.__file__).read_bytes()]
+    parts = [DEVICE_LIBRARY.read_bytes(), Path(draws_module.__file__).read_bytes(),
+             Path(builder_module.__file__).read_bytes(), Path(runner_module.__file__).read_bytes()]
     parts += [fault_netlist(get_circuit(cid), HEALTHY_FAULT).encode() for cid in circuit_ids]
     return _sha256(b"\x00".join(parts))
 

@@ -10,13 +10,21 @@ in 400 training draws is left out (such a unit would not reach a bench).
 * ``test``            the locked single-fault test set;
 * ``pilot``           the same protocol from its own seed stream, used before the
                       lock to set bars (never used for any tuning);
-* ``test_wide``, ``pilot_wide``   channel strip, tolerances 1.5x wider (stress);
+* ``pilot_aged``, ``test_aged``   channel strip, every part aged in its usual
+                      direction before the fault (stress, T6);
+* ``test_wide``, ``test_wide2``, ``test_wide3`` (and ``pilot_wide``)   channel
+                      strip, tolerances 1.5x, 2x and 3x wider (a reported curve);
 * ``unmodeled_val``   double faults and out-of-catalog modifications for
                       calibrating the "no single fault fits" threshold;
-* ``unmodeled_pilot`` the same, used only to set the T13 bar before the lock;
+* ``unmodeled_pilot`` the same, used only to set the T13 bars before the lock;
 * ``unmodeled_test``  the held-out set used for T13.
+
+Complaints (ADR-032): every evaluation complaint is rendered from the held-out
+paraphrase bank (never used to write or tune the rule-based reader) after the
+complaint noise of ``differential.nlp.benchmark.COMPLAINT_NOISE`` (symptoms left
+out or added); the noise-free rendering is kept for an ablation.
 Outputs: data/eval/cases__<circuit>__<split>.parquet (observables + provenance)
-and .jsonl (facts, complaint texts). These are committed.
+and .jsonl (facts, reported symptoms, complaint texts). These are committed.
 """
 
 from __future__ import annotations
@@ -30,7 +38,8 @@ import pandas as pd
 from differential.circuits.library import BLOCK_IDS, COMPOSITE_ID, get_circuit
 from differential.config import EVAL_DATA_DIR
 from differential.engine.symptom_prior import SymptomFacts, SymptomModel, derive_facts
-from differential.nlp.benchmark import MAIN_BANK, PERSONAS, leakage, render
+from differential.nlp.benchmark import COMPLAINT_NOISE, PERSONAS, leakage, noisy_facts, render
+from differential.nlp.paraphrase_bank import PARAPHRASE_BANK, SEVERITY_TAG_P
 from differential.sim.draws import BRIDGE
 from differential.sim.faults import fault_catalog, parse_fault_id
 from differential.sim.montecarlo import (
@@ -45,11 +54,15 @@ from differential.sim.montecarlo import (
 N_CASES = {
     "test": {COMPOSITE_ID: 500, **dict.fromkeys(BLOCK_IDS, 100)},
     "pilot": {COMPOSITE_ID: 200, **dict.fromkeys(BLOCK_IDS, 60)},
+    "test_aged": {COMPOSITE_ID: 300},
+    "pilot_aged": {COMPOSITE_ID: 150},
     "test_wide": {COMPOSITE_ID: 300},
+    "test_wide2": {COMPOSITE_ID: 300},
+    "test_wide3": {COMPOSITE_ID: 300},
     "pilot_wide": {COMPOSITE_ID: 150},
     "unmodeled_val": {COMPOSITE_ID: 60, **dict.fromkeys(BLOCK_IDS, 20)},
-    "unmodeled_pilot": {COMPOSITE_ID: 60, **dict.fromkeys(BLOCK_IDS, 20)},
-    "unmodeled_test": {COMPOSITE_ID: 50, **dict.fromkeys(BLOCK_IDS, 10)},
+    "unmodeled_pilot": {COMPOSITE_ID: 125, **dict.fromkeys(BLOCK_IDS, 25)},
+    "unmodeled_test": {COMPOSITE_ID: 250, **dict.fromkeys(BLOCK_IDS, 50)},
 }
 UNMODELED_SPLITS = ("unmodeled_val", "unmodeled_pilot", "unmodeled_test")
 MAX_ATTEMPTS = 200
@@ -164,15 +177,21 @@ def build_split(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, obje
                 raise RuntimeError(f"{cid} {split} case {i}: no symptomatic unit in {MAX_ATTEMPTS} draws")
         pending = nxt
     rows = [kept[i] for i in range(n)]
-    # Complaint texts: one persona per case from the main bank; paraphrases are
-    # rendered separately from the held-out bank by eval/nlp_benchmark.py.
+    # Complaint texts: one persona per case; the reported symptoms carry complaint
+    # noise, and the text comes from the held-out paraphrase bank. The noise-free
+    # text (same bank, own stream) feeds the "hybrid_clean" ablation.
     meta = []
-    trng = np.random.default_rng([BASE_SEED, 91, SPLIT_INDEX[split], list(N_TEST).index(cid)])
+    cidx = list(N_TEST).index(cid)
+    trng = np.random.default_rng([BASE_SEED, 91, SPLIT_INDEX[split], cidx])
+    nrng = np.random.default_rng([BASE_SEED, 92, SPLIT_INDEX[split], cidx])
+    crng = np.random.default_rng([BASE_SEED, 93, SPLIT_INDEX[split], cidx])
     for r in rows:
         facts = r.pop("_facts")
         assert isinstance(facts, SymptomFacts)
         persona = PERSONAS[int(trng.integers(len(PERSONAS)))]
-        text = render(facts, persona, trng, tp_stage, MAIN_BANK)
+        reported = noisy_facts(facts, nrng, COMPLAINT_NOISE)
+        text = render(reported, persona, trng, tp_stage, PARAPHRASE_BANK, SEVERITY_TAG_P)
+        clean = render(facts, persona, crng, tp_stage, PARAPHRASE_BANK, SEVERITY_TAG_P)
         meta.append({
             "case_id": r["case_id"], "circuit": cid, "split": split, "hypothesis": r["hypothesis"],
             "redraws": r["redraws"], "rejected_hypotheses": tried[int(r["case_index"])][:-1],  # type: ignore[call-overload]
@@ -182,7 +201,9 @@ def build_split(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, obje
                 "output_change_db": facts.output_change_db, "hum_rise_db": facts.hum_rise_db,
                 "thd_pct": facts.thd_pct, "output_dc_v": facts.output_dc_v,
                 "drift_tps": facts.drift_tps},
-            "persona": persona, "complaint": text, "leakage": leakage(text),
+            "reported": reported.features,
+            "persona": persona, "complaint": text, "clean_complaint": clean,
+            "complaint_bank": "paraphrase_a", "leakage": leakage(text),
         })
     return pd.DataFrame(rows), meta
 

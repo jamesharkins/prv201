@@ -15,15 +15,17 @@ or in a photo reading the technician confirmed.
 from __future__ import annotations
 
 import json
+import math
 import re
 import time
 import uuid
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-from differential.agent.format import fault_label, fmt_reading, pct
+from differential.agent.format import clean_name, fault_label, fmt_reading, pct
 from differential.agent.grounding import check_grounding, find_numbers, redact_ungrounded
 from differential.agent.tools import TOOL_SPECS, ToolBox
+from differential.circuits.library import get_circuit
 from differential.instruments.base import Instrument
 from differential.safety.hazards import hazard
 from differential.safety.rules import CERTAINTY_TEXT, enforce_output, screen_request
@@ -53,7 +55,8 @@ class Turn:
 class DifferentialAgent:
     def __init__(self, circuit_id: str, mode: str = "offline", llm: Any | None = None,
                  instrument: Instrument | None = None, budget: float = 40.0,
-                 likelihood: str = "generative", session_id: str | None = None) -> None:
+                 likelihood: str = "generative", session_id: str | None = None,
+                 trainee: bool = False) -> None:
         if mode not in MODES:
             raise ValueError(mode)
         if mode in ("live", "replay") and llm is None:
@@ -67,7 +70,9 @@ class DifferentialAgent:
                           use_llm=mode in ("live", "replay"), instrument=instrument)
         self.turns: list[Turn] = []
         self.history: list[dict[str, Any]] = []  # Claude message history (live/replay)
+        self.tb.trainee = trainee
         self.pending_key: str | None = None
+        self.withheld: dict[str, Any] | None = None  # trainee mode: recommendation not yet shown
         self.grounding_log: list[dict[str, Any]] = []
         self.safety_log: list[dict[str, Any]] = []
         self.confirmed_photo_values: list[float] = []
@@ -113,6 +118,8 @@ class DifferentialAgent:
 
     def measure(self, key: str) -> Turn:
         """Take the reading with the attached instrument (simulated bench or SCPI)."""
+        if self.pending_key == "guess":
+            return self._reply("Trainee mode: record your own next step first; then I'll show mine.")
         if self.tb.instrument is None:
             return self._reply("No instrument is attached; enter the reading by hand.")
         o = self.tb._obs(key)
@@ -120,8 +127,11 @@ class DifferentialAgent:
         return self.reading_event(key, r.value, r.source)
 
     def confirm_photo(self, photo_id: str, key: str, value: float) -> Turn:
-        self.confirmed_photo_values.append(float(value))
-        return self.reading_event(key, value, source=f"photo:{photo_id} (confirmed)")
+        v = float(value)
+        if not math.isfinite(v):
+            return self._reply("I couldn't record that: a reading must be a finite number")
+        self.confirmed_photo_values.append(v)
+        return self.reading_event(key, v, source=f"photo:{photo_id} (confirmed)")
 
     def snapshot(self, label: str) -> None:
         top = self.tb.engine.top_hypotheses(6)
@@ -133,7 +143,7 @@ class DifferentialAgent:
     def sign_off(self, name: str) -> dict[str, str]:
         import datetime as _dt
 
-        self.signoff = {"by": name.strip() or "technician",
+        self.signoff = {"by": clean_name(name) or "technician",
                         "at": _dt.datetime.now(_dt.UTC).strftime("%Y-%m-%d %H:%M UTC")}
         return self.signoff
 
@@ -141,7 +151,19 @@ class DifferentialAgent:
         t = self.tb.call("generate_repair_ticket")
         t["signoff"] = self.signoff
         t["status"] = "signed off" if self.signoff else "draft - awaiting technician sign-off"
-        rep = check_grounding(t["markdown"], self._evidence())
+        # The ticket is checked against the session's evidence, never against itself: the
+        # tool results minus every generated ticket, the technician's messages, and the
+        # engine's state at close (belief, effort, the clock), taken directly from the engine.
+        e = self.tb.engine
+        close_state = {"belief": self.tb.t_get_belief(), "effort": e.cost_spent,
+                       "created": t["created"], "discharge": list(self.tb.discharge_log)}
+        # Part values quoted in the actions ("R503 (2.2k resistor)") come from the circuit
+        # model, which is evidence in its own right; they are not readings.
+        parts = [f"{c.ref} {c.value}" for c in get_circuit(self.tb.circuit_id).components]
+        evidence = [*[c.result for c in self.tb.calls if c.name != "generate_repair_ticket"],
+                    *[x.text for x in self.turns if x.role in ("user", "event")],
+                    *self.confirmed_photo_values, close_state, parts]
+        rep = check_grounding(t["markdown"], evidence)
         t["grounding"] = {"checked": rep.checked, "ungrounded": [m.text for m in rep.ungrounded]}
         self.grounding_log.append({"where": "ticket", "checked": rep.checked,
                                    "ungrounded": [m.text for m in rep.ungrounded]})
@@ -202,11 +224,28 @@ class DifferentialAgent:
             return str(self.ticket()["markdown"])
         if re.search(r"\bwhy\b|explain|reason", low) and self.pending_key:
             return self._explain(self.pending_key)
+        if self.pending_key == "supervisor":
+            m = re.search(r"supervis\w*\s*(?:is|:)?\s*(?P<name>[A-Za-z][A-Za-z .'-]{1,60})", text, re.I)
+            if m:
+                return self.name_supervisor(m.group("name").strip()).text
+        if self.pending_key == "guess":
+            key = self._parse_guess(text)
+            if key is not None:
+                return self.trainee_guess(key).text
+            return ("Trainee mode: tell me which measurement you'd take next (for example "
+                    "dc:TP18, or just TP18) before I show mine.")
+        if self.pending_key == "approval" and re.search(
+                r"\b(approv|agree|consent|ok(ay)?\b|yes\b|go ahead)", low):
+            self.tb.call("approve_part_removal", {"note": text.strip()[:200]})
+            self.pending_key = None
+            return ("Recorded on the ticket: the owner agreed to parts being removed for "
+                    "testing.\n\n" + self._next_step())
         if self.pending_key == "discharge":
-            m = self.UNIT_RE.search(text)
-            if m is not None:
-                res = self.tb.call("confirm_discharge", {"volts": float(m.group("num")) / (
-                    1000.0 if (m.group("unit") or "").lower() == "mv" else 1.0)})
+            args = self._discharge_args(text)
+            if args:
+                res = self.tb.call("confirm_discharge", args)
+                if "error" in res:
+                    return f"I couldn't record that: {res['error']}"
                 if not res.get("verified"):
                     return str(res["message"])
                 self.pending_key = None
@@ -276,13 +315,82 @@ class DifferentialAgent:
                         "Ask for the ticket to get the repair ticket with the evidence trail.")
             return (f"I'm stopping because {rec.get('reason', 'the budget is used up')}. "
                     f"Best explanation so far: {names} ({pct(top['probability'])}).")
+        if self.tb.trainee and not rec.get("blocked"):
+            self.withheld = rec
+            self.pending_key = "guess"
+            example = next((o["key"] for o in self.tb.trainee_options() if o["key"] != rec["key"]),
+                           "dc:TP1")
+            return ("Trainee mode: which measurement would you take next, and why? Reply with its "
+                    f"key (for example {example}) or a test point, and I'll show mine and compare.")
         self.pending_key = rec["key"]
         return self.format_step(rec)
 
+    def trainee_guess(self, key: str) -> Turn:
+        """Trainee mode: record the trainee's own next step, then reveal the recommendation."""
+        rec = self.withheld
+        if self.pending_key != "guess" or rec is None:
+            return self._reply("There is no withheld recommendation to compare with right now.")
+        entry = self.tb.record_trainee_step(key, rec["key"])
+        self.withheld = None
+        self.pending_key = rec["key"]
+        verdict = ("Same choice as mine." if entry["match"] else
+                   f"You chose {key}; I'd take {rec['key']} because it is expected to tell the "
+                   "remaining suspects apart best for its effort. Both are recorded.")
+        return self._reply(verdict + "\n\n" + self.format_step(rec))
+
+    def name_supervisor(self, name: str) -> Turn:
+        res = self.tb.name_supervisor(name)
+        text = res["message"]
+        if self.pending_key == "supervisor":
+            self.pending_key = None
+            text += "\n\n" + self._next_step()
+        return self._reply(text)
+
+    TP_READING_RE = re.compile(r"\b(?P<tp>TP\d+)\b\D{0,12}?(?P<num>[-+]?\d+(?:\.\d+)?)\s*(?P<unit>mv|v)?",
+                               flags=re.I)
+
+    def _parse_guess(self, text: str) -> str | None:
+        """A measurement named in a trainee's message: an exact key, or a test point / part
+        (its first available measurement)."""
+        obs = self.tb.bundle.observables
+        m = re.search(r"\b(dc|ac|ac20|ac20k|hum|thd|lift):([A-Za-z]+\d+)\b", text, re.I)
+        if m:
+            key = f"{m.group(1).lower()}:{m.group(2).upper()}"
+            return key if key in obs else None
+        avail = [o.key for o in self.tb.engine.candidates()]
+        for tok in re.findall(r"\b([A-Z]{1,3}\d+)\b", text.upper()):
+            for k in avail:
+                if k.split(":", 1)[1] == tok:
+                    return k
+        return None
+
+    def _discharge_args(self, text: str) -> dict[str, Any]:
+        """Discharge readings in a message: 'TP4 0.3 V, TP5 0.2 V', or one number for the
+        main filter capacitor, or 'all ... 0.3 V' for every point."""
+        pairs = {m.group("tp").upper(): float(m.group("num")) / (
+            1000.0 if (m.group("unit") or "").lower() == "mv" else 1.0)
+            for m in self.TP_READING_RE.finditer(text)}
+        if pairs:
+            return {"readings": pairs}
+        m = self.UNIT_RE.search(text)
+        if m is None:
+            return {}
+        v = float(m.group("num")) / (1000.0 if (m.group("unit") or "").lower() == "mv" else 1.0)
+        return {"volts": v, "all_points": bool(re.search(r"\b(all|every|each)\b", text, re.I))}
+
     def format_step(self, rec: dict[str, Any]) -> str:
         """Plain-language text for one recommended step (offline template)."""
+        if rec.get("blocked") == "supervisor":
+            self.pending_key = "supervisor"
+            return str(rec["next_step"])
+        if rec.get("blocked") == "owner_approval":
+            self.pending_key = "approval"
+            return (f"Next I'd like to test {rec['part']} out of circuit ({rec['key']}, cost "
+                    f"{rec['cost']:g}). {rec['next_step']}")
         if rec.get("blocked") == "discharge_verification":
             self.pending_key = "discharge"
+        elif rec.get("blocked") == "owner_approval":
+            self.pending_key = "approval"
             return (f"Next I'd like to lift {rec['part']} ({rec['key']}, cost {rec['cost']:g}). "
                     f"First: {rec['next_step']}\n\n" + "\n".join(rec["safety"]["lines"]))
         parts = [f"Next: {rec['what']} at {rec['test_point'] or rec['part']} ({rec['key']}), "

@@ -22,7 +22,8 @@ from eval import metrics_io
 from eval.harness import SYSTEMS, bundle_for, run_system, unmodeled_outcome
 from eval.stats import auroc, ece
 
-PILOT_SYSTEMS = ["engine_gen", "hybrid", "fixed_order", "half_split", "random", "recap_prior"]
+PILOT_SYSTEMS = ["engine_gen", "engine_disc", "hybrid", "fixed_order", "half_split", "random",
+                 "recap_prior"]
 CIRCUITS = [COMPOSITE_ID, *BLOCK_IDS]
 
 
@@ -86,11 +87,16 @@ def main() -> None:
     out["recap_prior_top1_delta"] = per["recap_prior"]["top1"] - eg["top1"]
     steps = np.concatenate([json.loads(x) for x in cs["hybrid"]["step_seconds"]])
     out["cs_step_seconds_p95"] = float(np.percentile(steps, 95))
-    # Stress set: hybrid on widened tolerances vs hybrid on the nominal pilot units.
+    # Stress sets: hybrid on widened tolerances and on aged units vs the nominal pilot units.
     wide = run_system(SYSTEMS["hybrid"], COMPOSITE_ID, split="pilot_wide")
     out["wide_top1"] = float(wide["correct"].mean())
     out["wide_top1_drop"] = float(cs["hybrid"]["correct"].mean() - wide["correct"].mean())
     out["wide_n"] = len(wide)
+    aged = run_system(SYSTEMS["hybrid"], COMPOSITE_ID, split="pilot_aged")
+    out["aged_top1"] = float(aged["correct"].mean())
+    out["aged_top1_drop"] = float(cs["hybrid"]["correct"].mean() - aged["correct"].mean())
+    out["aged_flag_rate"] = float((aged["top_group"] == -1).mean())
+    out["aged_n"] = len(aged)
     # Unmodeled detector on the unmodeled_pilot split (never used for calibration)
     # against the pilot's single-fault units; full system (T13) and engine alone.
     for s in ("hybrid", "engine_gen"):
@@ -110,7 +116,7 @@ def main() -> None:
         out[f"{s}_unmodeled_n"] = len(pos)
         out[f"{s}_single_false_flag_rate"] = float(np.mean(pooled[s]["top_group"] == -1))
     # Accuracy by how often the true fault causes a symptom (the test set includes
-    # rarely-symptomatic faults in proportion to how often they reach a bench).
+    # rarely-symptomatic faults in proportion to how often they cause a symptom).
     rated = pd.concat([by_symptom_rate(runs["hybrid"][c], c) for c in CIRCUITS], ignore_index=True)
     out["hybrid_by_symptom_rate"] = {
         f"{lo:.2f}-{min(hi, 1.0):.2f}": {

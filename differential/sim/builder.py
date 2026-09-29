@@ -2,14 +2,20 @@
 
 Each deck contains the fault-specific netlist once and a ``.control`` script that,
 for every draw, applies the draw with ``alter``/``altermod``, runs the operating
-point, the AC analyses (1 kHz, 20 Hz, 20 kHz), the 120 Hz hum analysis and the
-1 kHz transient + Fourier analysis for THD, and echoes tagged result lines:
+point, one operating point per DC reading with the meter's input resistance across
+the measured node (``dcm``: what a real meter shows), the AC analyses (1 kHz, 20 Hz,
+20 kHz), the 120 Hz hum analysis and the 1 kHz transient + Fourier analysis for THD,
+and echoes tagged result lines:
 
     @@B <draw> <analysis>          analysis begins
     @@V <draw> <analysis> k=v ...  values (observable index = value)
     @@P <draw> <analysis> <plot>   active plot after the analysis (guards against
                                    reading a stale plot when an analysis fails)
     @@E <draw> <analysis>          analysis ends (Fourier output sits between B and E)
+
+The plain ``op`` values are the unloaded node voltages (kept for the hazard audit,
+which must see the voltage a finger would touch); the ``dcm`` values are the
+observables the engine learns from and the technician reads.
 """
 
 from __future__ import annotations
@@ -25,6 +31,7 @@ from differential.circuits.netlist import Element
 from differential.circuits.units import spice_number
 from differential.sim.draws import Draw, device_model_name, structural_edits
 from differential.sim.faults import Fault
+from differential.sim.measurement import DMM_INPUT_OHMS
 from differential.sim.observables import ObservableSpec, spice_observables
 
 AC_FREQS = {"ac": 1000.0, "ac20": 20.0, "ac20k": 20000.0}
@@ -39,6 +46,20 @@ RETRY_OPTIONS = [
     "vntol=1e-5 abstol=1e-10 method=gear rshunt=1e10",
 ]
 MAX_ECHO_ITEMS = 12
+# A meter resistor is parked at this value (effectively open) except while its own
+# DC reading is taken; 1e15 Ohm adds 1e-15 S, far below ngspice's default gmin.
+METER_IDLE_OHMS = 1e15
+
+
+def meter_element(tp_id: str) -> str:
+    """Name of the resistor that stands for the meter on test point ``tp_id``."""
+    return f"RMTR_{tp_id}".upper()
+
+
+def meter_elements(circuit: CircuitSpec) -> list[Element]:
+    """One idle meter resistor from every DC-measured test point to ground."""
+    return [Element(meter_element(tp.id), (tp.node, "0"), spice_number(METER_IDLE_OHMS))
+            for tp in circuit.test_points if "dc" in tp.measurements]
 
 
 @lru_cache(maxsize=1)
@@ -107,6 +128,7 @@ def fault_netlist(circuit: CircuitSpec, fault: Fault | Sequence[Fault], retry: i
         elements.append(new)
     for e in edits:
         elements.append(Element(e.add_name, (e.node_a, e.node_b), spice_number(e.default_value)))
+    elements += meter_elements(circuit)
     lines = [f"* {circuit.id} / {'+'.join(f.id for f in faults)}", f".include {DEVICE_LIBRARY}", ".options noinit noacct"]
     if RETRY_OPTIONS[retry]:
         lines.append(RETRY_OPTIONS[retry])
@@ -125,7 +147,8 @@ def _echo_values(tag: str, draw_id: int, items: list[tuple[int, str]]) -> list[s
 
 
 def control_lines(
-    circuit: CircuitSpec, draws: list[tuple[int, Draw]], with_thd: bool = True
+    circuit: CircuitSpec, draws: list[tuple[int, Draw]], with_thd: bool = True,
+    meter_loading: bool = True,
 ) -> tuple[list[str], tuple[ObservableSpec, ...]]:
     obs = tuple(spice_observables(circuit))
     idx_by_kind: dict[str, list[tuple[int, ObservableSpec]]] = {}
@@ -150,6 +173,20 @@ def control_lines(
             items.append((i, vec))
         lines += _echo_values("op", draw_id, items)
         lines.append(f'echo "@@E {draw_id} op"')
+        # --- DC readings as a meter shows them: the meter's input resistance across
+        # the node, one reading (one operating point) at a time.
+        if meter_loading and idx_by_kind.get("dc"):
+            lines.append(f'echo "@@B {draw_id} dcm"')
+            for i, o in idx_by_kind["dc"]:
+                assert o.tp is not None
+                rm = meter_element(o.tp)
+                lines.append(f"alter {rm} = {spice_number(DMM_INPUT_OHMS)}")
+                lines.append("op")
+                lines.append(f"let xm{i} = v({o.node})")
+                lines += _echo_values("dcm", draw_id, [(i, f"xm{i}")])
+                lines.append(f"alter {rm} = {spice_number(METER_IDLE_OHMS)}")
+            lines.append(f'echo "@@P {draw_id} dcm $curplot"')
+            lines.append(f'echo "@@E {draw_id} dcm"')
         # --- AC gains from the signal generator
         if sig is not None:
             for kind, freq in AC_FREQS.items():
@@ -204,7 +241,8 @@ def build_deck(
     draws: list[tuple[int, Draw]],
     retry: int = 0,
     with_thd: bool = True,
+    meter_loading: bool = True,
 ) -> Deck:
     net = fault_netlist(circuit, fault, retry=retry)
-    ctl, obs = control_lines(circuit, draws, with_thd=with_thd)
+    ctl, obs = control_lines(circuit, draws, with_thd=with_thd, meter_loading=meter_loading)
     return Deck(text=net + "\n".join(ctl) + "\n", observables=obs, draw_ids=tuple(i for i, _ in draws))

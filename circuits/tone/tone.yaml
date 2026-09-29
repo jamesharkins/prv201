@@ -1,6 +1,10 @@
 id: tone
 name: "Block 3 - Passive Baxandall tone control"
 netlist: tone.cir
+declared_supply_v: 15.33
+model_validation:
+  status: validated
+  evidence: "docs/hand_calcs.md: hand calculations agree with every simulated healthy bias point and gain within the stated tolerances"
 description: >
   Passive Baxandall bass/treble control with 100k audio-taper pots at
   mid-rotation. About 27 dB mid-band insertion loss when driven from the triode

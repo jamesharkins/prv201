@@ -9,9 +9,13 @@ from differential.circuits.library import get_circuit
 from differential.sim import measurement as meas
 from differential.sim.builder import build_deck, control_lines, fault_netlist, model_cards
 from differential.sim.draws import (
+    AGE_ELECTROLYTIC_C,
+    AGE_RESISTOR,
+    AGE_TRIODE_EMISSION,
     BRIDGE,
     C_OPEN,
     R_OPEN,
+    age_draw,
     apply_fault,
     healthy_draw,
     structural_edits,
@@ -28,6 +32,7 @@ from differential.sim.faults import (
     part_kind,
 )
 from differential.sim.montecarlo import (
+    AGED_SPLITS,
     SPLIT_INDEX,
     Job,
     catalog_jobs,
@@ -273,3 +278,50 @@ def test_stale_checkpoints_are_discarded(tmp_path, monkeypatch) -> None:  # type
     df, _ = mc.run_jobs([], "driver__demo")
     assert df.empty and not list(ckpt.glob("part_*.parquet"))
     assert (ckpt / "signature.txt").read_text().strip() == mc.simulation_signature([])
+
+
+def test_meter_loading_reads_like_a_real_meter() -> None:
+    """DC observables are solved with the meter's 10 MOhm across the node; the unloaded
+    node voltage is kept apart (hazard audit). A floating grid reads ~0 V on a meter."""
+    c = get_circuit("triode")
+    cat = [f.id for f in fault_catalog(c)]
+    obs = spice_observables(c)
+    dc = {o.key: i for i, o in enumerate(obs) if o.kind == "dc"}
+    healthy = [(0, make_draw("triode", "train", cat.index("healthy"), "healthy", 0))]
+    r = simulate_draws(c, HEALTHY_FAULT, healthy).results[0]
+    assert r.ok and r.open_dc is not None
+    plate = dc["dc:TP9"]
+    # the plate (tens of kOhm source) reads a little low; the supply-side nodes do not move
+    assert 0.001 < 1 - r.values[plate] / r.open_dc[plate] < 0.03
+    off = simulate_draws(c, HEALTHY_FAULT, healthy, meter_loading=False).results[0]
+    assert off.ok and np.allclose(off.values[list(dc.values())], r.open_dc[list(dc.values())])
+    grid_open = parse_fault_id("R201:open")
+    fd = [(0, make_draw("triode", "train", cat.index(grid_open.id), grid_open.id, 0))]
+    g = simulate_draws(c, grid_open, fd).results[0]
+    grid = dc["dc:TP7"]
+    assert g.ok and g.open_dc is not None
+    assert abs(g.values[grid]) < 0.05 < abs(g.open_dc[grid])
+    netlist = fault_netlist(c, HEALTHY_FAULT)
+    assert "RMTR_TP7 " in netlist and "1e+15" in netlist.replace("1e15", "1e+15")
+
+
+def test_age_draw_moves_parts_the_way_they_age() -> None:
+    c = get_circuit("channel_strip")
+    base = healthy_draw(c, np.random.default_rng(3))
+    aged = age_draw(c, healthy_draw(c, np.random.default_rng(3)), np.random.default_rng(4))
+    for comp in c.components:
+        el = comp.main_element
+        if comp.kind == "electrolytic":
+            k = aged.alters[el] / base.alters[el]
+            assert AGE_ELECTROLYTIC_C[0] <= k <= AGE_ELECTROLYTIC_C[1]
+            assert aged.alters[comp.elements["esr"]] > base.alters[comp.elements["esr"]]
+        elif comp.kind == "resistor":
+            assert AGE_RESISTOR[0] <= aged.alters[el] / base.alters[el] <= AGE_RESISTOR[1]
+        elif comp.kind == "triode":
+            pv = comp.params["pv"]
+            assert AGE_TRIODE_EMISSION[0] <= aged.alters[pv] / base.alters[pv] <= 1.0
+    assert aged.severity["aged"] == 1.0
+    assert {"pilot_aged", "test_aged"} == AGED_SPLITS
+    d = make_draw("channel_strip", "pilot_aged", 0, "healthy", 0)
+    assert d.severity.get("aged") == 1.0
+    assert "aged" not in make_draw("channel_strip", "pilot", 0, "healthy", 0).severity

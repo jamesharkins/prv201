@@ -1,6 +1,10 @@
 id: driver
 name: "Block 5 - Discrete BJT line driver"
 netlist: driver.cir
+declared_supply_v: 15.33
+model_validation:
+  status: validated
+  evidence: "docs/hand_calcs.md: hand calculations agree with every simulated healthy bias point and gain within the stated tolerances"
 description: >
   Common-emitter voltage amplifier (Q501, gain about 2) direct-coupled to an
   emitter follower (Q502, about 8.5 mA standing current), with an output

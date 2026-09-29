@@ -20,6 +20,7 @@ Context available in every template:
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -76,7 +77,8 @@ def context(tracker: PartTracker | None = None) -> dict[str, object]:
     tracker = tracker or PartTracker()
     bib = load_bibliography()
     citer = Citer(bib)
-    metrics = Metrics(load_json(RESULTS / "metrics.json"))
+    # A layout dry run may point at a scratch copy; documents are always rendered from the real file.
+    metrics = Metrics(load_json(Path(os.environ.get("DIFFERENTIAL_DRYRUN_METRICS", RESULTS / "metrics.json"))))
     targets = load_json(RESULTS / "targets.json")
     team = load_team()
     tmap = {t["id"]: t for t in targets.get("targets", [])}
@@ -129,9 +131,18 @@ def context(tracker: PartTracker | None = None) -> dict[str, object]:
     }
 
 
+def lower_first(text: str) -> str:
+    """Lower-case a leading capital for use mid-sentence, leaving acronyms alone."""
+    first = text.split(" ", 1)[0]
+    if any(c.isupper() for c in first[1:]) or any(c.isdigit() for c in first):
+        return text
+    return text[:1].lower() + text[1:]
+
+
 def render(ms: str) -> Path:
     env = make_env()
     env.filters["esc"] = typst_str
+    env.filters["lower_first"] = lower_first
     tpl_dir = ROOT / "templates" / ms
     out_dir = ROOT / "submissions" / ms
     out_dir.mkdir(parents=True, exist_ok=True)

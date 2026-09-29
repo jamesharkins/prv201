@@ -4,10 +4,11 @@ Protocol (identical for both variants, fixed before any live run):
   * Model: ``DIFFERENTIAL_MODEL`` (default claude-sonnet-5-5), default sampling; every
     response is cached by request hash, so a rerun replays exactly.
   * Inputs: the complaint text; the circuit description (stages, every part with its
-    value, every test point with its stage and whether it is high voltage); the healthy
-    reading and tolerance range of every measurement (the service-manual voltage chart);
-    the list of catalog faults it may name; the effort cost of every measurement and the
-    40-unit budget.
+    value, the SPICE netlist of the healthy circuit, every test point with its node,
+    stage and whether it is high voltage); the healthy reading and tolerance range of
+    every measurement (the service-manual voltage chart); the list of catalog faults it
+    may name; the effort cost of every measurement and the 40-unit budget. The prompt
+    was written once, before any run, and is not tuned on any unit.
   * Interaction: the model calls ``measure(key)`` and receives exactly the reading the
     other systems receive for that unit (same noise seed). It ends with
     ``diagnose(ranked_faults, confidence)``. If it overspends or stops without a
@@ -15,6 +16,9 @@ Protocol (identical for both variants, fixed before any live run):
   * ``llm_sim`` adds ``simulate_fault(fault_id)``: the median reading of every
     measurement under that fault, from the same simulations the engine learned from
     (an LLM agent with simulator access, the rival approach of [19]).
+  * Sessions: three independent sessions per unit (the attempt number is part of the
+    request, so cached responses are not reused across attempts); the unit's answer is
+    the group named first most often (ties: the first session's), its effort the mean.
   * Scoring: group-aware top-1 and top-3, exactly as for every other system.
 Cases: a stratified subset of the test set (``SUBSET``): per circuit, cases are
 chosen evenly across part kinds with a fixed seed.
@@ -42,6 +46,7 @@ from differential.sim.observables import KIND_LABEL
 
 SUBSET = {COMPOSITE_ID: 150, **dict.fromkeys(BLOCK_IDS, 30)}  # 300 paired units: about +-6 points on the margin
 MAX_TURNS = 40
+SESSIONS_PER_UNIT = 3
 
 SYSTEM = (
     "You are an experienced audio electronics technician diagnosing a unit on the bench. "
@@ -87,6 +92,10 @@ def bench_description(bundle: EngineBundle) -> str:
     lines = [f"Circuit: {c.name}. {c.description}", "", "Stages: " +
              "; ".join(f"{sid} = {name}" for sid, name in c.stages), "", "Parts:"]
     lines += [f"- {p.ref}: {p.kind} {p.value} (stage {p.stage})" for p in c.components]
+    lines += ["", "Netlist of the healthy circuit (SPICE; node names as in the test points):",
+              c.netlist_path.read_text().strip(), "", "Test points:"]
+    lines += [f"- {tp.id}: node {tp.node}, {tp.name} (stage {tp.stage})"
+              f"{' (HIGH VOLTAGE)' if tp.hv else ''}" for tp in c.test_points]
     lines += ["", "Measurements (key | what | healthy reading and range | cost):"]
     for key, o in bundle.observables.items():
         if o.is_lift:
@@ -125,7 +134,7 @@ def tools(with_sim: bool) -> list[dict[str, Any]]:
 
 
 def run_case(client: LLMClient, bundle: EngineBundle, row: dict[str, Any], complaint: str,
-             with_sim: bool) -> dict[str, Any]:
+             with_sim: bool, attempt: int = 0) -> dict[str, Any]:
     case_id = str(row["case_id"])
     truth = str(row["hypothesis"])
     truth_ref = parse_fault_id(truth).ref
@@ -164,7 +173,8 @@ def run_case(client: LLMClient, bundle: EngineBundle, row: dict[str, Any], compl
         return {"error": f"unknown tool {name}"}
 
     user = (f"{bench_description(bundle)}\n\nBudget: {DEFAULT_BUDGET:g} effort units.\n\n"
-            f"Customer complaint: {complaint}\n\nDiagnose the unit.")
+            f"Customer complaint: {complaint}\n\nDiagnose the unit. (Session {attempt + 1} of "
+            f"{SESSIONS_PER_UNIT}.)")
     msgs = [{"role": "user", "content": user}]
     for _ in range(MAX_TURNS):
         msgs, final = client.tool_loop(SYSTEM, msgs, tools(with_sim), handler, max_turns=1,
@@ -183,6 +193,27 @@ def run_case(client: LLMClient, bundle: EngineBundle, row: dict[str, Any], compl
                          if ranked_groups else "none")}
 
 
+def majority(bundle: EngineBundle, sessions: list[dict[str, Any]]) -> dict[str, Any]:
+    """The unit's answer: the group named first most often across its sessions (ties go to
+    the earliest session); effort is the mean over sessions."""
+    groups = bundle.groups
+
+    def first_group(r: dict[str, Any]) -> int | None:
+        ranked = [h for h in json.loads(r["ranked"]) if h in bundle.hypotheses]
+        return int(groups.group_of[bundle.hypotheses.index(ranked[0])]) if ranked else None
+
+    firsts = [first_group(r) for r in sessions]
+    counts = {g: firsts.count(g) for g in firsts if g is not None}
+    best = max(counts, key=lambda g: (counts[g], -firsts.index(g))) if counts else None
+    chosen = next((r for r, g in zip(sessions, firsts, strict=True) if g == best), sessions[0])
+    out = dict(chosen)
+    out["cost"] = float(np.mean([r["cost"] for r in sessions]))
+    out["sessions"] = json.dumps([{"ranked": r["ranked"], "correct": r["correct"], "cost": r["cost"]}
+                                  for r in sessions])
+    out["session_agreement"] = (counts.get(best, 0) / len(sessions)) if best is not None else 0.0
+    return out
+
+
 def run(system: str = "llm_only", client: LLMClient | None = None) -> pd.DataFrame | None:
     """Run a baseline over the stratified subset; None when no key and no cache."""
     from eval.harness import bundle_for, load_split
@@ -198,8 +229,10 @@ def run(system: str = "llm_only", client: LLMClient | None = None) -> pd.DataFra
             by_id = {m["case_id"]: m for m in meta}
             for case_id in select_subset(cid, df, bundle, n):
                 row = df[df["case_id"] == case_id].iloc[0].to_dict()
-                res = run_case(client, bundle, row, str(by_id[case_id]["complaint"]),
-                               with_sim=system == "llm_sim")
+                sessions = [run_case(client, bundle, row, str(by_id[case_id]["complaint"]),
+                                     with_sim=system == "llm_sim", attempt=a)
+                            for a in range(SESSIONS_PER_UNIT)]
+                res = majority(bundle, sessions)
                 res.update({"system": system, "circuit": cid})
                 rows.append(res)
     except LLMUnavailable:

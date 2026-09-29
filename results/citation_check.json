@@ -1,0 +1,2205 @@
+{
+ "documents": [],
+ "n_sources": 218,
+ "summary": {
+  "canonical:unreachable": 152,
+  "canonical:ok": 52,
+  "source:ok": 30,
+  "canonical:site-block": 11,
+  "source:site-block": 7,
+  "source:unreachable": 2
+ },
+ "reference_points_at_mirror": [
+  "cirdc_ieee_metadata_dataset",
+  "debenedetti_camel_2025",
+  "diodes_inc_switching_diode_spice",
+  "diodes_inc_zener_spice",
+  "espice_onsemi_lib_mirror",
+  "fluke_117_dcv_accuracy",
+  "fluke_117_input_characteristics",
+  "fluke_11x_manual_dcv_accuracy",
+  "fluke_11x_manual_general_specs",
+  "goodark_1n4728_1n4764_datasheet",
+  "greshake_llm_security_repo",
+  "huang_hallucination_survey_2025",
+  "koren_tubes_lib_ltspice_2008",
+  "ltspice_standard_bjt_mirror",
+  "ltspice_standard_dio_mirror",
+  "mospec_tip31_datasheet",
+  "onsemi_2n3906_datasheet",
+  "onsemi_2n3906_modpex_model_mirror",
+  "onsemi_spice_models_volta",
+  "philips_1n4728a_1n4749a_datasheet",
+  "philips_ecc83_datasheet_1954",
+  "rigol_ds1000z_user_guide_2014",
+  "rigol_ds1000ze_manual_de_2021",
+  "rohm_1n4148_datasheet",
+  "schemdraw_docs",
+  "shi_amsbench_2025",
+  "siglent_sds1000xe_extracted_specs",
+  "sklearn_calibration_user_guide",
+  "st_bd135_bd139_datasheet",
+  "vungarala_spicepilot_2024",
+  "wikipedia_al_electrolytic_mirror",
+  "wikipedia_film_capacitor_mirror",
+  "wikipedia_resistor_mirror",
+  "wikipedia_ripple_mirror",
+  "wikipedia_vacuum_tube_mirror",
+  "wikipedia_zener_mirror",
+  "zhao_mmcircuiteval_2025"
+ ],
+ "snippet_only": [
+  "akbari_circuitsense_2025",
+  "augury_series_f_2025",
+  "bastani_genai_learning_2025",
+  "bcg_field_service_ai_2026",
+  "berklee_maintenance_engineer",
+  "billboard_riaa_2025",
+  "bls_cps_11b_2017",
+  "bls_ep_2025_35",
+  "bls_oews_492097_2023",
+  "bls_ooh_eeet",
+  "bls_ooh_eeir",
+  "bls_ooh_electromech",
+  "brynjolfsson_genai_at_work_2023",
+  "ca_bhgs_r2r_advisory_2024",
+  "ca_prc_42488",
+  "census_electronics_aging_2023",
+  "cfr_37_201_40",
+  "co_hb24_1121",
+  "co_sb25b_004",
+  "co_sb26_189",
+  "conequip_electrical_diagnosis",
+  "council_pr_2026_05_07",
+  "council_pr_2026_06_29",
+  "dellacqua_jagged_frontier_2023",
+  "ec_ai_literacy_qa",
+  "ec_ai_omnibus_in_force",
+  "ec_draft_highrisk_guidelines_2026",
+  "ec_ip_25_1787_gpai_code",
+  "ec_ip_26_1714",
+  "ec_r2r_news_2026_07_31",
+  "ec_r2r_qa_2024",
+  "eo_14179",
+  "eo_14365",
+  "eo_14409",
+  "ep_pr_2026_06_ai_omnibus",
+  "eu_ai_act",
+  "eu_ai_act_consolidated_2026",
+  "eu_ai_omnibus_2026_1744",
+  "eu_deleg_dir_2026_74",
+  "eu_lvd_2014_35",
+  "eu_pld_2024_2853",
+  "eu_r2r_directive_2024_1799",
+  "eurlex_summary_ai_act",
+  "euronews_anthropic_exposure_2026",
+  "fbi_pdm",
+  "flux_funding_2026",
+  "forbes_reverb_2025",
+  "forbes_tractian_2024",
+  "fr_caisi_rfi_ai_agents_2026",
+  "ftc_ai_accuracy_policy_2026",
+  "ftc_deere_settlement_2026",
+  "ftc_nixing_the_fix_2021",
+  "ftc_repair_policy_statement_2021",
+  "ftc_warranty_letters_2024",
+  "greshake_2023",
+  "gvr_pdm",
+  "headphonesty_tube_shortage_2025",
+  "headphonesty_vintage_prices_2025",
+  "headphonesty_vintage_techs_2026",
+  "ibm_mas_92_2026",
+  "ifixit_fixbot_2025",
+  "installation_futuresource_loudspeakers",
+  "iota_pdm",
+  "ji_hallucination_survey_2023",
+  "kalai_why_hallucinate_2025",
+  "keysight_ads_ai_2025",
+  "koren_article_web_part1",
+  "koren_model_instructions_web",
+  "li_eee_bench_2025",
+  "magnetic_reverb_2025",
+  "maintainx_series_d_2025",
+  "mn_ag_r2r",
+  "mn_stat_325e72",
+  "mnm_pdm_2026",
+  "musically_riaa_h1_2026",
+  "musictrades_census_2025",
+  "musictrades_global_2025",
+  "musictrades_proaudio_census",
+  "ncsc_prompt_injection_2025",
+  "nist_ai_100_2_e2025",
+  "nist_ai_600_1",
+  "nist_ai_agent_standards_2026",
+  "nist_ai_rmf_1_0",
+  "nist_ai_rmf_page",
+  "nist_ai_rmf_playbook",
+  "nist_ai_update_2026_03",
+  "nist_caisi_agent_hijacking_2025",
+  "nist_csrc_glossary_prompt_injection",
+  "nist_ir_8596_cyber_ai_profile",
+  "ny_ag_repair_2024",
+  "ny_gbl_399nn",
+  "onet_492097_bright_outlook",
+  "or_sb1596_2024",
+  "ptc_servicemax_ai_2025",
+  "qi_2008_nff",
+  "rates_archer_hifi",
+  "rates_british_audio",
+  "rates_cw_guitar_audio",
+  "rates_studio_doctors",
+  "razavi_ai_analog_part1_2025",
+  "riaa_2024_yearend",
+  "riaa_2025_yearend",
+  "rnm_ai_pdm_2025",
+  "servicenow_knowledge_2026",
+  "siemens_eigen_agent_2026",
+  "siemens_maintenance_copilot_2025",
+  "skelic_circuit_2025",
+  "stereophile_retales_13",
+  "tsia_field_services_2026",
+  "tx_hb2963_2025",
+  "us_ai_action_plan_2025",
+  "us_ai_lead_act_s2937",
+  "us_hr_5388",
+  "us_rise_act_s2081",
+  "usco_1201_ninth_2024",
+  "usco_1201_tenth_2027",
+  "wa_eshb1483_2025",
+  "wh_ai_legislative_framework_2026"
+ ],
+ "results": [
+  {
+   "key": "akbari_circuitsense_2025",
+   "role": "canonical",
+   "url": "https://arxiv.org/abs/2509.22339",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "anthropic_economic_index_2025",
+   "role": "canonical",
+   "url": "https://www.anthropic.com/news/the-anthropic-economic-index",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "anthropic_labor_market_2026",
+   "role": "canonical",
+   "url": "https://www.anthropic.com/research/labor-market-impacts",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "augury_series_f_2025",
+   "role": "canonical",
+   "url": "https://siliconangle.com/2025/02/19/augury-raises-75m-ai-driven-industrial-equipment-health-repair-process-optimization/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "bandler_salama_1985",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/PROC.1985.13281",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "bandler_salama_1985",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/5/1985.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "bastani_genai_learning_2025",
+   "role": "canonical",
+   "url": "https://doi.org/10.1073/pnas.2422633122",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "baxandall_1952_bibliographic",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/bedwards/hex-index/c1a5a6ee3ffa8fc0e85da1d81460819af5382553/library/wikipedia/tone-control-circuit.raw.html",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "bcg_field_service_ai_2026",
+   "role": "canonical",
+   "url": "https://www.bcg.com/assets/2026/executive-perspectives-future-of-field-service-with-applied-ai.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "berklee_maintenance_engineer",
+   "role": "canonical",
+   "url": "https://www.berklee.edu/careers/roles/maintenance-engineer",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "billboard_riaa_2025",
+   "role": "canonical",
+   "url": "https://www.billboard.com/pro/riaa-2025-music-report-revenue-streaming-vinyl/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "bls_cps_11b_2017",
+   "role": "canonical",
+   "url": "https://www.bls.gov/cps/aa2017/cpsaat11b.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "bls_ep_2025_35",
+   "role": "canonical",
+   "url": "https://www.bls.gov/news.release/ecopro.nr0.htm",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "bls_oews_492097_2023",
+   "role": "canonical",
+   "url": "https://www.bls.gov/oes/2023/may/oes492097.htm",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "bls_ooh_eeet",
+   "role": "canonical",
+   "url": "https://www.bls.gov/ooh/architecture-and-engineering/electrical-and-electronics-engineering-technicians.htm",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "bls_ooh_eeir",
+   "role": "canonical",
+   "url": "https://www.bls.gov/ooh/installation-maintenance-and-repair/electrical-and-electronics-installers-and-repairers.htm",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "bls_ooh_electromech",
+   "role": "canonical",
+   "url": "https://www.bls.gov/ooh/architecture-and-engineering/electro-mechanical-technicians.htm",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "brynjolfsson_genai_at_work_2023",
+   "role": "canonical",
+   "url": "https://www.nber.org/papers/w31161",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "buolamwini_gebru_2018",
+   "role": "canonical",
+   "url": "https://proceedings.mlr.press/v81/buolamwini18a.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "buolamwini_gebru_2018",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/mlresearch/v81/gh-pages/buolamwini18a/buolamwini18a.pdf",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "ca_bhgs_r2r_advisory_2024",
+   "role": "canonical",
+   "url": "https://bhgs.dca.ca.gov/forms_pubs/sb_244_industry_advisory_english.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ca_prc_42488",
+   "role": "canonical",
+   "url": "https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202320240SB244",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "census_electronics_aging_2023",
+   "role": "canonical",
+   "url": "https://www.census.gov/library/stories/2023/09/one-chip-at-a-time.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "cfr_37_201_40",
+   "role": "canonical",
+   "url": "https://www.ecfr.gov/current/title-37/chapter-II/subchapter-A/part-201/section-201.40",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "cirdc_ieee_metadata_dataset",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/README.md",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "claude_models_overview",
+   "role": "canonical",
+   "url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "claude_opus_5_5_overview",
+   "role": "canonical",
+   "url": "https://platform.claude.com/docs/en/models/opus-5-5/overview",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "claude_pricing",
+   "role": "canonical",
+   "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "claude_prompt_caching",
+   "role": "canonical",
+   "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "claude_sonnet_5_5_overview",
+   "role": "canonical",
+   "url": "https://platform.claude.com/docs/en/models/sonnet-5-5/overview",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "claude_sonnet_5_5_whats_new",
+   "role": "canonical",
+   "url": "https://platform.claude.com/docs/en/models/sonnet-5-5/whats-new-sonnet-5-5",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "claude_structured_outputs",
+   "role": "canonical",
+   "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "claude_tool_use_overview",
+   "role": "canonical",
+   "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "claude_vision",
+   "role": "canonical",
+   "url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "cloete_stander_wilke_2022_access",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/ACCESS.2022.3149324",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "cloete_stander_wilke_2022_access",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/6287639/2022.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "co_hb24_1121",
+   "role": "canonical",
+   "url": "https://leg.colorado.gov/bills/hb24-1121",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "co_sb25b_004",
+   "role": "canonical",
+   "url": "https://leg.colorado.gov/bills/sb25b-004",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "co_sb26_189",
+   "role": "canonical",
+   "url": "https://leg.colorado.gov/bills/sb26-189",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "conequip_electrical_diagnosis",
+   "role": "canonical",
+   "url": "https://www.constructionequipment.com/equipment-maintenance-and-repair/article/10717900/the-psychology-of-electrical-problem-diagnosis-and-repair",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "council_pr_2026_05_07",
+   "role": "canonical",
+   "url": "https://www.consilium.europa.eu/en/press/press-releases/2026/05/07/artificial-intelligence-council-and-parliament-agree-to-simplify-and-streamline-rules/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "council_pr_2026_06_29",
+   "role": "canonical",
+   "url": "https://www.consilium.europa.eu/en/press/press-releases/2026/06/29/artificial-intelligence-council-gives-final-green-light-to-simplify-and-streamline-rules/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "debenedetti_camel_2025",
+   "role": "canonical",
+   "url": "https://github.com/google-research/camel-prompt-injection",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "dekleer_williams_1987",
+   "role": "canonical",
+   "url": "https://doi.org/10.1016/0004-3702(87)90063-4",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "dekleer_williams_1987",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/vintageplayer/SciBase-ACMTemp/ffc9cb3f5cb7cbf0a9d9c91d485b1a63bc421db4/Journals/TODS/Volumes/Volume%2013%20Issue%202%2C%20June%201988/Pages%3A%20167-196/references.txt",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "dellacqua_jagged_frontier_2023",
+   "role": "canonical",
+   "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4573321",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "dempster_laird_rubin_1977",
+   "role": "canonical",
+   "url": "https://doi.org/10.1111/j.2517-6161.1977.tb01600.x",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "dempster_laird_rubin_1977",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/dmetivie/ExpectationMaximization.jl/c1589dbc5ea7a5e5a33345d8f2afc3f9e7d2f527/docs/src/biblio.md",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "diodes_inc_switching_diode_spice",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/AndrejTica/School/65cb5a6dd0395eb53b8f16ed4cafa47b25959b41/LTspice/extras/DIODES.COM/OTHER/spicemodels_switching_diodes.txt",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "diodes_inc_zener_spice",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/AndrejTica/School/65cb5a6dd0395eb53b8f16ed4cafa47b25959b41/LTspice/extras/DIODES.COM/ZENER/LIB/spicemodels_zener_diodes.txt",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "e2e_circuit_analysis_2025",
+   "role": "canonical",
+   "url": "https://arxiv.org/abs/2512.10159",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "mirror_checked"
+  },
+  {
+   "key": "ec_ai_literacy_qa",
+   "role": "canonical",
+   "url": "https://digital-strategy.ec.europa.eu/en/faqs/ai-literacy-questions-answers",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ec_ai_omnibus_in_force",
+   "role": "canonical",
+   "url": "https://digital-strategy.ec.europa.eu/en/news/ai-omnibus-enters-force",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ec_draft_highrisk_guidelines_2026",
+   "role": "canonical",
+   "url": "https://digital-strategy.ec.europa.eu/en/consultations/targeted-consultation-draft-guidelines-classification-high-risk-artificial-intelligence-systems",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ec_ip_25_1787_gpai_code",
+   "role": "canonical",
+   "url": "https://ec.europa.eu/commission/presscorner/detail/en/ip_25_1787",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ec_ip_26_1714",
+   "role": "canonical",
+   "url": "https://digital-strategy.ec.europa.eu/en/news/commission-starts-enforcing-ai-act-rules-and-new-transparency-requirements-2-august",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ec_r2r_news_2026_07_31",
+   "role": "canonical",
+   "url": "https://commission.europa.eu/news-and-media/news/right-repair-new-consumer-rights-easy-and-attractive-repairs-2026-07-31_en",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ec_r2r_qa_2024",
+   "role": "canonical",
+   "url": "https://commission.europa.eu/document/download/2d443b31-dc2a-4e54-a9ec-5fbb61c895e9_en?filename=2024_07_18_QA_Right2repair_FINAL.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "efron_1979_bootstrap",
+   "role": "canonical",
+   "url": "https://doi.org/10.1214/aos/1176344552",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "efron_1979_bootstrap",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/rasbt/pattern_classification/3f96361bc78db6b5eb1840fa80409bad491e8ece/evaluation/model-evaluation/model-evaluation-selection-part2.md",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "eo_14179",
+   "role": "canonical",
+   "url": "https://www.federalregister.gov/documents/2025/01/31/2025-02172/removing-barriers-to-american-leadership-in-artificial-intelligence",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eo_14365",
+   "role": "canonical",
+   "url": "https://www.federalregister.gov/documents/2025/12/16/2025-23092/ensuring-a-national-policy-framework-for-artificial-intelligence",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eo_14409",
+   "role": "canonical",
+   "url": "https://www.federalregister.gov/documents/2026/06/05/2026-11415/promoting-advanced-artificial-intelligence-innovation-and-security",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ep_pr_2026_06_ai_omnibus",
+   "role": "canonical",
+   "url": "https://www.europarl.europa.eu/news/en/press-room/20260611IPR45207/ai-act-ep-approves-simplification-measures-and-nudifier-app-ban",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "espice_onsemi_lib_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/kicad-spice-library/KiCad-Spice-Library/a8688952bcaab19f567bc4db237b60bde03ef310/Models/uncategorized/spice_complete/onsemi.lib",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "eu_ai_act",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eu_ai_act_consolidated_2026",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/2026-07-27/eng",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eu_ai_act_text_mirror",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "eu_ai_act_text_mirror",
+   "role": "source",
+   "url": "https://github.com/bojkovski-cpu/ai-act-annotated",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "eu_ai_omnibus_2026_1744",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eu_deleg_dir_2026_74",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/dir_del/2026/74/oj/eng",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eu_lvd_2014_35",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0035",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eu_pld_2024_2853",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/dir/2024/2853/oj/eng",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eu_r2r_directive_2024_1799",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/dir/2024/1799/oj",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eu_r2r_directive_2024_1799",
+   "role": "source",
+   "url": "https://commission.europa.eu/law/law-topic/consumer-protection-law/directive-repair-goods_en",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "eurlex_summary_ai_act",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/EN/legal-content/summary/rules-for-trustworthy-artificial-intelligence-in-the-eu.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "euronews_anthropic_exposure_2026",
+   "role": "canonical",
+   "url": "https://www.euronews.com/business/2026/03/14/how-ai-will-reshape-work-anthropic-identifies-the-most-exposed-jobs",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "fbi_pdm",
+   "role": "canonical",
+   "url": "https://www.fortunebusinessinsights.com/predictive-maintenance-market-102104",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "fluke_117_dcv_accuracy",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/digital_multimeter/fluke-117/model.yaml",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "fluke_117_input_characteristics",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/digital_multimeter/fluke-117/tables/input_characteristics.yaml",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "fluke_11x_manual_dcv_accuracy",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/digital_multimeter/fluke-115/tables/accuracy_specifications.yaml",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "fluke_11x_manual_general_specs",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/digital_multimeter/fluke-115/tables/general_environmental.yaml",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "flux_funding_2026",
+   "role": "canonical",
+   "url": "https://siliconangle.com/2026/02/27/flux-nabs-37m-automate-printed-circuit-board-development-ai/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "forbes_reverb_2025",
+   "role": "canonical",
+   "url": "https://www.forbes.com/sites/marksparrow/2025/02/11/reverb-could-be-the-place-to-find-that-vintage-audio-gear-youre-after/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "forbes_tractian_2024",
+   "role": "canonical",
+   "url": "https://www.forbes.com/sites/jimvinoski/2024/12/05/industrial-copilot-tractian-raises-another-120-million/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "fr_caisi_rfi_ai_agents_2026",
+   "role": "canonical",
+   "url": "https://www.federalregister.gov/documents/2026/01/08/2026-00206/request-for-information-regarding-security-considerations-for-artificial-intelligence-agents",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "friedman_2001_gbm",
+   "role": "canonical",
+   "url": "https://doi.org/10.1214/aos/1013203451",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "friedman_2001_gbm",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/rust-ml/linfa/3b411a4c985cdf6b83430d9c44f11e338d300c50/src/composing/residual_chain.rs",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "ftc_ai_accuracy_policy_2026",
+   "role": "canonical",
+   "url": "https://www.federalregister.gov/documents/2026/07/07/2026-13628/policy-statement-concerning-the-suppression-of-accuracy-in-artificial-intelligence-systems",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ftc_deere_settlement_2026",
+   "role": "canonical",
+   "url": "https://www.ftc.gov/news-events/news/press-releases/2026/07/ftc-states-secure-settlement-deere-company-advancing-farmers-right-repair",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ftc_nixing_the_fix_2021",
+   "role": "canonical",
+   "url": "https://www.ftc.gov/reports/nixing-fix-ftc-report-congress-repair-restrictions",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ftc_repair_policy_statement_2021",
+   "role": "canonical",
+   "url": "https://www.ftc.gov/system/files/documents/public_statements/1592330/p194400repairrestrictionspolicystatement.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ftc_warranty_letters_2024",
+   "role": "canonical",
+   "url": "https://www.ftc.gov/news-events/news/press-releases/2024/07/ftc-warns-companies-stop-warranty-practices-harm-consumers-right-repair",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "gao_yang_jiang_2021_incipient_tim",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/TIM.2020.3024337",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "gao_yang_jiang_2021_incipient_tim",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/2021.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "gdpr",
+   "role": "canonical",
+   "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "gdpr",
+   "role": "source",
+   "url": "https://github.com/6022-labs/gdpr-mcp-server/tree/main/data/v1/articles",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "goodark_1n4728_1n4764_datasheet",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Diodes/1N4728%20-%201N4764.pdf",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "greshake_2023",
+   "role": "canonical",
+   "url": "https://doi.org/10.1145/3605764.3623985",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "greshake_2023",
+   "role": "source",
+   "url": "https://dl.acm.org/doi/10.1145/3605764.3623985",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "greshake_llm_security_repo",
+   "role": "canonical",
+   "url": "https://github.com/greshake/llm-security",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "guo_2017_calibration",
+   "role": "canonical",
+   "url": "https://proceedings.mlr.press/v70/guo17a.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "guo_2017_calibration",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/BrendonPedro/cloud_slm-router/92945dfaa6c2260643e83571f16ad0da17e6886a/research/raw/landscape/abs_1706.04599.html",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "gvr_pdm",
+   "role": "canonical",
+   "url": "https://www.grandviewresearch.com/press-release/global-predictive-maintenance-market",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "hanley_mcneil_1982_auc",
+   "role": "canonical",
+   "url": "https://doi.org/10.1148/radiology.143.1.7063747",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "hanley_mcneil_1982_auc",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/rasbt/python-machine-learning-book/7d916874374ae94d84bd43b9745ac9789e5b2a18/docs/references.md",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "he_he_li_2020_gan_tim",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/TIM.2020.2969008",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "he_he_li_2020_gan_tim",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/2020.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "headphonesty_tube_shortage_2025",
+   "role": "canonical",
+   "url": "https://www.headphonesty.com/2025/09/ongoing-tube-shortage-breaking-high-end-audio/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "headphonesty_vintage_prices_2025",
+   "role": "canonical",
+   "url": "https://www.headphonesty.com/2025/07/collectors-driving-vintage-audio-prices-crash/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "headphonesty_vintage_techs_2026",
+   "role": "canonical",
+   "url": "https://www.headphonesty.com/2026/08/vintage-audio-revival-running-out-people/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "hendrycks_gimpel_2017_ood",
+   "role": "canonical",
+   "url": "https://arxiv.org/abs/1610.02136",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "hendrycks_gimpel_2017_ood",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/Jingkang50/OODSurvey/68d19f70b429e989007aa9a59d9bd5b2abb8d301/5_OOD.md",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "hochwald_bastian_1979",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/TCS.1979.1084665",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "hochwald_bastian_1979",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/31/1979.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "horowitz_hill_2015_aoe3",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/Lippitz-Lab/advanced-experimental-physics/3e7eb497c50bc54b0775b15db75d13bff15200e3/literature.bib",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "huang_hallucination_survey_2025",
+   "role": "canonical",
+   "url": "https://github.com/LuckyyySTA/Awesome-LLM-hallucination",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "ibm_mas_92_2026",
+   "role": "canonical",
+   "url": "https://www.ibm.com/new/announcements/introducing-maximo-application-suite-9-2",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ifixit_fixbot_2025",
+   "role": "canonical",
+   "url": "https://9to5mac.com/2025/12/09/ifixit-launches-fixbot-ai-repair-helper-with-free-and-paid-versions/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "installation_futuresource_loudspeakers",
+   "role": "canonical",
+   "url": "https://www.installation-international.com/technology/audio/pro-loudspeaker-market-on-course-to-top-4bn-by-2029",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "iota_pdm",
+   "role": "canonical",
+   "url": "https://iot-analytics.com/predictive-maintenance-market/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ji_hallucination_survey_2023",
+   "role": "canonical",
+   "url": "https://doi.org/10.1145/3571730",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "kalai_why_hallucinate_2025",
+   "role": "canonical",
+   "url": "https://arxiv.org/abs/2509.04664",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ke_2017_lightgbm",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/microsoft/LightGBM/f4777388bd0c580719feb03469e80f767dc9b09f/README.md",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "keysight_ads_ai_2025",
+   "role": "canonical",
+   "url": "https://www.keysight.com/us/en/about/newsroom/news-releases/2025/1216_pr26-017-keysight-accelerates-electronic-design-productivity-with-secure-ai-powered-assistants.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "koren_article_web_part1",
+   "role": "canonical",
+   "url": "https://www.normankoren.com/Audio/Tubemodspice_article.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "koren_model_instructions_web",
+   "role": "canonical",
+   "url": "https://www.normankoren.com/Audio/Tubemodelinstr.HTM",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "koren_tube_lib_1996_mirror",
+   "role": "canonical",
+   "url": "https://www.normankoren.com/Audio/Tubemodspice_article.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "koren_tube_lib_1996_mirror",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/ajmwagar/pedalkernel/0278b397c861b5ebef2e8e38d15ab281b8e669dc/pedalkernel/models/tubemods_tmp/Tube.lib",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "koren_tubes_lib_ltspice_2008",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/kicad-spice-library/KiCad-Spice-Library/a8688952bcaab19f567bc4db237b60bde03ef310/Models/uncategorized/Bordodynovs%20Electronics%20Lib/sub/Tubes_Koren.lib",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "kulicki_trypuz_j3016_ontology",
+   "role": "canonical",
+   "url": "https://github.com/kul-ai/ontology-autonomous-driving",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "lee_critical_thinking_2025",
+   "role": "canonical",
+   "url": "https://www.microsoft.com/en-us/research/publication/the-impact-of-generative-ai-on-critical-thinking-self-reported-reductions-in-cognitive-effort-and-confidence-effects-from-a-survey-of-knowledge-workers/",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "li_eee_bench_2025",
+   "role": "canonical",
+   "url": "https://openaccess.thecvf.com/content/CVPR2025/html/Li_EEE-Bench_A_Comprehensive_Multimodal_Electrical_And_Electronics_Engineering_Benchmark_CVPR_2025_paper.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "lindley_1956",
+   "role": "canonical",
+   "url": "https://doi.org/10.1214/aoms/1177728069",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "lindley_1956",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/ActiveInferenceInstitute/cognitive/59fdc8275d41d9d3dc3126695083e27e0bd1f6ae/docs/manuscript/references.bib",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "ltspice_standard_bjt_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/vgreff/LTSpiceLibraries/8913bcc7bd392af5bc4ad8df433bb4477ff6b8e6/LTSpice/vglib/cmp/Original/standard.bjt",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "ltspice_standard_dio_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/vgreff/LTSpiceLibraries/8913bcc7bd392af5bc4ad8df433bb4477ff6b8e6/LTSpice/vglib/cmp/Original/standard.dio",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "mackay_1992_active_data_selection",
+   "role": "canonical",
+   "url": "https://doi.org/10.1162/neco.1992.4.4.590",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "mackay_1992_active_data_selection",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/chengsoonong/crowdastro/ce14432c36de0574b73d813304365b74446a61f8/tex/papers.bib",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "magnetic_reverb_2025",
+   "role": "canonical",
+   "url": "https://magneticmag.com/2025/10/reverbs-cyril-nigg-talks-tariffs-independence-and-why-the-used-market-is-thriving/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "maintainx_series_d_2025",
+   "role": "canonical",
+   "url": "https://www.getmaintainx.com/newsroom/maintainx-raises-150m",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "miao_2024_attention_fcn_access",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/ACCESS.2024.3403908",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "miao_2024_attention_fcn_access",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/6287639/2024.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "mn_ag_r2r",
+   "role": "canonical",
+   "url": "https://www.ag.state.mn.us/Consumer/Publications/RightToRepair.asp",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "mn_stat_325e72",
+   "role": "canonical",
+   "url": "https://www.revisor.mn.gov/statutes/cite/325E.72",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "mnm_pdm_2026",
+   "role": "canonical",
+   "url": "https://www.marketsandmarkets.com/PressReleases/operational-predictive-maintenance.asp",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "mospec_tip31_datasheet",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Transistors,%20FETs,%20Thyristors/TIP31%20NPN%20,%20TIP32%20PNP%20100V%203A.pdf",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "msft_copilot_field_service_2023",
+   "role": "canonical",
+   "url": "https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2023/08/09/introducing-copilot-in-dynamics-365-field-service-helping-your-frontline-deliver-exceptional-service-with-next-generation-ai/",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "msft_d365_field_service_page",
+   "role": "canonical",
+   "url": "https://www.microsoft.com/en-us/dynamics-365/products/field-service",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "msft_d365_wave1_2026",
+   "role": "canonical",
+   "url": "https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/03/18/2026-release-wave-1-plans-for-microsoft-dynamics-365-microsoft-power-platform-and-copilot-studio-offerings/",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "musically_riaa_h1_2026",
+   "role": "canonical",
+   "url": "https://musically.com/2026/09/01/us-recorded-music-revenues-grew-by-6-9-in-the-first-half-of-2026/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "musictrades_census_2025",
+   "role": "canonical",
+   "url": "https://musictrades.com/music-industry-census-report/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "musictrades_global_2025",
+   "role": "canonical",
+   "url": "https://musictrades.com/top-225-global-report/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "musictrades_proaudio_census",
+   "role": "canonical",
+   "url": "https://www.musictrades.com/audio-and-sound-equipment.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "naeini_cooper_hauskrecht_2015",
+   "role": "canonical",
+   "url": "https://doi.org/10.1609/aaai.v29i1.9602",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "naeini_cooper_hauskrecht_2015",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/scikit-learn-contrib/MAPIE/7e888f5249bf942912207d398525d3259a5f07c0/mapie/metrics/calibration.py",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "ncsc_prompt_injection_2025",
+   "role": "canonical",
+   "url": "https://www.ncsc.gov.uk/blog-post/prompt-injection-is-not-sql-injection",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ngspice_inpcompat_source",
+   "role": "canonical",
+   "url": "https://sourceforge.net/p/ngspice/ngspice/ci/master/tree/src/frontend/inpcompat.c?format=raw",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "ngspice_manual_v47",
+   "role": "canonical",
+   "url": "https://sourceforge.net/projects/ngspice/files/ng-spice-rework/47/ngspice-47-manual.pdf/download",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "ngspice_release_notes_47",
+   "role": "canonical",
+   "url": "https://sourceforge.net/projects/ngspice/files/ng-spice-rework/47/ReleaseNotes.txt/download",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "nist_ai_100_2_e2025",
+   "role": "canonical",
+   "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "nist_ai_600_1",
+   "role": "canonical",
+   "url": "https://www.nist.gov/news-events/news/2024/07/department-commerce-announces-new-guidance-tools-270-days-following",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "nist_ai_agent_standards_2026",
+   "role": "canonical",
+   "url": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "nist_ai_rmf_1_0",
+   "role": "canonical",
+   "url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "nist_ai_rmf_page",
+   "role": "canonical",
+   "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "nist_ai_rmf_playbook",
+   "role": "canonical",
+   "url": "https://www.nist.gov/itl/ai-risk-management-framework/nist-ai-rmf-playbook",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "nist_ai_update_2026_03",
+   "role": "canonical",
+   "url": "https://www.nist.gov/system/files/documents/2026/03/27/03_AI%20Update-March.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "nist_caisi_agent_hijacking_2025",
+   "role": "canonical",
+   "url": "https://www.nist.gov/news-events/news/2025/01/technical-blog-strengthening-ai-agent-hijacking-evaluations",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "nist_csrc_glossary_prompt_injection",
+   "role": "canonical",
+   "url": "https://csrc.nist.gov/glossary/term/indirect_prompt_injection",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "nist_ir_8596_cyber_ai_profile",
+   "role": "canonical",
+   "url": "https://www.nist.gov/news-events/news/2025/12/draft-nist-guidelines-rethink-cybersecurity-ai-era",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ny_ag_repair_2024",
+   "role": "canonical",
+   "url": "https://ag.ny.gov/press-release/2024/attorney-general-james-reminds-consumers-its-easier-ever-get-electronics",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "ny_gbl_399nn",
+   "role": "canonical",
+   "url": "https://www.nysenate.gov/legislation/laws/GBS/399-NN",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "onet_492097_bright_outlook",
+   "role": "canonical",
+   "url": "https://www.onetonline.org/help/bright/49-2097.00",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "onsemi_2n3903_2n3904_datasheet",
+   "role": "canonical",
+   "url": "https://www.onsemi.com/pdf/datasheet/2n3903-d.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "onsemi_2n3903_2n3904_datasheet",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/gloveboxes/Z80ROMlessSBC/26658cef8c46189ec46c9f47612ddaf65822fe33/datasheets/2N3903-D.pdf",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "onsemi_2n3906_datasheet",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/nicholaschiang/digikey-transistors/97aed5179256e78c282d2bdeac6332efff901f20/data/pdf/2N3906-D.PDF",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "onsemi_2n3906_modpex_model_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/hanhha/SPICELIB/30137cb80078ea40e7c4cbf66f05f9bd496fea24/2N3906.LIB",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "onsemi_spice_models_volta",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/robo-fish/Volta/2d2c372826096380f0e4f0226469b4fd7f31e20d/app/resources/Models_OnSemi.lib",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "or_sb1596_2024",
+   "role": "canonical",
+   "url": "https://www.oregonlegislature.gov/bills_laws/lawsstatutes/2024orLaw0069.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "osha_1910_269",
+   "role": "canonical",
+   "url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.269",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_269",
+   "role": "source",
+   "url": "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_303",
+   "role": "canonical",
+   "url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.303",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_303",
+   "role": "source",
+   "url": "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_331_399",
+   "role": "canonical",
+   "url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.331",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_331_399",
+   "role": "source",
+   "url": "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_333",
+   "role": "canonical",
+   "url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.333",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_333",
+   "role": "source",
+   "url": "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_334",
+   "role": "canonical",
+   "url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.334",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "osha_1910_334",
+   "role": "source",
+   "url": "https://github.com/dgrinnell/ehs-regulatory-assistant/blob/main/data/corpus/sections.jsonl",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "owasp_llm_top10_2025",
+   "role": "canonical",
+   "url": "https://github.com/GenAI-Security-Project/GenAI-LLM-Top10/blob/main/2025/LLM01_PromptInjection.md",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "owasp_llm_top10_2026",
+   "role": "canonical",
+   "url": "https://github.com/GenAI-Security-Project/GenAI-LLM-Top10/tree/main/2026/final",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "pattipati_alexandridis_1990",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/21.105086",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "pattipati_alexandridis_1990",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/21/1990.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "philips_1n4728a_1n4749a_datasheet",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Diodes/1N4728%20-%201N4747%20zeners%201w.pdf",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "philips_ecc83_datasheet_1954",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/holla2040/valvestudio/ee4031613390cea26cd00e121cfc63218f0eacd2/experiments/02-modeling/triode/data/ecc83-philips-1954.pdf",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "ptc_servicemax_ai_2025",
+   "role": "canonical",
+   "url": "https://www.ptc.com/en/news/2025/ptc-launches-servicemax-ai",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "qi_2008_nff",
+   "role": "canonical",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0026271408000474",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "rates_archer_hifi",
+   "role": "canonical",
+   "url": "https://archerhifi.com/repair-and-service/vintage-stereo-repair/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "rates_british_audio",
+   "role": "canonical",
+   "url": "https://britishaudio.com/pages/electronic-repair-rates",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "rates_cw_guitar_audio",
+   "role": "canonical",
+   "url": "https://www.cwguitaraudio.com/services",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "rates_studio_doctors",
+   "role": "canonical",
+   "url": "https://thestudiodoctors.com/audio-repair-los-angeles.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "razavi_ai_analog_part1_2025",
+   "role": "canonical",
+   "url": "http://www.seas.ucla.edu/brweb/papers/Journals/BR_SSCM_4_2025.pdf",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "razavi_bench_2026",
+   "role": "canonical",
+   "url": "https://github.com/Arcadia-1/razavi-bench",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "riaa_2024_yearend",
+   "role": "canonical",
+   "url": "https://www.riaa.com/reports/2024-year-end-music-industry-revenue-report-riaa/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "riaa_2025_yearend",
+   "role": "canonical",
+   "url": "https://www.riaa.com/reports/2025-year-end-music-industry-revenue-report-riaa/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "rigol_ds1000z_user_guide_2014",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/oscilloscope/rigol-ds1074z/tables/published_horizontal_vertical.yaml",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "rigol_ds1000ze_manual_de_2021",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/ProfessorQuantumUniverse/RigolManual/d9e0b867fe03b93ff6dfbad171260e7f8bf218f3/DS1102ZE_deutsche_Anleitung.txt",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "rnm_ai_pdm_2025",
+   "role": "canonical",
+   "url": "https://www.globenewswire.com/news-release/2025/04/02/3054012/28124/en/AI-Based-Predictive-Maintenance-Market-Report-2025-2030-A-Projected-US-1-69-Billion-Landscape-Businesses-Must-Invest-in-Cloud-and-Edge-Technologies-for-Future-Success.html",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "rohm_1n4148_datasheet",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Diodes/1n4148.pdf",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "schemdraw_docs",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/cdelker/schemdraw/e140437dac9b681e9f7eb1accdd462fef2433864/docs/elements/electrical.rst",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "schemdraw_pypi",
+   "role": "canonical",
+   "url": "https://pypi.org/pypi/schemdraw/json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "schreiber_1979",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/TCS.1979.1084666",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "schreiber_1979",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/31/1979.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "schwarz_1978_bic",
+   "role": "canonical",
+   "url": "https://doi.org/10.1214/aos/1176344136",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "schwarz_1978_bic",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/jkriege2/QuickFit3/d5253eaa37fd55b208c7b709ce6f03fb1f5fe585/doc/bayesian_fit/bayesian_fit.bib",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "servicenow_knowledge_2026",
+   "role": "canonical",
+   "url": "https://newsroom.servicenow.com/press-releases/details/2026/ServiceNow-brings-Autonomous-Workforce-to-every-major-business-function/default.aspx",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "shi_amsbench_2025",
+   "role": "canonical",
+   "url": "https://github.com/Why0912/AMSBench",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "shi_deng_wang_he_2020_dmic_tim",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/TIM.2019.2905307",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "shi_deng_wang_he_2020_dmic_tim",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/2020.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "shi_he_wang_2019_gmm_dt_access",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/ACCESS.2019.2943380",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "shi_he_wang_2019_gmm_dt_access",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/6287639/2019.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "siegen_pedc_lecture08_capacitors",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/IAS-Uni-Siegen/PEDC_course/84a4cded9f01a601e7052748080dad12965fc355/lecture/tex/Lecture08.tex",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "siemens_eigen_agent_2026",
+   "role": "canonical",
+   "url": "https://techjacksolutions.com/ai-brief/siemens-launches-eigen-engineering-agent-at-hannover-messe-i/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "siemens_maintenance_copilot_2025",
+   "role": "canonical",
+   "url": "https://press.siemens.com/global/en/pressrelease/siemens-expands-industrial-copilot-new-generative-ai-powered-maintenance-offering",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "siglent_sds1000xe_extracted_specs",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/JamesCarron/OpenMeasurement/cc1d46e85c6b3300bd01214e01b461e5c1dd6eb6/MarketResearch/coverage/datasheets/oscilloscope/siglent/sds1000x_e/capabilities.yaml",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "skelic_circuit_2025",
+   "role": "canonical",
+   "url": "https://arxiv.org/abs/2502.07980",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "sklearn_calibration_user_guide",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/scikit-learn/scikit-learn/857849927da6e988d7d026b17aef214d43e5f26e/doc/modules/calibration.rst",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "st_bd135_bd139_datasheet",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/Vitorbnc/electronics-datasheets/6c6d127ab8b1a71b1036b54df74e0b97874cec9a/Transistors,%20FETs,%20Thyristors/bd139%20datasheet%20st.pdf",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "stenbakken_souders_stewart_1989",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/19.39034",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "stenbakken_souders_stewart_1989",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/1989.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "stereophile_retales_13",
+   "role": "canonical",
+   "url": "https://www.stereophile.com/content/re-tales-13-getting-your-hi-fi-fixed",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "tomlinson_working_with_ai_2025",
+   "role": "canonical",
+   "url": "https://www.microsoft.com/en-us/research/publication/working-with-ai-measuring-the-occupational-implications-of-generative-ai/",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "tsia_field_services_2026",
+   "role": "canonical",
+   "url": "https://www.tsia.com/blog/state-of-field-services-2026-ai",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "tx_hb2963_2025",
+   "role": "canonical",
+   "url": "https://capitol.texas.gov/tlodocs/89R/billtext/html/HB02963F.htm",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "us_ai_action_plan_2025",
+   "role": "canonical",
+   "url": "https://www.whitehouse.gov/wp-content/uploads/2025/07/Americas-AI-Action-Plan.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "us_ai_lead_act_s2937",
+   "role": "canonical",
+   "url": "https://www.hawley.senate.gov/hawley-durbin-introduce-legislation-empowering-americans-to-bring-liability-claims-against-ai-companies/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "us_hr_5388",
+   "role": "canonical",
+   "url": "https://www.congress.gov/bill/119th-congress/house-bill/5388",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "us_rise_act_s2081",
+   "role": "canonical",
+   "url": "https://www.congress.gov/bill/119th-congress/senate-bill/2081/text",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "usco_1201_ninth_2024",
+   "role": "canonical",
+   "url": "https://www.federalregister.gov/documents/2024/10/28/2024-24563/exemption-to-prohibition-on-circumvention-of-copyright-protection-systems-for-access-control",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "usco_1201_tenth_2027",
+   "role": "canonical",
+   "url": "https://www.federalregister.gov/documents/2026/06/09/2026-11545/exemptions-to-permit-circumvention-of-access-controls-on-copyrighted-works",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "vassios_2025_selftrained_tim",
+   "role": "canonical",
+   "url": "https://doi.org/10.1109/TIM.2025.3542098",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "vassios_2025_selftrained_tim",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/2025.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "vungarala_spicepilot_2024",
+   "role": "canonical",
+   "url": "https://github.com/ACADLab/SPICEPilot",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "wa_eshb1483_2025",
+   "role": "canonical",
+   "url": "https://app.leg.wa.gov/billsummary/?BillNumber=1483&Year=2025&Initiative=false",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "wh_ai_legislative_framework_2026",
+   "role": "canonical",
+   "url": "https://www.whitehouse.gov/releases/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "wikipedia_al_electrolytic_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Aluminum_electrolytic_capacitor.html",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "wikipedia_film_capacitor_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Film_capacitor.html",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "wikipedia_resistor_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Resistor.html",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "wikipedia_ripple_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Ripple_(electrical).html",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "wikipedia_vacuum_tube_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Vacuum_tube.html",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "wikipedia_zener_mirror",
+   "role": "canonical",
+   "url": "https://raw.githubusercontent.com/ajb2969/MLInformationRetrieval/e7682cc2537f31fabfbc0175c61f9b5cdef1fc9a/html_documents/Zener_diode.html",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "zadrozny_elkan_2002",
+   "role": "canonical",
+   "url": "https://doi.org/10.1145/775047.775151",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "zadrozny_elkan_2002",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/scikit-learn/scikit-learn/857849927da6e988d7d026b17aef214d43e5f26e/doc/modules/calibration.rst",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "zhao_mmcircuiteval_2025",
+   "role": "canonical",
+   "url": "https://github.com/cure-lab/MMCircuitEval",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  }
+ ]
+}

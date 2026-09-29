@@ -7,7 +7,7 @@
       "failures_logged": 0,
       "hypotheses": 251,
       "path": "channel_strip__train.parquet",
-      "retried_draws": 2,
+      "retried_draws": 0,
       "rows": 100400
     },
     "channel_strip__val": {
@@ -110,16 +110,16 @@
       "rows": 3200
     }
   },
-  "git_commit": "71580d9973007b603731b6e95895e595b705e78a",
+  "git_commit": "b7ed8b5971e11739c753e343b86e4c485db87fe8",
   "host_cpus": 4,
   "netlist_sha256": {
-    "channel_strip": "636043e20f217f202940381513e8ca574fe3a93fafa7003aaa70f63864c1f836",
+    "channel_strip": "fbdea70f69539e2651f851bb6d6924577c41bc2914c72cd9ff87e6cabbdf420c",
     "devices.lib": "38d579652112fcc8d293a1cf615ad558257fbb853bd665044dc22a6feb506e7c",
-    "driver": "edd45bc992bee367e45c597360e92abcfeebcd0c70ff63ca5c3bf1ac1cca96a5",
-    "opamp": "f1ddb57cfee9a2b7795f3871a660b2c5d11c21a2da00d8d1458c775ea94197da",
-    "psu": "5b3aa412dca8b90484aad71ce2d177f45715b59802d4e784c4de95a773b33023",
-    "tone": "30644de8013e6d8e2b6e9e23648b0d02aceb542c88f37371e1c528263b539fe7",
-    "triode": "7aff76cfe1d8800a38d2be9029d1001b6b8910a36dd53752a15d9776e01ba3be"
+    "driver": "d82bcc9b0bad9f92248818742b00c8315a193ad1b112b1af3fe3e823703cece4",
+    "opamp": "721d741b5772882bcf0e9389273cadae280029e6610b6bbc6f29e9449bd0ae49",
+    "psu": "5041850b4c25d5ff9dcda05841fa131d2c65b7e17161e49bf5a511f606fdf157",
+    "tone": "c5478fc1543542bcf06e888b0266322f0866edebcb0e814309e20378f740709b",
+    "triode": "d98874c3d69036786b9adb941eac66469fc1b9376a8fd53785f66ab68736f224"
   },
   "ngspice_version": "ngspice-42",
   "numpy": "2.4.6",
@@ -128,9 +128,13 @@
   "split_index": {
     "demo": 5,
     "pilot": 9,
+    "pilot_aged": 10,
     "pilot_wide": 7,
     "test": 2,
+    "test_aged": 11,
     "test_wide": 6,
+    "test_wide2": 12,
+    "test_wide3": 13,
     "train": 0,
     "unmodeled_pilot": 8,
     "unmodeled_test": 4,
@@ -138,7 +142,7 @@
     "val": 1
   },
   "tolerance_spec_note": "draws.py was extended with an optional tol_scale (stress splits, ADR-022) after these datasets were generated; tolerance_spec_sha256 is the hash at generation time. At the default scale the random stream and values are unchanged; tests/test_reproducibility.py re-simulates stored rows and checks they match to storage precision (float32).",
-  "tolerance_spec_sha256": "39986620f13acb181b33ed80a1a938e863d252e2ed8c35ee9066256e0b5c861d",
+  "tolerance_spec_sha256": "c8b6b9c025060fa45a65c7376f00e711821c4f5b6be06841238cb03b32babb18",
   "tolerance_spec_sha256_current": "39986620f13acb181b33ed80a1a938e863d252e2ed8c35ee9066256e0b5c861d",
   "workers": 4
 }

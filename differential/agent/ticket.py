@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 from differential import __version__
 from differential.agent.format import fault_label, fmt_reading, pct
-from differential.safety.hazards import DISCHARGE_VERIFY_MAX_V
+from differential.safety.hazards import DISCHARGE_VERIFY_MAX_V, discharge_points
 from differential.sim.faults import parse_fault_id
 from differential.sim.observables import KIND_LABEL
 
@@ -61,9 +61,14 @@ def build_ticket(tb: ToolBox) -> dict[str, Any]:
                 and circuit.component_is_hv(p.ref)]
     safety = []
     if hv_parts:
+        pts = discharge_points(circuit.id)
         safety.append("This unit carries high voltage. Before any hands-in work: switch off, "
                       "unplug, discharge " + ", ".join(hv_parts) + " through a resistor and "
-                      f"confirm below {DISCHARGE_VERIFY_MAX_V:g} V with the meter.")
+                      f"confirm below {DISCHARGE_VERIFY_MAX_V:g} V with the meter at "
+                      + ", ".join(pts) + "; re-check after any power cycle.")
+    removed = [{"part": str(r["key"])[5:], "verdict": "out of tolerance"
+                if float(r["value"]) >= 0.5 else "within tolerance"}  # type: ignore[arg-type]
+               for r in readings if str(r["key"]).startswith("lift:")]
     ticket = {
         "circuit": {"id": circuit.id, "name": circuit.name},
         "created": dt.datetime.now(dt.UTC).strftime("%Y-%m-%d %H:%M UTC"),
@@ -77,6 +82,13 @@ def build_ticket(tb: ToolBox) -> dict[str, Any]:
         "effort_spent": e.cost_spent,
         "actions": actions,
         "safety": safety,
+        "part_removal": {"owner_approved": tb.removal_approved, "note": tb.removal_note,
+                         "parts_removed": removed},
+        "discharge_attestations": list(tb.discharge_log),
+        "trainee": ({"supervisor": tb.supervisor, "steps": len(tb.trainee_log),
+                     "matched": sum(1 for x in tb.trainee_log if x["match"]),
+                     "log": list(tb.trainee_log)} if tb.trainee else None),
+        "signoff_meaning": SIGNOFF_MEANING,
         "ai_disclosure": AI_DISCLOSURE,
         "provenance": {
             "differential_version": __version__,
@@ -93,6 +105,9 @@ def build_ticket(tb: ToolBox) -> dict[str, Any]:
 
 AI_DISCLOSURE = ("Prepared with Differential, an AI diagnostic assistant. It recommends; "
                  "the technician who signs this ticket makes the diagnosis.")
+SIGNOFF_MEANING = ("Signing confirms that the technician took the readings listed and accepts "
+                   "the recommended next steps; it does not certify that the tool's diagnosis is "
+                   "correct. The record belongs to this job, not to a person's performance.")
 
 
 def ticket_markdown(t: dict[str, Any]) -> str:
@@ -115,6 +130,21 @@ def ticket_markdown(t: dict[str, Any]) -> str:
         lines += ["## Recommended action", ""] + [f"- {a}" for a in t["actions"]] + [""]
     if t["safety"]:
         lines += ["## Safety", ""] + [f"- {s}" for s in t["safety"]] + [""]
+    for a in t.get("discharge_attestations", []):
+        lines.append("Discharge attested by the technician at " + a["time"] + ": " + ", ".join(
+            f"{tp} {v:g} V" for tp, v in a["readings"].items()) + ".")
+    pr = t.get("part_removal") or {}
+    if pr.get("parts_removed") or pr.get("owner_approved"):
+        lines += ["", "## Parts removed for testing", "",
+                  "Owner approval: " + ("recorded" if pr.get("owner_approved") else "not recorded"), ""]
+        lines += [f"- {x['part']}: {x['verdict']}" for x in pr.get("parts_removed", [])]
+        lines.append("")
+    tr = t.get("trainee")
+    if tr:
+        lines += ["## Trainee mode", "",
+                  f"Supervisor: {tr['supervisor'] or 'not named'}. The trainee chose the same next "
+                  f"measurement as the tool in {tr['matched']} of {tr['steps']} steps.", ""]
+    lines += [f"_{t['signoff_meaning']}_", ""]
     p = t["provenance"]
     lines += ["---", f"Differential {p['differential_version']} · likelihood {p['likelihood']} · "
               f"policy {p['policy']} · symptom extractor {p['extractor']}. {p['note']}"]

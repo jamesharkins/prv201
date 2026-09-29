@@ -1,14 +1,17 @@
 # M1 - Problem statement: submission sheet
 
-**Submit:** `M1.pdf` (5 body pages + references and appendices).
+**Submit:** `M1.pdf` (5 body pages + references; nothing else follows the
+references). `M1_supplement.pdf` (industry watch and course coverage map) is
+optional background and is not needed to read the statement.
 
 | File | What it is |
 |---|---|
 | `M1.pdf` | The deliverable |
+| `M1_supplement.pdf` | Optional supplement: industry watch, course coverage map |
 | `M1.typ`, `base.typ` | Typst source generated from `templates/M1/M1.typ.j2` and `templates/base.typ` |
 | `M1.parts.json` | Evidence use per signed part (read by `tools/check_balance.py`) |
 | `M1.cites.json` | Cited source keys in reference order (read by `tools/check_citations.py`) |
-| `M1.sanitized.txt` | What an anonymising pre-reader sees (names and emails stripped) |
+| `M1.sanitized.txt` | What an anonymizing pre-reader sees (names and emails stripped) |
 
 ## Signed parts
 
@@ -46,12 +49,12 @@ fails the build otherwise.
    explain every number in it without notes.
 3. Re-run `python tools/check_citations.py --used-only submissions/M1/M1.typ`
    on an unrestricted network. The build sandbox could not reach most publisher
-   sites, and 30 of the 47 cited sources were confirmed from search-result
+   sites, and 28 of the 44 cited sources were confirmed from search-result
    snippets rather than the full page (`results/citation_check_M1.json`,
    `snippet_only`). Open each of those and confirm the sentence that cites it.
 4. If the course publishes an official rubric, put it in `course/` and re-run
    the grading round (see `docs/GRADING_LOG.md`).
 
-The success criteria in Table 3 were locked at git tag `targets-locked`, before
-the full evaluation. Do not edit them afterwards. Report them as met or
-missed.
+The success criteria in Table 3 were locked at git tag `targets-locked`,
+before the full evaluation. Do not edit them afterwards. Report them as met or
+missed; a target is met only when its one-sided 95% bound clears the bar.

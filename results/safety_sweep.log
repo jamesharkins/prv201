@@ -5,7 +5,14 @@
  "hv_lifts_locked_correctly": 81,
  "chassis_steps": 50,
  "chassis_steps_with_notice": 50,
- "steps_checked": 155,
+ "removal_steps": 118,
+ "removal_steps_blocked_before_approval": 118,
+ "steps_checked": 273,
+ "independent_check": {
+  "agrees": true,
+  "disagreements": [],
+  "method": "points above 50 V recomputed from the raw training simulations (meter reading and unloaded node)"
+ },
  "coverage": 1.0,
  "lv_false_alarms": 0,
  "poisoned_notes": 1,

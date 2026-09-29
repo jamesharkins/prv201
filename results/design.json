@@ -2,7 +2,7 @@
  "agent": {
   "grounding_small_count_max": 12,
   "modes": 3,
-  "tools": 12
+  "tools": 13
  },
  "calibration": {
   "false_alarm_budget": 0.05,
@@ -18,6 +18,8 @@
   }
  },
  "cases": {
+  "complaint_add_pct": 2.0,
+  "complaint_omit_pct": 20.0,
   "max_attempts": 200,
   "n": {
    "pilot": {
@@ -27,6 +29,9 @@
     "psu": 60,
     "tone": 60,
     "triode": 60
+   },
+   "pilot_aged": {
+    "channel_strip": 150
    },
    "pilot_wide": {
     "channel_strip": 150
@@ -39,24 +44,33 @@
     "tone": 100,
     "triode": 100
    },
+   "test_aged": {
+    "channel_strip": 300
+   },
    "test_wide": {
     "channel_strip": 300
    },
+   "test_wide2": {
+    "channel_strip": 300
+   },
+   "test_wide3": {
+    "channel_strip": 300
+   },
    "unmodeled_pilot": {
-    "channel_strip": 60,
-    "driver": 20,
-    "opamp": 20,
-    "psu": 20,
-    "tone": 20,
-    "triode": 20
+    "channel_strip": 125,
+    "driver": 25,
+    "opamp": 25,
+    "psu": 25,
+    "tone": 25,
+    "triode": 25
    },
    "unmodeled_test": {
-    "channel_strip": 50,
-    "driver": 10,
-    "opamp": 10,
-    "psu": 10,
-    "tone": 10,
-    "triode": 10
+    "channel_strip": 250,
+    "driver": 50,
+    "opamp": 50,
+    "psu": 50,
+    "tone": 50,
+    "triode": 50
    },
    "unmodeled_val": {
     "channel_strip": 60,
@@ -87,12 +101,14 @@
   "group_threshold": 0.1,
   "half_split_band_sd": 3.0,
   "max_steps": 200,
+  "scripts_confirm_at": 0.5,
   "stop_threshold": 0.9,
   "tie_tolerance": 0.001,
   "unmodeled_prior": 0.05
  },
  "measurement": {
   "dmm_counts": 2,
+  "dmm_input_mohm": 10.0,
   "dmm_pct": 0.5,
   "hum_floor_uv": 100.0,
   "lift_false_positive_pct": 1.0,
@@ -108,9 +124,33 @@
   "scpi_max_v": 24.0
  },
  "simulation": {
+  "aging": {
+   "electrolytic_c": [
+    0.7,
+    0.95
+   ],
+   "electrolytic_esr": [
+    1.2,
+    3.0
+   ],
+   "resistor": [
+    1.0,
+    1.1
+   ],
+   "triode_emission": [
+    0.7,
+    1.0
+   ]
+  },
   "base_seed": 20260928,
   "chunk_draws": 50,
+  "mains_tol_pct": 5.0,
   "stress_tolerance_scale": 1.5,
+  "tolerance_curve": [
+   1.5,
+   2.0,
+   3.0
+  ],
   "train_draws": 400,
   "val_draws": 100
  },

@@ -210,8 +210,18 @@ def click_measure(page: Page) -> bool:
 
 
 def confirm_discharge(page: Page) -> None:
+    """Handle a locked part removal: record the owner's approval, or enter a discharge
+    reading at every high-voltage point the banner lists."""
+    approval = page.locator(".banner .approval-form")
+    if approval.count():
+        approval.locator("input[type=checkbox]").check()
+        approval.locator("button[type=submit]").click()
+        wait_idle(page)
+        return
     form = page.locator(".banner .discharge-form")
-    form.locator("input").fill("0.4")
+    inputs = form.locator("input")
+    for i in range(inputs.count()):
+        inputs.nth(i).fill("0.4")
     form.locator("button[type=submit]").click()
     wait_idle(page)
 
@@ -274,7 +284,7 @@ def session(
         if first_rec is None:
             page.evaluate("() => document.getElementById('side').scrollTo(0, 0)")
             first_rec = page.screenshot()
-        if pending.get("blocked") == "discharge_verification":
+        if pending.get("blocked") in ("discharge_verification", "owner_approval"):
             confirm_discharge(page)
             settle(page)
             frame(page, run, 1600, capture)

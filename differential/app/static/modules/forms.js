@@ -86,38 +86,128 @@ export function liftForm({ part, onSubmit, onCancel }) {
   return { form: wrap, focus: () => row.querySelector("button")?.focus() };
 }
 
-/** Discharge check: the measured voltage across the main filter capacitor. */
-export function dischargeForm({ onSubmit }) {
-  const inputId = nextId("dc-in");
+/** Discharge check: one reading per point that can hold high voltage. Part removal stays
+ *  locked until every point reads below the limit; the readings are the technician's
+ *  attestation and go on the ticket. */
+export function dischargeForm({ points = [], readings = {}, onSubmit }) {
   const errId = nextId("dc-err");
-  const input = h("input", {
-    type: "text", id: inputId, class: "input input-num", inputmode: "decimal",
-    autocomplete: "off", placeholder: "0.8", "aria-describedby": errId,
-  });
   const err = h("p", { class: "form-error", id: errId });
+  const inputs = points.map((p) => {
+    const id = nextId("dc-in");
+    const input = h("input", {
+      type: "text", id, class: "input input-num", inputmode: "decimal", autocomplete: "off",
+      placeholder: "0.3", "aria-describedby": errId, "data-tp": p.tp,
+      value: readings[p.tp] !== undefined ? String(readings[p.tp]) : "",
+    });
+    return { tp: p.tp, input, row: h("div", { class: "rf-row dc-row" },
+      h("label", { for: id, class: "dc-tp" }, h("b", {}, p.tp), h("span", { class: "dc-name" }, ` ${p.name || ""}`)),
+      input, h("span", { class: "unit-fixed" }, "V")) };
+  });
   const submit = h("button", { type: "submit", class: "btn btn-danger btn-sm" },
-    icon("unlock"), h("span", {}, "Confirm discharge"));
+    icon("unlock"), h("span", {}, "Record discharge readings"));
   const form = h("form", { class: "discharge-form", novalidate: true },
-    h("label", { for: inputId, class: "discharge-label" },
-      "Voltage measured across the main filter capacitor"),
-    h("div", { class: "rf-row" }, input, h("span", { class: "unit-fixed" }, "V"), submit),
-    err);
+    h("p", { class: "discharge-label" },
+      "Measured voltage at each point that can hold high voltage (each must be below 2 V):"),
+    ...inputs.map((x) => x.row), h("div", { class: "rf-row" }, submit), err);
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const v = parseNumber(input.value);
-    if (!Number.isFinite(v)) {
-      err.textContent = "Enter the voltage you measured, for example 0.8.";
-      input.setAttribute("aria-invalid", "true");
+    const out = {};
+    for (const x of inputs) {
+      const v = parseNumber(x.input.value);
+      if (!Number.isFinite(v)) {
+        err.textContent = `Enter the voltage you measured at ${x.tp}, for example 0.3.`;
+        x.input.setAttribute("aria-invalid", "true");
+        x.input.focus();
+        return;
+      }
+      x.input.removeAttribute("aria-invalid");
+      out[x.tp] = v;
+    }
+    err.textContent = "";
+    const res = await onSubmit(out, submit);
+    if (res) {
+      err.textContent = res;
+      inputs[0]?.input.focus();
+    }
+  });
+  return { form, input: inputs[0] ? inputs[0].input : null };
+}
+
+/** Owner's approval before a part is removed from the board (a destructive step). */
+export function approvalForm({ part, onSubmit }) {
+  const id = nextId("appr");
+  const box = h("input", { type: "checkbox", id, class: "approval-box" });
+  const err = h("p", { class: "form-error" });
+  const submit = h("button", { type: "submit", class: "btn btn-secondary btn-sm" },
+    icon("pencil"), h("span", {}, "Record approval"));
+  const form = h("form", { class: "approval-form", novalidate: true },
+    h("div", { class: "rf-row" }, box,
+      h("label", { for: id }, `The owner agrees that parts, starting with ${part || "this part"}, may be removed from this unit for testing.`)),
+    h("div", { class: "rf-row" }, submit), err);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!box.checked) {
+      err.textContent = "Tick the box once the owner has agreed.";
+      box.focus();
+      return;
+    }
+    err.textContent = "";
+    const res = await onSubmit("owner agreed that parts may be removed for testing", submit);
+    if (res) err.textContent = res;
+  });
+  return { form, input: box };
+}
+
+
+/** Trainee mode: the supervising technician's name (high-voltage units). */
+export function supervisorForm({ onSubmit }) {
+  const id = nextId("sup");
+  const input = h("input", { type: "text", id, class: "input", autocomplete: "name",
+    placeholder: "Supervising technician" });
+  const err = h("p", { class: "form-error" });
+  const submit = h("button", { type: "submit", class: "btn btn-danger btn-sm" },
+    icon("unlock"), h("span", {}, "Record supervisor"));
+  const form = h("form", { class: "supervisor-form", novalidate: true },
+    h("label", { for: id, class: "discharge-label" },
+      "A qualified technician must supervise in person. Their name goes on the ticket:"),
+    h("div", { class: "rf-row" }, input, submit), err);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!input.value.trim()) {
+      err.textContent = "Enter the supervising technician's name.";
       input.focus();
       return;
     }
-    input.removeAttribute("aria-invalid");
     err.textContent = "";
-    const res = await onSubmit(v, submit);
-    if (res) {
-      err.textContent = res;
-      input.focus();
-    }
+    const res = await onSubmit(input.value.trim(), submit);
+    if (res) err.textContent = res;
   });
   return { form, input };
+}
+
+/** Trainee mode: the trainee commits their own next measurement before seeing the tool's. */
+export function guessForm({ options = [], onSubmit }) {
+  const id = nextId("guess");
+  const select = h("select", { id, class: "input guess-select" },
+    h("option", { value: "" }, "Choose a measurement…"),
+    ...options.map((o) => h("option", { value: o.key },
+      `${o.test_point || o.part || o.key}: ${o.what}`)));
+  const err = h("p", { class: "form-error" });
+  const submit = h("button", { type: "submit", class: "btn btn-primary btn-sm" },
+    icon("pencil"), h("span", {}, "Commit my choice"));
+  const form = h("form", { class: "guess-form", novalidate: true },
+    h("label", { for: id, class: "discharge-label" }, "Your call first: which measurement would you take next?"),
+    h("div", { class: "rf-row" }, select, submit), err);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!select.value) {
+      err.textContent = "Choose the measurement you would take next.";
+      select.focus();
+      return;
+    }
+    err.textContent = "";
+    const res = await onSubmit(select.value, submit);
+    if (res) err.textContent = res;
+  });
+  return { form, input: select };
 }

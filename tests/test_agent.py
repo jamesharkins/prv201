@@ -37,20 +37,90 @@ def test_offline_session_reaches_a_grounded_ticket() -> None:
     assert "Repair ticket" in ticket["markdown"]
 
 
-def test_lift_steps_are_locked_until_discharge_is_confirmed() -> None:
+def test_lift_steps_are_locked_until_approval_and_discharge_at_every_hv_point() -> None:
     from differential.agent.tools import ToolBox
+    from differential.safety.hazards import discharge_points
 
     tb = ToolBox("psu")
     lift = next(o for o in tb.bundle.observables.values() if o.is_lift)
-    assert tb.step_payload(lift)["blocked"] == "discharge_verification"
-    assert tb.t_confirm_discharge(12.0)["verified"] is False
-    assert tb.t_confirm_discharge(0.4)["verified"] is True
+    # a destructive step needs the owner's approval first
+    assert tb.step_payload(lift)["blocked"] == "owner_approval"
+    assert "error" in tb.call("record_measurement", {"key": lift.key, "value": 1.0})
+    tb.call("approve_part_removal", {"note": "owner agreed by phone"})
+    blocked = tb.step_payload(lift)
+    pts = discharge_points("psu")
+    assert blocked["blocked"] == "discharge_verification" and len(pts) >= 2
+    assert [p["tp"] for p in blocked["discharge_points"]] == pts
+    # one reading covers only the main filter capacitor; the rest are asked for
+    one = tb.t_confirm_discharge(volts=0.4)
+    assert one["verified"] is False and one["missing"] == pts[1:]
+    # a charged later capacitor (e.g. behind an open dropping resistor) keeps it locked
+    charged = tb.t_confirm_discharge(readings={p: 0.2 for p in pts[1:-1]} | {pts[-1]: 38.0})
+    assert charged["verified"] is False and "Still charged" in charged["message"]
+    ok = tb.t_confirm_discharge(readings={pts[-1]: 0.3})
+    assert ok["verified"] is True and set(ok["readings"]) == set(pts)
     assert not tb.step_payload(lift).get("blocked")
     res = tb.call("record_measurement", {"key": lift.key, "value": 1.0})
     assert "error" not in res
+    # a powered measurement re-energises the unit: every point must be re-checked
     dc = next(o for o in tb.bundle.observables.values() if o.kind == "dc")
     tb.call("record_measurement", {"key": dc.key, "value": 15.0})
-    assert tb.step_payload(lift)["blocked"] == "discharge_verification"
+    again = tb.step_payload(next(o for o in tb.bundle.observables.values()
+                                 if o.is_lift and o.key != lift.key))
+    assert again["blocked"] == "discharge_verification" and again["discharge_readings"] == {}
+    assert tb.discharge_log and set(tb.discharge_log[0]["readings"]) == set(pts)
+
+
+def test_all_points_attestation_and_ticket_record() -> None:
+    from differential.agent.agent import DifferentialAgent
+    from differential.safety.hazards import discharge_points
+
+    agent = DifferentialAgent("psu", mode="offline")
+    agent.tb.call("approve_part_removal", {})
+    agent.pending_key = "discharge"
+    out = agent.user_message("Discharged, all points read 0.3 V.")
+    assert "Discharge recorded" in out.text
+    t = agent.ticket()
+    assert t["part_removal"]["owner_approved"] is True
+    assert t["discharge_attestations"][0]["all_points_from_one_reading"] is True
+    assert set(t["discharge_attestations"][0]["readings"]) == set(discharge_points("psu"))
+    assert "does not certify" in t["markdown"] and not t["grounding"]["ungrounded"]
+
+
+def test_ticket_is_not_grounded_against_itself() -> None:
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("driver", mode="offline")
+    t = agent.ticket()
+    assert not t["grounding"]["ungrounded"]
+    # an invented number in a ticket must be caught: the ticket tool's own output is not evidence
+    from differential.agent.grounding import check_grounding
+
+    evidence = [c.result for c in agent.tb.calls if c.name != "generate_repair_ticket"]
+    rep = check_grounding(t["markdown"] + "\nMeasured 7.77 V at TP20.", [*evidence, t["created"]])
+    assert any("7.77" in m.text for m in rep.ungrounded)
+
+
+def test_unvalidated_model_makes_every_point_hands_off(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    from dataclasses import replace
+
+    import differential.circuits.library as lib
+    from differential.safety import hazards
+
+    real = lib.get_circuit
+
+    def fake(cid: str):  # type: ignore[no-untyped-def]
+        c = real(cid)
+        return replace(c, model_validated=False) if cid == "channel_strip" else c
+
+    monkeypatch.setattr(lib, "get_circuit", fake)
+    cs = real("channel_strip")
+    assert all(hazards.hazard("channel_strip", tp.id).high_voltage for tp in cs.test_points)
+    assert hazards.hazard("channel_strip", "TP13").level == "unvalidated_model"
+    assert hazards.discharge_points("channel_strip") == [tp.id for tp in cs.test_points]
+    # a low-voltage block stays as mapped even when unvalidated
+    monkeypatch.setattr(lib, "get_circuit", lambda cid: replace(real(cid), model_validated=False))
+    assert not hazards.hazard("driver", "TP18").high_voltage
 
 
 def test_high_voltage_steps_carry_instructions() -> None:
@@ -166,3 +236,67 @@ def test_photo_proposal_is_checked_against_the_step() -> None:
     assert any(i.startswith("mode_mismatch") for i in wrong_mode["plausibility"]["issues"])
     no_step = tb.call("read_meter_photo", {"photo_id": photo("8.59", "V", "DC")})
     assert "plausibility" not in no_step
+
+
+def test_trainee_mode_withholds_the_step_and_needs_a_supervisor_on_hv_units() -> None:
+    from differential.agent.agent import DifferentialAgent
+
+    # a low-voltage block: no supervisor needed, the recommendation waits for the trainee's choice
+    agent = DifferentialAgent("driver", mode="offline", trainee=True)
+    out = agent.user_message("Output is quiet and a bit distorted.")
+    assert agent.pending_key == "guess" and agent.withheld is not None
+    assert "Trainee mode" in out.text and agent.withheld["key"] not in out.text
+    blocked = agent.measure(agent.withheld["key"])
+    assert "own next step first" in blocked.text and not agent.tb.engine.readings
+    rec_key = agent.withheld["key"]
+    other = next(o["key"] for o in agent.tb.trainee_options() if o["key"] != rec_key)
+    reply = agent.trainee_guess(other)
+    assert agent.pending_key == rec_key and rec_key in reply.text
+    assert agent.tb.trainee_log[-1] == {"step": 1, "guess": other, "recommended": rec_key, "match": False}
+    t = agent.ticket()
+    assert t["trainee"]["steps"] == 1 and t["trainee"]["matched"] == 0
+
+    # a high-voltage unit: every step needs a named supervisor first
+    hv = DifferentialAgent("triode", mode="offline", trainee=True)
+    hv.user_message("It hums and the level is low.")
+    assert hv.pending_key == "supervisor"
+    hv.user_message("Supervisor is Pat Lee")
+    assert hv.tb.supervisor == "Pat Lee" and hv.pending_key == "guess"
+
+
+def test_trainee_guess_parsing() -> None:
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("driver", mode="offline", trainee=True)
+    agent.user_message("No output at all.")
+    assert agent._parse_guess("I'd check dc:TP19 first") == "dc:TP19"
+    key = agent._parse_guess("probably TP21")
+    assert key is not None and key.endswith(":TP21")
+
+
+def test_non_finite_readings_never_unlock_or_enter_the_engine() -> None:
+    from differential.agent.tools import ToolBox
+    from differential.safety.hazards import discharge_points
+
+    tb = ToolBox("psu")
+    tb.call("approve_part_removal", {})
+    pts = discharge_points("psu")
+    # NaN compares as "not above the limit"; it must be refused, not taken as discharged
+    for bad in (float("nan"), float("inf"), float("-inf")):
+        assert "error" in tb.call("confirm_discharge", {"readings": {p: bad for p in pts}})
+        assert "error" in tb.call("confirm_discharge", {"volts": bad, "all_points": True})
+    assert tb.discharge_verified is False and tb.discharge_readings == {}
+    dc = next(o for o in tb.bundle.observables.values() if o.kind == "dc")
+    assert "error" in tb.call("record_measurement", {"key": dc.key, "value": float("nan")})
+    assert dc.key not in tb.engine.taken()
+
+
+def test_ticket_text_fields_are_cleaned() -> None:
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("psu", mode="offline", instrument=_bench("psu", "R102:open"))
+    agent.tb.call("approve_part_removal", {"note": "ok\n## Diagnosis: C101 [replace](http://x)"})
+    agent.sign_off("# Verified by manufacturer\nJ. O'Brien")
+    md = agent.ticket()["markdown"]
+    assert "## Diagnosis: C101" not in md and "](http" not in md
+    assert agent.signoff["by"] == "Verified by manufacturer J. O'Brien"

@@ -41,25 +41,33 @@ from eval.stats import (
     auroc_ci,
     bootstrap_mean,
     bootstrap_ratio_of_means,
+    brier_shown,
     ece,
+    ece_equal_mass,
     exact_binomial,
+    from_boots,
+    log_loss,
     mcnemar,
     paired_diff,
     roc_curve,
+    shown_calibration,
 )
 
 CIRCUITS = [COMPOSITE_ID, *BLOCK_IDS]
 MAIN = ["random", "fixed_order", "half_split", "engine_gen", "engine_disc", "hybrid"]
 SENSITIVITY = [sensitivity_name(b, w, f) for b in SENSITIVITY_BASES for w in EFFORT_WEIGHTS
                for f in WEIGHT_FACTORS]
-ABLATIONS = ["hybrid_oracle", "hybrid_paraphrase", "recap_prior", "engine_eig_nocost",
+ABLATIONS = ["hybrid_oracle", "hybrid_clean", "hybrid_devbank", "hybrid_bank_b", "recap_prior", "engine_eig_nocost",
              "engine_n50", "engine_n100", "engine_n200", *SENSITIVITY]
 SMOKE_SYSTEMS = ["random", "fixed_order", "half_split", "engine_gen", "hybrid"]
 SMOKE_LIMIT = 8
 # The smoke test checks the pipeline, not the system: it runs on the pilot splits so
 # that no check before the targets-locked tag ever touches a test unit.
-SPLITS = {"test": "test", "unmodeled_test": "unmodeled_test", "test_wide": "test_wide"}
-SMOKE_SPLITS = {"test": "pilot", "unmodeled_test": "unmodeled_pilot", "test_wide": "pilot_wide"}
+SPLITS = {"test": "test", "unmodeled_test": "unmodeled_test", "test_aged": "test_aged",
+          "test_wide": "test_wide", "test_wide2": "test_wide2", "test_wide3": "test_wide3"}
+SMOKE_SPLITS = {"test": "pilot", "unmodeled_test": "unmodeled_pilot", "test_aged": "pilot_aged",
+                "test_wide": "pilot_wide", "test_wide2": "pilot_wide", "test_wide3": "pilot_wide"}
+CAP_SHARE = 0.6
 CAP_KINDS = ("film_cap", "electrolytic")
 
 
@@ -81,8 +89,11 @@ def run_everything(smoke: bool) -> dict[str, dict[str, pd.DataFrame]]:
                                                limit=limit) for cid in CIRCUITS}
     out["unmodeled_engine"] = {cid: run_system(SYSTEMS["engine_gen"], cid, sp["unmodeled_test"],
                                                limit=limit) for cid in CIRCUITS}
-    out["wide_hybrid"] = {COMPOSITE_ID: run_system(SYSTEMS["hybrid"], COMPOSITE_ID,
-                                                   sp["test_wide"], limit=limit)}
+    out["aged_hybrid"] = {COMPOSITE_ID: run_system(SYSTEMS["hybrid"], COMPOSITE_ID,
+                                                   sp["test_aged"], limit=limit)}
+    for key in ("test_wide", "test_wide2", "test_wide3"):
+        out[f"{key}_hybrid"] = {COMPOSITE_ID: run_system(SYSTEMS["hybrid"], COMPOSITE_ID,
+                                                         sp[key], limit=limit)}
     return out
 
 
@@ -114,8 +125,7 @@ def step_ece_ci(df: pd.DataFrame, n_boot: int = 500) -> tuple[Estimate, list[dic
         idx = rng.integers(0, len(per_case), len(per_case))
         vals.append(ece(np.concatenate([per_case[i][0] for i in idx]),
                         np.concatenate([per_case[i][1] for i in idx]))[0])
-    lo, hi = np.percentile(vals, [2.5, 97.5])
-    return Estimate(value, float(lo), float(hi)), bins
+    return from_boots(value, vals), bins
 
 
 def boot_diff_indep(a: np.ndarray, b: np.ndarray, n_boot: int = 2000) -> Estimate:
@@ -123,138 +133,258 @@ def boot_diff_indep(a: np.ndarray, b: np.ndarray, n_boot: int = 2000) -> Estimat
     a, b = np.asarray(a, float), np.asarray(b, float)
     d = [a[rng.integers(0, len(a), len(a))].mean() - b[rng.integers(0, len(b), len(b))].mean()
          for _ in range(n_boot)]
-    lo, hi = np.percentile(d, [2.5, 97.5])
-    return Estimate(float(a.mean() - b.mean()), float(lo), float(hi))
+    return from_boots(float(a.mean() - b.mean()), d)
+
+
+def shown_ece_ci(df: pd.DataFrame, n_boot: int = 500) -> tuple[Estimate, list[dict[str, float]]]:
+    """T12: equal-mass ECE of the probabilities shown for the first three groups at the stop;
+    the bootstrap resamples whole diagnoses (their three probabilities are correlated)."""
+    r3 = [json.loads(x) for x in df["ranked3"]]
+    truth = list(df["truth_group"])
+    conf, corr = shown_calibration(r3, truth)
+    value, bins = ece_equal_mass(conf, corr)
+    rng = np.random.default_rng(12)
+    vals = []
+    for _ in range(n_boot):
+        idx = rng.integers(0, len(r3), len(r3))
+        c, k = shown_calibration([r3[i] for i in idx], [truth[i] for i in idx])
+        vals.append(ece_equal_mass(c, k)[0])
+    return from_boots(value, vals), bins
+
+
+def cap_mix_weights(df: pd.DataFrame, share: float = CAP_SHARE) -> np.ndarray:
+    """Unit weights that turn each circuit's units into a mix with ``share`` capacitor
+    faults, circuits keeping their test-set weight (T14, reweighted accuracy)."""
+    w = np.zeros(len(df))
+    for c in df["circuit"].unique():
+        sel = (df["circuit"] == c).to_numpy()
+        is_cap = df.loc[sel, "truth_kind"].isin(CAP_KINDS).to_numpy()
+        n_cap, n_oth, total = int(is_cap.sum()), int((~is_cap).sum()), float(sel.sum())
+        if n_cap == 0 or n_oth == 0:
+            w[sel] = 1.0
+            continue
+        w[sel] = np.where(is_cap, share * total / n_cap, (1 - share) * total / n_oth)
+    return w / w.sum()
+
+
+def boot_weighted_diff(a: np.ndarray, b: np.ndarray, w: np.ndarray, n_boot: int = 2000) -> Estimate:
+    """Weighted mean of paired differences a - b, bootstrap over units."""
+    a, b, w = np.asarray(a, float), np.asarray(b, float), np.asarray(w, float)
+    rng = np.random.default_rng(14)
+    vals = []
+    for _ in range(n_boot):
+        idx = rng.integers(0, len(a), len(a))
+        vals.append(float(np.sum(w[idx] * (a[idx] - b[idx])) / np.sum(w[idx])))
+    return from_boots(float(np.sum(w * (a - b)) / np.sum(w)), vals)
 
 
 # ----------------------------------------------------------------- targets
-def judge(t: dict[str, Any], value: float | None) -> str:
-    if value is None or not np.isfinite(value):
+def judge(t: dict[str, Any], e: Estimate | float | None, bar: float | None = None) -> str:
+    """Met when the one-sided 95% bound clears the bar (ADR-033): the lower bound for an
+    'at least' target, the upper bound for an 'at most' one. A census or release gate
+    ('==') must equal the bar exactly."""
+    if e is None:
         return "pending"
-    comp, bar = t["comparator"], float(t["value"])
-    ok = {"≥": value >= bar, ">=": value >= bar, "<=": value <= bar, "==": abs(value - bar) < 1e-12,
-          "margin>=": value >= bar}.get(comp)
-    if ok is None:
-        raise ValueError(comp)
-    return "met" if ok else "missed"
+    comp = t["comparator"]
+    b = float(t["value"] if bar is None else bar)
+    if comp == "==":
+        v = e.value if isinstance(e, Estimate) else float(e)
+        return "met" if np.isfinite(v) and abs(v - b) < 1e-12 else "missed"
+    if not isinstance(e, Estimate) or not np.isfinite(e.value):
+        return "pending"
+    if comp in ("≥", ">=", "margin>="):
+        return "met" if e.lo1 >= b else "missed"
+    if comp == "<=":
+        return "met" if e.hi1 <= b else "missed"
+    raise ValueError(comp)
 
 
-def two_part(t: dict[str, Any], offline: float | None, claude: float | None) -> str:
-    """Targets with an offline bar and a Claude bar: met only when both parts are met."""
-    parts = [(offline, float(t["value_offline"])), (claude, float(t["value"]))]
-    if any(v is not None and v < bar for v, bar in parts):
+def both(*states: str) -> str:
+    """A target with several parts is met only when every part is."""
+    if "missed" in states:
         return "missed"
-    if all(v is not None for v, _ in parts):
+    return "met" if all(s == "met" for s in states) else "pending"
+
+
+def two_part(t: dict[str, Any], offline: Estimate | None, claude: Estimate | None) -> str:
+    """Targets with an offline bar and a Claude bar: met only when both parts are met,
+    each judged on its one-sided bound."""
+    s_off = judge(t, offline, float(t["value_offline"])) if offline is not None else "pending"
+    s_cl = judge(t, claude, float(t["value"])) if claude is not None else "pending"
+    if "missed" in (s_off, s_cl):
+        return "missed"
+    if s_off == "met" and s_cl == "met":
         return "met"
-    return "pending" if offline is None else "offline part met; Claude part pending"
+    return "pending" if s_off == "pending" else "offline part met; Claude part pending"
 
 
 def effort_target(eng: pd.DataFrame, base: pd.DataFrame) -> dict[str, Any]:
     a, b = aligned(eng, base)
     ratio = bootstrap_ratio_of_means(a["cost"].to_numpy(), b["cost"].to_numpy())
     acc_gap = float(a["correct"].mean() - b["correct"].mean())
-    return {"ratio": est(ratio), "top1_system": float(a["correct"].mean()),
+    return {"ratio": ratio, "top1_system": float(a["correct"].mean()),
             "top1_baseline": float(b["correct"].mean()), "top1_gap": acc_gap,
             "accuracy_condition": acc_gap >= -0.02, "n": len(a)}
 
 
 def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, Any]) -> dict[str, Any]:
+    """Every target on the locked sets. The test mix (500 channel strip, 100 per block) is
+    the reporting weight, so pooling the units weights them as the targets define."""
     M = metrics_io.load()
     T = {t["id"]: t for t in targets["targets"]}
     out: dict[str, Any] = {}
     hyb = pooled(R["hybrid"])
+    eng = pooled(R["engine_gen"])
     cs = R["hybrid"][COMPOSITE_ID]
 
-    def put(tid: str, value: float | None, detail: dict[str, Any], status: str | None = None) -> None:
-        st = status or judge(T[tid], value)
-        out[tid] = {"id": tid, "bar": T[tid]["text"], "value": value, "status": st, **detail}
+    def put(tid: str, e: Estimate | None, detail: dict[str, Any], status: str | None = None) -> None:
+        st = status or judge(T[tid], e)
+        out[tid] = {"id": tid, "bar": T[tid]["text"], "role": T[tid].get("role"),
+                    "value": None if e is None else e.value,
+                    "ci": None if e is None else est(e), "status": st, **detail}
 
-    e1 = bootstrap_mean(hyb["correct"].to_numpy(float))
-    put("T1", e1.value, {"ci": est(e1), "n": len(hyb)})
-    e2 = bootstrap_mean(cs["correct"].to_numpy(float))
-    put("T2", e2.value, {"ci": est(e2), "n": len(cs)})
-    e3 = bootstrap_mean(hyb["top3"].to_numpy(float))
-    put("T3", e3.value, {"ci": est(e3), "n": len(hyb)})
-    margins = {}
-    for base in ("fixed_order", "random"):
-        a, b = aligned(cs, R[base][COMPOSITE_ID])
+    put("T1", bootstrap_mean(hyb["correct"].to_numpy(float)), {"n": len(hyb)})
+    put("T2", exact_binomial(int(cs["correct"].sum()), len(cs)), {"n": len(cs)})
+    put("T3", bootstrap_mean(hyb["top3"].to_numpy(float)), {"n": len(hyb)})
+    margins, states = {}, []
+    eng_cs = R["engine_gen"][COMPOSITE_ID]
+    for base in ("fixed_order", "random", "half_split"):
+        a, b = aligned(eng_cs, R[base][COMPOSITE_ID])
         d = paired_diff(a["correct"].to_numpy(float), b["correct"].to_numpy(float))
         margins[base] = {"margin": est(d), "mcnemar": mcnemar(a["correct"].to_numpy(),
                                                                b["correct"].to_numpy())}
-    worst = min(v["margin"]["value"] for v in margins.values())
-    put("T4", worst, {"margins": margins})
+        states.append(judge(T["T4"], d))
+        full = paired_diff(*(x["correct"].to_numpy(float) for x in aligned(cs, R[base][COMPOSITE_ID])))
+        margins[base]["full_system_margin"] = est(full)
+    worst = min(margins, key=lambda k: margins[k]["margin"]["value"])
+    put("T4", paired_diff(*(x["correct"].to_numpy(float)
+                            for x in aligned(eng_cs, R[worst][COMPOSITE_ID]))),
+        {"margins": margins, "smallest_vs": worst}, both(*states))
     llm = M.get("llm_only")
     if isinstance(llm, dict) and "margin" in llm:
-        put("T5", llm["margin"]["value"], {"detail": llm})
+        m5 = llm["margin"]
+        put("T5", Estimate(m5["value"], m5["lo"], m5["hi"], m5.get("lo1", m5["lo"]),
+                           m5.get("hi1", m5["hi"])), {"detail": llm})
     else:
         put("T5", None, {"note": "requires DIFFERENTIAL_API_KEY; protocol in eval/llm_baseline.py"})
-    wide = R["wide_hybrid"][COMPOSITE_ID]
-    drop = boot_diff_indep(cs["correct"].to_numpy(float), wide["correct"].to_numpy(float))
-    put("T6", drop.value, {"ci": est(drop), "wide_top1": float(wide["correct"].mean()),
-                           "n_wide": len(wide)})
-    put("T7", None, {"note": "requires the hardware fault board (hardware/fault_board)"})
-    eng = pooled(R["engine_gen"])
+    aged = R["aged_hybrid"][COMPOSITE_ID]
+    drop = boot_diff_indep(cs["correct"].to_numpy(float), aged["correct"].to_numpy(float))
+    curve = {k: float(R[f"{k}_hybrid"][COMPOSITE_ID]["correct"].mean())
+             for k in ("test_wide", "test_wide2", "test_wide3")}
+    put("T6", drop, {"aged_top1": float(aged["correct"].mean()), "n_aged": len(aged),
+                     "aged_flagged": float((aged["top_group"] == -1).mean()),
+                     "aged_wrong_name": float(((aged["top_group"] != -1)
+                                               & ~aged["correct"].astype(bool)).mean()),
+                     "tolerance_curve_top1": {"1x": float(cs["correct"].mean()), "1.5x": curve["test_wide"],
+                                              "2x": curve["test_wide2"], "3x": curve["test_wide3"]}})
+    hw = M.get("fault_board", {})
+    if hw.get("status") == "measured":
+        k7, n7 = int(hw["engine_top1_correct"]), int(hw["n_faults"])
+        put("T7", exact_binomial(k7, n7), {"detail": hw})
+    else:
+        put("T7", None, {"note": "requires the hardware fault boards (hardware/fault_board)"})
     for tid, base in (("T8", "fixed_order"), ("T9", "half_split"), ("T10", "random")):
         d = effort_target(eng, pooled(R[base]))
-        st = judge(T[tid], d["ratio"]["value"])
+        st = judge(T[tid], d["ratio"])
         if st == "met" and not d["accuracy_condition"]:
             st = "missed"
-        put(tid, d["ratio"]["value"], d, st)
+        put(tid, d["ratio"], {k: v for k, v in d.items() if k != "ratio"}, st)
     d = effort_target(hyb, eng)
-    st = judge(T["T11"], d["ratio"]["value"])
-    put("T11", d["ratio"]["value"], d, "missed" if st == "met" and not d["accuracy_condition"] else st)
-    e12, bins = step_ece_ci(hyb)
-    put("T12", e12.value, {"ci": est(e12), "bins": bins,
-                           "stop_ece": ece(hyb["confidence"].to_numpy(),
-                                           hyb["correct"].to_numpy(float))[0]})
+    st = judge(T["T11"], d["ratio"])
+    put("T11", d["ratio"], {k: v for k, v in d.items() if k != "ratio"},
+        "missed" if st == "met" and not d["accuracy_condition"] else st)
+    e12, bins = shown_ece_ci(hyb)
+    step12, step_bins = step_ece_ci(hyb)
+    r3 = [json.loads(x) for x in hyb["ranked3"]]
+    put("T12", e12, {"bins": bins, "brier": brier_shown(r3, list(hyb["truth_group"])),
+                     "log_loss": log_loss(hyb["p_truth"].to_numpy()),
+                     "every_step_ece_equal_width": est(step12), "every_step_bins": step_bins,
+                     "aged_shown_ece": shown_ece_ci(aged)[0].value})
     unm = pooled(R["unmodeled_hybrid"])
-    au = auroc_ci(unm["unmodeled_prob"].to_numpy(), hyb["unmodeled_prob"].to_numpy())
     oc = pd.Series([unmodeled_outcome(load_bundle(c, with_disc=False), t, int(g))
                     for c, t, g in zip(unm["circuit"], unm["truth"], unm["top_group"], strict=True)])
-    flagged = bootstrap_mean((oc == "flagged").to_numpy(float))
     misleading = bootstrap_mean((oc == "misleading").to_numpy(float))
-    false_flag = float((hyb["top_group"] == -1).mean())
-    st = judge(T["T13"], au.value)
-    if st == "met" and (flagged.value < float(T["T13"]["value_flag_rate"])
-                        or misleading.value > float(T["T13"]["value_misleading"])):
-        st = "missed"
-    put("T13", au.value, {"ci": est(au), "flag_rate": est(flagged),
-                          "faulty_part_rate": float((oc == "faulty_part").mean()),
-                          "misleading_rate": est(misleading),
-                          "single_false_flag_rate": false_flag, "n_unmodeled": len(unm)}, st)
-    a, b = aligned(pooled(R["recap_prior"]), eng)
-    d14 = paired_diff(a["correct"].to_numpy(float), b["correct"].to_numpy(float))
-    put("T14", d14.value, {"ci": est(d14)})
+    by_kind = {k: float((oc[unm["truth"].str.contains(pat, regex=True).to_numpy()] == "misleading").mean())
+               for k, pat in (("double_fault", r"\+"), ("modification", r"value_x|BRIDGE"))}
+    put("T13", misleading, {"n_unmodeled": len(unm), "misleading_by_kind": by_kind,
+                            "faulty_part_rate": float((oc == "faulty_part").mean())})
+    au = auroc_ci(unm["unmodeled_prob"].to_numpy(), hyb["unmodeled_prob"].to_numpy())
+    flagged = bootstrap_mean((oc == "flagged").to_numpy(float))
+    put("T22", au, {"flag_rate": est(flagged), "single_false_flag_rate":
+                    float((hyb["top_group"] == -1).mean()), "n_unmodeled": len(unm)},
+        both(judge(T["T22"], au), judge(T["T22"], flagged, float(T["T22"]["value_flag_rate"]))))
+    named = bootstrap_mean((hyb["top_group"] != -1).to_numpy(float))
+    sel = hyb[hyb["top_group"] != -1]
+    acc_named = bootstrap_mean(sel["correct"].to_numpy(float))
+    put("T23", named, {"accuracy_when_naming": est(acc_named), "n_named": len(sel)},
+        both(judge(T["T23"], named), judge(T["T23"], acc_named, float(T["T23"]["value_accuracy"]))))
+    rec = pooled(R["recap_prior"])
+    a, b = aligned(rec, eng)
+    uni = np.full(len(a), 1.0 / len(a))
+    capw = cap_mix_weights(a)
+    d_cat = boot_weighted_diff(a["correct"].to_numpy(float), b["correct"].to_numpy(float), uni)
+    d_cap = boot_weighted_diff(b["correct"].to_numpy(float), a["correct"].to_numpy(float), capw)
+    put("T14", d_cat if d_cat.value <= d_cap.value else d_cap,
+        {"capacitor_heavy_prior_catalog_mix": est(d_cat), "uniform_prior_capacitor_mix": est(d_cap),
+         "top1_capacitor_mix_full_system": float(np.sum(cap_mix_weights(hyb)
+                                                        * hyb["correct"].to_numpy(float)))},
+        both(judge(T["T14"], d_cat), judge(T["T14"], d_cap)))
     sweep = M.get("safety_sweep", {})
-    n15 = int(sweep.get("hv_steps", 0)) + int(sweep.get("hv_lifts", 0)) + int(sweep.get("chassis_steps", 0))
-    k15 = round(float(sweep.get("coverage") or 0.0) * n15)
-    put("T15", sweep.get("coverage"), {"steps_checked": sweep.get("steps_checked"),
-                                       "required_checks": n15,
-                                       "ci": est(exact_binomial(k15, n15)) if n15 else None,
-                                       "lv_false_alarms": sweep.get("lv_false_alarms")})
+    n15 = int(sweep.get("steps_checked", 0))
+    cov = sweep.get("coverage")
+    indep = sweep.get("independent_check", {})
+    st15 = "pending" if cov is None else ("met" if cov == 1.0 and indep.get("agrees", False) else "missed")
+    put("T15", None if cov is None else Estimate(float(cov), float(cov), float(cov)),
+        {"steps_checked": sweep.get("steps_checked"), "required_checks": n15,
+         "independent_check": indep, "lv_false_alarms": sweep.get("lv_false_alarms")}, st15)
     rt = M.get("redteam_offline", {})
-    if rt.get("status") == "measured":
-        put("T16", float(rt["unsafe"]), {"detail": rt, "ci_unsafe_rate": est(
-            exact_binomial(int(rt["unsafe"]), int(rt.get("n_attacks", 0))))})
+    if rt.get("status") == "measured" and int(rt.get("n_attacks", 0)) >= int(
+            targets["evaluation_sets"]["red_team_min"]):
+        k16, n16 = int(rt["unsafe"]), int(rt["n_attacks"])
+        put("T16", Estimate(float(k16), float(k16), float(k16)),
+            {"detail": rt, "unsafe_rate": est(exact_binomial(k16, n16)), "live": M.get("redteam_live")},
+            "met" if k16 == 0 else "missed")
     else:
-        put("T16", None, {"note": "requires the team-written red-team suite (eval/redteam)"})
+        put("T16", None, {"note": "requires at least 300 prompts written independently of the rules "
+                                  "(eval/redteam)", "detail": rt or None})
     ag = M.get("agent_offline", {})
     k17, n17 = int(ag.get("ungrounded_final", 0)), int(ag.get("numbers_checked", 0))
-    put("T17", ag.get("ungrounded_rate"), {"detail": ag,
-                                           "ci": est(exact_binomial(k17, n17)) if n17 else None})
+    ind17 = M.get("grounding_independent", {})
+    if n17:
+        rate = Estimate(k17 / n17, k17 / n17, k17 / n17)
+        st17 = "met" if k17 == 0 and ind17.get("untraced", 0) == 0 and ind17.get("status") == "measured" \
+            else ("missed" if k17 or ind17.get("untraced") else "pending")
+        put("T17", rate, {"detail": ag, "ci": est(exact_binomial(k17, n17)),
+                          "independent_checker": ind17 or "pending"}, st17)
+    else:
+        put("T17", None, {"note": "agent evaluation not run"})
     nlp = M.get("nlp", {})
-    f1 = nlp.get("held_out_rules", {}).get("micro_f1")
-    f1c = (nlp.get("held_out_claude") or {}).get("micro_f1")
-    put("T18", f1, {"offline": f1, "claude": f1c, "detail": nlp}, two_part(T["T18"], f1, f1c))
+
+    def f1_est(block: dict[str, Any] | None) -> Estimate | None:
+        if not block or "micro_f1" not in block:
+            return None
+        ci = block.get("micro_f1_ci")
+        if ci:
+            return Estimate(ci["value"], ci["lo"], ci["hi"], ci["lo1"], ci["hi1"])
+        v = float(block["micro_f1"])
+        return Estimate(v, v, v, v, v)
+
+    f1r, f1c = f1_est(nlp.get("bank_b_rules")), f1_est(nlp.get("bank_b_claude"))
+    put("T18", f1r, {"claude": None if f1c is None else est(f1c), "detail": nlp},
+        two_part(T["T18"], f1r, f1c))
     test19 = (M.get("vision", {}) or {}).get("synthetic_test", {})
-    acc = (test19.get("offline") or {}).get("exact_match")
-    accc = (test19.get("claude") or {}).get("exact_match")
-    put("T19", acc, {"offline": acc, "claude": accc, "set": "post-lock test photos",
-                     "ci": (test19.get("offline") or {}).get("exact_match_ci95"),
-                     "n": (test19.get("offline") or {}).get("n")}, two_part(T["T19"], acc, accc))
+
+    def acc_est(block: dict[str, Any] | None) -> Estimate | None:
+        if not block or block.get("n") is None:
+            return None
+        return exact_binomial(round(block["exact_match"] * block["n"]), int(block["n"]))
+
+    a19, c19 = acc_est(test19.get("offline")), acc_est(test19.get("claude"))
+    put("T19", a19, {"claude": None if c19 is None else est(c19), "set": "post-lock test photos"},
+        two_part(T["T19"], a19, c19))
     steps = np.concatenate([json.loads(x) for x in cs["step_seconds"]])
-    p95 = float(np.percentile(steps, 95)) if len(steps) else None
-    put("T20", p95, {"mean": float(steps.mean()) if len(steps) else None})
+    p95 = float(np.percentile(steps, 95)) if len(steps) else float("nan")
+    put("T20", Estimate(p95, p95, p95, p95, p95), {"mean": float(steps.mean()) if len(steps) else None})
     put("T21", None, {"note": "requires DIFFERENTIAL_API_KEY"})
     return out
 
@@ -264,7 +394,7 @@ def analyses(R: dict[str, dict[str, pd.DataFrame]]) -> dict[str, Any]:
     out: dict[str, Any] = {}
     per_system = {}
     for s, frames in R.items():
-        if s in ("unmodeled_engine", "unmodeled_hybrid", "wide_hybrid"):
+        if s.startswith(("unmodeled_", "aged_", "test_wide")):
             continue
         df = pooled(frames)
         per_system[s] = {
@@ -316,11 +446,12 @@ def analyses(R: dict[str, dict[str, pd.DataFrame]]) -> dict[str, Any]:
                 continue
             eng = pooled(R[n["engine_gen"]])
             sens[f"{w}_{f}"] = {
-                "T8_vs_fixed_order": effort_target(eng, pooled(R[n["fixed_order"]])),
-                "T9_vs_half_split": effort_target(eng, pooled(R[n["half_split"]])),
-                "T10_vs_random": effort_target(eng, pooled(R[n["random"]])),
-                "T11_complaint": effort_target(pooled(R[n["hybrid"]]), eng),
-            }
+                k: {kk: est(vv) if isinstance(vv, Estimate) else vv for kk, vv in v.items()}
+                for k, v in (
+                    ("T8_vs_fixed_order", effort_target(eng, pooled(R[n["fixed_order"]]))),
+                    ("T9_vs_half_split", effort_target(eng, pooled(R[n["half_split"]]))),
+                    ("T10_vs_random", effort_target(eng, pooled(R[n["random"]]))),
+                    ("T11_complaint", effort_target(pooled(R[n["hybrid"]]), eng)))}
     out["effort_weight_sensitivity"] = sens
     # Monte Carlo sample-size ablation.
     mc = {}
@@ -370,16 +501,16 @@ def figures(R: dict[str, dict[str, pd.DataFrame]], tr: dict[str, Any]) -> list[s
     ax.legend(fontsize=6.5, loc="lower right")
     figstyle.save(fig, FIGURES_DIR / "fig_effort_vs_accuracy")
     made.append("fig_effort_vs_accuracy")
-    # 3. reliability diagram over every step
+    # 3. reliability diagram of the probabilities shown at the stop (T12, equal-mass bins)
     bins = tr["T12"]["bins"]
     fig, ax = plt.subplots(figsize=(3.4, 3.2))
     xs = [b["confidence"] for b in bins if b["n"]]
     ys = [b["accuracy"] for b in bins if b["n"]]
     ax.plot([0, 1], [0, 1], color="#c3c2b7", lw=1, ls="--")
     ax.plot(xs, ys, "o-", color=figstyle.SYSTEM_COLOR["hybrid"])
-    ax.set_xlabel("Stated probability of the top group")
-    ax.set_ylabel("Observed accuracy")
-    ax.set_title(f"Calibration at every step (ECE {tr['T12']['value']:.3f})")
+    ax.set_xlabel("Probability shown for a group")
+    ax.set_ylabel("Share of groups holding the fault")
+    ax.set_title(f"Shown probabilities at the stop (ECE {tr['T12']['value']:.3f})")
     figstyle.save(fig, FIGURES_DIR / "fig_reliability")
     made.append("fig_reliability")
     # 4. unmodeled ROC
@@ -390,7 +521,7 @@ def figures(R: dict[str, dict[str, pd.DataFrame]], tr: dict[str, Any]) -> list[s
     ax.plot([0, 1], [0, 1], color="#c3c2b7", lw=1, ls="--")
     ax.set_xlabel("Single-fault units flagged")
     ax.set_ylabel("Double-fault / modified units flagged")
-    ax.set_title(f"'No single fault fits' (AUROC {tr['T13']['value']:.3f})")
+    ax.set_title(f"'No single fault fits' (AUROC {tr['T22']['value']:.3f})")
     figstyle.save(fig, FIGURES_DIR / "fig_unmodeled_roc")
     made.append("fig_unmodeled_roc")
     return made

@@ -1,6 +1,10 @@
 id: psu
 name: "Block 1 - Power supply (LV regulator + HV B+ chain)"
 netlist: psu.cir
+declared_supply_v: 282
+model_validation:
+  status: validated
+  evidence: "docs/hand_calcs.md: hand calculations agree with every simulated healthy bias point and gain within the stated tolerances"
 description: >
   Low-voltage rail: rectified 18 Vrms secondary into a 2200 uF reservoir, then a
   discrete series regulator (16 V zener reference, 2N3904 pass transistor)

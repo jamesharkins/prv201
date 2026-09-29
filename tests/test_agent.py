@@ -42,6 +42,7 @@ def test_lift_steps_are_locked_until_approval_and_discharge_at_every_hv_point() 
     from differential.safety.hazards import discharge_points
 
     tb = ToolBox("psu")
+    tb.t_confirm_bring_up("variac")
     lift = next(o for o in tb.bundle.observables.values() if o.is_lift)
     # a destructive step needs the owner's approval first
     assert tb.step_payload(lift)["blocked"] == "owner_approval"
@@ -125,11 +126,16 @@ def test_unvalidated_model_makes_every_point_hands_off(monkeypatch) -> None:  # 
 
 def test_high_voltage_steps_carry_instructions() -> None:
     from differential.agent.tools import ToolBox
+    from differential.safety.rules import METER_RATING
 
     tb = ToolBox("triode")
     tp9 = tb.bundle.observables["dc:TP9"]
+    assert tb.step_payload(tp9)["blocked"] == "bring_up"  # first power-up through a limiter
+    tb.t_confirm_bring_up("series_lamp")
     lines = " ".join(tb.step_payload(tp9)["safety"]["lines"])
     assert "HIGH VOLTAGE" in lines and "Hands-off" in lines and "resistor tool" in lines
+    assert METER_RATING in lines and "with the power off" in lines
+    assert "dielectric absorption" in lines
 
 
 def test_model_cannot_record_a_value_nobody_typed() -> None:
@@ -261,7 +267,10 @@ def test_trainee_mode_withholds_the_step_and_needs_a_supervisor_on_hv_units() ->
     hv.user_message("It hums and the level is low.")
     assert hv.pending_key == "supervisor"
     hv.user_message("Supervisor is Pat Lee")
-    assert hv.tb.supervisor == "Pat Lee" and hv.pending_key == "guess"
+    assert hv.tb.supervisor == "Pat Lee" and hv.pending_key == "bring_up"
+    hv.user_message("We brought it up on a variac.")
+    assert hv.tb.bring_up is not None and hv.tb.bring_up["method"] == "variac"
+    assert hv.pending_key == "guess"
 
 
 def test_trainee_guess_parsing() -> None:
@@ -314,6 +323,8 @@ def test_trainee_on_a_high_voltage_unit_measures_nothing_before_a_supervisor() -
     assert "error" in tb.call("confirm_discharge", {"readings": {p: 0.1 for p in pts}})
     assert tb.engine.taken() == set()
     tb.name_supervisor("Pat Lee")
+    assert "first powered" in tb.call("record_measurement", {"key": dc.key, "value": 12.0})["error"]
+    tb.t_confirm_bring_up("known_good")
     assert "error" not in tb.call("record_measurement", {"key": dc.key, "value": 12.0})
 
 
@@ -389,3 +400,62 @@ def test_names_on_the_ticket_carry_no_numbers_and_ungrounded_numbers_are_withhel
     t = agent.ticket()
     assert "999" not in t["markdown"]
     assert all(u not in t["markdown"] for u in t["grounding"]["ungrounded"])
+
+
+def test_bring_up_is_recorded_before_any_powered_step_and_goes_on_the_ticket() -> None:
+    """Bench practice (ADR-042): a unit with a high-voltage or mains supply is first powered
+    through a current limiter; low-voltage bench boards are not gated."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("psu", mode="offline")
+    out = agent.user_message("Loud hum from the power supply.")
+    assert agent.pending_key == "bring_up" and "variac" in out.text
+    # a negation or an unclear answer is not recorded
+    assert "Not recorded" in agent.user_message("No variac here.").text
+    assert "Not recorded" in agent.user_message("I plugged it in.").text
+    assert agent.tb.bring_up is None
+    reply = agent.user_message("It went up on a dim bulb tester, lamp glowed then dimmed")
+    assert agent.tb.bring_up["method"] == "series_lamp" and "Recorded" in reply.text
+    assert "dim-bulb" in agent.ticket()["markdown"] or "series-lamp" in agent.ticket()["markdown"]
+    assert DifferentialAgent("driver", mode="offline").tb.step_payload(
+        next(o for o in DifferentialAgent("driver", mode="offline").tb.bundle.observables.values()
+             if o.kind == "dc")).get("blocked") is None
+
+
+def test_discharge_check_expires_unless_a_bleeder_is_attached() -> None:
+    """Dielectric absorption (ADR-042): a discharge check is repeated right before contact."""
+    from differential.agent.tools import ToolBox
+    from differential.safety.hazards import discharge_points
+    from differential.safety.rules import DISCHARGE_VALID_S
+
+    now = [1000.0]
+    tb = ToolBox("psu")
+    tb.clock = lambda: now[0]
+    tb.t_confirm_bring_up("variac")
+    tb.call("approve_part_removal", {"note": "owner agreed"})
+    lift = next(o for o in tb.bundle.observables.values() if o.is_lift)
+    pts = discharge_points("psu")
+    tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2))
+    assert not tb.step_payload(lift).get("blocked")
+    now[0] += DISCHARGE_VALID_S + 1
+    again = tb.step_payload(lift)
+    assert again["blocked"] == "discharge_verification" and "dielectric absorption" in again["next_step"]
+    assert "error" in tb.call("record_measurement", {"key": lift.key, "value": 1.0})
+    tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2), bleeder=True)
+    now[0] += 10 * DISCHARGE_VALID_S
+    assert not tb.step_payload(lift).get("blocked")
+    assert tb.discharge_log[-1]["bleeder"] is True
+
+
+def test_live_model_cannot_attest_for_the_technician() -> None:
+    """Discharge readings, owner approval and bring-up are the technician's words only."""
+    from differential.agent.agent import DifferentialAgent, Turn
+
+    agent = DifferentialAgent("psu", mode="offline")
+    agent.turns.append(Turn("user", "The amp hums.", 0.0))
+    assert "refused" in agent._guarded_tool("confirm_discharge", {"volts": 0.3})["error"]
+    assert "refused" in agent._guarded_tool("approve_part_removal", {"note": "ok"})["error"]
+    assert "refused" in agent._guarded_tool("confirm_bring_up", {"method": "variac"})["error"]
+    agent.turns.append(Turn("user", "Brought up on a variac. TP4 reads 0.3 V", 0.0))
+    assert "error" not in agent._guarded_tool("confirm_bring_up", {"method": "variac"})
+    assert "refused" not in str(agent._guarded_tool("confirm_discharge", {"readings": {"TP4": 0.3}}))

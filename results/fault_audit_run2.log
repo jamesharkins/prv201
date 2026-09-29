@@ -1,0 +1,109 @@
+psu     C102:cap_loss_50       agree (36/36 readings)
+psu     Q101:beta_low          agree (36/36 readings)
+psu     R105:drift_x2          agree (36/36 readings)
+psu     R106:drift_x2          agree (36/36 readings)
+psu     Q101:cb_leak           agree (36/36 readings)
+psu     R102:open              agree (36/36 readings)
+psu     R104:open              agree (36/36 readings)
+psu     C101:short             agree (36/36 readings)
+psu     C102:short             agree (36/36 readings)
+triode  V201:low_emission      agree (30/30 readings)
+triode  C202:cap_loss_50       agree (30/30 readings)
+triode  R202:drift_x0.5        agree (30/30 readings)
+triode  R203:drift_x2          agree (30/30 readings)
+triode  R202:open              agree (30/30 readings)
+triode  R203:open              agree (30/30 readings)
+triode  C201:short             agree (30/30 readings)
+triode  R201:short             agree (30/30 readings)
+tone    R302:drift_x10         agree (24/24 readings)
+tone    R303:drift_x0.5        agree (24/24 readings)
+tone    VR301:wiper_open       agree (24/24 readings)
+tone    VR302:wiper_open       agree (24/24 readings)
+tone    C302:short             agree (24/24 readings)
+tone    R303:short             agree (24/24 readings)
+opamp   U401:dead              agree (39/39 readings)
+opamp   C402:high_esr          agree (39/39 readings)
+opamp   C404:cap_loss_90       agree (39/39 readings)
+opamp   R402:drift_x10         agree (39/39 readings)
+opamp   R407:drift_x0.5        agree (39/39 readings)
+opamp   R403:open              agree (39/39 readings)
+opamp   R407:open              agree (39/39 readings)
+opamp   R402:short             agree (39/39 readings)
+opamp   C405:short             agree (39/39 readings)
+driver  C501:cap_loss_50       agree (45/45 readings)
+driver  C501:cap_loss_90       agree (45/45 readings)
+driver  R504:drift_x0.5        agree (45/45 readings)
+driver  R507:drift_x10         agree (45/45 readings)
+driver  Q501:cb_leak           agree (45/45 readings)
+driver  Q502:cb_leak           agree (45/45 readings)
+driver  R505:open              agree (45/45 readings)
+driver  C504:open              agree (45/45 readings)
+driver  Q501:ce_short          agree (45/45 readings)
+driver  R505:short             agree (45/45 readings)
+{
+ "faults": 42,
+ "faults_agree": 42,
+ "agree_rate": 1.0,
+ "ci95": [
+  0.9159161450596448,
+  1.0
+ ],
+ "readings": 1509,
+ "readings_agree": 1509,
+ "by_block": {
+  "psu": {
+   "faults": 9,
+   "agree": 9
+  },
+  "triode": {
+   "faults": 8,
+   "agree": 8
+  },
+  "tone": {
+   "faults": 6,
+   "agree": 6
+  },
+  "opamp": {
+   "faults": 9,
+   "agree": 9
+  },
+  "driver": {
+   "faults": 10,
+   "agree": 10
+  }
+ },
+ "by_type": {
+  "dead": {
+   "faults": 1,
+   "agree": 1
+  },
+  "degradation": {
+   "faults": 8,
+   "agree": 8
+  },
+  "drift": {
+   "faults": 10,
+   "agree": 10
+  },
+  "leakage": {
+   "faults": 3,
+   "agree": 3
+  },
+  "open": {
+   "faults": 10,
+   "agree": 10
+  },
+  "short": {
+   "faults": 10,
+   "agree": 10
+  }
+ },
+ "rule": {
+  "dc": "|diff| <= 2 x meter accuracy (0.5 % + 2 counts)",
+  "ac_hum_db": 0.5,
+  "gain_floor": 0.001,
+  "hum_floor_v": 0.0001
+ },
+ "seed": 20260929,
+ "per_type": 2
+}

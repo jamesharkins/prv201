@@ -21,6 +21,24 @@ from dataclasses import dataclass, field
 
 HV_THRESHOLD_V = 50.0
 
+# Bench practice (round-4 review, ADR-042). Each rule is enforced here or in the agent's
+# tools and checked for every possible step by the safety sweep (eval/safety_sweep.py).
+# 1. Bring-up: the first power-up of a unit with a high-voltage or mains supply goes
+#    through a current limiter, and how it was done is recorded before any powered step.
+BRING_UP_METHODS: dict[str, str] = {
+    "variac": "brought up slowly on a variac (variable autotransformer)",
+    "series_lamp": "brought up through a series-lamp (dim-bulb) current limiter",
+    "current_limited_supply": "powered from a current-limited bench supply",
+    "known_good": "was running normally on its own supply before the complaint (as reported)",
+}
+# 2. Meter: leads and meter rated for the voltage, IEC 61010 measurement category.
+METER_RATING = "CAT II 600 V or better (IEC 61010)"
+# 3. Dielectric absorption: a discharged capacitor recovers some charge, so a discharge
+#    check is repeated right before contact unless a bleeder stays clipped across it.
+DISCHARGE_VALID_S = 300.0
+# 4. Hands-off measurement: leads are clipped on with the power off (in hv_warning and
+#    hv_inside_notice).
+
 _LIVE = (r"(?:while|when|with) (?:it|the (?:unit|amp|chassis|power|set))(?:'s| is| still| being| stays?)*"
          r" (?:on|live|hot|powered(?: up)?|plugged in|energi[sz]ed)\b")
 
@@ -157,14 +175,15 @@ def hv_warning(voltage: float | None, where: str, discharge_parts: list[str],
         first = f"HIGH VOLTAGE: treat {where} as live high voltage."
     return [
         first,
-        "Hands-off measurement: with power off, clip the black lead to chassis ground and the red "
-        "lead (rated for the voltage) to the point, then power up, read, and power down before "
-        "touching anything. If you must probe live, use one hand and keep the other away from "
-        "the chassis.",
+        "Hands-off measurement: with the power off, clip the black lead to chassis ground and the "
+        f"red lead to the point (meter and leads rated {METER_RATING}), then power up, read, and "
+        "power down before touching anything. If you must probe live, use one hand and keep the "
+        "other away from the chassis.",
         f"Discharge before any hands-in work: switch off, unplug, discharge {parts} through a "
-        "resistor tool (not a screwdriver), confirm below 2 V with the meter, and re-check "
-        "before touching: capacitors can recover charge, and a bleeder resistor may have failed "
-        "open.",
+        "resistor tool (not a screwdriver) and confirm below 2 V with the meter. Re-check right "
+        f"before touching (a check older than {DISCHARGE_VALID_S / 60:.0f} minutes is repeated) or "
+        "leave a bleeder clipped across the capacitor: a discharged capacitor recovers some "
+        "charge (dielectric absorption), and a bleeder resistor may have failed open.",
     ]
 
 
@@ -176,9 +195,17 @@ def hv_inside_notice(supply_v: float) -> str:
     return (f"HIGH VOLTAGE INSIDE: this unit has a supply of about {supply_v:.0f} V DC, so exposed "
             "parts anywhere in the chassis can carry high voltage while it is powered. Clip the "
             "leads on with the power off where you can, keep one hand clear of the chassis, keep "
-            "the probe from slipping across adjacent pins, and use a meter and leads rated for "
-            "that voltage. Bring an unfamiliar unit up through a variac or a series-lamp current "
-            "limiter the first time.")
+            "the probe from slipping across adjacent pins, and use a meter and leads rated "
+            f"{METER_RATING}.")
+
+
+def bring_up_text() -> str:
+    """The step shown before the first power-up of a unit with a high-voltage or mains supply."""
+    return ("BRING-UP FIRST: before this unit is powered for measurement, bring it up through a "
+            "variac or a series-lamp (dim-bulb) current limiter and watch the lamp or the current "
+            "draw: a lamp that stays bright means a short, so switch off. Record how the unit was "
+            "brought up (variac, series lamp, current-limited bench supply, or already running "
+            "normally before the complaint); it goes on the ticket.")
 
 
 SCOPE_GROUND_NOTE = ("Clip the oscilloscope's ground lead only to chassis ground: on an earthed "

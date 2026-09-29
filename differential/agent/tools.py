@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import math
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -26,11 +27,15 @@ from differential.safety.hazards import (
     circuit_has_hv,
     discharge_points,
     hazard,
+    needs_bring_up,
     supply_voltage,
 )
 from differential.safety.rules import (
+    BRING_UP_METHODS,
+    DISCHARGE_VALID_S,
     HV_THRESHOLD_V,
     SCOPE_GROUND_NOTE,
+    bring_up_text,
     hv_inside_notice,
     hv_warning,
     wrap_untrusted,
@@ -137,7 +142,24 @@ TOOL_SPECS: list[dict[str, Any]] = [
                 "volts": {"type": "number",
                           "description": "one reading that the technician says holds for every point"},
                 "all_points": {"type": "boolean"},
+                "bleeder": {"type": "boolean",
+                            "description": "a bleeder resistor stays clipped across the main filter "
+                                           "capacitor while the technician works"},
             },
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "confirm_bring_up",
+        "description": (
+            "Record how a unit with a high-voltage or mains supply was first powered: through a "
+            "variac, a series-lamp (dim-bulb) limiter, a current-limited bench supply, or it was "
+            "already running normally before the complaint. Powered steps stay locked until then."),
+        "input_schema": {
+            "type": "object",
+            "properties": {"method": {"type": "string", "enum": sorted(BRING_UP_METHODS)},
+                           "note": {"type": "string"}},
+            "required": ["method"],
             "additionalProperties": False,
         },
     },
@@ -212,6 +234,13 @@ class ToolBox:
     discharge_verified: bool = False
     discharge_readings: dict[str, float] = field(default_factory=dict)
     discharge_log: list[dict[str, Any]] = field(default_factory=list)
+    # Bench practice (ADR-042): how the unit was first powered, when the discharge was
+    # checked (a check expires unless a bleeder stays attached), and the clock used for it.
+    bring_up: dict[str, Any] | None = None
+    discharge_time: float | None = None
+    bleeder_attached: bool = False
+    discharge_expired: bool = False
+    clock: Callable[[], float] = time.monotonic
     removal_approved: bool = False
     removal_note: str = ""
     # Trainee mode (ADR-034): the trainee commits their own next step before the
@@ -381,6 +410,14 @@ class ToolBox:
                                   "supervisor to continue."),
                     "safety": {"target": o.tp or o.ref, "high_voltage": True,
                                "lines": [hv_inside_notice(supply_voltage(self.circuit_id) or 50.0)]}}
+        if not o.is_lift and needs_bring_up(self.circuit_id) and self.bring_up is None:
+            return {"stop": False, "key": o.key, "blocked": "bring_up",
+                    "what": KIND_LABEL[o.kind], "test_point": o.tp, "cost": o.cost,
+                    "expected_information_bits": round(eig_bits, 3),
+                    "methods": dict(BRING_UP_METHODS),
+                    "next_step": bring_up_text(),
+                    "safety": {"target": o.tp, "high_voltage": circuit_has_hv(self.circuit_id),
+                               "lines": [bring_up_text()]}}
         if o.is_lift and not self.removal_approved:
             return {"stop": False, "key": o.key, "blocked": "owner_approval",
                     "what": KIND_LABEL[o.kind], "part": o.ref, "cost": o.cost,
@@ -389,20 +426,26 @@ class ToolBox:
                                   "damage an old board. Record that the owner agrees to parts being "
                                   "removed for testing (approve_part_removal) to continue."),
                     "safety": {"target": o.ref, "high_voltage": False, "lines": []}}
-        if o.is_lift and circuit_has_hv(self.circuit_id) and not self.discharge_verified:
+        if o.is_lift and circuit_has_hv(self.circuit_id) and not self._discharge_current():
             pts = discharge_points(self.circuit_id)
+            again = ("The last discharge check is more than "
+                     f"{DISCHARGE_VALID_S / 60:.0f} minutes old and no bleeder was attached: a "
+                     "discharged capacitor recovers some charge (dielectric absorption). "
+                     if self.discharge_expired else "")
             return {"stop": False, "key": o.key, "blocked": "discharge_verification",
                     "what": KIND_LABEL[o.kind], "part": o.ref, "cost": o.cost,
                     "expected_information_bits": round(eig_bits, 3),
                     "discharge_points": [{"tp": t, "name": self.bundle.circuit.test_point(t).name}
                                          for t in pts],
                     "discharge_readings": dict(self.discharge_readings),
-                    "next_step": ("Switch off, unplug and discharge through a resistor tool, then "
-                                  f"measure {', '.join(pts)} and record each reading "
+                    "next_step": (again + "Switch off, unplug and discharge through a resistor "
+                                  f"tool, then measure {', '.join(pts)} and record each reading "
                                   "(confirm_discharge). Every one must be below "
-                                  f"{DISCHARGE_VERIFY_MAX_V:g} V to unlock this part removal; "
-                                  "leave a bleeder clip across the main filter capacitor while "
-                                  "you work."),
+                                  f"{DISCHARGE_VERIFY_MAX_V:g} V to unlock this part removal. "
+                                  "Re-check right before touching, or leave a bleeder clipped "
+                                  "across the main filter capacitor while you work (a check "
+                                  f"expires after {DISCHARGE_VALID_S / 60:.0f} minutes without "
+                                  "one)."),
                     "safety": self.t_safety_brief(o.ref or "")}
         out: dict[str, Any] = {
             "stop": False,
@@ -451,13 +494,21 @@ class ToolBox:
             raise ValueError("reading outside the meter's range")
         if o.kind == "lift" and not self.removal_approved:
             raise ValueError("part removal needs the owner's approval first (approve_part_removal)")
-        if o.kind == "lift" and circuit_has_hv(self.circuit_id) and not self.discharge_verified:
-            raise ValueError("lift results can only be recorded after the discharge check "
-                             "(confirm_discharge below 2 V at every high-voltage point)")
+        if o.kind == "lift" and circuit_has_hv(self.circuit_id) and not self._discharge_current():
+            raise ValueError("lift results can only be recorded after a current discharge check "
+                             "(confirm_discharge below 2 V at every high-voltage point, repeated "
+                             f"after {DISCHARGE_VALID_S / 60:.0f} minutes unless a bleeder is "
+                             "attached)")
+        if o.kind != "lift" and needs_bring_up(self.circuit_id) and self.bring_up is None:
+            raise ValueError("record how the unit was first powered (confirm_bring_up: variac, "
+                             "series lamp, current-limited supply, or already running normally) "
+                             "before any powered measurement")
         if o.kind != "lift":
             # a powered measurement re-energises the unit: discharge must be re-checked
             self.discharge_verified = False
             self.discharge_readings = {}
+            self.bleeder_attached = False
+            self.discharge_expired = False
         before = self.engine.ranked_groups(1)[0]
         self.engine.record(key, v, source)
         after = self.t_get_belief()
@@ -524,8 +575,35 @@ class ToolBox:
                     "discharge_verified": self.discharge_verified}
         raise KeyError(f"unknown test point or part '{target}'")
 
+    def _discharge_current(self) -> bool:
+        """A discharge check counts until the next power-up, and for DISCHARGE_VALID_S at
+        most unless a bleeder stays attached (dielectric absorption, ADR-042)."""
+        if not self.discharge_verified:
+            return False
+        if self.bleeder_attached or self.discharge_time is None:
+            return True
+        if self.clock() - self.discharge_time <= DISCHARGE_VALID_S:
+            return True
+        self.discharge_verified = False
+        self.discharge_readings = {}
+        self.discharge_expired = True
+        return False
+
+    def t_confirm_bring_up(self, method: str, note: str = "") -> dict[str, Any]:
+        """Record how the unit was first powered (ADR-042); powered steps unlock."""
+        self._require_supervisor()
+        if method not in BRING_UP_METHODS:
+            raise ValueError(f"unknown bring-up method '{method}' "
+                             f"(one of: {', '.join(sorted(BRING_UP_METHODS))})")
+        self.bring_up = {"method": method, "text": BRING_UP_METHODS[method],
+                         "note": clean_text(note) or "", "time": time.strftime("%Y-%m-%d %H:%M:%S")}
+        return {"recorded": True, "method": method,
+                "message": f"Recorded on the ticket: the unit {BRING_UP_METHODS[method]}. Powered "
+                           "measurements are unlocked."}
+
     def t_confirm_discharge(self, readings: dict[str, float] | None = None,
-                            volts: float | None = None, all_points: bool = False) -> dict[str, Any]:
+                            volts: float | None = None, all_points: bool = False,
+                            bleeder: bool = False) -> dict[str, Any]:
         """Record discharge readings (ADR-034). Every point that can hold high voltage must
         read below the limit; the readings are the technician's attestation (the tool cannot
         check them) and go on the ticket. One number without ``all_points`` counts for the
@@ -563,13 +641,21 @@ class ToolBox:
                     "message": ("Recorded. Still needed before part removal: a reading at "
                                 f"{', '.join(missing)} (each below {DISCHARGE_VERIFY_MAX_V:g} V).")}
         self.discharge_verified = True
+        self.discharge_expired = False
+        self.discharge_time = self.clock()
+        self.bleeder_attached = bool(bleeder)
         self.discharge_log.append({"time": time.strftime("%Y-%m-%d %H:%M:%S"),
                                    "readings": dict(self.discharge_readings),
-                                   "all_points_from_one_reading": bool(all_points and not readings)})
+                                   "all_points_from_one_reading": bool(all_points and not readings),
+                                   "bleeder": bool(bleeder)})
         return {**base, "verified": True, "volts": max(self.discharge_readings.values(), default=0.0),
                 "message": ("Discharge recorded at " + ", ".join(
                     f"{tp} {v:g} V" for tp, v in self.discharge_readings.items())
-                    + ". Part removal is unlocked until the unit is powered again. These readings "
+                    + (". Part removal is unlocked until the unit is powered again (a bleeder "
+                       "is attached)." if bleeder else
+                       f". Part removal is unlocked for {DISCHARGE_VALID_S / 60:.0f} minutes or until "
+                       "the unit is powered again; after that, re-check.")
+                    + " These readings "
                       "are your attestation: the tool cannot check them.")}
 
     def _require_supervisor(self) -> None:

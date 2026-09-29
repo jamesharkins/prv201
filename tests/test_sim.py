@@ -325,3 +325,45 @@ def test_age_draw_moves_parts_the_way_they_age() -> None:
     d = make_draw("channel_strip", "pilot_aged", 0, "healthy", 0)
     assert d.severity.get("aged") == 1.0
     assert "aged" not in make_draw("channel_strip", "pilot", 0, "healthy", 0).severity
+
+
+def test_training_mixes_as_new_and_aged_units_in_equal_numbers() -> None:
+    """ADR-039: training, validation and calibration splits age every second draw; test,
+    pilot and demo units are as-new; the aged sets are aged throughout."""
+    from differential.sim.montecarlo import MIXED_AGE_SPLITS, is_aged
+
+    assert {"train", "val", "unmodeled_val"} == MIXED_AGE_SPLITS
+    for split in ("train", "val"):
+        for hyp in (0, 1, 7):
+            flags = [is_aged(split, hyp, i) for i in range(400)]
+            assert sum(flags) == 200
+            assert sum(flags[:50]) == 25  # the sample-size ablation keeps the mix
+    cases = [is_aged("unmodeled_val", 100000 + i, 0) for i in range(60)]
+    assert sum(cases) == 30
+    for split in ("test", "pilot", "unmodeled_test", "unmodeled_pilot", "demo", "test_wide"):
+        assert not any(is_aged(split, h, i) for h in range(3) for i in range(20))
+    assert all(is_aged("test_aged", h, i) for h in range(3) for i in range(20))
+    assert make_draw("channel_strip", "train", 0, "healthy", 1).severity.get("aged") == 1.0
+    assert "aged" not in make_draw("channel_strip", "train", 0, "healthy", 0).severity
+
+
+def test_symptom_reference_ignores_aged_healthy_draws() -> None:
+    """A symptom is judged against an as-new healthy unit, so aged healthy draws in the
+    training data must not move the reference."""
+    import pandas as pd
+
+    from differential.engine.symptom_prior import SymptomModel
+    from differential.sim.montecarlo import load_dataset
+
+    tr = load_dataset("tone", "train")
+    if "aged" not in tr.columns:
+        pytest.skip("training data predates ADR-039")
+    ok = tr[tr["ok"]]
+    shifted = ok.copy()
+    aged_healthy = (shifted["hypothesis"] == "healthy") & shifted["aged"].astype(bool)
+    dc_cols = [c for c in shifted.columns if c.startswith("dc:")]
+    shifted.loc[aged_healthy, dc_cols] = shifted.loc[aged_healthy, dc_cols] + 50.0
+    a = SymptomModel.fit("tone", ok).reference
+    b = SymptomModel.fit("tone", pd.DataFrame(shifted)).reference
+    assert a is not None and b is not None
+    assert a.dc_median == b.dc_median and a.dc_halfspread == b.dc_halfspread

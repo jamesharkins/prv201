@@ -77,6 +77,8 @@ export const api = {
     { json: { readings } }),
   approveRemoval: (sid, note) => request("POST", `/api/sessions/${enc(sid)}/approve_removal`,
     { json: { note } }),
+  bringUp: (sid, method) => request("POST", `/api/sessions/${enc(sid)}/bring_up`,
+    { json: { method } }),
   guess: (sid, key) => request("POST", `/api/sessions/${enc(sid)}/guess`, { json: { key } }),
   supervisor: (sid, name) => request("POST", `/api/sessions/${enc(sid)}/supervisor`, { json: { name } }),
   photo: (sid, file) => {

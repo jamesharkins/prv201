@@ -10,8 +10,9 @@ in 400 training draws is left out (such a unit would not reach a bench).
 * ``test``            the locked single-fault test set;
 * ``pilot``           the same protocol from its own seed stream, used before the
                       lock to set bars (never used for any tuning);
-* ``pilot_aged``, ``test_aged``   channel strip, every part aged in its usual
-                      direction before the fault (stress, T6);
+* ``pilot_aged``, ``test_aged``   every circuit (the same mix as ``pilot`` and
+                      ``test``), every part aged in its usual direction before the
+                      fault (T6); training mixes as-new and aged units (ADR-039);
 * ``test_wide``, ``test_wide2``, ``test_wide3`` (and ``pilot_wide``)   channel
                       strip, tolerances 1.5x, 2x and 3x wider (a reported curve);
 * ``unmodeled_val``   double faults and out-of-catalog modifications for
@@ -54,8 +55,8 @@ from differential.sim.montecarlo import (
 N_CASES = {
     "test": {COMPOSITE_ID: 500, **dict.fromkeys(BLOCK_IDS, 100)},
     "pilot": {COMPOSITE_ID: 200, **dict.fromkeys(BLOCK_IDS, 60)},
-    "test_aged": {COMPOSITE_ID: 300},
-    "pilot_aged": {COMPOSITE_ID: 150},
+    "test_aged": {COMPOSITE_ID: 500, **dict.fromkeys(BLOCK_IDS, 100)},
+    "pilot_aged": {COMPOSITE_ID: 200, **dict.fromkeys(BLOCK_IDS, 60)},
     "test_wide": {COMPOSITE_ID: 300},
     "test_wide2": {COMPOSITE_ID: 300},
     "test_wide3": {COMPOSITE_ID: 300},

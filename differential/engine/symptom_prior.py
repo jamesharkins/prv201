@@ -2,7 +2,7 @@
 
 1. ``SymptomReference`` holds healthy-unit statistics for a circuit (medians and
    spreads of the output level, hum, THD and every DC test point) computed from
-   healthy training draws.
+   as-new healthy training draws.
 2. ``derive_facts`` turns one simulated unit into symptom facts with fixed,
    documented thresholds (ADR-012), e.g. "output down more than 30 dB" ->
    no output; "down 3-30 dB" -> low gain.
@@ -208,7 +208,10 @@ class SymptomModel:
         circuit = get_circuit(circuit_id)
         hyps = [f.id for f in fault_catalog(circuit)]
         ok = train[train["ok"]]
-        ref = SymptomReference.from_healthy(circuit, ok[ok["hypothesis"] == "healthy"])
+        # A symptom is judged against a healthy unit as built: the reference uses the
+        # as-new healthy draws only (training also holds aged units, ADR-039).
+        as_new = ~ok["aged"].astype(bool) if "aged" in ok.columns else np.ones(len(ok), dtype=bool)
+        ref = SymptomReference.from_healthy(circuit, ok[(ok["hypothesis"] == "healthy") & as_new])
         P = np.zeros((len(hyps), len(FEATURES)))
         symp = np.zeros(len(hyps))
         for i, h in enumerate(hyps):

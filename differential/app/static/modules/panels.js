@@ -4,7 +4,7 @@ import { h, icon, clear, replaceChildren, nextId } from "./dom.js";
 import {
   KIND_SHORT, capitalize, fmtCost, fmtNum, kindOf, pct, sourceLabel, sourceTitle, stageName, targetOf,
 } from "./format.js";
-import { approvalForm, dischargeForm, guessForm, liftForm, readingForm, supervisorForm } from "./forms.js";
+import { approvalForm, bringUpForm, dischargeForm, guessForm, liftForm, readingForm, supervisorForm } from "./forms.js";
 
 /** Bold the "Label:" lead of a safety line ("Hands-off measurement: ..."). */
 function leadEmphasis(line) {
@@ -29,12 +29,13 @@ export class SafetyBanner {
     const blocked = Boolean(pending && pending.blocked === "discharge_verification");
     const approval = Boolean(pending && pending.blocked === "owner_approval");
     const supervised = Boolean(pending && pending.blocked === "supervisor");
+    const bringUp = Boolean(pending && pending.blocked === "bring_up");
     if (!b) {
       this.sig = null;
       clear(this.slot);
       return false;
     }
-    const sig = JSON.stringify([b.title, b.lines, blocked, approval, pending && pending.key,
+    const sig = JSON.stringify([b.title, b.lines, blocked, approval, bringUp, pending && pending.key,
       state.discharge_readings]);
     if (sig === this.sig) return false;
     this.sig = sig;
@@ -61,10 +62,14 @@ export class SafetyBanner {
       const f = supervisorForm({ onSubmit: (n, btn) => this.handlers.supervisor(n, btn) });
       body.append(h("div", { class: "banner-lock" }, f.form));
     }
+    if (bringUp) {
+      const f = bringUpForm({ methods: pending.methods || {}, onSubmit: (m, btn) => this.handlers.bringUp(m, btn) });
+      body.append(h("div", { class: "banner-lock" }, f.form));
+    }
     const level = b.level === "danger" ? "danger" : "warning";
     replaceChildren(this.slot,
       h("section", { class: `banner banner-${level}`, "aria-labelledby": titleId },
-        h("div", { class: "banner-icon", "aria-hidden": "true" }, icon(blocked || approval || supervised ? "lock" : "bolt")),
+        h("div", { class: "banner-icon", "aria-hidden": "true" }, icon(blocked || approval || supervised || bringUp ? "lock" : "bolt")),
         body));
     return true; // a new or changed banner
   }
@@ -172,6 +177,16 @@ export class NextCard {
         h("div", { class: "next-actions" },
           h("button", { type: "button", class: "btn btn-danger-outline", onclick: () => this.handlers.focusDischarge() },
             icon("unlock"), h("span", {}, "Name the supervisor"))));
+      return;
+    }
+    if (pending.blocked === "bring_up") {
+      this.root.classList.add("is-locked");
+      replaceChildren(this.root,
+        head(h("div", { class: "chips" }, h("span", { class: "chip chip-danger" }, icon("lock"), "Bring-up first"))),
+        h("p", { class: "next-how" }, String(pending.next_step || "")),
+        h("div", { class: "next-actions" },
+          h("button", { type: "button", class: "btn btn-danger-outline", onclick: () => this.handlers.focusDischarge() },
+            icon("unlock"), h("span", {}, "Record the bring-up"))));
       return;
     }
     if (pending.blocked === "owner_approval") {

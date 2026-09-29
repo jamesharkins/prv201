@@ -4,8 +4,8 @@ Adds what the M1 review asked for: a half-split tracing baseline, calibration ov
 every step (not only at the stop), the unmodeled detector's operating point, the
 folklore-prior robustness check, and the widened-tolerance stress set. Uses the
 pilot split (units simulated from their own seed stream with the test protocol),
-the pilot_wide split and the unmodeled_pilot split; none of them is used for any
-training, calibration or tuning (ADR-029, ADR-030).
+the pilot_wide, pilot_aged and unmodeled_pilot splits; none of them is used for any
+training, calibration or tuning (ADR-029, ADR-030, ADR-039).
 Writes metrics.json section "pilot2" and results/pilot2.log.
 """
 
@@ -13,13 +13,17 @@ from __future__ import annotations
 
 import json
 import time
+from collections.abc import Callable
 
 import numpy as np
 import pandas as pd
 
 from differential.circuits.library import BLOCK_IDS, COMPOSITE_ID
 from eval import metrics_io
+from eval.effort import summary as effort_summary
+from eval.effort import with_effort
 from eval.harness import SYSTEMS, bundle_for, run_system, unmodeled_outcome
+from eval.set_bars import WEIGHTS
 from eval.stats import auroc, ece
 
 PILOT_SYSTEMS = ["engine_gen", "engine_disc", "hybrid", "fixed_order", "half_split", "random",
@@ -81,22 +85,52 @@ def main() -> None:
                                   - out["channel_strip"]["random"]["top1"])  # type: ignore[index]
     out["cs_margin_vs_half_split"] = (out["channel_strip"]["hybrid"]["top1"]  # type: ignore[index]
                                       - out["channel_strip"]["half_split"]["top1"])  # type: ignore[index]
+    # Effort parts and effort to a confirmed answer (ADR-041), weighted like the test set.
+    eff = {s: effort_summary(with_effort(runs[s]), WEIGHTS)
+           for s in ("engine_gen", "hybrid", "fixed_order", "half_split", "random")}
+    out["effort_weighted"] = eff
+    for base in ("fixed_order", "half_split", "random"):
+        out[f"confirmed_effort_ratio_vs_{base}"] = (eff["engine_gen"]["confirmed_effort"]
+                                                    / eff[base]["confirmed_effort"])
+        out[f"raw_effort_ratio_vs_{base}_weighted"] = eff["engine_gen"]["effort"] / eff[base]["effort"]
     out["hybrid_step_ece"] = step_ece(pooled["hybrid"])
     out["hybrid_stop_ece"] = float(ece(pooled["hybrid"]["confidence"].to_numpy(),
                                        pooled["hybrid"]["correct"].to_numpy(dtype=float))[0])
     out["recap_prior_top1_delta"] = per["recap_prior"]["top1"] - eg["top1"]
     steps = np.concatenate([json.loads(x) for x in cs["hybrid"]["step_seconds"]])
     out["cs_step_seconds_p95"] = float(np.percentile(steps, 95))
-    # Stress sets: hybrid on widened tolerances and on aged units vs the nominal pilot units.
+    # Stress sets: hybrid on widened tolerances (channel strip) and on aged units (every
+    # circuit, weighted like the test set: channel strip one half, each block one tenth).
     wide = run_system(SYSTEMS["hybrid"], COMPOSITE_ID, split="pilot_wide")
     out["wide_top1"] = float(wide["correct"].mean())
     out["wide_top1_drop"] = float(cs["hybrid"]["correct"].mean() - wide["correct"].mean())
     out["wide_n"] = len(wide)
-    aged = run_system(SYSTEMS["hybrid"], COMPOSITE_ID, split="pilot_aged")
-    out["aged_top1"] = float(aged["correct"].mean())
-    out["aged_top1_drop"] = float(cs["hybrid"]["correct"].mean() - aged["correct"].mean())
-    out["aged_flag_rate"] = float((aged["top_group"] == -1).mean())
-    out["aged_n"] = len(aged)
+    aged = {cid: run_system(SYSTEMS["hybrid"], cid, split="pilot_aged") for cid in CIRCUITS}
+
+    def weighted(frames: dict[str, pd.DataFrame], rate: Callable[[pd.DataFrame], pd.Series]) -> float:
+        return sum(WEIGHTS[c] * float(rate(f).mean()) for c, f in frames.items())
+
+    def top1(f: pd.DataFrame) -> pd.Series:
+        return f["correct"].astype(bool)
+
+    def flagged(f: pd.DataFrame) -> pd.Series:
+        return f["top_group"] == -1
+
+    def wrong_name(f: pd.DataFrame) -> pd.Series:
+        return (f["top_group"] != -1) & ~f["correct"].astype(bool)
+
+    out["aged_n_cases"] = {cid: len(f) for cid, f in aged.items()}
+    out["aged_n"] = sum(len(f) for f in aged.values())
+    out["aged_top1_by_circuit"] = {cid: float(f["correct"].mean()) for cid, f in aged.items()}
+    new_w, aged_w = weighted(runs["hybrid"], top1), weighted(aged, top1)
+    aged_cs = float(aged[COMPOSITE_ID]["correct"].mean())
+    out["new_top1_weighted"] = new_w
+    out["aged_top1_weighted"] = aged_w
+    out["aged_top1_drop_weighted"] = new_w - aged_w
+    out["aged_flag_rate_weighted"] = weighted(aged, flagged)
+    out["aged_wrong_name_rate_weighted"] = weighted(aged, wrong_name)
+    out["aged_cs_top1"] = aged_cs
+    out["aged_cs_top1_drop"] = float(cs["hybrid"]["correct"].mean()) - aged_cs
     # Unmodeled detector on the unmodeled_pilot split (never used for calibration)
     # against the pilot's single-fault units; full system (T13) and engine alone.
     for s in ("hybrid", "engine_gen"):

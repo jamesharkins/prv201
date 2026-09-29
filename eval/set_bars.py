@@ -42,6 +42,8 @@ import pandas as pd
 from differential.circuits.library import BLOCK_IDS, COMPOSITE_ID
 from differential.config import RESULTS_DIR
 from eval import metrics_io
+from eval.effort import summary as effort_summary
+from eval.effort import with_effort
 from eval.harness import bundle_for, results_path, unmodeled_outcome
 from eval.stats import auroc, brier_shown, ece, ece_equal_mass, log_loss, shown_calibration
 
@@ -94,9 +96,13 @@ def stratified_boot(d: dict[str, pd.DataFrame], stat: Callable[[dict[str, pd.Dat
     return float(np.std(vals, ddof=1))
 
 
-def effort_ratio(num: dict[str, pd.DataFrame], den: dict[str, pd.DataFrame]) -> tuple[float, float]:
-    both = {c: num[c][["case_id", "cost"]].merge(den[c][["case_id", "cost"]], on="case_id",
-                                                 suffixes=("_n", "_d")) for c in CIRCUITS}
+def effort_ratio(num: dict[str, pd.DataFrame], den: dict[str, pd.DataFrame],
+                 col: str = "confirmed_cost") -> tuple[float, float]:
+    """Ratio of test-mix-weighted mean efforts; by default the effort to a confirmed
+    answer (eval/effort.py, ADR-041)."""
+    both = {c: num[c][["case_id", col]].merge(den[c][["case_id", col]], on="case_id",
+                                              suffixes=("_n", "_d"))
+            .rename(columns={f"{col}_n": "cost_n", f"{col}_d": "cost_d"}) for c in CIRCUITS}
 
     def stat(d: dict[str, pd.DataFrame]) -> float:
         n = sum(WEIGHTS[c] * float(d[c]["cost_n"].mean()) for c in CIRCUITS)
@@ -238,10 +244,11 @@ def selective(d: dict[str, pd.DataFrame]) -> dict[str, float]:
 
 
 def main() -> None:
-    hyb, eng = runs("hybrid"), runs("engine_gen")
-    fixed, half, rnd, recap = runs("fixed_order"), runs("half_split"), runs("random"), runs("recap_prior")
+    hyb, eng = with_effort(runs("hybrid")), with_effort(runs("engine_gen"))
+    fixed, half, rnd = (with_effort(runs(s)) for s in ("fixed_order", "half_split", "random"))
+    recap = runs("recap_prior")
     disc = runs("engine_disc")
-    aged = pd.read_parquet(results_path("hybrid", COMPOSITE_ID, "pilot_aged"))
+    aged = runs("hybrid", "pilot_aged")
     cs = COMPOSITE_ID
     n_pilot = {c: len(hyb[c]) for c in CIRCUITS}
     n_single_pilot, n_cs_pilot = sum(n_pilot.values()), n_pilot[cs]
@@ -277,11 +284,18 @@ def main() -> None:
     d["T4"] = {**t4, "k": K, "direction": ">=", "step": 0.01, "bar": b4, "n_pilot": n_cs_pilot,
                "n_test": n_cs, "rule": "the smallest of the three margin bars, met when every margin's "
                                         "lower bound clears it"}
-    a_cs, a_ag = hyb[cs]["correct"].to_numpy(), aged["correct"].to_numpy()
-    put("T6", float(a_cs.mean() - a_ag.mean()), math.hypot(ac_se(a_cs), ac_se(a_ag)), False, 0.01,
-        len(a_ag), ev["aged_cases"], aged_flag_rate=float((aged["top_group"] == -1).mean()),
-        aged_wrong_name_rate=float(((aged["top_group"] != -1) & ~aged["correct"].astype(bool)).mean()),
-        n_aged=len(a_ag))
+    # T6: the same count as T1 on aged units (ADR-039); the drop from as-new units and the
+    # split of the misses into "no single fault fits" calls and wrong names are context.
+    n_aged_pilot = sum(len(f) for f in aged.values())
+    flag = {c: f.assign(flag=(f["top_group"] == -1).astype(float)) for c, f in aged.items()}
+    wrong = {c: f.assign(wrong=((f["top_group"] != -1) & ~f["correct"].astype(bool)).astype(float))
+             for c, f in aged.items()}
+    t1_new = weighted_prop(hyb, "correct")[0]
+    t6_est, t6_se = weighted_prop(aged, "correct")
+    put("T6", t6_est, t6_se, True, 0.01, n_aged_pilot, ev["aged_cases"],
+        drop_from_new=t1_new - t6_est, aged_flag_rate=weighted_prop(flag, "flag")[0],
+        aged_wrong_name_rate=weighted_prop(wrong, "wrong")[0],
+        aged_cs_top1=float(aged[cs]["correct"].mean()), n_aged=n_aged_pilot)
     acc = {name: sum(WEIGHTS[c] * float(r[c]["correct"].mean()) for c in CIRCUITS)
            for name, r in (("engine", eng), ("fixed_order", fixed), ("half_split", half),
                            ("random", rnd), ("hybrid", hyb))}
@@ -334,6 +348,12 @@ def main() -> None:
         "cs_mean_effort": {n: float(r[cs]["cost"].mean()) for n, r in
                            (("hybrid", hyb), ("engine", eng), ("fixed_order", fixed),
                             ("half_split", half), ("random", rnd))},
+        # effort parts and effort to a confirmed answer, test-mix weights (ADR-041)
+        "effort": {n: effort_summary(r, WEIGHTS) for n, r in
+                   (("hybrid", hyb), ("engine", eng), ("fixed_order", fixed),
+                    ("half_split", half), ("random", rnd))},
+        "raw_effort_ratio": {n: effort_ratio(eng, r, "cost")[0] for n, r in
+                             (("fixed_order", fixed), ("half_split", half), ("random", rnd))},
         "n_pilot": n_pilot,
         # What reading the complaint did in the pilot (full system vs engine alone):
         "complaint_accuracy_change_pts": 100 * (acc["hybrid"] - acc["engine"]),
@@ -343,7 +363,7 @@ def main() -> None:
     text = {
         "T1": f"≥ {round(100 * d['T1']['bar'])}%", "T2": f"≥ {round(100 * d['T2']['bar'])}%",
         "T3": f"≥ {round(100 * d['T3']['bar'])}%", "T4": f"≥ {pts(d['T4']['bar'])} each",
-        "T6": f"≤ {round(100 * d['T6']['bar'])} points",
+        "T6": f"≥ {round(100 * d['T6']['bar'])}%",
         "T8": f"≤ {d['T8']['bar']:.2f}×", "T9": f"≤ {d['T9']['bar']:.2f}×",
         "T10": f"≤ {d['T10']['bar']:.2f}×", "T11": f"≤ {d['T11']['bar']:.2f}×",
         "T12": f"≤ {d['T12']['bar']:.2f}", "T13": f"≤ {round(100 * d['T13']['bar'])}%",
@@ -364,6 +384,14 @@ def main() -> None:
                 t["value_flag_rate"] = b22f
             if t["id"] == "T23":
                 t["value_accuracy"] = b23a
+    # How the primaries combine: each is reported on its own; if they were independent, the
+    # chance that every pilot-estimable primary is met is the product of their chances.
+    prim = [t for t in tj["targets"] if t.get("role") == "primary" and t["id"] in d]
+    context["joint_chance_primaries"] = float(np.prod([d[t["id"]]["chance_met"] for t in prim]))
+    tj["joint_chance_primaries"] = {
+        "targets": [t["id"] for t in prim], "chance": round(context["joint_chance_primaries"], 3),
+        "note": "product of the per-target chances of meeting the bar, as if the targets were "
+                "independent; T5 and T7 have no pilot and are left out"}
     # T7 (hardware): the bar is fixed from what a pass must show; record the smallest pass count
     from eval.stats import exact_binomial
 
@@ -388,7 +416,7 @@ def derivation(tid: str, v: dict[str, Any]) -> str:
     """One sentence stating the pilot estimate and how the bar follows from it."""
     rule = (f"bar = estimate moved {K} standard errors against the system, rounded (ADR-029); "
             f"chance of meeting it if the test behaves like the pilot about {100 * v['chance_met']:.0f}%")
-    pct = {"T1", "T2", "T3", "T13"}
+    pct = {"T1", "T2", "T3", "T6", "T13"}
     if tid == "T4":
         return ("Pilot margins of the engine alone: "
                 f"{100 * v['estimate_vs_fixed_order']:+.1f} points over the fixed-order chart, "
@@ -408,8 +436,6 @@ def derivation(tid: str, v: dict[str, Any]) -> str:
                 f"{100 * v['accuracy_se']:.1f}); {rule}.")
     if tid in pct:
         est, se = f"{100 * v['estimate']:.1f}%", f"{100 * v['se']:.1f} points"
-    elif tid == "T6":
-        est, se = f"{100 * v['estimate']:.1f} points", f"{100 * v['se']:.1f} points"
     else:
         est, se = f"{v['estimate']:.3f}", f"{v['se']:.3f}"
     return f"Pilot estimate {est} (standard error {se}, {int(v['n_pilot'])} units); {rule}."
@@ -417,13 +443,11 @@ def derivation(tid: str, v: dict[str, Any]) -> str:
 
 def pilot_text(tid: str, v: dict[str, Any]) -> str:
     """The pilot estimate as printed next to its bar in the M1 targets table."""
-    if tid in ("T1", "T2", "T3", "T13"):
+    if tid in ("T1", "T2", "T3", "T6", "T13"):
         return f"{100 * v['estimate']:.1f}%"
     if tid == "T4":
         return (f"{100 * v['estimate_vs_fixed_order']:+.0f} / {100 * v['estimate_vs_random']:+.0f} / "
                 f"{100 * v['estimate_vs_half_split']:+.0f} pts").replace("-", "−")
-    if tid == "T6":
-        return f"{100 * v['estimate']:.1f} pts".replace("-", "−")
     if tid == "T14":
         return (f"{100 * v['wrong_prior_catalog_mix']:+.1f} / "
                 f"{100 * v['uniform_prior_capacitor_mix']:+.1f} pts").replace("-", "−")

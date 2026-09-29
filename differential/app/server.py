@@ -18,7 +18,7 @@ import re
 import threading
 import uuid
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
@@ -74,7 +74,7 @@ def _state(s: dict[str, Any]) -> dict[str, Any]:
     pending = None
     rec = next((c.result for c in reversed(tb.calls) if c.name == "recommend_measurement"), None)
     if rec and not rec.get("stop") and agent.pending_key in (rec.get("key"), "discharge", "approval",
-                                                               "supervisor"):
+                                                               "supervisor", "bring_up"):
         pending = rec
     if agent.pending_key == "guess" and agent.withheld is not None:
         # trainee mode: the recommendation stays hidden until the trainee commits a choice
@@ -84,6 +84,9 @@ def _state(s: dict[str, Any]) -> dict[str, Any]:
     if pending and pending.get("blocked") == "supervisor":
         banner = {"level": "danger", "title": "Trainee mode: a supervisor must be named",
                   "lines": [pending["next_step"], *pending["safety"]["lines"]]}
+    elif pending and pending.get("blocked") == "bring_up":
+        banner = {"level": "danger", "title": "Bring the unit up through a current limiter first",
+                  "lines": [str(pending.get("next_step", ""))]}
     elif pending and pending.get("blocked") == "owner_approval":
         banner = {"level": "warning", "title": "Owner's approval needed before removing parts",
                   "lines": [str(pending.get("next_step", "")).replace(" (approve_part_removal)", "")]}
@@ -110,6 +113,7 @@ def _state(s: dict[str, Any]) -> dict[str, Any]:
         "discharge_verified": tb.discharge_verified,
         "discharge_readings": dict(tb.discharge_readings),
         "removal_approved": tb.removal_approved,
+        "bring_up": tb.bring_up,
         "trainee": ({"supervisor": tb.supervisor, "log": tb.trainee_log} if tb.trainee else None),
         "banner": banner,
         "readings": readings,
@@ -183,6 +187,11 @@ class Discharge(BaseModel):
 
 
 class Approval(BaseModel):
+    note: str = Field("", max_length=500)
+
+
+class BringUp(BaseModel):
+    method: Literal["variac", "series_lamp", "current_limited_supply", "known_good"]
     note: str = Field("", max_length=500)
 
 
@@ -335,6 +344,23 @@ def supervisor(sid: str, req: Supervisor) -> dict[str, Any]:
         reply = s["agent"].name_supervisor(req.name)
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
+    return {"reply": _turn(reply), "state": _state(s)}
+
+
+@app.post("/api/sessions/{sid}/bring_up")
+def bring_up(sid: str, req: BringUp) -> dict[str, Any]:
+    """How the unit was first powered: variac, series lamp, current-limited supply or
+    already running normally (ADR-042); recorded on the ticket."""
+    s = _session(sid)
+    agent: DifferentialAgent = s["agent"]
+    res = agent.tb.call("confirm_bring_up", {"method": req.method, "note": req.note})
+    if "error" in res:
+        raise HTTPException(400, str(res["error"]))
+    text = res["message"]
+    if agent.pending_key == "bring_up":
+        agent.pending_key = None
+        text += "\n\n" + agent._next_step()
+    reply = agent._reply(text)
     return {"reply": _turn(reply), "state": _state(s)}
 
 

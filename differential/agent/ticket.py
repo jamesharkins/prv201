@@ -85,6 +85,7 @@ def build_ticket(tb: ToolBox) -> dict[str, Any]:
         "part_removal": {"owner_approved": tb.removal_approved, "note": tb.removal_note,
                          "parts_removed": removed},
         "discharge_attestations": list(tb.discharge_log),
+        "bring_up": dict(tb.bring_up) if tb.bring_up else None,
         "trainee": ({"supervisor": tb.supervisor, "steps": len(tb.trainee_log),
                      "matched": sum(1 for x in tb.trainee_log if x["match"]),
                      "log": list(tb.trainee_log)} if tb.trainee else None),
@@ -130,9 +131,13 @@ def ticket_markdown(t: dict[str, Any]) -> str:
         lines += ["## Recommended action", ""] + [f"- {a}" for a in t["actions"]] + [""]
     if t["safety"]:
         lines += ["## Safety", ""] + [f"- {s}" for s in t["safety"]] + [""]
+    bu = t.get("bring_up")
+    if bu:
+        lines.append(f"Bring-up recorded by the technician at {bu['time']}: the unit {bu['text']}.")
     for a in t.get("discharge_attestations", []):
         lines.append("Discharge attested by the technician at " + a["time"] + ": " + ", ".join(
-            f"{tp} {v:g} V" for tp, v in a["readings"].items()) + ".")
+            f"{tp} {v:g} V" for tp, v in a["readings"].items())
+            + (" (bleeder attached)" if a.get("bleeder") else "") + ".")
     pr = t.get("part_removal") or {}
     if pr.get("parts_removed") or pr.get("owner_approved"):
         lines += ["", "## Parts removed for testing", "",

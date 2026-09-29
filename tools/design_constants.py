@@ -46,7 +46,9 @@ def collect() -> dict[str, Any]:
             "aging": {"electrolytic_c": list(draws_mod.AGE_ELECTROLYTIC_C),
                       "electrolytic_esr": list(draws_mod.AGE_ELECTROLYTIC_ESR),
                       "resistor": list(draws_mod.AGE_RESISTOR),
-                      "triode_emission": list(draws_mod.AGE_TRIODE_EMISSION)},
+                      "triode_emission": list(draws_mod.AGE_TRIODE_EMISSION),
+                      "training_share_pct": 100 / mc.MIXED_AGE_EVERY,
+                      "mixed_splits": sorted(mc.MIXED_AGE_SPLITS)},
         },
         "measurement": {
             "dmm_pct": 100 * meas.DMM_PCT, "dmm_counts": meas.DMM_DIGITS,

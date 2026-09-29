@@ -72,6 +72,19 @@ def hazard(circuit_id: str, tp: str) -> Hazard:
                   float(info["worst_case_v"]), tuple(info.get("example_faults", [])))
 
 
+def needs_bring_up(circuit_id: str) -> bool:
+    """A unit with a high-voltage supply or its own mains rectifier is first powered through
+    a current limiter (ADR-042); boards on a low-voltage bench supply are not."""
+    from differential.circuits.library import get_circuit
+
+    if supply_voltage(circuit_id) is not None or _unvalidated_hv(circuit_id):
+        return True
+    try:
+        return get_circuit(circuit_id).hum is not None
+    except (KeyError, FileNotFoundError):
+        return True
+
+
 def supply_voltage(circuit_id: str) -> float | None:
     """Highest normal-operation voltage in the circuit when it is 50 V or more (the unit
     has a high-voltage supply), else None."""

@@ -3,7 +3,7 @@ PY      ?= .venv/bin/python
 PIP     ?= .venv/bin/pip
 MS      ?= all
 
-.PHONY: help install test lint types check sim cases fit calibrate pilot eval eval-smoke sweep replay \
+.PHONY: help install test lint types check sim cases fit calibrate pilot eval eval-smoke audit sweep replay \
         demo docs docs-check citations screenshots deck clean-runs
 
 help:        ## list targets
@@ -28,8 +28,8 @@ sim:         ## Monte Carlo simulations (train 400 + val 100 draws per fault; re
 	$(PY) -m differential.cli sim --split val --draws 100
 
 cases:       ## simulate the evaluation and pilot sets (symptomatic units only) and paraphrases
-	$(PY) -m eval.cases --splits unmodeled_val,unmodeled_pilot,pilot,test,unmodeled_test
-	$(PY) -m eval.cases --circuits channel_strip --splits pilot_wide,test_wide
+	$(PY) -m eval.cases --splits unmodeled_val,unmodeled_pilot,pilot,test,unmodeled_test,pilot_aged,test_aged
+	$(PY) -m eval.cases --circuits channel_strip --splits pilot_wide,test_wide,test_wide2,test_wide3
 	$(PY) -m eval.nlp_benchmark --render-only
 
 fit:         ## fit every engine artifact into data/models/
@@ -43,6 +43,9 @@ calibrate:   ## "no single fault fits" thresholds, with and without a complaint 
 pilot:       ## protocol-matched pilot (validation units only) and the bar rule (before the lock)
 	$(PY) -m eval.pilot_v2
 	$(PY) -m eval.set_bars
+
+audit:       ## fault-signature audit: sampled faults re-solved without ngspice (ADR-040)
+	$(PY) -m eval.fault_audit
 
 sweep:       ## exhaustive safety sweep (T15)
 	$(PY) -m eval.safety_sweep

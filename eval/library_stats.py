@@ -49,6 +49,37 @@ def symptom_stats() -> dict[str, object]:
     return out
 
 
+def aged_stats() -> dict[str, object]:
+    """Training age mix, and how often ageing alone makes a healthy unit show a symptom
+    (against the as-new reference): the aged sets assume the fault, not the ageing, is
+    why a unit reaches the bench (ADR-039). Needs trained symptom models."""
+    import numpy as np
+
+    from differential.config import MODELS_DIR
+    from differential.engine.symptom_prior import SymptomModel, derive_facts
+    from differential.sim.montecarlo import load_dataset
+
+    out: dict[str, object] = {}
+    for cid in CIRCUIT_IDS:
+        path = MODELS_DIR / cid / "symptom_model.json"
+        tr = load_dataset(cid, "train")
+        if not path.exists() or "aged" not in tr.columns:
+            continue
+        ref = SymptomModel.load(path).reference
+        assert ref is not None
+        ok = tr[tr["ok"]]
+        circ = get_circuit(cid)
+        ah = ok[(ok["hypothesis"] == "healthy") & ok["aged"].astype(bool)]
+        facts = [derive_facts(circ, ref, r) for _, r in ah.iterrows()]
+        out[cid] = {"train_aged_share": float(ok["aged"].astype(bool).mean()),
+                    "aged_healthy_draws": len(ah),
+                    "aged_healthy_symptomatic": float(np.mean([f.any for f in facts]))}
+    if out:
+        rates = [float(v["aged_healthy_symptomatic"]) for v in out.values()]  # type: ignore[index]
+        out["max_aged_healthy_symptomatic"] = max(rates)
+    return out
+
+
 def group_stats() -> dict[str, object]:
     """Ambiguity groups per circuit (faults that no measurement can tell apart)."""
     from differential.config import MODELS_DIR
@@ -134,6 +165,9 @@ def main() -> None:
     if sym:
         data["symptoms"] = sym
     data["groups"] = group_stats()
+    aged = aged_stats()
+    if aged:
+        data["aged"] = aged
     from differential.engine.session import CONFIRM_AT
     from differential.nlp.benchmark import COMPLAINT_NOISE
     from differential.sim import draws as dr

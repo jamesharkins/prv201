@@ -672,3 +672,112 @@ deleted.
 - **Consequences.** Due weeks go into `SUBMISSION_GUIDE.md`: M1 at the start of week
   6's class, M2 week 8, M3 week 11, M4 week 13, final milestone and videos
   (non-finalists) at the end of week 13, presentations for finalists in week 14.
+
+## ADR-039 - Aged units in training and a primary aged-unit target
+
+- **Context.** Round 4 (all four judges, two graders): units that reach a bench are
+  old, yet the engine was trained on as-new tolerances only and aged units were a
+  secondary target on the channel strip alone. The pilot's aged top-1 (66.7%, a
+  25.8-point drop from as-new units) was not printed.
+- **Decision.** (1) Training, validation and calibration draws mix as-new and aged
+  units: every second draw (odd hypothesis index plus draw index) is aged with the
+  model of the aged stress sets (`draws.age_draw`: electrolytic capacitance
+  x U(0.70, 0.95) and ESR x logU(1.2, 3.0), resistors x U(1.00, 1.10), triode
+  emission x U(0.70, 1.00)), so every fault has as many aged draws as as-new ones.
+  Test and pilot units stay as-new; the aged sets are aged throughout. (2) A symptom is
+  still judged against an as-new healthy unit: the symptom reference uses the as-new
+  healthy draws only, so the definition of a unit that reaches the bench does not move.
+  A probe before the change found aged healthy units rarely show a symptom against that
+  reference (0-5% by circuit, 100 units each), so in the aged sets the fault, not the
+  ageing, is almost always why the unit is on the bench; `eval/library_stats.py`
+  reports the rate from the training data. (3) The aged sets cover every circuit with
+  the test mix (pilot 200 + 5 x 60, test 500 + 5 x 100). (4) T6 becomes a primary
+  target: T1's count (top-1 by ambiguity group, full system) on the 1,000 aged units,
+  weighted like T1, bar by the ADR-029 rule from the aged pilot; the drop from T1 and
+  the split of misses into wrong names and "no single fault fits" calls are reported
+  without a bar. (5) The simulation signature now includes the split configuration and
+  the draw code, so any change to the mix discards old checkpoints (standing rule 9).
+  (6) `set_bars` records the chance that every pilot-estimable primary is met if the
+  targets were independent, so the documents can state how the primaries combine.
+- **Consequences.** Full rebuild: simulation, evaluation sets, training, calibration,
+  pilot, bars and the safety sweep. As-new accuracy may fall a little because each
+  fault's likelihood now spans both populations; the pilot shows by how much, and the
+  bars follow from it.
+
+## ADR-040 - Fault-signature audit with an independent solver
+
+- **Context.** Round 4 (engineer, ML PhD and professor judges): the 22 hand checks are
+  healthy bias points; fault behaviour, which is what the engine learns, was never
+  checked outside ngspice, and an earlier close look at one fault found a model
+  artifact (ADR-030).
+- **Decision.** `eval/fault_audit.py` draws a stratified random sample of catalogued
+  faults (up to two of each fault type per circuit, all five blocks and the channel
+  strip, fixed seed) and re-solves three training units of each (two as-new, one aged,
+  rebuilt from their seeds) without ngspice and without the simulator's netlist
+  builder: the circuit is read from the healthy netlist, the fault is inserted from its
+  catalog definition, and a nodal solver written for the audit (Newton with source
+  stepping) evaluates the published device equations (Gummel-Poon with the onsemi
+  2N3904 card, the Diodes Inc. diode and zener cards, Koren's triode equation, the
+  op-amp macro-model) for the operating point, the AC gains and the 120 Hz hum. The
+  agreement rule was fixed before the first comparison: DC within twice the bench
+  meter's accuracy, AC and hum within 0.5 dB above the instrument floor, every reading
+  of all three units. The result is reported with an exact interval, and the first
+  run is kept (`results/fault_audit_run1.json`).
+- **Result.** First run (blocks only): 36 of 42 faults agreed; all six disagreements
+  were the audit solver's own omissions (no junction capacitances in its small-signal
+  model; a Newton step limit that stalled with a saturated op-amp). With those fixed and
+  the rule unchanged: 42 of 42; with the channel strip added under the same rule, 53 of
+  53 faults and 3,159 of 3,159 readings (`docs/fault_audit.md`).
+- **Consequences.** The simulator's fault insertion and ngspice's solutions are checked
+  against an independent implementation. Not checked: whether the device equations
+  describe real parts (hand calculations for healthy bias points; hardware T7), THD,
+  and meter loading. The documents say so.
+
+## ADR-041 - Effort to a confirmed answer
+
+- **Context.** Round 4 (engineer, professor, ML PhD): the scripted procedures pay for
+  unsoldering their leading suspect before they stop (ADR-033), while the engine stops
+  at 90% belief and its mean effort (6.7 units) is below the cost of one unsoldering
+  test (10), so it almost never pays for confirming its answer. The effort targets
+  compared a confirmed answer with an unconfirmed one.
+- **Decision.** Effort is split into probing (in-circuit readings) and unsoldering
+  (out-of-circuit tests), and every method is charged one confirming unsoldering test of
+  its named group's leading part unless the session already unsoldered a part of that
+  group and found it defective (`eval/effort.py`; lift readings recomputed with the
+  harness's own noise seeds, so no new runs are needed). A "no single fault fits" call
+  names no part and is charged nothing; the flag rate is reported beside the effort.
+  T8-T11 become ratios of this effort to a confirmed answer, with bars from the pilot by
+  the ADR-029 rule; the raw effort ratio and the probing, unsoldering and confirming
+  parts are reported without bars. In the effort-weight sensitivity runs the confirming
+  test is charged at the run's own weights.
+- **Consequences.** A check on the round-4 block pilots showed the engine's advantage
+  shrinking from about a third of the scripts' raw effort to roughly 0.7-0.9 of their
+  confirmed effort; the new pilot sets the bars. The headline effort claim becomes
+  smaller and fairer. T9's rationale no longer calls half-split tracing "expert
+  practice": it is a textbook procedure.
+
+## ADR-042 - Bench practice in the safety layer
+
+- **Context.** Round 4 (audio-electronics engineer): the safety layer covered discharge,
+  isolation and hands-off measurement but not four habits of a careful bench:
+  bringing an unfamiliar unit up through a variac or series lamp, a meter rated for the
+  voltage and category, re-checking a discharged capacitor right before contact
+  (dielectric absorption), and clipping leads on with the power off.
+- **Decision.** Each habit is a rule in code and a check in the exhaustive sweep (T15).
+  (1) Bring-up: in a unit with a high-voltage supply or its own mains rectifier
+  (`hazards.needs_bring_up`), every powered step is blocked and no powered reading is
+  accepted until the technician records how the unit was first powered (variac, series
+  lamp, current-limited bench supply, or already running normally before the
+  complaint); the record goes on the ticket. (2) Meter: every powered step in a unit
+  with a high-voltage supply names the rating (`rules.METER_RATING`, IEC 61010 CAT II
+  600 V or better) and says to clip the leads on with the power off. (3) Dielectric
+  absorption: a discharge check unlocks part removal for `rules.DISCHARGE_VALID_S`
+  (5 minutes) or until the next power-up, whichever is first, unless the technician
+  records a bleeder clipped across the main filter capacitor; an expired check says why.
+  (4) Oscilloscope steps keep the scope-ground note, now also swept. Attestations are
+  the technician's alone: in live mode the model's calls to record discharge readings,
+  owner approval or bring-up are refused unless the technician's own words carry them.
+- **Consequences.** The web app gains a bring-up form in the safety banner; the offline
+  chat accepts plain answers ("brought it up on a variac") and, like owner approval,
+  records nothing when the sentence contains a negation. Low-voltage bench boards are
+  not gated. Tests cover each rule; the sweep reports each count.

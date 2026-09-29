@@ -159,6 +159,39 @@ export function approvalForm({ part, onSubmit }) {
 }
 
 
+/** How a unit with a high-voltage or mains supply was first powered (ADR-042). */
+export function bringUpForm({ methods = {}, onSubmit }) {
+  const id = nextId("bringup");
+  const labels = {
+    variac: "On a variac, raised slowly",
+    series_lamp: "Through a series lamp (dim-bulb limiter)",
+    current_limited_supply: "From a current-limited bench supply",
+    known_good: "It was already running normally before the complaint",
+  };
+  const select = h("select", { id, class: "input" },
+    h("option", { value: "" }, "Choose how it was powered…"),
+    ...Object.keys(methods).map((m) => h("option", { value: m }, labels[m] || methods[m])));
+  const err = h("p", { class: "form-error" });
+  const submit = h("button", { type: "submit", class: "btn btn-danger btn-sm" },
+    icon("unlock"), h("span", {}, "Record bring-up"));
+  const form = h("form", { class: "bringup-form", novalidate: true },
+    h("label", { for: id, class: "discharge-label" },
+      "How was the unit first powered? It goes on the ticket:"),
+    h("div", { class: "rf-row" }, select, submit), err);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!select.value) {
+      err.textContent = "Choose how the unit was first powered.";
+      select.focus();
+      return;
+    }
+    err.textContent = "";
+    const res = await onSubmit(select.value, submit);
+    if (res) err.textContent = res;
+  });
+  return { form, input: select };
+}
+
 /** Trainee mode: the supervising technician's name (high-voltage units). */
 export function supervisorForm({ onSubmit }) {
   const id = nextId("sup");

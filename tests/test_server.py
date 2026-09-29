@@ -170,3 +170,21 @@ def test_red_team_round_4_regressions(client: TestClient) -> None:
     client.post(f"/api/sessions/{tid}/measure", json={"key": "dc:TP4"})
     client.post(f"/api/sessions/{tid}/readings", json={"key": "dc:TP5", "value": 300.0})
     assert client.get(f"/api/sessions/{tid}").json()["readings"] == []
+
+
+def test_bring_up_endpoint_unlocks_powered_steps(client: TestClient) -> None:
+    """ADR-042: on a unit with a high-voltage or mains supply, powered readings wait for the
+    recorded bring-up; the method is validated and goes on the ticket."""
+    sid = client.post("/api/sessions", json={"circuit_id": "psu", "mode": "offline", "seed": 3}).json()["session_id"]
+    st = client.post(f"/api/sessions/{sid}/messages", json={"text": "It hums loudly."}).json()["state"]
+    assert st["pending"]["blocked"] == "bring_up" and st["banner"]["level"] == "danger"
+    early = client.post(f"/api/sessions/{sid}/readings", json={"key": "dc:TP1", "value": 24.0}).json()
+    assert early["state"]["readings"] == [] and "first powered" in early["reply"]["text"]
+    assert client.post(f"/api/sessions/{sid}/bring_up", json={"method": "screwdriver"}).status_code == 422
+    r = client.post(f"/api/sessions/{sid}/bring_up", json={"method": "variac"}).json()
+    assert r["state"]["bring_up"]["method"] == "variac"
+    assert r["state"]["pending"] is None or r["state"]["pending"].get("blocked") != "bring_up"
+    late = client.post(f"/api/sessions/{sid}/readings", json={"key": "dc:TP1", "value": 24.0}).json()
+    assert [x["key"] for x in late["state"]["readings"]] == ["dc:TP1"]
+    md = client.get(f"/api/sessions/{sid}/ticket").json()["markdown"]
+    assert "variac" in md

@@ -15,6 +15,7 @@ Outputs (``data/sim/``):
 from __future__ import annotations
 
 import hashlib
+import inspect
 import json
 import logging
 import os
@@ -63,6 +64,11 @@ SPLIT_INDEX = {
 TOL_SCALE = {"test_wide": 1.5, "pilot_wide": 1.5, "test_wide2": 2.0, "test_wide3": 3.0}
 # Aged-unit splits: every part drifts the way parts age (draws.age_draw) before the fault.
 AGED_SPLITS = frozenset({"pilot_aged", "test_aged"})
+# Training, validation and calibration splits mix as-new and aged units (ADR-039): every
+# second draw is aged (odd hypothesis index + draw index), so each fault has as many aged
+# draws as as-new ones, and calibration cases alternate.
+MIXED_AGE_SPLITS = frozenset({"train", "val", "unmodeled_val"})
+MIXED_AGE_EVERY = 2
 CHUNK = 50
 log = logging.getLogger("differential.sim")
 
@@ -96,12 +102,18 @@ class Job:
         return f"{self.circuit_id}|{self.split}|{self.hypothesis}|{self.draws[0]}-{self.draws[-1]}"
 
 
+def is_aged(split: str, hyp_index: int, draw: int) -> bool:
+    """Whether one draw is an aged unit."""
+    return split in AGED_SPLITS or (split in MIXED_AGE_SPLITS
+                                    and (hyp_index + draw) % MIXED_AGE_EVERY == 1)
+
+
 def make_draw(circuit_id: str, split: str, hyp_index: int, hypothesis: str, draw: int) -> Draw:
     """Deterministically construct the parameter draw for one simulation."""
     circuit = get_circuit(circuit_id)
     rng = draw_rng(circuit_id, split, hyp_index, draw)
     d = healthy_draw(circuit, rng, TOL_SCALE.get(split, 1.0))
-    if split in AGED_SPLITS:
+    if is_aged(split, hyp_index, draw):
         age_draw(circuit, d, rng)
     for fid in hypothesis.split("+"):
         apply_fault(circuit, d, parse_fault_id(fid), rng)
@@ -139,6 +151,7 @@ def run_job(job: Job) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]]]:
             "reason": r.reason,
             "fundamental": float(r.fundamental),
             "severity": json.dumps(d.severity, sort_keys=True),
+            "aged": "aged" in d.severity,
         }
         for o, v in zip(obs, r.values, strict=True):
             row[o.key] = float(v)
@@ -312,6 +325,10 @@ def simulation_signature(circuit_ids: Sequence[str]) -> str:
     """Hash of everything a simulated row depends on besides its seed."""
     parts = [DEVICE_LIBRARY.read_bytes(), Path(draws_module.__file__).read_bytes(),
              Path(builder_module.__file__).read_bytes(), Path(runner_module.__file__).read_bytes()]
+    parts.append(json.dumps({"tol_scale": TOL_SCALE, "aged": sorted(AGED_SPLITS),
+                             "mixed_aged": sorted(MIXED_AGE_SPLITS), "every": MIXED_AGE_EVERY,
+                             "make_draw": inspect.getsource(make_draw) + inspect.getsource(is_aged)},
+                            sort_keys=True).encode())
     parts += [fault_netlist(get_circuit(cid), HEALTHY_FAULT).encode() for cid in circuit_ids]
     return _sha256(b"\x00".join(parts))
 

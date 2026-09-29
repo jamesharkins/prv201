@@ -26,6 +26,7 @@ from differential.config import FIGURES_DIR, RESULTS_DIR
 from differential.engine.bundle import load_bundle
 from differential.sim.faults import MODE_TYPE, parse_fault_id
 from eval import figstyle, metrics_io
+from eval.effort import with_effort
 from eval.harness import (
     EFFORT_WEIGHTS,
     SENSITIVITY_BASES,
@@ -89,8 +90,8 @@ def run_everything(smoke: bool) -> dict[str, dict[str, pd.DataFrame]]:
                                                limit=limit) for cid in CIRCUITS}
     out["unmodeled_engine"] = {cid: run_system(SYSTEMS["engine_gen"], cid, sp["unmodeled_test"],
                                                limit=limit) for cid in CIRCUITS}
-    out["aged_hybrid"] = {COMPOSITE_ID: run_system(SYSTEMS["hybrid"], COMPOSITE_ID,
-                                                   sp["test_aged"], limit=limit)}
+    out["aged_hybrid"] = {cid: run_system(SYSTEMS["hybrid"], cid, sp["test_aged"], limit=limit)
+                          for cid in CIRCUITS}
     for key in ("test_wide", "test_wide2", "test_wide3"):
         out[f"{key}_hybrid"] = {COMPOSITE_ID: run_system(SYSTEMS["hybrid"], COMPOSITE_ID,
                                                          sp[key], limit=limit)}
@@ -219,10 +220,18 @@ def two_part(t: dict[str, Any], offline: Estimate | None, claude: Estimate | Non
 
 
 def effort_target(eng: pd.DataFrame, base: pd.DataFrame) -> dict[str, Any]:
+    """Effort to a confirmed answer (ADR-041); the raw effort and its parts are reported."""
     a, b = aligned(eng, base)
-    ratio = bootstrap_ratio_of_means(a["cost"].to_numpy(), b["cost"].to_numpy())
+    ratio = bootstrap_ratio_of_means(a["confirmed_cost"].to_numpy(), b["confirmed_cost"].to_numpy())
+    raw = bootstrap_ratio_of_means(a["cost"].to_numpy(), b["cost"].to_numpy())
     acc_gap = float(a["correct"].mean() - b["correct"].mean())
-    return {"ratio": ratio, "top1_system": float(a["correct"].mean()),
+    parts = {side: {"effort": float(f["cost"].mean()), "probing": float(f["probe_cost"].mean()),
+                    "unsoldering": float(f["lift_cost"].mean()),
+                    "confirming_charge": float(f["confirm_cost"].mean()),
+                    "confirmed_effort": float(f["confirmed_cost"].mean())}
+             for side, f in (("system", a), ("baseline", b))}
+    return {"ratio": ratio, "raw_ratio": est(raw), "parts": parts,
+            "top1_system": float(a["correct"].mean()),
             "top1_baseline": float(b["correct"].mean()), "top1_gap": acc_gap,
             "accuracy_condition": acc_gap >= -0.02, "n": len(a)}
 
@@ -267,29 +276,34 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
                            m5.get("hi1", m5["hi"])), {"detail": llm})
     else:
         put("T5", None, {"note": "requires DIFFERENTIAL_API_KEY; protocol in eval/llm_baseline.py"})
-    aged = R["aged_hybrid"][COMPOSITE_ID]
-    drop = boot_diff_indep(cs["correct"].to_numpy(float), aged["correct"].to_numpy(float))
+    # T6 (ADR-039): T1's count on aged units; the aged set has the test set's mix, so
+    # pooling weights it as T1 is weighted.
+    aged = pooled(R["aged_hybrid"])
+    drop = boot_diff_indep(hyb["correct"].to_numpy(float), aged["correct"].to_numpy(float))
     curve = {k: float(R[f"{k}_hybrid"][COMPOSITE_ID]["correct"].mean())
              for k in ("test_wide", "test_wide2", "test_wide3")}
-    put("T6", drop, {"aged_top1": float(aged["correct"].mean()), "n_aged": len(aged),
-                     "aged_flagged": float((aged["top_group"] == -1).mean()),
-                     "aged_wrong_name": float(((aged["top_group"] != -1)
-                                               & ~aged["correct"].astype(bool)).mean()),
-                     "tolerance_curve_top1": {"1x": float(cs["correct"].mean()), "1.5x": curve["test_wide"],
-                                              "2x": curve["test_wide2"], "3x": curve["test_wide3"]}})
+    put("T6", bootstrap_mean(aged["correct"].to_numpy(float)),
+        {"n": len(aged), "drop_from_new": est(drop),
+         "by_circuit": {c: float(f["correct"].mean()) for c, f in R["aged_hybrid"].items()},
+         "aged_flagged": float((aged["top_group"] == -1).mean()),
+         "aged_wrong_name": float(((aged["top_group"] != -1) & ~aged["correct"].astype(bool)).mean()),
+         "tolerance_curve_top1": {"1x": float(cs["correct"].mean()), "1.5x": curve["test_wide"],
+                                  "2x": curve["test_wide2"], "3x": curve["test_wide3"]}})
     hw = M.get("fault_board", {})
     if hw.get("status") == "measured":
         k7, n7 = int(hw["engine_top1_correct"]), int(hw["n_faults"])
         put("T7", exact_binomial(k7, n7), {"detail": hw})
     else:
         put("T7", None, {"note": "requires the hardware fault boards (hardware/fault_board)"})
+    eng = pooled(with_effort(R["engine_gen"]))
+    hyb_e = pooled(with_effort(R["hybrid"]))
     for tid, base in (("T8", "fixed_order"), ("T9", "half_split"), ("T10", "random")):
-        d = effort_target(eng, pooled(R[base]))
+        d = effort_target(eng, pooled(with_effort(R[base])))
         st = judge(T[tid], d["ratio"])
         if st == "met" and not d["accuracy_condition"]:
             st = "missed"
         put(tid, d["ratio"], {k: v for k, v in d.items() if k != "ratio"}, st)
-    d = effort_target(hyb, eng)
+    d = effort_target(hyb_e, eng)
     st = judge(T["T11"], d["ratio"])
     put("T11", d["ratio"], {k: v for k, v in d.items() if k != "ratio"},
         "missed" if st == "met" and not d["accuracy_condition"] else st)
@@ -444,14 +458,15 @@ def analyses(R: dict[str, dict[str, pd.DataFrame]]) -> dict[str, Any]:
             n = {b: sensitivity_name(b, w, f) for b in SENSITIVITY_BASES}
             if not all(x in R for x in n.values()):
                 continue
-            eng = pooled(R[n["engine_gen"]])
+            eff = {b: pooled(with_effort(R[x], SYSTEMS[x].cost_scale)) for b, x in n.items()}
+            eng = eff["engine_gen"]
             sens[f"{w}_{f}"] = {
                 k: {kk: est(vv) if isinstance(vv, Estimate) else vv for kk, vv in v.items()}
                 for k, v in (
-                    ("T8_vs_fixed_order", effort_target(eng, pooled(R[n["fixed_order"]]))),
-                    ("T9_vs_half_split", effort_target(eng, pooled(R[n["half_split"]]))),
-                    ("T10_vs_random", effort_target(eng, pooled(R[n["random"]]))),
-                    ("T11_complaint", effort_target(pooled(R[n["hybrid"]]), eng)))}
+                    ("T8_vs_fixed_order", effort_target(eng, eff["fixed_order"])),
+                    ("T9_vs_half_split", effort_target(eng, eff["half_split"])),
+                    ("T10_vs_random", effort_target(eng, eff["random"])),
+                    ("T11_complaint", effort_target(eff["hybrid"], eng)))}
     out["effort_weight_sensitivity"] = sens
     # Monte Carlo sample-size ablation.
     mc = {}

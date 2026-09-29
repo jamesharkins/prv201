@@ -165,6 +165,7 @@ const banner = new SafetyBanner($("banner-slot"), {
   },
   approve: async (note, btn) => act(() => api.approveRemoval(app.state.session_id, note), { button: btn }),
   supervisor: async (name, btn) => act(() => api.supervisor(app.state.session_id, name), { button: btn }),
+  bringUp: async (method, btn) => act(() => api.bringUp(app.state.session_id, method), { button: btn }),
 });
 
 const nextCard = new NextCard($("next-card"), {
@@ -176,7 +177,7 @@ const nextCard = new NextCard($("next-card"), {
   guess: (key, btn) => act(() => api.guess(app.state.session_id, key), { button: btn }),
   focusDischarge: () => {
     const input = document.querySelector(
-      ".banner .discharge-form input, .banner .approval-form input, .banner .supervisor-form input");
+      ".banner .discharge-form input, .banner .approval-form input, .banner .supervisor-form input, .banner .bringup-form select");
     if (input) {
       input.scrollIntoView({ block: "center", behavior: "smooth" });
       input.focus({ preventScroll: true });

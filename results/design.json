@@ -19,8 +19,11 @@
   }
  },
  "cases": {
+  "bank_a_phrasings": 174,
+  "bank_b_phrasings": 240,
   "complaint_add_pct": 2.0,
   "complaint_omit_pct": 20.0,
+  "dev_phrasings": 78,
   "max_attempts": 200,
   "n": {
    "pilot": {
@@ -91,7 +94,15 @@
     "tone": 20,
     "triode": 20
    }
-  }
+  },
+  "personas": 3
+ },
+ "effort": {
+  "budget": 40.0,
+  "dc": 1.0,
+  "hv_extra": 2.0,
+  "lift": 10.0,
+  "scope": 3.0
  },
  "engine": {
   "budget": 40.0,

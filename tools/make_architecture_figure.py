@@ -77,10 +77,10 @@ def main() -> None:
     box(ax, 0.40, 0.44, 0.20, 0.19, "Agent", "live (Claude), offline\n(templates) or replay;\nreads complaints and\nexplains each step", ORANGE, ORANGE_T)
     box(ax, 0.635, 0.465, 0.165, 0.165, "Tools", "belief, next step,\nexpected readings,\nsafety brief, ticket", ORANGE, ORANGE_T)
     box(ax, 0.83, 0.465, 0.15, 0.165, "Engine session", "posterior, expected\ninformation per\neffort, stopping", BLUE, BLUE_T)
-    box(ax, 0.40, 0.235, 0.20, 0.15, "LLM client", "Claude API; key from\nDIFFERENTIAL_API_KEY;\nresponse cache", ORANGE, ORANGE_T, fs=5.8)
+    box(ax, 0.40, 0.235, 0.20, 0.15, "LLM client", "live mode only: complaint,\nphotos, readings go to the\nClaude API; key from env", ORANGE, ORANGE_T, fs=5.8)
     box(ax, 0.635, 0.235, 0.165, 0.15, "NLP + vision", "complaint to symptoms;\nmeter photo to reading", ORANGE, ORANGE_T, fs=5.8)
     box(ax, 0.83, 0.235, 0.15, 0.15, "Instruments", "simulated bench,\nSCPI (24 V board),\nmanual entry", AQUA, AQUA_T, fs=5.8)
-    box(ax, 0.03, 0.235, 0.335, 0.15, "Safety layer (code)", "request screening, fault-conditioned hazard map,\nunsoldering lock, output checks, grounding check",
+    box(ax, 0.03, 0.235, 0.335, 0.15, "Safety layer (code)", "screening first; hazard map; gates on steps and readings;\nsafety records from forms only; output and grounding checks",
         RED, RED_T, fs=5.8)
     arrow(ax, (0.182, 0.547), (0.213, 0.547), GRAY, style="<|-|>")
     arrow(ax, (0.367, 0.547), (0.398, 0.547), GRAY, style="<|-|>")

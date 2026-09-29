@@ -15,26 +15,30 @@ from eval import figstyle  # noqa: E402
 INK, MUTED, LINE = "#0b0b0b", "#52514e", "#c3c2b7"
 LANES = [  # (title, subtitle, edge, fill)
     ("Technician", "person at the bench", "#52514e", "#f1f0ec"),
-    ("Web UI", "schematic, chat, ticket", "#52514e", "#f1f0ec"),
-    ("Agent", "LLM or templates", "#eb6834", "#fdebe3"),
+    ("Web UI", "schematic, chat, forms", "#52514e", "#f1f0ec"),
     ("Safety layer", "code, not prompt", "#e34948", "#fce8e8"),
+    ("Agent", "LLM or templates", "#eb6834", "#fdebe3"),
     ("Engine", "belief + next step", "#2a78d6", "#e3effc"),
     ("Instrument", "simulated / SCPI / typed", "#1baf7a", "#e0f5ed"),
 ]
-# (from lane, to lane, label, dashed=return)
+# (from lane, to lane, label, dashed=return). The request is screened before the agent sees
+# it, safety records come only from the forms, and every reading passes the gates before the
+# engine records it (M2 review, round 1).
 STEPS = [
     (0, 1, "1  complaint: “hums and sounds thin”", False),
-    (1, 2, "2  message", False),
-    (2, 3, "3  screen request (mains-side, bypass: refuse)", False),
-    (2, 4, "4  symptoms → prior over faults", False),
-    (4, 2, "5  next measurement + expected readings", True),
-    (2, 3, "6  hazard map: hands-off / discharge text; lift locked?", False),
-    (3, 1, "7  step shown with safety banner", True),
-    (0, 5, "8  technician measures (or confirms a photo reading)", False),
-    (5, 4, "9  reading recorded → posterior updated", False),
-    (4, 2, "10  stop at ≥ 0.90, budget, or no informative step", True),
-    (2, 3, "11  grounding check: every number traced", False),
-    (3, 0, "12  ticket: diagnosis, evidence, sign-off", True),
+    (1, 2, "2  screen the request first: unsafe work refused", False),
+    (2, 3, "3  allowed text; notes and complaints as data", False),
+    (3, 4, "4  symptoms → prior over faults", False),
+    (4, 3, "5  next measurement + expected readings", True),
+    (3, 2, "6  hazard text; gates: bring-up, approval, discharge", False),
+    (2, 1, "7  step shown with safety banner and forms", True),
+    (0, 2, "8  safety records: only in the forms", False),
+    (0, 5, "9  technician measures (or confirms a photo reading)", False),
+    (5, 2, "10  reading checked against the gates", False),
+    (2, 4, "11  reading recorded → posterior updated", False),
+    (4, 3, "12  stop at ≥ 0.90, budget, or no informative step", True),
+    (3, 2, "13  grounding and output check: every number traced", False),
+    (2, 0, "14  ticket: diagnosis, evidence, sign-off", True),
 ]
 
 
@@ -67,7 +71,7 @@ def main() -> None:
         lx = min(x0, x1) + 0.006
         ax.text(lx, y + 0.012, label, ha="left", va="bottom", fontsize=5.8, color=INK,
                 bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.6, "alpha": 0.9})
-    ax.text(0.5, 0.012, "Solid: request or data; dashed: result returned. Steps 5–10 repeat "
+    ax.text(0.5, 0.012, "Solid: request or data; dashed: result returned. Steps 5–11 repeat "
             "for every measurement.", ha="center", va="bottom", fontsize=5.8, color=MUTED)
     figstyle.save(fig, ROOT / "results" / "figures" / "dataflow")
 

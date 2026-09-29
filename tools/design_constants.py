@@ -21,17 +21,30 @@ def default(fn: Any, name: str) -> Any:
     return inspect.signature(fn).parameters[name].default
 
 
+def _phrasings(bank: dict[str, Any]) -> int:
+    """Phrasings in a complaint bank: persona -> feature -> list of texts (or one text)."""
+    n = 0
+    for feats in bank.values():
+        for v in feats.values():
+            n += len(v) if isinstance(v, list | tuple) else 1
+    return n
+
+
 def collect() -> dict[str, Any]:
     from differential.agent import agent, grounding, tools
     from differential.engine import ambiguity, discriminative, generative, selection, session
     from differential.engine import symptom_prior as sp
     from differential.engine.bundle import DEFAULT_UNMODELED_PRIOR
     from differential.instruments import scpi
+    from differential.nlp import benchmark as bench
+    from differential.nlp import paraphrase_bank as bank_a
+    from differential.nlp import paraphrase_bank_b as bank_b
     from differential.nlp.benchmark import COMPLAINT_NOISE as noise
     from differential.safety import hazards, rules
     from differential.sim import draws as draws_mod
     from differential.sim import measurement as meas
     from differential.sim import montecarlo as mc
+    from differential.sim import observables as obs_mod
     from eval import cases, recalibrate_unmodeled, run_eval, set_bars, stats
     from eval import train as train_mod
 
@@ -96,7 +109,15 @@ def collect() -> dict[str, Any]:
         },
         "cases": {"n": {k: dict(v) for k, v in cases.N_CASES.items()},
                   "max_attempts": cases.MAX_ATTEMPTS,
-                  "complaint_omit_pct": 100 * noise.p_omit, "complaint_add_pct": 100 * noise.p_add},
+                  "complaint_omit_pct": 100 * noise.p_omit, "complaint_add_pct": 100 * noise.p_add,
+                  # the complaint banks: writer voices and phrasings per bank (M2 data plan)
+                  "personas": len(bench.PERSONAS),
+                  "dev_phrasings": _phrasings(bench.MAIN_BANK),
+                  "bank_a_phrasings": _phrasings(bank_a.PARAPHRASE_BANK),
+                  "bank_b_phrasings": _phrasings(bank_b.PARAPHRASE_BANK_B)},
+        # effort units per reading (differential/sim/observables.py) and the budget
+        "effort": {"dc": obs_mod.COST_DC, "scope": obs_mod.COST_SCOPE, "hv_extra": obs_mod.COST_HV_EXTRA,
+                   "lift": obs_mod.COST_LIFT, "budget": session.DEFAULT_BUDGET},
         "statistics": {
             "bootstrap_resamples": stats.N_BOOT, "seed": stats.SEED,
             "ece_bins": default(stats.ece, "n_bins"),

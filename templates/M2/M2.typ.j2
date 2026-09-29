@@ -11,48 +11,39 @@
 <% set P3 = "Part 3 — Diagnosis engine and evaluation plan" %>
 <% set P4 = "Part 4 — Agent, safety, security and interface" %>
 <% set cs = m('library.circuits.channel_strip') %>
+<% set ev = targets.evaluation_sets %>
+<% set fa = m('fault_audit') %>
 *Executive summary.* Differential helps a qualified bench technician find the failed part in analog audio equipment. For a modeled circuit it simulates every cataloged single-part fault under part tolerances, keeps a probability for every suspect and for "no single fault fits", recommends the measurement expected to rule out the most suspects per unit of effort, and explains each step; a language model reads complaints and meter photos and writes explanations, while code enforces safety and checks that every number traces to a measurement. This document specifies that design and the plan that tests it against the success criteria locked in M1 (git tag `targets-locked`). << P1 >> traces requirements to code and tests and sets the plan and risks; << P2 >> specifies circuits, faults, simulation and data; << P3 >> the inference, measurement choice, calibration and evaluation statistics; << P4 >> the agent, the safety layer, the injection defense and the interface. Every major choice has an alternatives table.
 
 << part(1, "Requirements, architecture and plan") >>
 
-*What changed since M1.* Instructor feedback on M1 had not been returned when this document was prepared. @tab:feedback lists what our own AI-assisted review of M1 found (three rubric-based reads, four reviewer perspectives and a claim-to-source audit per round) and how the design changed; the full log is `feedback/FEEDBACK_LOG.md`.
+*What changed since M1.* Instructor feedback on M1 had not been returned when this document was prepared. Before the targets were locked, M1 went through five rounds of our own AI-assisted review, each with three rubric-based reads, four reviewer perspectives (the course professor, an audio-electronics engineer, an ML methods reviewer, an ethics and policy scholar), a claim-to-source audit and, from the fourth round, a red team attacking the running app. @tab:feedback lists the findings that changed the design rather than the wording; the full log, with the commit that closed each item, is `feedback/FEEDBACK_LOG.md`. The largest changes came late: aged units now make up half of training, a fault audit checks the simulator with an independent solver, every method is charged for confirming its answer, and the safety layer enforces bench practice.
 
 #figure(
   table(
-    columns: (1.55fr, 2.1fr, 0.75fr),
+    columns: (1.55fr, 2.1fr, 0.6fr),
     table.header([M1 review finding], [Design change], [Where]),
-    [A hazard example (147 V at a tube cathode) was physically implausible], [Traced to a 1 GΩ leakage resistor in the tube model; removed; two circuits re-simulated and retrained; hazard map re-audited], [Part 2],
-    [Test set dropped faults that rarely cause a symptom], [Every set samples symptomatic units, so a fault appears in proportion to how often it causes a symptom (not how often it fails in service)], [Part 2],
-    [Pilot reused validation units that had exposed a bug], [The pilot is its own simulated split, used only to set bars], [Part 3],
-    [Safety judged each probed point alone], [Live-chassis notice on every powered step of a high-voltage unit; hazards conditioned on faults; scope ground warning], [Part 4],
-    [Effort weights are guesses], [Each weight halved and doubled in every effort comparison; timing study planned], [Part 3],
-    [No measure of a technician using the tool], [Technician study protocol with a planted wrong recommendation (planned, not locked)], [Part 4],
-    [Photos sent with metadata in live mode], [Photos re-encoded without metadata before upload], [Part 4],
+    [A hazard example (147 V at a tube cathode) was physically implausible], [Traced to a leakage resistor in the tube model; removed; circuits re-simulated, retrained and the hazard map re-audited], [Part 2],
+    [Units reaching a bench are aged, but the engine trained on as-new parts], [Half of the training and validation units aged; aged pilot and test sets on every circuit; aged accuracy a primary target (T6)], [Part 2],
+    [Fault behavior never checked outside the simulator], [<< fa.faults >> randomly drawn faults re-solved by an independent solver from published device equations; agreement reported with its interval], [Part 2],
+    [Test sets dropped faults that rarely cause a symptom; the only hardware target was small], [Every set samples symptomatic units; << ev.fault_board_min >> faults inserted blind into three 24 V boards as a primary target (T7)], [Parts 2, 3],
+    [Effort comparison favored the engine, which rarely paid for unsoldering], [Effort to a confirmed answer: one confirming unsoldering test charged to every unconfirmed answer; probing and unsoldering reported apart], [Part 3],
+    [Bars close to certain to pass; rounding could undo the margin], [Met only when the one-sided 95% bound clears the bar; rounding never past the pilot estimate; joint chance of the primaries stated], [Part 3],
+    [Safety judged point by point; bench habits missing], [Per-point discharge below 2 V; owner approval; bring-up gate; rated meter; discharge check lapses; leads clipped with the power off], [Part 4],
+    [The model could record attestations the technician never gave], [Discharge, approval and bring-up records accepted only from the technician's own words], [Part 4],
+    [No control for deskilling, blame or worker monitoring], [Trainee mode, sign-off limited to readings and plan, tickets per job not per person; study S1 with ethics review], [Part 4],
   ),
-  caption: [M1 review findings that changed the design. Text-only fixes are in the log.],
+  caption: [M1 review findings that changed the design (all five rounds). Text-only fixes are in the log.],
 ) <tab:feedback>
 
-*Requirements.* << requirements | length >> requirements trace the M1 objectives (O1-O5), safety (S) and engineering practice (P) to the code that implements them and the tests or evaluations that verify them (@tab:reqs). << requirements | selectattr('targets') | list | length >> of them are checked by at least one locked target; the others (circuit library, fault catalog, simulation, ticket, modes and the clean-clone build) by unit tests and continuous integration. Every locked target is traced by at least one requirement. The matrix lives in `docs/requirements.yaml`; `tools/check_requirements.py` fails if a listed file or target disappears or a target is traced by no requirement.
+*Requirements.* << requirements | length >> requirements trace the M1 objectives (O1-O5), safety (S) and engineering practice (P) to the code that implements them and the tests or evaluations that verify them (Appendix A, @tab:reqs). << requirements | selectattr('targets') | list | length >> of them are checked by at least one locked target; the others (circuit library, fault catalog, simulation, ticket, modes and the clean-clone build) by unit tests and continuous integration. Every locked target is traced by at least one requirement. The matrix lives in `docs/requirements.yaml`; `tools/check_requirements.py` fails if a listed file or target disappears or a target is traced by no requirement.
 
-#[
-#show figure: set block(breakable: true)
-#figure(
-  table(
-    columns: (0.3fr, 2.5fr, 0.42fr, 1.6fr, 0.75fr),
-    table.header([ID], [Requirement], [From], [Verified by], [Targets]),
-<% for r in requirements %>
-    [<< r.id >>], [<< r.text | esc >>], [<< r.source | esc >>], [<< r.verification | map('replace', 'tests/', '') | map('replace', 'eval/', '') | join(', ') | esc >>], [<< (r.targets | join(', ')) if r.targets else '—' >>],
-<% endfor %>
-  ),
-  caption: [Requirements traceability. "From": M1 objective (O1 accuracy, O2 effort, O3 honesty, O4 safety, O5 practicality), safety (S) or engineering practice (P). Test files are in `tests/`, evaluation scripts in `eval/`.],
-) <tab:reqs>
-]
 
 *Architecture.* @fig:arch shows the three layers. Offline, each circuit model and its fault catalog are simulated with ngspice under part tolerances and learned into a model bundle (likelihoods, ambiguity groups, calibrated thresholds). Online, one Python process serves the web interface: the agent (Claude in live mode, templates offline, recorded responses in replay) calls tools that act only on an engine session, and the safety layer sits between every step and the technician. The evaluation layer runs every system on held-out simulated units and writes `results/metrics.json`, from which every number in these documents is rendered. Three invariants hold throughout: the ranking shown and written on the ticket comes only from the engine; only code decides what is safe; and no number reaches the technician unless it traces to a tool result or a reading the technician confirmed.
 
 #figure(
   image("/results/figures/architecture.svg", width: 94%),
-  caption: [Architecture. Blue: simulation and inference; orange: language layer; red: safety layer (code, not prompt); green: instruments; grey: interface and evaluation. The `make` target that builds each layer is in its title.],
+  caption: [Architecture. Blue: simulation and inference; orange: language layer; red: safety layer (code, not prompt); green: instruments; gray: interface and evaluation. The `make` target that builds each layer is in its title.],
 ) <fig:arch>
 
 #figure(
@@ -132,7 +123,7 @@
 <% set hv = m('hv_audit.circuits') %>
 <% set lib = m('library.circuits') %>
 
-*Circuit library.* Six circuits are modeled (@tab:circuits): five original blocks with the standard topologies of preamplifier and line-level gear, and a channel strip that chains them. Each circuit is a SPICE netlist plus a sidecar file listing every part with its kind and tolerance, every test point with its node, stage, allowed measurements and hazard flag, and service notes. The channel strip joins the five netlists, keeps one signal source and load, and renumbers the test points; a test fails if the composed files fall out of date. Device models are Koren's published 12AX7 equations, with amplification factor and emission exposed so that tube wear can be simulated; a behavioural op-amp with controls for gain-bandwidth and a stuck output; and standard 2N3904, 1N4148 and 1N4745A models. The rectifiers are modeled as a quasi-static source plus a ripple current, which a full transient simulation of the rectifier and reservoir confirms within << num(m('hand_calcs.hum_model_overstatement_min_pct'), 1) >>-<< num(m('hand_calcs.hum_model_overstatement_max_pct'), 1) >>% (the model slightly overstates hum).
+*Circuit library.* Six circuits are modeled (@tab:circuits): five original blocks with the standard topologies of preamplifier and line-level gear, and a channel strip that chains them. Each circuit is a SPICE netlist plus a sidecar file listing every part with its kind and tolerance, every test point with its node, stage, allowed measurements and hazard flag, and service notes. The channel strip joins the five netlists, keeps one signal source and load, and renumbers the test points; a test fails if the composed files fall out of date. Device models are Koren's published 12AX7 equations, with amplification factor and emission exposed so that tube wear can be simulated; a behavioral op-amp with controls for gain-bandwidth and a stuck output; and standard 2N3904, 1N4148 and 1N4745A models. The rectifiers are modeled as a quasi-static source plus a ripple current, which a full transient simulation of the rectifier and reservoir confirms within << num(m('hand_calcs.hum_model_overstatement_min_pct'), 1) >>-<< num(m('hand_calcs.hum_model_overstatement_max_pct'), 1) >>% (the model slightly overstates hum).
 
 #figure(
   table(
@@ -235,7 +226,7 @@
   table(
     columns: (1.0fr, 1.55fr, 2.0fr, 1.3fr),
     table.header([Choice], [Options], [Chosen, because], [Cost accepted]),
-    [Likelihood], [Gaussian mixtures; kernel density; normalizing flows; boosted trees; Bayesian network], [Mixtures: exact on any subset of readings, few parameters per fault; boosted trees kept as a check], [Assumes smooth, unimodal-ish spreads],
+    [Likelihood], [Gaussian mixtures; kernel density; normalizing flows; boosted trees; Bayesian network], [Mixtures: exact on any subset of readings, few parameters per fault; boosted trees kept as a check], [Assumes smooth, roughly unimodal spreads],
     [Measurement choice], [Fixed chart; half-splitting; information gain; multi-step lookahead], [Information gain per unit effort, one step ahead: cheap per step, the entropy rule of model-based diagnosis << cite('dekleer_williams_1987') >> with a cost term; optimal sequencing needs a search << cite('pattipati_alexandridis_1990') >>], [Can be myopic on long plans],
     [Unmodeled units], [None; fixed threshold; calibrated flat hypothesis; learned detector], [Calibrated flat hypothesis: fits the Bayesian update, tunable to a false-alarm budget], [Flags only part of double faults],
     [Statistics], [Normal approximations; bootstrap; exact tests], [Bootstrap and exact tests: no normality assumption at 0 % or 100 %], [Compute],
@@ -327,14 +318,29 @@
 // END-PARTS
 
 <% set appendices %>
-#heading(level: 1, numbering: none)[Appendix A · Industry watch]
+#heading(level: 1, numbering: none)[Appendix A · Requirements traceability matrix]
+#[
+#show figure: set block(breakable: true)
+#figure(
+  table(
+    columns: (0.3fr, 2.5fr, 0.42fr, 1.6fr, 0.75fr),
+    table.header([ID], [Requirement], [From], [Verified by], [Targets]),
+<% for r in requirements %>
+    [<< r.id >>], [<< r.text | esc >>], [<< r.source | esc >>], [<< r.verification | map('replace', 'tests/', '') | map('replace', 'eval/', '') | join(', ') | esc >>], [<< (r.targets | join(', ')) if r.targets else '—' >>],
+<% endfor %>
+  ),
+  caption: [Requirements traceability. "From": M1 objective (O1 accuracy, O2 effort, O3 honesty, O4 safety, O5 practicality), safety (S) or engineering practice (P). Test files are in `tests/`, evaluation scripts in `eval/`.],
+) <tab:reqs>
+]
+
+#heading(level: 1, numbering: none)[Appendix B · Industry watch]
 #set text(size: 9pt)
 - *Field-service AI grows with a technician shortage (BCG, June 2026).* BCG reports that a shortage of technician talent keeps intensifying field-service pain points and describes technician copilots as "creating knowledge bases across technology generations" << cite('bcg_field_service_ai_2026') >>. Differential's explanations in physical terms and the planned technician study address whether a tool transfers skill or replaces it.
 - *Analog playback keeps growing (RIAA, first half of 2026).* U.S. vinyl revenue rose 17.7% to \$554 million and physical revenue 25.9% << cite('musically_riaa_h1_2026') >>. More analog playback in use suggests more analog gear to repair, although no source measures repair demand directly.
 - *Unguarded AI can harm learning.* Students who practiced with a plain chat interface scored 17% worse than those who never had access once it was removed, while tutor-style hints largely prevented the harm << cite('bastani_genai_learning_2025') >>. This supports showing reasons and runner-ups rather than bare answers, and measuring over-reliance in the technician study.
 - *EU high-risk rules move (Digital Omnibus, July 2026).* The Omnibus sets the high-risk rules to apply from 2 December 2027 for Annex III systems and 2 August 2028 for Annex I systems << cite('eu_ai_omnibus_2026_1744') >>; the transparency duty our interface meets applies from 2 August 2026 << cite('ec_ip_26_1714') >>.
 
-#heading(level: 1, numbering: none)[Appendix B · Course coverage map]
+#heading(level: 1, numbering: none)[Appendix C · Course coverage map]
 #figure(
   table(
     columns: (0.25fr, 0.95fr, 2.6fr, 0.55fr),

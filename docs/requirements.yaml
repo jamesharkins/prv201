@@ -58,7 +58,7 @@ requirements:
     verification: [eval/run_eval.py, hardware/fault_board/procedure.md]
     targets: [T6, T7]
   - id: R10
-    text: Stay robust to a mis-set prior (forum folklore)
+    text: Stay robust to a wrong prior, in either direction
     source: O3
     components: [eval/harness.py]
     verification: [eval/run_eval.py]

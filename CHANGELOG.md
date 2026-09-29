@@ -34,3 +34,23 @@ safety and grounding targets T15-T19 before release.
   notice reads "high voltage inside"; a trainee mode withholds the recommendation
   until the trainee commits a choice and needs a named supervisor on high-voltage
   units; the ticket is no longer grounded against its own text.
+- Before the lock, after M1 review rounds 4 to 6 (ADR-035 to ADR-047): half of the
+  training units aged, with an aged primary target (T6); a fault audit against an
+  independent solver; effort counted to a confirmed answer; bench-practice gates
+  (bring-up method, rated meter, leads clipped with the power off, a discharge check
+  that lapses); test sets of 5,000 single-fault, 5,000 aged and 2,500 out-of-catalog
+  units judged with exact bounds; a bar per part; the scripts' thresholds tuned on the
+  pilot; hazard exposure (T24) and release gates for over-reliance (T25) and complaint
+  voices (T26); the hazard map checked on units outside the catalog. Safety records
+  (bring-up, the owner's approval, discharge readings, a trainee's supervisor) are made
+  only in the app's forms, never from chat or by the model (ADR-045).
+
+## Tags
+
+| Tag | Commit | What |
+|---|---|---|
+| `targets-locked` | `60cca12` | Targets v4 locked before the full evaluation; no test unit scored |
+| `m1-ready` | `60cca12` | M1 final after six review rounds |
+
+The tags were created in the build environment, which could not push tags; the
+commands to recreate them on these commits are in `SUBMISSION_GUIDE.md`.

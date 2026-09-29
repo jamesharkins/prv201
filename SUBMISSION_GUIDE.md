@@ -34,6 +34,24 @@ enters the score that counts.
    whose name contains `rubric`). It replaces `rubric/derived_rubric.md`; re-run
    the review round described in `CLAUDE.md` and `docs/GRADING_LOG.md`.
 
+## 1a. Push the milestone tags
+
+The build environment could push the branch but not tags (the git proxy
+answered HTTP 403 to every tag push). The targets were locked in commit
+`60cca12` ("Lock the targets (v4)"), which sets `locked_on` in
+`results/targets.json` and is on the pushed branch before any evaluation
+result. Create the tags on that commit from any clone and push them:
+
+```bash
+git fetch origin claude/differential-build
+git tag -a targets-locked 60cca12 -m "Targets v4 locked before the full evaluation (ADR-046, ADR-047); no test unit scored"
+git tag -a m1-ready 60cca12 -m "M1 problem statement final after six review rounds"
+git push origin targets-locked m1-ready
+```
+
+Later milestone tags (`m2-ready`, `m3-ready`, `m5-ready`) are listed in
+`CHANGELOG.md` with their commits when they are made.
+
 ## 2. Re-check sources the build could only see as search snippets
 
 The build container could not reach most publisher and government sites.

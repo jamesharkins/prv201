@@ -386,7 +386,10 @@ def ticket(sid: str) -> dict[str, Any]:
 @app.post("/api/sessions/{sid}/ticket/signoff")
 def signoff(sid: str, req: SignOff) -> dict[str, Any]:
     agent: DifferentialAgent = _session(sid)["agent"]
-    agent.sign_off(req.name)
+    try:
+        agent.sign_off(req.name)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
     return dict(agent.ticket())
 
 
@@ -419,7 +422,8 @@ def replay(name: str) -> JSONResponse:
 def export(sid: str) -> JSONResponse:
     s = _session(sid)
     data = s["agent"].export()
-    data["hidden_fault"] = s["bench"].hypothesis
+    if s.get("revealed"):  # the answer key only after the demo reveals it
+        data["hidden_fault"] = s["bench"].hypothesis
     return JSONResponse(data)
 
 

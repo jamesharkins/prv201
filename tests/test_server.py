@@ -148,3 +148,25 @@ def test_bad_input_is_refused_cleanly(client: TestClient) -> None:
     assert r.status_code == 422
     assert client.post(f"/api/sessions/{sid}/messages", json={"text": "x" * 5000}).status_code == 422
     assert client.get(f"/api/sessions/{sid}").json()["discharge_verified"] is False
+
+
+def test_red_team_round_4_regressions(client: TestClient) -> None:
+    sid = client.post("/api/sessions", json={"circuit_id": "psu", "mode": "offline", "seed": 1}).json()["session_id"]
+    for body in ('{"key": "dc:TP4", "value": 1e999}', '{"key": "dc:TP4", "value": -Infinity}'):
+        r = client.post(f"/api/sessions/{sid}/readings", content=body,
+                        headers={"content-type": "application/json"})
+        assert r.status_code == 422
+    r = client.post(f"/api/sessions/{sid}/discharge", content='{"readings": {"TP4": NaN}}',
+                    headers={"content-type": "application/json"})
+    assert r.status_code == 422
+    # the answer key stays hidden until the demo reveals it
+    assert "hidden_fault" not in client.get(f"/api/sessions/{sid}/export").json()
+    client.post(f"/api/sessions/{sid}/reveal")
+    assert "hidden_fault" in client.get(f"/api/sessions/{sid}/export").json()
+    assert client.post(f"/api/sessions/{sid}/ticket/signoff", json={"name": "0.1 V"}).status_code == 400
+    # a trainee on a high-voltage unit cannot record a reading before naming a supervisor
+    tid = client.post("/api/sessions", json={"circuit_id": "psu", "mode": "offline", "seed": 5,
+                                             "trainee": True}).json()["session_id"]
+    client.post(f"/api/sessions/{tid}/measure", json={"key": "dc:TP4"})
+    client.post(f"/api/sessions/{tid}/readings", json={"key": "dc:TP5", "value": 300.0})
+    assert client.get(f"/api/sessions/{tid}").json()["readings"] == []

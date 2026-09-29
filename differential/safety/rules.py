@@ -21,11 +21,16 @@ from dataclasses import dataclass, field
 
 HV_THRESHOLD_V = 50.0
 
+_LIVE = (r"(?:while|when|with) (?:it|the (?:unit|amp|chassis|power|set))(?:'s| is| still| being| stays?)*"
+         r" (?:on|live|hot|powered(?: up)?|plugged in|energi[sz]ed)\b")
+
 REFUSAL_RULES: dict[str, list[str]] = {
     "fuse_bypass": [
         r"bypass(?:ing)? (?:the |a |that )?fuse", r"(?:bridge|jumper|short(?:ing)?)(?: out)? (?:the |a |that )?fuse",
         r"(?:paper ?clip|foil|tin ?foil|a (?:piece of )?wire|a nail|a coin|solder) (?:in|into|across|for|instead of|as) (?:the |a )?fuse",
-        r"(?:bigger|larger|higher[- ]rated|heavier) fuse", r"defeat(?:ing)? (?:the )?fuse",
+        r"(?:bigger|larger|higher|heavier)(?:[- ](?:value|rated|rating|amp|amperage|current))? fuse",
+        r"(?:up|over)[- ]?siz(?:e|ed|ing) (?:the |a )?fuse", r"fuse (?:of|with) a (?:higher|bigger|larger) (?:rating|value|current)",
+        r"defeat(?:ing)? (?:the )?fuse",
         r"(?:without|skip(?:ping)?) (?:the |a )?fuse", r"fuse (?:with|using) (?:a )?(?:paper ?clip|wire|foil)",
     ],
     "ground_lift": [
@@ -35,7 +40,7 @@ REFUSAL_RULES: dict[str, list[str]] = {
         r"two[- ]prong adapter",
     ],
     "interlock": [
-        r"(?:defeat|bypass|disable|override|jumper|tape (?:down|over)|cheat) (?:the |a |an )?(?:safety )?interlock",
+        r"(?:defeat|bypass|disable|override|jumper|tape (?:down|over)|wedge|tie (?:down|back)|cheat) (?:the |a |an )?(?:[a-z]+ )?interlock",
         r"(?:defeat|bypass|disable|override) (?:the )?(?:lid|cover|door) (?:switch|safety)",
         r"interlock (?:bypass|defeat|override)",
     ],
@@ -52,9 +57,12 @@ REFUSAL_RULES: dict[str, list[str]] = {
     ],
     "live_hv_hands_in": [
         r"(?:skip|don'?t bother|no need)(?: to)?(?: with)? (?:the )?discharg", r"without discharging",
-        r"(?:touch|hold|grab|poke|reach into)\w* .{0,30}(?:while|when) (?:it'?s |it is )?(?:on|live|powered|plugged in)",
-        r"(?:solder|desolder|replace|lift)\w* .{0,30}(?:while|with) (?:it|the (?:unit|amp|power)) (?:is )?(?:on|live|powered|plugged in)",
-        r"(?:work|working) (?:on|inside) (?:it|the (?:unit|amp|chassis)) (?:while|with the power) (?:it'?s |it is )?(?:on|live|powered)",
+        # hands, iron or tools on the circuit while it is powered ("still", "up" and "with it
+        # live" included); measuring a powered unit with clip leads is not matched
+        r"(?:touch|hold|grab|poke|prod|feel|reach)\w*(?: around)? .{0,40}" + _LIVE,
+        r"(?:solder|desolder|replace|lift|swap|pull|cut)\w* .{0,40}" + _LIVE,
+        r"(?:work|working|hands?) (?:on|inside|in) .{0,25}" + _LIVE,
+        r"(?:probe|touch) (?:it )?with (?:my|your|a) (?:finger|hand)s?",
         r"bare hands? on (?:the )?(?:b\+|plate|high voltage)",
     ],
 }

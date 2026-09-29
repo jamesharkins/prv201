@@ -17,8 +17,21 @@ def clean_text(text: str, limit: int = 200) -> str:
     return " ".join(_MARKUP.sub(" ", str(text)).split())[:limit].strip()
 
 
+_NOT_NAME = re.compile(r"[^\w .'-]|[\d_]")
+
+
 def clean_name(name: str) -> str:
-    return clean_text(name, 80)
+    """A person's name for the ticket: letters, spaces and . ' - only (no digits, so no
+    number can reach the ticket through a name), at most 60 characters."""
+    return " ".join(_NOT_NAME.sub(" ", str(name)).split())[:60].strip(" .'-")
+
+
+def person_name(name: str) -> str:
+    """``clean_name``, refusing text that is not a name (empty, or more than six words)."""
+    out = clean_name(name)
+    if sum(c.isalpha() for c in out) < 2 or len(out.split()) > 6:
+        raise ValueError("give a person's name (letters only, at most six words)")
+    return out
 
 
 def fmt_volts(v: float) -> str:

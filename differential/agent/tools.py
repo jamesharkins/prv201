@@ -15,7 +15,7 @@ from typing import Any
 
 import numpy as np
 
-from differential.agent.format import clean_name, clean_text, fault_label, fmt_reading
+from differential.agent.format import clean_text, fault_label, fmt_reading, person_name
 from differential.circuits.library import BLOCK_IDS, COMPOSITE_ID, get_circuit
 from differential.engine.bundle import EngineBundle, cached_bundle
 from differential.engine.session import DiagnosisSession
@@ -437,6 +437,7 @@ class ToolBox:
     def t_record_measurement(self, key: str, value: float, source: str = "technician") -> dict[
             str, Any]:
         o = self._obs(key)
+        self._require_supervisor()
         if key in self.engine.taken():
             raise ValueError(f"{key} is already recorded")
         v = finite(value)
@@ -529,6 +530,7 @@ class ToolBox:
         read below the limit; the readings are the technician's attestation (the tool cannot
         check them) and go on the ticket. One number without ``all_points`` counts for the
         main filter capacitor, the first point, and the others are asked for."""
+        self._require_supervisor()
         pts = discharge_points(self.circuit_id)
         got: dict[str, float] = {}
         for tp, v in (readings or {}).items():
@@ -536,7 +538,8 @@ class ToolBox:
             if tp not in pts:
                 raise ValueError(f"{tp} is not a point that needs a discharge reading "
                                  f"({', '.join(pts) or 'none in this circuit'})")
-            got[tp] = abs(finite(v))
+            # the same point given twice (e.g. "TP4" and "tp4"): the worst reading counts
+            got[tp] = max(got.get(tp, 0.0), abs(finite(v)))
         if volts is not None:
             v = abs(finite(volts))
             for tp in (pts if all_points else pts[:1]):
@@ -569,12 +572,16 @@ class ToolBox:
                     + ". Part removal is unlocked until the unit is powered again. These readings "
                       "are your attestation: the tool cannot check them.")}
 
+    def _require_supervisor(self) -> None:
+        """Trainee mode on a high-voltage unit: nothing is measured or recorded until the
+        supervising technician is named (ADR-034; red team round 4)."""
+        if self.trainee and circuit_has_hv(self.circuit_id) and not self.supervisor:
+            raise ValueError("trainee mode: name the qualified technician supervising you before "
+                             "any measurement on this high-voltage unit")
+
     def name_supervisor(self, name: str) -> dict[str, Any]:
         """Trainee mode: record the qualified technician supervising in person."""
-        name = clean_name(name)
-        if not name:
-            raise ValueError("give the supervising technician's name")
-        self.supervisor = name
+        self.supervisor = person_name(name)
         return {"supervisor": self.supervisor,
                 "message": f"Supervisor recorded: {self.supervisor}. High-voltage steps are shown "
                            "from now on; they must be done with the supervisor present."}

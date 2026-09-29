@@ -22,7 +22,7 @@ import uuid
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-from differential.agent.format import clean_name, fault_label, fmt_reading, pct
+from differential.agent.format import fault_label, fmt_reading, pct, person_name
 from differential.agent.grounding import check_grounding, find_numbers, redact_ungrounded
 from differential.agent.tools import TOOL_SPECS, ToolBox
 from differential.circuits.library import get_circuit
@@ -143,7 +143,7 @@ class DifferentialAgent:
     def sign_off(self, name: str) -> dict[str, str]:
         import datetime as _dt
 
-        self.signoff = {"by": clean_name(name) or "technician",
+        self.signoff = {"by": person_name(name),
                         "at": _dt.datetime.now(_dt.UTC).strftime("%Y-%m-%d %H:%M UTC")}
         return self.signoff
 
@@ -164,6 +164,8 @@ class DifferentialAgent:
                     *[x.text for x in self.turns if x.role in ("user", "event")],
                     *self.confirmed_photo_values, close_state, parts]
         rep = check_grounding(t["markdown"], evidence)
+        if rep.ungrounded:  # as in chat: an untraced number never reaches the document
+            t["markdown"] = redact_ungrounded(t["markdown"], rep)
         t["grounding"] = {"checked": rep.checked, "ungrounded": [m.text for m in rep.ungrounded]}
         self.grounding_log.append({"where": "ticket", "checked": rep.checked,
                                    "ungrounded": [m.text for m in rep.ungrounded]})
@@ -234,14 +236,19 @@ class DifferentialAgent:
                 return self.trainee_guess(key).text
             return ("Trainee mode: tell me which measurement you'd take next (for example "
                     "dc:TP18, or just TP18) before I show mine.")
-        if self.pending_key == "approval" and re.search(
-                r"\b(approv|agree|consent|ok(ay)?\b|yes\b|go ahead)", low):
-            self.tb.call("approve_part_removal", {"note": text.strip()[:200]})
-            self.pending_key = None
-            return ("Recorded on the ticket: the owner agreed to parts being removed for "
-                    "testing.\n\n" + self._next_step())
+        if self.pending_key == "approval":
+            if self.APPROVE_RE.search(text) and not self.REFUSE_RE.search(text):
+                self.tb.call("approve_part_removal", {"note": text})
+                self.pending_key = None
+                return ("Recorded on the ticket: the owner agreed to parts being removed for "
+                        "testing.\n\n" + self._next_step())
+            if self.REFUSE_RE.search(text) or self.APPROVE_RE.search(text):
+                return ("Not recorded: part removal stays locked until the owner approves. Say "
+                        "\"the owner approves\" (or use the approval button) once they have agreed.")
         if self.pending_key == "discharge":
             args = self._discharge_args(text)
+            if "error" in args:
+                return f"Not recorded: {args['error']}."
             if args:
                 res = self.tb.call("confirm_discharge", args)
                 if "error" in res:
@@ -346,8 +353,23 @@ class DifferentialAgent:
             text += "\n\n" + self._next_step()
         return self._reply(text)
 
-    TP_READING_RE = re.compile(r"\b(?P<tp>TP\d+)\b\D{0,12}?(?P<num>[-+]?\d+(?:\.\d+)?)\s*(?P<unit>mv|v)?",
-                               flags=re.I)
+    APPROVE_RE = re.compile(r"\b(yes|yep|approved?|approves|agreed?|agrees|consents?|consented|"
+                            r"go ahead)\b", flags=re.I)
+    REFUSE_RE = re.compile(r"\b(no|not|don'?t|doesn'?t|didn'?t|won'?t|never|refus\w*|declin\w*|"
+                           r"without|wait|later|hold)\b|\?", flags=re.I)
+    NUMBER = r"[-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?"
+    VOLT_UNIT = r"(?:kilo|milli|micro|[kmuµ])?(?:volts?|vdc|v)\b"
+    TP_READING_RE = re.compile(rf"\b(?P<tp>TP\d+)\b\D{{0,12}}?(?P<num>{NUMBER})(?P<comma>,\d)?\s*"
+                               rf"(?P<unit>{VOLT_UNIT})?", flags=re.I)
+    VOLTS_RE = re.compile(rf"(?P<num>{NUMBER})(?P<comma>,\d)?\s*(?P<unit>{VOLT_UNIT})?(?![a-z])",
+                          flags=re.I)
+
+    @staticmethod
+    def _volts(num: str, unit: str | None) -> float:
+        u = (unit or "v").lower()
+        scale = (1e3 if u.startswith(("kilo", "k")) else 1e-3 if u.startswith(("milli", "m"))
+                 else 1e-6 if u.startswith(("micro", "u", "µ")) else 1.0)
+        return float(num) * scale
 
     def _parse_guess(self, text: str) -> str | None:
         """A measurement named in a trainee's message: an exact key, or a test point / part
@@ -366,16 +388,24 @@ class DifferentialAgent:
 
     def _discharge_args(self, text: str) -> dict[str, Any]:
         """Discharge readings in a message: 'TP4 0.3 V, TP5 0.2 V', or one number for the
-        main filter capacitor, or 'all ... 0.3 V' for every point."""
-        pairs = {m.group("tp").upper(): float(m.group("num")) / (
-            1000.0 if (m.group("unit") or "").lower() == "mv" else 1.0)
-            for m in self.TP_READING_RE.finditer(text)}
+        main filter capacitor, or 'all ... 0.3 V' for every point. Units are read (V, mV, kV,
+        uV); a comma decimal ('0,5 V') or another unit is refused rather than guessed, since
+        the reading unlocks part removal."""
+        found = list(self.TP_READING_RE.finditer(text))
+        if any(m.group("comma") for m in found) or re.search(r"\d,\d", text):
+            return {"error": "write readings with a decimal point, for example 0.5 V"}
+        if re.search(rf"{self.NUMBER}\s*(?:k|m|u|µ)?(?:a|amps?|ohms?|hz|db|%)\b", text, re.I):
+            return {"error": "give each discharge reading in volts (V, mV or kV)"}
+        pairs: dict[str, float] = {}
+        for m in found:
+            tp = m.group("tp").upper()
+            pairs[tp] = max(pairs.get(tp, 0.0), abs(self._volts(m.group("num"), m.group("unit"))))
         if pairs:
             return {"readings": pairs}
-        m = self.UNIT_RE.search(text)
-        if m is None:
+        one = self.VOLTS_RE.search(text)
+        if one is None:
             return {}
-        v = float(m.group("num")) / (1000.0 if (m.group("unit") or "").lower() == "mv" else 1.0)
+        v = self._volts(one.group("num"), one.group("unit"))
         return {"volts": v, "all_points": bool(re.search(r"\b(all|every|each)\b", text, re.I))}
 
     def format_step(self, rec: dict[str, Any]) -> str:
@@ -389,8 +419,6 @@ class DifferentialAgent:
                     f"{rec['cost']:g}). {rec['next_step']}")
         if rec.get("blocked") == "discharge_verification":
             self.pending_key = "discharge"
-        elif rec.get("blocked") == "owner_approval":
-            self.pending_key = "approval"
             return (f"Next I'd like to lift {rec['part']} ({rec['key']}, cost {rec['cost']:g}). "
                     f"First: {rec['next_step']}\n\n" + "\n".join(rec["safety"]["lines"]))
         parts = [f"Next: {rec['what']} at {rec['test_point'] or rec['part']} ({rec['key']}), "
@@ -415,7 +443,7 @@ class DifferentialAgent:
                 f"Runners-up: {alts or 'none'}. The leading suspects predict clearly different "
                 "readings there, so the result will move the belief whichever way it comes out.")
 
-    UNIT_RE = re.compile(r"(?P<num>[-+]?\d+(?:\.\d+)?)\s*(?P<unit>mv|v/v|v|db|%)?(?![a-z])",
+    UNIT_RE = re.compile(r"(?P<num>[-+]?\d+(?:\.\d+)?)\s*(?P<unit>kv|mv|uv|µv|v/v|v|db|%)?(?![a-z])",
                          flags=re.I)
 
     def _parse_reading(self, text: str) -> tuple[str, float] | None:
@@ -445,7 +473,10 @@ class DifferentialAgent:
         kind = key.split(":")[0]
         if kind == "lift":
             return None
-        value = num / 1000.0 if unit == "mv" else num
+        if re.search(r"\d\s*(?:k|m|u|µ)?(?:a|amps?|ohms?|hz)\b", text, re.I) or re.search(
+                r"\d,\d", text):
+            return None  # another unit or a comma decimal: ask rather than guess
+        value = self._volts(str(num), unit) if unit in ("kv", "mv", "uv", "µv", "v") else num
         if kind in ("ac", "ac20", "ac20k") and unit == "db":
             value = 10.0 ** (num / 20.0)
         # Only numbers the technician actually typed are accepted.

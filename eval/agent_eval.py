@@ -49,7 +49,7 @@ def run_case(row: dict[str, Any], complaint: str, mode: str) -> dict[str, Any]:
             continue
         if key == "discharge":
             pts = discharge_points(str(row["circuit"]))
-            agent.record_discharge(dict.fromkeys(pts, 0.3))
+            agent.record_discharge(dict.fromkeys(pts, 0.3), meter_proved=True)
             continue
         if key in ("supervisor", "guess"):  # trainee mode only; the evaluation is a technician
             break

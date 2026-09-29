@@ -141,6 +141,9 @@ TOOL_SPECS: list[dict[str, Any]] = [
                              "description": "test point id -> volts, e.g. {\"TP4\": 0.3}"},
                 "volts": {"type": "number",
                           "description": "one reading, for the first point (the main filter capacitor)"},
+                "meter_proved": {"type": "boolean",
+                                 "description": "the meter was proved on a known live source "
+                                                "before and after the readings (live-dead-live)"},
                 "bleeder": {"type": "boolean",
                             "description": "a bleeder resistor stays clipped across the main filter "
                                            "capacitor while the technician works"},
@@ -237,6 +240,9 @@ class ToolBox:
     calls: list[ToolCall] = field(default_factory=list)
     discharge_verified: bool = False
     discharge_readings: dict[str, float] = field(default_factory=dict)
+    # when each point's reading was taken: a check is only as fresh as its oldest reading
+    # (red team, M2 round 1: re-reading one point must not refresh the others)
+    discharge_times: dict[str, float] = field(default_factory=dict)
     discharge_log: list[dict[str, Any]] = field(default_factory=list)
     # Bench practice (ADR-042): how the unit was first powered, when the discharge was
     # checked (a check expires unless a bleeder stays attached), and the clock used for it.
@@ -408,6 +414,30 @@ class ToolBox:
     def step_payload(self, o: ObservableSpec, eig_bits: float = 0.0,
                      alternatives: list[Any] | None = None, policy: str = "") -> dict[str, Any]:
         """Everything the agent says about one recommended step (also used by the T15 sweep)."""
+        p = self._step_payload(o, eig_bits, alternatives, policy)
+        return self._withhold_gated(p) if self.trainee and p.get("blocked") else p
+
+    _GATED_IDENTITY = ("key", "what", "part", "test_point", "cost", "expected_information_bits",
+                       "alternatives", "predictions", "how")
+
+    def _withhold_gated(self, p: dict[str, Any]) -> dict[str, Any]:
+        """Trainee mode: a gate says what it needs, never which step the tool would take
+        next, so the trainee still commits their own choice first (red team, M2 round 1)."""
+        out = {k: v for k, v in p.items() if k not in self._GATED_IDENTITY}
+        out.update({"key": None, "withheld": True})
+        if p["blocked"] == "owner_approval":
+            out["next_step"] = ("Testing a part out of circuit means unsoldering it from the board, "
+                                "which can damage an old board. Record that the owner agrees to parts "
+                                "being removed for testing (approve_part_removal) to continue.")
+        if p["blocked"] == "discharge_verification":
+            out["safety"] = {"target": None, "high_voltage": True,
+                             "lines": hv_warning(None, "any part in this chassis", self._discharge_parts())}
+        elif isinstance(out.get("safety"), dict):
+            out["safety"] = {**out["safety"], "target": None}
+        return out
+
+    def _step_payload(self, o: ObservableSpec, eig_bits: float = 0.0,
+                      alternatives: list[Any] | None = None, policy: str = "") -> dict[str, Any]:
         if self.trainee and not self.supervisor and circuit_has_hv(self.circuit_id):
             return {"stop": False, "key": o.key, "blocked": "supervisor",
                     "what": KIND_LABEL[o.kind], "part": o.ref, "test_point": o.tp, "cost": o.cost,
@@ -514,6 +544,7 @@ class ToolBox:
             # a powered measurement re-energises the unit: discharge must be re-checked
             self.discharge_verified = False
             self.discharge_readings = {}
+            self.discharge_times = {}
             self.bleeder_attached = False
             self.discharge_expired = False
         before = self.engine.ranked_groups(1)[0]
@@ -593,6 +624,7 @@ class ToolBox:
             return True
         self.discharge_verified = False
         self.discharge_readings = {}
+        self.discharge_times = {}
         self.discharge_expired = True
         return False
 
@@ -610,13 +642,20 @@ class ToolBox:
 
     def t_confirm_discharge(self, readings: dict[str, float] | None = None,
                             volts: float | None = None,
-                            bleeder: bool = False) -> dict[str, Any]:
+                            bleeder: bool = False, meter_proved: bool = False) -> dict[str, Any]:
         """Record discharge readings (ADR-034). Every point that can hold high voltage must
         read below the limit; the readings are the technician's attestation (the tool cannot
         check them) and go on the ticket. One number counts for the main filter capacitor,
         the first point, and the others are asked for: a reading never stands for a point
         it was not taken at (red team, round 6)."""
         self._require_supervisor()
+        if not meter_proved:
+            # Live-dead-live (M2 review, round 1): a meter that failed reads 0 V and makes a
+            # charged capacitor look safe, so it is proved on a known live source before and
+            # after the readings.
+            raise ValueError("prove the meter on a known live source before and after the "
+                             "readings (live-dead-live): a failed meter reads 0 V on a charged "
+                             "capacitor")
         pts = discharge_points(self.circuit_id)
         got: dict[str, float] = {}
         for tp, v in (readings or {}).items():
@@ -630,7 +669,15 @@ class ToolBox:
             v = abs(finite(volts))
             for tp in pts[:1]:
                 got.setdefault(tp, v)
+        now = self.clock()
+        # A reading older than the validity window no longer counts: it is asked for again
+        # rather than completing a new check (red team, M2 round 1).
+        for tp, t0 in list(self.discharge_times.items()):
+            if now - t0 > DISCHARGE_VALID_S and tp not in got:
+                self.discharge_readings.pop(tp, None)
+                self.discharge_times.pop(tp, None)
         self.discharge_readings.update(got)
+        self.discharge_times.update(dict.fromkeys(got, now))
         # "below 2 V": a reading of exactly the limit is still charged (red team, round 6)
         charged = {tp: v for tp, v in self.discharge_readings.items() if v >= DISCHARGE_VERIFY_MAX_V}
         missing = [tp for tp in pts if tp not in self.discharge_readings]
@@ -641,6 +688,7 @@ class ToolBox:
             worst = ", ".join(f"{tp} {v:g} V" for tp, v in charged.items())
             for tp in charged:
                 self.discharge_readings.pop(tp, None)
+                self.discharge_times.pop(tp, None)
             return {**base, "verified": False, "volts": max(charged.values()),
                     "message": f"Still charged: {worst}. Discharge again through a resistor and "
                                "re-measure; do not touch the circuit."}
@@ -651,7 +699,8 @@ class ToolBox:
                                 f"{', '.join(missing)} (each below {DISCHARGE_VERIFY_MAX_V:g} V).")}
         self.discharge_verified = True
         self.discharge_expired = False
-        self.discharge_time = self.clock()
+        # the window counts from the oldest reading in the set
+        self.discharge_time = min((self.discharge_times[tp] for tp in pts), default=self.clock())
         self.bleeder_attached = bool(bleeder)
         self.discharge_log.append({"time": time.strftime("%Y-%m-%d %H:%M:%S"),
                                    "readings": dict(self.discharge_readings),
@@ -713,6 +762,10 @@ class ToolBox:
         proposal: dict[str, Any] = dict(reader(self.photos[photo_id],
                                                client=self.llm if self.use_llm else None))
         proposal["requires_confirmation"] = True
+        # the step the photo was taken for, and whether a confirmation has used it (red team,
+        # M2 round 1: one photo must not back readings at other points, or several readings)
+        proposal["for_key"] = key
+        proposal["used"] = False
         if key and proposal.get("legible"):
             proposal["plausibility"] = self._photo_plausibility(proposal, key)
         self.photo_proposals[photo_id] = proposal

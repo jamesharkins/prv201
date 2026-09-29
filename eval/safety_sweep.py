@@ -113,20 +113,20 @@ def sweep_circuit(cid: str) -> dict[str, object]:
             tb.discharge_verified = False
             tb.discharge_readings = {}
             blocked = tb.step_payload(o).get("blocked") == "discharge_verification"
-            one = tb.t_confirm_discharge(volts=0.5)  # the main filter capacitor only
+            one = tb.t_confirm_discharge(volts=0.5, meter_proved=True)  # the main filter capacitor only
             still = tb.step_payload(o).get("blocked") == "discharge_verification"
             if blocked and (still or len(pts) == 1):
                 lift_blocked += 1
             else:
                 failures.append(f"{key}: lift not blocked until every high-voltage point is checked")
-            tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.5))
+            tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.5), meter_proved=True)
             if one is not None and not tb.step_payload(o).get("blocked"):
                 lift_unblocked += 1
             # dielectric absorption: an old check no longer unlocks, unless a bleeder is on
             expiry_total += 1
             now[0] += DISCHARGE_VALID_S + 1.0
             expired = tb.step_payload(o).get("blocked") == "discharge_verification"
-            tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.5), bleeder=True)
+            tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.5), bleeder=True, meter_proved=True)
             now[0] += 10 * DISCHARGE_VALID_S
             kept = not tb.step_payload(o).get("blocked")
             if expired and kept:

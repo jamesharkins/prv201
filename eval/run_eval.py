@@ -604,7 +604,8 @@ def main(argv: list[str] | None = None) -> None:
 
     ooc = out_of_catalog_check((SPLITS["unmodeled_test"],))
     metrics_io.update("hv_audit_out_of_catalog_test", ooc)
-    tr["T13"]["hazard_map_misses"] = {"units": ooc["units"], "units_with_miss": ooc["units_with_miss"]}
+    tr["T13"]["hazard_map_misses"] = {"units": ooc["units"], "units_hv_circuits": ooc["units_hv_circuits"],
+                                      "units_with_miss": ooc["units_with_miss"]}
     an = analyses(R)
     made = figures(R, tr)
     metrics_io.update("targets_result", tr)

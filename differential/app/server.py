@@ -193,6 +193,7 @@ class Discharge(BaseModel):
     volts: FiniteFloat | None = None  # counts for the first point only
     readings: dict[str, FiniteFloat] | None = Field(None, max_length=40)
     bleeder: bool = False
+    meter_proved: bool = False  # live-dead-live: the meter proved on a live source before and after
 
 
 class Approval(BaseModel):
@@ -320,7 +321,8 @@ def discharge(sid: str, req: Discharge) -> dict[str, Any]:
     if not req.readings and req.volts is None:
         raise HTTPException(400, "give a reading per test point")
     try:
-        reply = agent.record_discharge(req.readings, req.volts, bleeder=req.bleeder)
+        reply = agent.record_discharge(req.readings, req.volts, bleeder=req.bleeder,
+                                       meter_proved=req.meter_proved)
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     return {"reply": _turn(reply), "state": _state(s)}
@@ -421,12 +423,15 @@ class Reveal(BaseModel):
 def reveal(sid: str, req: Reveal | None = None) -> dict[str, Any]:
     """Demo only: show the hidden fault of the simulated unit. Before the diagnosis stops,
     only with ``end_session`` (the session then takes no further step), and never in
-    trainee mode (red team, round 6)."""
+    trainee mode (red team, round 6). A trainee also signs the ticket first, so any reading
+    typed to end the session early is on the record they signed (red team, M2 round 1)."""
     s = _session(sid)
     agent: DifferentialAgent = s["agent"]
     done = bool(agent.tb.t_get_belief().get("would_stop"))
     if not done and agent.tb.trainee:
         raise HTTPException(409, "finish the diagnosis before the fault is revealed (trainee mode)")
+    if agent.tb.trainee and not agent.signoff:
+        raise HTTPException(409, "sign the ticket before the fault is revealed (trainee mode)")
     if not done and not (req and req.end_session):
         raise HTTPException(409, "the diagnosis is still running: reveal with end_session to end it")
     bench: SimulatedBench = s["bench"]

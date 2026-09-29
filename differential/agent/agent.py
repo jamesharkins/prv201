@@ -27,7 +27,7 @@ from differential.agent.grounding import check_grounding, find_numbers, redact_u
 from differential.agent.tools import FORM_ONLY_TOOLS, MODEL_TOOL_SPECS, ToolBox
 from differential.circuits.library import get_circuit
 from differential.instruments.base import Instrument
-from differential.safety.attest import uncertain
+from differential.safety.attest import reported, uncertain
 from differential.safety.attest import volts as _to_volts
 from differential.safety.hazards import DISCHARGE_VERIFY_MAX_V, discharge_points, hazard
 from differential.safety.rules import CERTAINTY_TEXT, enforce_output, screen_request
@@ -145,13 +145,25 @@ class DifferentialAgent:
             return self._reply("I couldn't record that: a reading must be a finite number")
         # A photo reading is the photo's only when the confirmed value is what the photo
         # showed; otherwise it is the technician's own entry and the ticket says so.
-        shown = (self.tb.photo_proposals.get(photo_id) or {}).get("value")
+        proposal = self.tb.photo_proposals.get(photo_id) or {}
+        shown = proposal.get("value")
         same = (isinstance(shown, int | float) and math.isfinite(float(shown))
                 and abs(v - float(shown)) <= max(1e-9, 1e-3 * abs(float(shown))))
+        for_key = proposal.get("for_key")
+        # The photo backs one reading, at the step it was taken for (red team, M2 round 1).
+        if proposal.get("used"):
+            source = f"typed by the technician (photo:{photo_id} already backs another reading)"
+        elif for_key and key != for_key:
+            source = f"typed by the technician (photo:{photo_id} was taken for {for_key})"
+        elif same:
+            source = f"photo:{photo_id} (confirmed)"
+        else:
+            source = f"typed by the technician (photo:{photo_id} showed a different value)"
         self.confirmed_photo_values.append(v)
-        source = (f"photo:{photo_id} (confirmed)" if same
-                  else f"typed by the technician (photo:{photo_id} showed a different value)")
-        return self.reading_event(key, v, source=source)
+        turn = self.reading_event(key, v, source=source)
+        if source.startswith("photo:") and proposal:
+            proposal["used"] = True
+        return turn
 
     def snapshot(self, label: str) -> None:
         top = self.tb.engine.top_hypotheses(6)
@@ -263,8 +275,9 @@ class DifferentialAgent:
         if self.pending_key in FORM_GATES:
             return self._form_needed(self.pending_key)
         reading = self._parse_reading(text)
-        if reading is not None and uncertain(text) is not None:
-            return (f"Not recorded: that reads as {uncertain(text)}. Give the reading as a plain "
+        why = (uncertain(text) or reported(text)) if reading is not None else None
+        if reading is not None and why is not None:
+            return (f"Not recorded: that reads as {why}. Give the reading you took as a plain "
                     f"statement, for example '{reading[0]} = <value> V'.")
         if reading is not None:
             key, value = reading
@@ -316,7 +329,8 @@ class DifferentialAgent:
         return self._reply(text)
 
     def record_discharge(self, readings: dict[str, float] | None = None,
-                         volts: float | None = None, bleeder: bool = False) -> Turn:
+                         volts: float | None = None, bleeder: bool = False,
+                         meter_proved: bool = False) -> Turn:
         """Discharge readings from the discharge form: one per point (ADR-034)."""
         args: dict[str, Any] = {}
         if readings:
@@ -327,6 +341,7 @@ class DifferentialAgent:
             raise ValueError("give a reading per test point")
         if bleeder:
             args["bleeder"] = True
+        args["meter_proved"] = bool(meter_proved)
         res = self.tb.call("confirm_discharge", args)
         if "error" in res:
             raise ValueError(str(res["error"]))
@@ -447,12 +462,17 @@ class DifferentialAgent:
             return str(rec["next_step"])
         if rec.get("blocked") == "owner_approval":
             self.pending_key = "approval"
+            if rec.get("withheld"):  # trainee mode: the part stays unnamed until they choose
+                return str(rec["next_step"])
             return (f"Next I'd like to test {rec['part']} out of circuit ({rec['key']}, cost "
                     f"{rec['cost']:g}). {rec['next_step']}")
         if rec.get("blocked") == "discharge_verification":
             self.pending_key = "discharge"
+            lines = "\n".join(rec["safety"]["lines"])
+            if rec.get("withheld"):
+                return f"Before any part is removed: {rec['next_step']}\n\n{lines}"
             return (f"Next I'd like to lift {rec['part']} ({rec['key']}, cost {rec['cost']:g}). "
-                    f"First: {rec['next_step']}\n\n" + "\n".join(rec["safety"]["lines"]))
+                    f"First: {rec['next_step']}\n\n{lines}")
         parts = [f"Next: {rec['what']} at {rec['test_point'] or rec['part']} ({rec['key']}), "
                  f"cost {rec['cost']:g}. How: {rec['how']}"]
         preds = rec.get("expected_readings", [])

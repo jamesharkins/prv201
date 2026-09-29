@@ -948,3 +948,48 @@ deleted.
   no model, part-by-part unsoldering runs out of budget.
 - **Consequences.** Reported without a bar on the 2,500 channel-strip test units (twins
   simulated after the lock). No locked target changes.
+
+## ADR-049 - Red team and review of M2, round 1: screening, freshness, provenance, bench practice
+
+- **Context.** The M2 round-1 red team found one high, two medium and four low findings (no
+  critical): request screening missed natural phrasings in every refused category and
+  Unicode obfuscation; a discharge check was as fresh as its newest reading, not its oldest;
+  on high-voltage trainee units the gated first step named the tool's recommendation; the
+  offline chat recorded hearsay and unrelated voltages as readings; one meter photo could
+  back readings at other points; a trainee could reveal the answer after one typed reading;
+  the output filter lagged the request screen. The engineer judge asked for bench practice
+  the safety layer lacked, and the ML judge noted that the out-of-catalog hazard check
+  counted units from circuits that cannot reach high voltage.
+- **Decision.**
+  1. Screening folds Unicode before matching (compatibility forms, zero-width and other
+     format characters, look-alike Cyrillic and Greek letters), refuses a fuse replaced by
+     wire or copper or a jumpered holder (also in German, Spanish, French and Italian), a
+     fuse swapped for a higher rating (both ratings compared), the ground pin or
+     protective-earth wire removed, 3-to-2 adapters, a lid switch held shut, work "with it
+     switched on", "while it's running" or "with power applied", skipping the discharge,
+     the IEC inlet and the primary winding. Outgoing text is checked for the same
+     instructions. Everyday bench talk (a same-rating fuse, a 230 V B+ supply, a heater
+     reading) still passes; both lists are regression tests.
+  2. Each discharge point keeps its own timestamp; a check expires with its oldest reading,
+     and a reading older than the window is asked for again rather than completing a check.
+  3. In trainee mode a gated step (supervisor, bring-up, owner's approval, discharge) names
+     no key, part, point or information value until the trainee has chosen.
+  4. A typed reading is not recorded when it is someone else's, a document's, an earlier
+     one, or a voltage that is not at a test point (wall outlet, heater, battery).
+  5. A photo proposal keeps the step it was taken for; a confirmation earns "photo
+     (confirmed)" only at that step, once, with the value shown; anything else is recorded
+     as the technician's typed entry.
+  6. A trainee signs the ticket before the hidden fault is revealed, so a reading typed to
+     end the session early is on the record they signed.
+  7. Bench practice: the discharge form needs the meter proved on a known live source
+     before and after the readings (live-dead-live); the ticket of a unit with a mains or
+     high-voltage supply ends with the post-repair check (safety-marked parts replaced only
+     with the specified type, the manual's leakage or ground-continuity check); the bring-up
+     text says a variac or series lamp limits current but does not isolate, and the scope
+     note says a chassis that could be tied to the mains needs an isolation transformer or
+     a differential probe.
+  8. The out-of-catalog hazard check reports how many units come from circuits whose supply
+     can exceed 50 V (275 of the 410 validation and pilot units); only those can show a miss.
+- **Consequences.** 415 tests pass; the safety sweep covers every step with no false
+  high-voltage alarm. The session-authentication finding is informational for a localhost
+  demo and is recorded in the threat model. The locked T13 text is unchanged.

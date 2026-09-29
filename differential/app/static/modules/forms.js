@@ -105,10 +105,16 @@ export function dischargeForm({ points = [], readings = {}, onSubmit }) {
   });
   const submit = h("button", { type: "submit", class: "btn btn-danger btn-sm" },
     icon("unlock"), h("span", {}, "Record discharge readings"));
+  // Live-dead-live: a failed meter reads 0 V on a charged capacitor.
+  const provedId = nextId("dc-proved");
+  const proved = h("input", { type: "checkbox", id: provedId, class: "proved-box" });
   const form = h("form", { class: "discharge-form", novalidate: true },
     h("p", { class: "discharge-label" },
       "Measured voltage at each point that can hold high voltage (each must be below 2 V):"),
-    ...inputs.map((x) => x.row), h("div", { class: "rf-row" }, submit), err);
+    ...inputs.map((x) => x.row),
+    h("div", { class: "rf-row" }, proved,
+      h("label", { for: provedId }, "I proved the meter on a known live source before and after these readings (live-dead-live).")),
+    h("div", { class: "rf-row" }, submit), err);
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const out = {};
@@ -123,8 +129,13 @@ export function dischargeForm({ points = [], readings = {}, onSubmit }) {
       x.input.removeAttribute("aria-invalid");
       out[x.tp] = v;
     }
+    if (!proved.checked) {
+      err.textContent = "Prove the meter on a known live source before and after the readings, then tick the box.";
+      proved.focus();
+      return;
+    }
     err.textContent = "";
-    const res = await onSubmit(out, submit);
+    const res = await onSubmit(out, submit, true);
     if (res) {
       err.textContent = res;
       inputs[0]?.input.focus();

@@ -42,6 +42,46 @@ _QUESTION_START = re.compile(
 )
 
 
+# Readings that are not the technician's own measurement now (red team, M2 round 1):
+# someone else's, a document's, an old one, or a voltage that is not at a test point.
+_REPORTED = re.compile(
+    r"\b(colleague|co-?worker|owner|customer|client|friend|boss|someone|somebody|previous tech\w*|"
+    r"last tech\w*|other tech\w*|my (?:tech|mate|buddy|dad|brother|son|husband|wife))\b"
+    r"|\b(said|says|told|according to|reportedly|apparently|supposedly|quoted)\b"
+    r"|\b(he|she|they) (?:measured|read|got|found|saw|reported|wrote|checked)\b",
+    re.I,
+)
+_DOCUMENT = re.compile(
+    r"\b(schematic|manual|chart|spec\w*|datasheet|label|diagram|drawing|nameplate|marking)s?\s+"
+    r"(?:shows?|says?|lists?|gives?|specif\w*|calls? for|reads?|states?|indicates?|has|is)\b"
+    r"|\b(?:nominal|rated|supposed to be|meant to be)\b",
+    re.I,
+)
+_PAST = re.compile(
+    r"\b(last (?:week|month|year|time|visit)|yesterday|earlier today|years? ago|before it "
+    r"(?:broke|failed|died)|when it (?:was )?(?:still )?work\w*|used to)\b",
+    re.I,
+)
+_ELSEWHERE = re.compile(
+    r"\b(wall (?:outlet|socket)|outlet|power strip|extension (?:cord|lead)|mains|heater|filament|"
+    r"meter'?s? battery|battery|bench supply)\b",
+    re.I,
+)
+
+
+def reported(text: str) -> str | None:
+    """Why a typed reading is not the technician's own measurement at a test point, or None."""
+    if _REPORTED.search(text):
+        return "someone else's reading"
+    if _DOCUMENT.search(text):
+        return "a value from a document, not a measurement"
+    if _PAST.search(text):
+        return "an earlier reading, not one taken now"
+    if _ELSEWHERE.search(text):
+        return "a voltage that is not at a test point"
+    return None
+
+
 def uncertain(text: str) -> str | None:
     """Why ``text`` is not a plain affirmative statement, or None if it is."""
     if "?" in text:

@@ -1185,26 +1185,32 @@
  "hv_audit_out_of_catalog": {
   "circuits": {
    "channel_strip": {
+    "high_voltage_supply": true,
     "misses": [],
     "units": 185
    },
    "driver": {
+    "high_voltage_supply": false,
     "misses": [],
     "units": 45
    },
    "opamp": {
+    "high_voltage_supply": false,
     "misses": [],
     "units": 45
    },
    "psu": {
+    "high_voltage_supply": true,
     "misses": [],
     "units": 45
    },
    "tone": {
+    "high_voltage_supply": false,
     "misses": [],
     "units": 45
    },
    "triode": {
+    "high_voltage_supply": true,
     "misses": [],
     "units": 45
    }
@@ -1214,6 +1220,7 @@
    "unmodeled_pilot"
   ],
   "units": 410,
+  "units_hv_circuits": 275,
   "units_with_miss": 0
  },
  "library": {

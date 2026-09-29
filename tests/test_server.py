@@ -65,11 +65,11 @@ def test_session_flow(client: TestClient) -> None:
                         json={"key": state["readings"][0]["key"],
                               "value": state["readings"][0]["value"]})
     assert typed.status_code == 200
-    d = client.post(f"/api/sessions/{sid}/discharge", json={"volts": 0.5}).json()
+    d = client.post(f"/api/sessions/{sid}/discharge", json={"meter_proved": True, "volts": 0.5}).json()
     assert "reply" in d
     a = client.post(f"/api/sessions/{sid}/approve_removal", json={"note": "owner agreed"}).json()
     assert a["state"]["removal_approved"] is True
-    assert client.post(f"/api/sessions/{sid}/discharge", json={}).status_code == 400
+    assert client.post(f"/api/sessions/{sid}/discharge", json={"meter_proved": True, }).status_code == 400
     t = client.get(f"/api/sessions/{sid}/ticket").json()
     assert t["status"].startswith("draft") and t["markdown"]
     signed = client.post(f"/api/sessions/{sid}/ticket/signoff", json={"name": "Bench tech"}).json()
@@ -240,10 +240,33 @@ def test_red_team_round_6_regressions(client: TestClient) -> None:
     assert ok.status_code == 200 and "Recorded on the ticket" in ok.json()["reply"]["text"]
     # a discharge record needs a reading per point; one value covers the first point only
     client.post(f"/api/sessions/{sid}/approve_removal", json={"note": "owner agreed"})
-    one = client.post(f"/api/sessions/{sid}/discharge", json={"volts": 0.3, "all_points": True})
+    one = client.post(f"/api/sessions/{sid}/discharge", json={"meter_proved": True, "volts": 0.3, "all_points": True})
     assert one.status_code == 200 and one.json()["state"]["discharge_verified"] is False
     # a trainee cannot reveal the answer before finishing
     tid = client.post("/api/sessions", json={"circuit_id": "driver", "mode": "offline", "seed": 2,
                                              "trainee": True}).json()["session_id"]
     assert client.post(f"/api/sessions/{tid}/reveal", json={"end_session": True}).status_code == 409
 
+
+
+def test_trainee_reveal_needs_the_signed_ticket(client: TestClient) -> None:
+    """F6 (M2 round 1): a reading typed to end a trainee session early cannot unlock the
+    answer; the trainee signs the ticket, so such a reading is on the signed record."""
+    from differential.app import server
+
+    tid = client.post("/api/sessions", json={"circuit_id": "driver", "mode": "offline", "seed": 2,
+                                             "trainee": True}).json()["session_id"]
+    agent = server._sessions[tid]["agent"]
+    agent.tb.engine.record("dc:TP19", 999.0, "typed by the technician")  # a fabricated reading
+    assert agent.tb.t_get_belief()["would_stop"]
+    assert client.post(f"/api/sessions/{tid}/reveal").status_code == 409
+    assert client.post(f"/api/sessions/{tid}/ticket/signoff", json={"name": "Sam Trainee"}).status_code == 200
+    assert client.post(f"/api/sessions/{tid}/reveal").status_code == 200
+
+
+def test_discharge_form_needs_the_meter_proved(client: TestClient) -> None:
+    sid = client.post("/api/sessions", json={"circuit_id": "psu", "fault": "C104:short", "seed": 3,
+                                             "mode": "offline"}).json()["session_id"]
+    client.post(f"/api/sessions/{sid}/bring_up", json={"method": "variac"})
+    r = client.post(f"/api/sessions/{sid}/discharge", json={"readings": {"TP4": 0.2}})
+    assert r.status_code == 400 and "live-dead-live" in r.text

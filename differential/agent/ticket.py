@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 from differential import __version__
 from differential.agent.format import fault_label, fmt_reading, pct
-from differential.safety.hazards import DISCHARGE_VERIFY_MAX_V, discharge_points
+from differential.safety.hazards import DISCHARGE_VERIFY_MAX_V, discharge_points, needs_bring_up
 from differential.sim.faults import parse_fault_id
 from differential.sim.observables import KIND_LABEL
 
@@ -64,8 +64,14 @@ def build_ticket(tb: ToolBox) -> dict[str, Any]:
         pts = discharge_points(circuit.id)
         safety.append("This unit carries high voltage. Before any hands-in work: switch off, "
                       "unplug, discharge " + ", ".join(hv_parts) + " through a resistor and "
-                      f"confirm below {DISCHARGE_VERIFY_MAX_V:g} V with the meter at "
-                      + ", ".join(pts) + "; re-check after any power cycle.")
+                      f"confirm below {DISCHARGE_VERIFY_MAX_V:g} V at " + ", ".join(pts)
+                      + " with a meter proved on a live source before and after; re-check after "
+                        "any power cycle.")
+    if needs_bring_up(circuit.id):
+        # after the repair (M2 review, round 1): what the owner gets back must be safe
+        safety.append("Before the unit goes back to its owner: replace any safety-marked part "
+                      "only with the type the manual specifies, and do the manual's leakage or "
+                      "ground-continuity check.")
     removed = [{"part": str(r["key"])[5:], "verdict": "out of tolerance"
                 if float(r["value"]) >= 0.5 else "within tolerance"}  # type: ignore[arg-type]
                for r in readings if str(r["key"]).startswith("lift:")]

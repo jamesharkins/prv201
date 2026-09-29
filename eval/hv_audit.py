@@ -61,14 +61,14 @@ def out_of_catalog_check(splits: tuple[str, ...]) -> dict[str, object]:
     """Units outside the catalog (double faults, wrong-value parts, solder bridges) with a
     point above 50 V that the hazard map marks as low voltage (round-6 review). The map is
     built from single catalog faults only, so this is where it could miss a hazard."""
-    from differential.safety.hazards import hazard
+    from differential.safety.hazards import circuit_has_hv, hazard
     from eval.cases import load_cases
     from eval.lock import require_lock
 
     if any("test" in s for s in splits):
         require_lock("check test units against the hazard map")
     per: dict[str, object] = {}
-    units = misses = 0
+    units = misses = units_hv = 0
     for cid in CIRCUIT_IDS:
         found: list[dict[str, object]] = []
         n = 0
@@ -86,9 +86,14 @@ def out_of_catalog_check(splits: tuple[str, ...]) -> dict[str, object]:
                         found.append({"split": split, "seed": str(row["seed"]),
                                       "hypothesis": str(row["hypothesis"]), "tp": tp, "volts": round(v, 1)})
         units += n
+        # only a circuit whose supply can exceed the threshold can put it on a point at all
+        # (M2 review, round 1: the low-voltage blocks cannot count as evidence)
+        hv_supply = circuit_has_hv(cid)
+        units_hv += n if hv_supply else 0
         misses += len({(f["split"], f["seed"]) for f in found})
-        per[cid] = {"units": n, "misses": found}
-    return {"splits": list(splits), "units": units, "units_with_miss": misses, "circuits": per}
+        per[cid] = {"units": n, "high_voltage_supply": hv_supply, "misses": found}
+    return {"splits": list(splits), "units": units, "units_hv_circuits": units_hv,
+            "units_with_miss": misses, "circuits": per}
 
 
 def main() -> None:

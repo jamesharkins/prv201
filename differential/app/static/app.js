@@ -154,8 +154,8 @@ const schematic = new SchematicView($("schematic"), {
 });
 
 const banner = new SafetyBanner($("banner-slot"), {
-  discharge: async (readings, btn) => {
-    const err = await act(() => api.discharge(app.state.session_id, readings), { button: btn });
+  discharge: async (readings, btn, meterProved = false) => {
+    const err = await act(() => api.discharge(app.state.session_id, readings, meterProved), { button: btn });
     if (err) return err;
     if (app.state && !app.state.discharge_verified) {
       const last = [...(app.state.transcript || [])].reverse().find((t) => t.role === "assistant");

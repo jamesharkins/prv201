@@ -47,7 +47,7 @@ export class SafetyBanner {
     if (blocked) {
       const f = dischargeForm({
         points: pending.discharge_points || [], readings: state.discharge_readings || {},
-        onSubmit: (v, btn) => this.handlers.discharge(v, btn),
+        onSubmit: (v, btn, proved) => this.handlers.discharge(v, btn, proved),
       });
       body.append(h("div", { class: "banner-lock" },
         h("p", { class: "banner-lock-text" }, icon("lock"),

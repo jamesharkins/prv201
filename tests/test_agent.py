@@ -53,12 +53,12 @@ def test_lift_steps_are_locked_until_approval_and_discharge_at_every_hv_point() 
     assert blocked["blocked"] == "discharge_verification" and len(pts) >= 2
     assert [p["tp"] for p in blocked["discharge_points"]] == pts
     # one reading covers only the main filter capacitor; the rest are asked for
-    one = tb.t_confirm_discharge(volts=0.4)
+    one = tb.t_confirm_discharge(volts=0.4, meter_proved=True)
     assert one["verified"] is False and one["missing"] == pts[1:]
     # a charged later capacitor (e.g. behind an open dropping resistor) keeps it locked
-    charged = tb.t_confirm_discharge(readings={p: 0.2 for p in pts[1:-1]} | {pts[-1]: 38.0})
+    charged = tb.t_confirm_discharge(readings={p: 0.2 for p in pts[1:-1]} | {pts[-1]: 38.0}, meter_proved=True)
     assert charged["verified"] is False and "Still charged" in charged["message"]
-    ok = tb.t_confirm_discharge(readings={pts[-1]: 0.3})
+    ok = tb.t_confirm_discharge(readings={pts[-1]: 0.3}, meter_proved=True)
     assert ok["verified"] is True and set(ok["readings"]) == set(pts)
     assert not tb.step_payload(lift).get("blocked")
     res = tb.call("record_measurement", {"key": lift.key, "value": 1.0})
@@ -81,9 +81,9 @@ def test_discharge_form_needs_every_point_and_goes_on_the_ticket() -> None:
     agent.record_owner_approval("owner agreed")
     agent.pending_key = "discharge"
     pts = discharge_points("psu")
-    out = agent.record_discharge(volts=0.3)
+    out = agent.record_discharge(volts=0.3, meter_proved=True)
     assert agent.tb.discharge_verified is False and "Still needed" in out.text
-    out = agent.record_discharge(dict.fromkeys(pts, 0.3))
+    out = agent.record_discharge(dict.fromkeys(pts, 0.3), meter_proved=True)
     assert "Discharge recorded" in out.text and agent.tb.discharge_verified is True
     t = agent.ticket()
     assert t["part_removal"]["owner_approved"] is True
@@ -299,8 +299,8 @@ def test_non_finite_readings_never_unlock_or_enter_the_engine() -> None:
     pts = discharge_points("psu")
     # NaN compares as "not above the limit"; it must be refused, not taken as discharged
     for bad in (float("nan"), float("inf"), float("-inf")):
-        assert "error" in tb.call("confirm_discharge", {"readings": {p: bad for p in pts}})
-        assert "error" in tb.call("confirm_discharge", {"volts": bad})
+        assert "error" in tb.call("confirm_discharge", {"meter_proved": True, "readings": {p: bad for p in pts}})
+        assert "error" in tb.call("confirm_discharge", {"meter_proved": True, "volts": bad})
     assert tb.discharge_verified is False and tb.discharge_readings == {}
     dc = next(o for o in tb.bundle.observables.values() if o.kind == "dc")
     assert "error" in tb.call("record_measurement", {"key": dc.key, "value": float("nan")})
@@ -327,7 +327,7 @@ def test_trainee_on_a_high_voltage_unit_measures_nothing_before_a_supervisor() -
     dc = next(o for o in tb.bundle.observables.values() if o.kind == "dc")
     assert "supervis" in tb.call("record_measurement", {"key": dc.key, "value": 12.0})["error"]
     pts = discharge_points("psu")
-    assert "error" in tb.call("confirm_discharge", {"readings": {p: 0.1 for p in pts}})
+    assert "error" in tb.call("confirm_discharge", {"meter_proved": True, "readings": {p: 0.1 for p in pts}})
     assert tb.engine.taken() == set()
     tb.name_supervisor("Pat Lee")
     assert "first powered" in tb.call("record_measurement", {"key": dc.key, "value": 12.0})["error"]
@@ -392,7 +392,7 @@ def test_duplicate_discharge_points_keep_the_worst_reading() -> None:
     tb = ToolBox("psu")
     tb.call("approve_part_removal", {})
     pts = discharge_points("psu")
-    res = tb.call("confirm_discharge", {"readings": {pts[0]: 400.0, pts[0].lower(): 0.1,
+    res = tb.call("confirm_discharge", {"meter_proved": True, "readings": {pts[0]: 400.0, pts[0].lower(): 0.1,
                                                       **{p: 0.1 for p in pts[1:]}}})
     assert res["verified"] is False and "Still charged" in res["message"]
 
@@ -454,13 +454,13 @@ def test_discharge_check_expires_unless_a_bleeder_is_attached() -> None:
     tb.call("approve_part_removal", {"note": "owner agreed"})
     lift = next(o for o in tb.bundle.observables.values() if o.is_lift)
     pts = discharge_points("psu")
-    tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2))
+    tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2), meter_proved=True)
     assert not tb.step_payload(lift).get("blocked")
     now[0] += DISCHARGE_VALID_S + 1
     again = tb.step_payload(lift)
     assert again["blocked"] == "discharge_verification" and "dielectric absorption" in again["next_step"]
     assert "error" in tb.call("record_measurement", {"key": lift.key, "value": 1.0})
-    tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2), bleeder=True)
+    tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2), bleeder=True, meter_proved=True)
     now[0] += 10 * DISCHARGE_VALID_S
     assert not tb.step_payload(lift).get("blocked")
     assert tb.discharge_log[-1]["bleeder"] is True
@@ -516,9 +516,9 @@ def test_discharge_form_accepts_plain_readings_and_refuses_the_limit() -> None:
     agent = DifferentialAgent("psu", mode="offline")
     agent.record_owner_approval("owner agreed")
     pts = discharge_points("psu")
-    agent.record_discharge(dict.fromkeys(pts, DISCHARGE_VERIFY_MAX_V))
+    agent.record_discharge(dict.fromkeys(pts, DISCHARGE_VERIFY_MAX_V), meter_proved=True)
     assert agent.tb.discharge_verified is False
-    agent.record_discharge(dict.fromkeys(pts, 0.2))
+    agent.record_discharge(dict.fromkeys(pts, 0.2), meter_proved=True)
     assert agent.tb.discharge_verified is True
 
 
@@ -616,3 +616,132 @@ def test_prompt_examples_carry_no_numbers() -> None:
     agent.user_message("No output at all.")
     reply = agent.user_message("hmm")
     assert "value withheld" not in reply.text
+
+
+# ----------------------------------------------------------- red team, M2 round 1
+def test_rereading_one_point_does_not_refresh_the_others() -> None:
+    """F2(a): a discharge check is only as fresh as its oldest reading."""
+    from differential.agent.tools import ToolBox
+    from differential.safety.hazards import discharge_points
+    from differential.safety.rules import DISCHARGE_VALID_S
+
+    now = [1000.0]
+    tb = ToolBox("psu")
+    tb.clock = lambda: now[0]
+    tb.t_confirm_bring_up("variac")
+    tb.call("approve_part_removal", {"note": "owner agreed"})
+    lift = next(o for o in tb.bundle.observables.values() if o.is_lift)
+    pts = discharge_points("psu")
+    assert len(pts) > 1
+    assert tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2), meter_proved=True)["verified"]
+    for _ in range(3):  # keep re-entering only the first point, inside each window
+        now[0] += DISCHARGE_VALID_S - 30
+        tb.t_confirm_discharge(readings={pts[0]: 0.1}, meter_proved=True)
+    blocked = tb.step_payload(lift)
+    assert blocked["blocked"] == "discharge_verification"
+    assert "error" in tb.call("record_measurement", {"key": lift.key, "value": 1.0})
+
+
+def test_stale_partial_readings_cannot_complete_a_check() -> None:
+    """F2(b): readings older than the window are asked for again, not reused."""
+    from differential.agent.tools import ToolBox
+    from differential.safety.hazards import discharge_points
+    from differential.safety.rules import DISCHARGE_VALID_S
+
+    now = [1000.0]
+    tb = ToolBox("psu")
+    tb.clock = lambda: now[0]
+    tb.t_confirm_bring_up("variac")
+    pts = discharge_points("psu")
+    first = tb.t_confirm_discharge(readings=dict.fromkeys(pts[:-1], 0.2), meter_proved=True)
+    assert not first["verified"] and first["missing"] == pts[-1:]
+    now[0] += DISCHARGE_VALID_S + 30
+    late = tb.t_confirm_discharge(readings={pts[-1]: 0.2}, meter_proved=True)
+    assert not late["verified"] and set(late["missing"]) == set(pts[:-1])
+    fresh = tb.t_confirm_discharge(readings=dict.fromkeys(pts[:-1], 0.2), meter_proved=True)
+    assert fresh["verified"]
+
+
+def test_trainee_gates_do_not_name_the_recommendation() -> None:
+    """F3: on a high-voltage trainee unit the first steps are gated (supervisor, bring-up);
+    neither the payload, the reply nor the export may show the step the tool would take."""
+    from differential.agent.agent import DifferentialAgent
+
+    hv = DifferentialAgent("psu", mode="offline", trainee=True)
+    reply = hv.user_message("Loud hum and the output is weak.").text
+    assert hv.pending_key == "supervisor"
+    rec = next(c.result for c in reversed(hv.tb.calls) if c.name == "recommend_measurement")
+    assert rec["withheld"] and rec["key"] is None
+    assert not {"part", "test_point", "expected_information_bits"} & set(rec)
+    exported = [c["result"] for c in hv.export()["tool_calls"] if c["name"] == "recommend_measurement"]
+    assert all(r.get("key") is None for r in exported)
+    assert "dc:" not in reply and "ac:" not in reply
+    hv.name_supervisor("Pat Lee")
+    rec = next(c.result for c in reversed(hv.tb.calls) if c.name == "recommend_measurement")
+    assert rec["blocked"] == "bring_up" and rec["key"] is None
+    hv.record_bring_up("variac")
+    assert hv.pending_key == "guess"  # the trainee chooses before the tool's step is shown
+
+
+@pytest.mark.parametrize("text", [
+    "My colleague measured 3.3 V there last week",
+    "The schematic shows 3.3 V at TP19",
+    "The heater winding is 6.3 V",
+    "The meter battery is 9 V",
+    "The wall outlet here is 120 V",
+    "Owner says it measured 12 V when it was working",
+])
+def test_hearsay_and_unrelated_voltages_are_not_recorded(text: str) -> None:
+    """F4: only the technician's own reading at a test point, taken now, is recorded (a
+    low-voltage circuit, so no safety form stands in the way)."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("driver", mode="offline")
+    agent.user_message("No output from the line out.")
+    assert agent.pending_key and ":" in agent.pending_key
+    before = len(agent.tb.engine.readings)
+    reply = agent.user_message(text).text
+    assert len(agent.tb.engine.readings) == before
+    assert "Not recorded: that reads as" in reply and "forms" not in reply
+
+
+@pytest.mark.parametrize("text", ["TP19 reads 3.3 V", "3.30 V", "I get 12.1 V at TP18", "TP19 = 3.3 V"])
+def test_plain_readings_still_record(text: str) -> None:
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("driver", mode="offline")
+    agent.user_message("No output from the line out.")
+    before = len(agent.tb.engine.readings)
+    agent.user_message(text)
+    assert len(agent.tb.engine.readings) == before + 1
+
+
+def test_a_photo_backs_one_reading_at_its_own_step() -> None:
+    """F5: a photo confirms the step it was taken for, once; other uses are typed entries."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("driver", mode="offline")
+    agent.tb.photos["p2"] = b"x"
+    agent.tb.photo_proposals["p2"] = {"value": 3.3, "text": "3.300", "for_key": "dc:TP19",
+                                      "used": False}
+    agent.confirm_photo("p2", "dc:TP20", 3.3)  # another point
+    agent.confirm_photo("p2", "dc:TP19", 3.3)  # its own point
+    agent.confirm_photo("p2", "dc:TP21", 3.3)  # reused
+    sources = {r.key: r.source for r in agent.tb.engine.readings}
+    assert sources["dc:TP20"] == "typed by the technician (photo:p2 was taken for dc:TP19)"
+    assert sources["dc:TP19"] == "photo:p2 (confirmed)"
+    assert sources["dc:TP21"] == "typed by the technician (photo:p2 already backs another reading)"
+
+
+def test_discharge_record_needs_the_meter_proved_live_dead_live() -> None:
+    """M2 review, round 1 (engineer): a failed meter reads 0 V on a charged capacitor."""
+    from differential.agent.tools import ToolBox
+    from differential.safety.hazards import discharge_points
+
+    tb = ToolBox("psu")
+    tb.t_confirm_bring_up("variac")
+    pts = discharge_points("psu")
+    with pytest.raises(ValueError, match="live-dead-live"):
+        tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2))
+    assert not tb.discharge_verified
+    assert tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2), meter_proved=True)["verified"]

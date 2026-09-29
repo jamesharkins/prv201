@@ -49,7 +49,7 @@ fails the build otherwise.
    explain every number in it without notes.
 3. Re-run `python tools/check_citations.py --used-only submissions/M1/M1.typ`
    on an unrestricted network. The build sandbox could not reach most publisher
-   sites, and 28 of the 44 cited sources were confirmed from search-result
+   sites, and 39 of the 74 cited sources were confirmed from search-result
    snippets rather than the full page (`results/citation_check_M1.json`,
    `snippet_only`). Open each of those and confirm the sentence that cites it.
 4. If the course publishes an official rubric, put it in `course/` and re-run

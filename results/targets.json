@@ -1,5 +1,5 @@
 {
-  "status": "draft v4 after M1 review round 6 (ADR-046); locked at git tag targets-locked before the full evaluation, then reported exactly as written, met or missed",
+  "status": "locked v4 (ADR-046, ADR-047) at git tag targets-locked before the full evaluation; reported exactly as written, met or missed",
   "pass_rule": "A target is met when its one-sided 95% confidence bound clears the bar: the lower bound for an 'at least' target, the upper bound for an 'at most' target (exact Clopper-Pearson for counts of units or prompts, ADR-044; a stratified bootstrap over units, 2,000 resamples, for paired margins, ratios and calibration error). A census (T15, T17) is met only with no exception; a release gate (T15-T17, T25, T26) must hold before any release. Every result is reported with its two-sided 95% interval.",
   "roles": {
     "primary": "the claims the project stands on",
@@ -524,7 +524,7 @@
       "primary": false
     }
   ],
-  "locked_on": null,
+  "locked_on": "2026-09-29",
   "bar_rule": "Each pilot-estimable bar is the protocol-matched pilot's estimate moved against the system by 1.5 standard errors and rounded to the reporting step, never past the estimate (eval/set_bars.py, ADR-029, ADR-043); a target with several parts has a bar per part (ADR-046); a bar is met only when the one-sided 95% bound clears it (ADR-033).",
   "joint_chance_primaries": {
     "targets": [

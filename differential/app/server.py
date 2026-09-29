@@ -110,7 +110,7 @@ def _state(s: dict[str, Any]) -> dict[str, Any]:
                            for h, p in e.top_hypotheses(8)],
         "history": agent.history_snapshots,
         "pending": pending,
-        "discharge_verified": tb.discharge_verified,
+        "discharge_verified": tb._discharge_current(),
         "discharge_readings": dict(tb.discharge_readings),
         "removal_approved": tb.removal_approved,
         "bring_up": tb.bring_up,
@@ -384,6 +384,8 @@ async def photo(sid: str, file: UploadFile = File(...)) -> dict[str, Any]:  # no
     data = await file.read()
     if len(data) > MAX_PHOTO_BYTES:
         raise HTTPException(413, "photo too large")
+    if not data:
+        raise HTTPException(400, "empty photo")
     pid = uuid.uuid4().hex[:8]
     agent: DifferentialAgent = s["agent"]
     agent.tb.photos[pid] = data

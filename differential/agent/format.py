@@ -26,10 +26,24 @@ def clean_name(name: str) -> str:
     return " ".join(_NOT_NAME.sub(" ", str(name)).split())[:60].strip(" .'-")
 
 
+# Words that say there is nobody, or that name a role instead of a person (red team, round 5):
+# "Nobody", "N/A", "Not present", "Unsupervised trainee", "I", "the supervisor".
+_NO_PERSON = {"none", "nobody", "noone", "no", "not", "nil", "null", "na", "nan", "unknown", "absent",
+              "available", "unavailable", "present", "unsupervised", "anyone", "someone", "somebody",
+              "everyone", "everybody", "tbd", "tba", "missing", "away", "gone"}
+_ROLE_ONLY = {"i", "me", "myself", "self", "the", "or", "and", "is", "am", "yes", "ok", "okay", "here",
+              "there", "trainee", "supervisor", "technician", "tech", "owner", "customer", "user",
+              "admin", "test", "the supervisor", "my supervisor", "the trainee"}
+
+
 def person_name(name: str) -> str:
-    """``clean_name``, refusing text that is not a name (empty, or more than six words)."""
+    """``clean_name``, refusing text that is not a person's name: empty, more than six
+    words, a word that says there is nobody, or a role instead of a name."""
     out = clean_name(name)
-    if sum(c.isalpha() for c in out) < 2 or len(out.split()) > 6:
+    words = [w for w in re.split(r"[\s.'-]+", out.lower()) if w]
+    if (sum(c.isalpha() for c in out) < 2 or len(out.split()) > 6
+            or any(w in _NO_PERSON for w in words) or "".join(words) in _NO_PERSON
+            or out.lower() in _ROLE_ONLY):
         raise ValueError("give a person's name (letters only, at most six words)")
     return out
 

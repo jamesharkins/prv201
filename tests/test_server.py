@@ -188,3 +188,31 @@ def test_bring_up_endpoint_unlocks_powered_steps(client: TestClient) -> None:
     assert [x["key"] for x in late["state"]["readings"]] == ["dc:TP1"]
     md = client.get(f"/api/sessions/{sid}/ticket").json()["markdown"]
     assert "variac" in md
+
+
+def test_red_team_round_5_regressions(client: TestClient) -> None:
+    sid = client.post("/api/sessions", json={"circuit_id": "psu", "mode": "offline", "seed": 2}).json()["session_id"]
+    # M4: an empty upload is a client error, not a crash
+    r = client.post(f"/api/sessions/{sid}/photos", files={"file": ("empty.jpg", b"", "image/jpeg")})
+    assert r.status_code == 400
+    # M2: the supervisor endpoint wants a person
+    tid = client.post("/api/sessions", json={"circuit_id": "psu", "mode": "offline", "seed": 5,
+                                             "trainee": True}).json()["session_id"]
+    for name in ("Nobody", "None", "N/A", "Not Present"):
+        assert client.post(f"/api/sessions/{tid}/supervisor", json={"name": name}).status_code == 400
+    assert client.post(f"/api/sessions/{tid}/supervisor", json={"name": "Ana Ruiz"}).status_code == 200
+
+
+def test_state_shows_a_lapsed_discharge_check_as_lapsed(client: TestClient) -> None:
+    """L1: the session state recomputes the discharge check instead of echoing a flag."""
+    from differential.app import server
+    from differential.safety.rules import DISCHARGE_VALID_S
+
+    sid = client.post("/api/sessions", json={"circuit_id": "psu", "mode": "offline", "seed": 4}).json()["session_id"]
+    tb = server._sessions[sid]["agent"].tb
+    now = [1000.0]
+    tb.clock = lambda: now[0]
+    tb.discharge_verified, tb.discharge_time, tb.bleeder_attached = True, now[0], False
+    assert client.get(f"/api/sessions/{sid}").json()["discharge_verified"] is True
+    now[0] += DISCHARGE_VALID_S + 1
+    assert client.get(f"/api/sessions/{sid}").json()["discharge_verified"] is False

@@ -813,7 +813,12 @@ def _decode_canvas(canvas: np.ndarray) -> _Decoded | None:
 
 
 def _gray(image_bytes: bytes) -> np.ndarray | None:
-    img = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+    if not image_bytes:
+        return None
+    try:
+        img = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+    except cv2.error:
+        return None
     return None if img is None else cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 

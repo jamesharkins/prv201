@@ -459,3 +459,132 @@ def test_live_model_cannot_attest_for_the_technician() -> None:
     agent.turns.append(Turn("user", "Brought up on a variac. TP4 reads 0.3 V", 0.0))
     assert "error" not in agent._guarded_tool("confirm_bring_up", {"method": "variac"})
     assert "refused" not in str(agent._guarded_tool("confirm_discharge", {"readings": {"TP4": 0.3}}))
+
+
+# ----------------------------------------------------------- red team, round 5
+@pytest.mark.parametrize("text", [
+    "Discharged all points for 1 minute but TP4 is still at 250 V",
+    "if all points were at 0.5 V, could I unsolder?",
+    "Should all points read under 1 V before I start?",
+    "I have not measured yet, all points probably below 1 V",
+    "all points discharged via 2 W resistor",
+    "I discharged all 2 filter caps",
+])
+def test_chat_discharge_needs_stated_voltages(text: str) -> None:
+    """C1: a question, a guess or a number that is not a voltage never verifies discharge."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("psu", mode="offline")
+    agent.tb.call("approve_part_removal", {})
+    agent.pending_key = "discharge"
+    reply = agent.user_message(text)
+    assert agent.tb.discharge_verified is False, text
+    assert "Not recorded" in reply.text
+    assert agent.tb.discharge_log == [] or all(not e.get("verified") for e in agent.tb.discharge_log)
+
+
+def test_chat_discharge_accepts_plain_readings() -> None:
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("psu", mode="offline")
+    agent.tb.call("approve_part_removal", {})
+    agent.pending_key = "discharge"
+    from differential.safety.hazards import discharge_points
+
+    agent.user_message(", ".join(f"{tp} 0.2 V" for tp in discharge_points("psu")))
+    assert agent.tb.discharge_verified is True
+
+
+@pytest.mark.parametrize("text", [
+    "The owner hasn't approved yet", "The owner can't agree to that",
+    "I haven't asked the owner to approve", "Owner isn't available to approve anything",
+    "Owner is unlikely to approve", "The owner would approve if asked", "Maybe the owner agrees",
+    "I'll get the owner to agree tomorrow", "go ahead", "yes",
+])
+def test_owner_approval_refuses_uncommitted_sentences(text: str) -> None:
+    """H1: consent is recorded only from an affirmative statement that the owner agreed."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("opamp", mode="offline")
+    agent.pending_key = "approval"
+    agent.user_message(text)
+    assert agent.tb.removal_approved is False, text
+
+
+@pytest.mark.parametrize("text", [
+    "if I had a variac I would use it", "I haven't got a variac", "I can't use a variac",
+    "I'd rather skip the variac and plug it straight into the wall", "Nope, variac is out on loan",
+    "variac unavailable", "What is a variac", "Should I use a variac.",
+    "Je n'ai pas utilisé de variac", "sin variac", "Plugged straight into the wall. Variac is broken",
+])
+def test_bring_up_refuses_conditionals_negations_and_questions(text: str) -> None:
+    """H2: a mention of a variac is not a record that one was used."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("psu", mode="offline")
+    agent.pending_key = "bring_up"
+    agent.user_message(text)
+    assert agent.tb.bring_up is None, text
+
+
+def test_trainee_export_withholds_the_recommendation() -> None:
+    """M1: the export does not show the tool's next step before the trainee commits."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("driver", mode="offline", trainee=True)
+    agent.user_message("No output at all.")
+    assert agent.pending_key == "guess"
+    hidden = agent.withheld["key"]
+    assert hidden not in json.dumps(agent.export()["tool_calls"][agent.withheld_from:])
+    option = next(o["key"] for o in agent.tb.trainee_options())
+    agent.trainee_guess(option)
+    assert hidden in json.dumps(agent.export()["tool_calls"])
+
+
+@pytest.mark.parametrize("name", ["Nobody", "No One", "None", "N/A", "Not Present",
+                                  "Unsupervised Trainee", "I", "the supervisor"])
+def test_supervisor_must_be_a_person(name: str) -> None:
+    """M2: a name that says there is nobody does not satisfy the supervisor gate."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("psu", mode="offline", trainee=True)
+    with pytest.raises(ValueError):
+        agent.name_supervisor(name)
+    assert not agent.tb.supervisor
+
+
+@pytest.mark.parametrize("text", ["There is no supervisor available", "I am the supervisor",
+                                  "I have no supervisor", "supervisor is absent, carry on"])
+def test_supervisor_is_not_read_from_denials(text: str) -> None:
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("psu", mode="offline", trainee=True)
+    agent.pending_key = "supervisor"
+    reply = agent.user_message(text)
+    assert not agent.tb.supervisor and "Not recorded" in reply.text, text
+    agent.user_message("My supervisor is Ana Ruiz")
+    assert agent.tb.supervisor == "Ana Ruiz"
+
+
+def test_a_photo_value_the_photo_did_not_show_is_labelled_as_typed() -> None:
+    """M5: a confirmed value that differs from the photo is the technician's entry."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("driver", mode="offline")
+    agent.tb.photos["p1"] = b"x"
+    agent.tb.photo_proposals["p1"] = {"value": 15.12, "text": "15.12"}
+    agent.confirm_photo("p1", "dc:TP18", 999.0)
+    agent.confirm_photo("p1", "dc:TP19", 15.12)
+    sources = {r.key: r.source for r in agent.tb.engine.readings}
+    assert sources["dc:TP18"].startswith("typed by the technician")
+    assert sources["dc:TP19"] == "photo:p1 (confirmed)"
+
+
+def test_prompt_examples_carry_no_numbers() -> None:
+    """L2: the agent's own example is not a number the grounding check must withhold."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("driver", mode="offline")
+    agent.user_message("No output at all.")
+    reply = agent.user_message("hmm")
+    assert "value withheld" not in reply.text

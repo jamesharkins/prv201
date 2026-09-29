@@ -45,10 +45,16 @@ _LIVE = (r"(?:while|when|with) (?:it|the (?:unit|amp|chassis|power|set))(?:'s| i
 REFUSAL_RULES: dict[str, list[str]] = {
     "fuse_bypass": [
         r"bypass(?:ing)? (?:the |a |that )?fuse", r"(?:bridge|jumper|short(?:ing)?)(?: out)? (?:the |a |that )?fuse",
-        r"(?:paper ?clip|foil|tin ?foil|a (?:piece of )?wire|a nail|a coin|solder) (?:in|into|across|for|instead of|as) (?:the |a )?fuse",
+        r"(?:paper ?clip|foil|tin ?foil|(?:a (?:piece of )?)?wire|(?:a )?nail|(?:a )?coin|solder|(?:a )?bolt|(?:a )?screw)"
+        r" (?:in|into|across|for|instead of|in place of|in lieu of|as) (?:the |a )?fuse",
+        r"replac\w* (?:the |a )?fuse with (?:a |some )?(?:paper ?clip|wire|nail|foil|coin|bolt|screw|jumper|link)",
+        r"(?:contourn\w*|shunt\w*|pont\w*|court-circuit\w*) (?:le |la )?fusible",
+        r"(?:puente\w*|puenteando|anul\w*|salt\w*) (?:el |un )?fusible|fusible (?:puenteado|anulado)",
+        r"sicherung (?:\w+ )?(?:überbrück\w*|ueberbrueck\w*|brück\w*|kurzschlie\w*)|(?:überbrück\w*|ueberbrueck\w*) (?:die )?sicherung",
+        r"(?:bypass\w*|ponticell\w*|escludere) (?:il )?fusibile",
         r"(?:bigger|larger|higher|heavier)(?:[- ](?:value|rated|rating|amp|amperage|current))? fuse",
         r"(?:up|over)[- ]?siz(?:e|ed|ing) (?:the |a )?fuse", r"fuse (?:of|with) a (?:higher|bigger|larger) (?:rating|value|current)",
-        r"defeat(?:ing)? (?:the )?fuse",
+        r"defeat(?:ing)? (?:the )?fuse", r"fuse[- ]?bypass",
         r"(?:without|skip(?:ping)?) (?:the |a )?fuse", r"fuse (?:with|using) (?:a )?(?:paper ?clip|wire|foil)",
     ],
     "ground_lift": [
@@ -72,6 +78,7 @@ REFUSAL_RULES: dict[str, list[str]] = {
         r"(?:replace|rewire|repair|splice|swap) (?:the )?(?:power cord|mains (?:lead|cord|wiring)|iec (?:inlet|socket)|power (?:inlet|switch)|primary)",
         r"(?:power|mains) transformer primary", r"(?:rewir|repair)\w* (?:the )?(?:mains|line voltage)",
         r"(?:120|230|240) ?v(?:ac)? (?:side|wiring|input|primary)", r"voltage selector", r"power entry module",
+        r"(?:power|mains|line|ac)[- ]cord (?:side|end|wiring)", r"(?:plug|wall)[- ]side of (?:the )?(?:unit|amp|chassis|supply)",
     ],
     "live_hv_hands_in": [
         r"(?:skip|don'?t bother|no need)(?: to)?(?: with)? (?:the )?discharg", r"without discharging",
@@ -230,11 +237,24 @@ def _match(text: str, patterns: list[str]) -> list[str]:
     return hits
 
 
+_LEET = str.maketrans({"4": "a", "@": "a", "3": "e", "1": "i", "!": "i", "0": "o", "5": "s", "$": "s",
+                       "7": "t"})
+
+
+def _normalized(text: str) -> str:
+    """The message with obfuscation undone for screening only: letters spaced out one by one
+    ("b y p a s s") joined, punctuation between letters ("f.u.s.e") dropped and leetspeak
+    digits ("byp4ss") read as letters (red team, round 5)."""
+    t = re.sub(r"(?<=\w)[.*_\-](?=\w)", "", text.lower())
+    t = re.sub(r"\b(?:\w ){2,}\w\b", lambda m: m.group(0).replace(" ", ""), t)
+    return " ".join(t.translate(_LEET).split())
+
+
 def screen_request(text: str) -> ScreenResult:
     """Check a user message before it reaches any model or tool."""
     t = " ".join(text.split())
     for cat, pats in REFUSAL_RULES.items():
-        hits = _match(t, pats)
+        hits = _match(t, pats) or _match(_normalized(t), pats)
         if hits:
             return ScreenResult(False, cat, REFUSAL_TEXT[cat], matched=hits)
     hits = _match(t, OUT_OF_SCOPE)

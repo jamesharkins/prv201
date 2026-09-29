@@ -20,13 +20,21 @@ import re
 import time
 import uuid
 from dataclasses import asdict, dataclass, field
-from typing import Any, ClassVar
+from typing import Any
 
 from differential.agent.format import fault_label, fmt_reading, pct, person_name
 from differential.agent.grounding import check_grounding, find_numbers, redact_ungrounded
 from differential.agent.tools import TOOL_SPECS, ToolBox
 from differential.circuits.library import get_circuit
 from differential.instruments.base import Instrument
+from differential.safety.attest import (
+    bring_up_method,
+    discharge_readings,
+    owner_approval,
+    supervisor_name,
+    uncertain,
+)
+from differential.safety.attest import volts as _to_volts
 from differential.safety.hazards import hazard
 from differential.safety.rules import CERTAINTY_TEXT, enforce_output, screen_request
 
@@ -73,6 +81,7 @@ class DifferentialAgent:
         self.tb.trainee = trainee
         self.pending_key: str | None = None
         self.withheld: dict[str, Any] | None = None  # trainee mode: recommendation not yet shown
+        self.withheld_from = 0  # index of the tool call holding the withheld recommendation
         self.grounding_log: list[dict[str, Any]] = []
         self.safety_log: list[dict[str, Any]] = []
         self.confirmed_photo_values: list[float] = []
@@ -130,8 +139,15 @@ class DifferentialAgent:
         v = float(value)
         if not math.isfinite(v):
             return self._reply("I couldn't record that: a reading must be a finite number")
+        # A photo reading is the photo's only when the confirmed value is what the photo
+        # showed; otherwise it is the technician's own entry and the ticket says so.
+        shown = (self.tb.photo_proposals.get(photo_id) or {}).get("value")
+        same = (isinstance(shown, int | float) and math.isfinite(float(shown))
+                and abs(v - float(shown)) <= max(1e-9, 1e-3 * abs(float(shown))))
         self.confirmed_photo_values.append(v)
-        return self.reading_event(key, v, source=f"photo:{photo_id} (confirmed)")
+        source = (f"photo:{photo_id} (confirmed)" if same
+                  else f"typed by the technician (photo:{photo_id} showed a different value)")
+        return self.reading_event(key, v, source=source)
 
     def snapshot(self, label: str) -> None:
         top = self.tb.engine.top_hypotheses(6)
@@ -178,12 +194,20 @@ class DifferentialAgent:
             "mode": self.mode,
             "model": getattr(self.llm, "model", None),
             "turns": [asdict(t) for t in self.turns],
-            "tool_calls": [{"name": c.name, "input": c.input, "result": c.result,
+            "tool_calls": [{"name": c.name, "input": c.input, "result": self._exported_result(i, c),
                             "seconds": round(c.seconds, 4), "error": c.error}
-                           for c in self.tb.calls],
+                           for i, c in enumerate(self.tb.calls)],
             "grounding": self.grounding_log,
             "safety": self.safety_log,
         }
+
+    def _exported_result(self, i: int, call: Any) -> Any:
+        """A tool result as exported. In trainee mode the recommendation stays withheld
+        until the trainee commits their own next step (red team, round 5)."""
+        if (self.withheld is not None and i >= self.withheld_from
+                and call.name in ("recommend_measurement", "get_belief", "expected_readings")):
+            return {"withheld": "trainee mode: shown after the trainee commits their own next step"}
+        return call.result
 
     # -------------------------------------------------------------- helpers
     def _evidence(self) -> list[Any]:
@@ -227,9 +251,15 @@ class DifferentialAgent:
         if re.search(r"\bwhy\b|explain|reason", low) and self.pending_key:
             return self._explain(self.pending_key)
         if self.pending_key == "supervisor":
-            m = re.search(r"supervis\w*\s*(?:is|:)?\s*(?P<name>[A-Za-z][A-Za-z .'-]{1,60})", text, re.I)
-            if m:
-                return self.name_supervisor(m.group("name").strip()).text
+            name = supervisor_name(text)
+            if name is None:
+                return ("Not recorded: this high-voltage unit needs a named supervisor. Say "
+                        "\"my supervisor is <name>\" (or use the supervisor field) once a "
+                        "qualified technician is supervising you.")
+            try:
+                return self.name_supervisor(name).text
+            except ValueError as exc:
+                return f"Not recorded: {exc}."
         if self.pending_key == "guess":
             key = self._parse_guess(text)
             if key is not None:
@@ -237,7 +267,7 @@ class DifferentialAgent:
             return ("Trainee mode: tell me which measurement you'd take next (for example "
                     "dc:TP18, or just TP18) before I show mine.")
         if self.pending_key == "bring_up":
-            method = None if self.REFUSE_RE.search(text) else self._bring_up_method(text)
+            method = bring_up_method(text)
             if method is None:
                 return ("Not recorded: powered steps stay locked until you tell me how the unit was "
                         "first powered: on a variac, through a series lamp (dim bulb), from a "
@@ -249,16 +279,19 @@ class DifferentialAgent:
             self.pending_key = None
             return str(res["message"]) + "\n\n" + self._next_step()
         if self.pending_key == "approval":
-            if self.APPROVE_RE.search(text) and not self.REFUSE_RE.search(text):
+            if owner_approval(text):
                 self.tb.call("approve_part_removal", {"note": text})
                 self.pending_key = None
                 return ("Recorded on the ticket: the owner agreed to parts being removed for "
                         "testing.\n\n" + self._next_step())
-            if self.REFUSE_RE.search(text) or self.APPROVE_RE.search(text):
-                return ("Not recorded: part removal stays locked until the owner approves. Say "
-                        "\"the owner approves\" (or use the approval button) once they have agreed.")
+            if uncertain(text) is not None or re.search(
+                    r"\b(owner|customer|client|approv\w*|agree\w*|consent\w*|go ahead|yes|ok|okay)\b",
+                    text, re.I):
+                return ("Not recorded: part removal stays locked until the owner has approved it. "
+                        "Say \"the owner approves\" (or use the approval button) once they have "
+                        "agreed.")
         if self.pending_key == "discharge":
-            args = self._discharge_args(text)
+            args = discharge_readings(text)
             if "error" in args:
                 return f"Not recorded: {args['error']}."
             if args:
@@ -270,6 +303,9 @@ class DifferentialAgent:
                 self.pending_key = None
                 return str(res["message"]) + "\n\n" + self._next_step()
         reading = self._parse_reading(text)
+        if reading is not None and uncertain(text) is not None:
+            return (f"Not recorded: that reads as {uncertain(text)}. Give the reading as a plain "
+                    f"statement, for example '{reading[0]} = <value> V'.")
         if reading is not None:
             key, value = reading
             res = self.tb.call("record_measurement", {"key": key, "value": value})
@@ -282,7 +318,7 @@ class DifferentialAgent:
             self.snapshot("complaint")
             return self._after_symptoms(res)
         return ("Tell me the reading for the recommended measurement (for example "
-                f"'{self.pending_key or 'dc:TP1'} = 12.3 V'), ask 'why', or ask for the ticket.")
+                f"'{self.pending_key or 'dc:TP1'} = <value> V'), ask 'why', or ask for the ticket.")
 
     def _after_symptoms(self, res: dict[str, Any]) -> str:
         classes = [c.replace("_", " ") for c in res["symptom_classes"]]
@@ -336,6 +372,7 @@ class DifferentialAgent:
                     f"Best explanation so far: {names} ({pct(top['probability'])}).")
         if self.tb.trainee and not rec.get("blocked"):
             self.withheld = rec
+            self.withheld_from = len(self.tb.calls) - 1  # the recommend_measurement call
             self.pending_key = "guess"
             example = next((o["key"] for o in self.tb.trainee_options() if o["key"] != rec["key"]),
                            "dc:TP1")
@@ -365,23 +402,9 @@ class DifferentialAgent:
             text += "\n\n" + self._next_step()
         return self._reply(text)
 
-    APPROVE_RE = re.compile(r"\b(yes|yep|approved?|approves|agreed?|agrees|consents?|consented|"
-                            r"go ahead)\b", flags=re.I)
-    REFUSE_RE = re.compile(r"\b(no|not|don'?t|doesn'?t|didn'?t|won'?t|never|refus\w*|declin\w*|"
-                           r"without|wait|later|hold)\b|\?", flags=re.I)
-    NUMBER = r"[-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?"
-    VOLT_UNIT = r"(?:kilo|milli|micro|[kmuµ])?(?:volts?|vdc|v)\b"
-    TP_READING_RE = re.compile(rf"\b(?P<tp>TP\d+)\b\D{{0,12}}?(?P<num>{NUMBER})(?P<comma>,\d)?\s*"
-                               rf"(?P<unit>{VOLT_UNIT})?", flags=re.I)
-    VOLTS_RE = re.compile(rf"(?P<num>{NUMBER})(?P<comma>,\d)?\s*(?P<unit>{VOLT_UNIT})?(?![a-z])",
-                          flags=re.I)
-
     @staticmethod
     def _volts(num: str, unit: str | None) -> float:
-        u = (unit or "v").lower()
-        scale = (1e3 if u.startswith(("kilo", "k")) else 1e-3 if u.startswith(("milli", "m"))
-                 else 1e-6 if u.startswith(("micro", "u", "µ")) else 1.0)
-        return float(num) * scale
+        return _to_volts(num, unit)
 
     def _parse_guess(self, text: str) -> str | None:
         """A measurement named in a trainee's message: an exact key, or a test point / part
@@ -397,41 +420,6 @@ class DifferentialAgent:
                 if k.split(":", 1)[1] == tok:
                     return k
         return None
-
-    def _discharge_args(self, text: str) -> dict[str, Any]:
-        """Discharge readings in a message: 'TP4 0.3 V, TP5 0.2 V', or one number for the
-        main filter capacitor, or 'all ... 0.3 V' for every point. Units are read (V, mV, kV,
-        uV); a comma decimal ('0,5 V') or another unit is refused rather than guessed, since
-        the reading unlocks part removal."""
-        found = list(self.TP_READING_RE.finditer(text))
-        if any(m.group("comma") for m in found) or re.search(r"\d,\d", text):
-            return {"error": "write readings with a decimal point, for example 0.5 V"}
-        if re.search(rf"{self.NUMBER}\s*(?:k|m|u|µ)?(?:a|amps?|ohms?|hz|db|%)\b", text, re.I):
-            return {"error": "give each discharge reading in volts (V, mV or kV)"}
-        pairs: dict[str, float] = {}
-        for m in found:
-            tp = m.group("tp").upper()
-            pairs[tp] = max(pairs.get(tp, 0.0), abs(self._volts(m.group("num"), m.group("unit"))))
-        if pairs:
-            return {"readings": pairs}
-        one = self.VOLTS_RE.search(text)
-        if one is None:
-            return {}
-        v = self._volts(one.group("num"), one.group("unit"))
-        return {"volts": v, "all_points": bool(re.search(r"\b(all|every|each)\b", text, re.I))}
-
-    BRING_UP_RE: ClassVar[dict[str, re.Pattern[str]]] = {
-        "variac": re.compile(r"\bvariac|auto-?transformer|variable transformer", re.I),
-        "series_lamp": re.compile(r"series[- ]?(?:lamp|bulb)|dim[- ]?bulb|light ?bulb|lamp limiter", re.I),
-        "current_limited_supply": re.compile(r"current[- ]limit\w*|bench supply|lab supply", re.I),
-        "known_good": re.compile(r"already (?:running|working|on)|(?:was|been) (?:running|working|"
-                                 r"playing) (?:fine|normally|ok)|known[- ]good|worked (?:fine|normally)",
-                                 re.I),
-    }
-
-    def _bring_up_method(self, text: str) -> str | None:
-        hits = [m for m, rx in self.BRING_UP_RE.items() if rx.search(text)]
-        return hits[0] if len(hits) == 1 else None
 
     def format_step(self, rec: dict[str, Any]) -> str:
         """Plain-language text for one recommended step (offline template)."""
@@ -547,24 +535,26 @@ class DifferentialAgent:
         # Attestations are the technician's, never the model's (ADR-042): the model may only
         # pass on what the technician typed.
         if name == "confirm_discharge":
+            # The readings must be the ones the technician's latest message states, as the
+            # offline parser reads them (no questions, conditions or bare numbers).
+            said = discharge_readings(self._last_user_text())
             vals = [float(v) for v in (args.get("readings") or {}).values()]
             if args.get("volts") is not None:
                 vals.append(float(args["volts"]))
-            typed = self._typed_numbers()
-            if not vals or not all(any(abs(abs(v) - abs(a)) <= 1e-9 * max(1.0, abs(a))
-                                       or abs(abs(v) - abs(a) / 1000.0) < 1e-12 for a in typed)
-                                   for v in vals):
-                return {"error": "refused: discharge readings must be the technician's own numbers. "
-                                 "Ask the technician to measure each point and report it."}
-        if name == "approve_part_removal":
-            last = self._last_user_text()
-            if not self.APPROVE_RE.search(last) or self.REFUSE_RE.search(last):
-                return {"error": "refused: only the technician can record the owner's approval, "
-                                 "in their own words (for example \"the owner approves\")."}
-        if name == "confirm_bring_up":
-            last = self._last_user_text()
-            if self.REFUSE_RE.search(last) or self._bring_up_method(last) != args.get("method"):
-                return {"error": "refused: the technician must say how the unit was first powered."}
+            stated = [*(said.get("readings") or {}).values(),
+                      *([said["volts"]] if said.get("volts") is not None else [])]
+            if ("error" in said or not stated or not vals
+                    or not all(any(abs(abs(v) - abs(a)) <= 1e-9 * max(1.0, abs(a)) for a in stated)
+                               for v in vals)):
+                return {"error": "refused: discharge readings must be the voltages the technician "
+                                 "stated in their last message. Ask the technician to measure each "
+                                 "point and report it, for example \"TP4 0.3 V, TP5 0.2 V\"."}
+        if name == "approve_part_removal" and not owner_approval(self._last_user_text()):
+            return {"error": "refused: only the technician can record the owner's approval, "
+                             "in their own words (for example \"the owner approves\")."}
+        if (name == "confirm_bring_up"
+                and bring_up_method(self._last_user_text()) != args.get("method")):
+            return {"error": "refused: the technician must say how the unit was first powered."}
         if name == "record_measurement":
             value = float(args.get("value", float("nan")))
             typed = [n.value for t in self.turns if t.role in ("user", "event")

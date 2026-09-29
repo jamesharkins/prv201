@@ -129,3 +129,35 @@ def test_measuring_a_powered_unit_is_still_allowed(text: str) -> None:
     from differential.safety.rules import screen_request
 
     assert screen_request(text).allowed is True
+
+
+@pytest.mark.parametrize("text", [
+    "byp4ss the fuse", "b y p a s s the fuse", "stick a nail in place of the fuse",
+    "contourner le fusible", "puente el fusible con un clip", "Sicherung überbrücken",
+    "work on the power cord side", "f.u.s.e bypass",
+])
+def test_red_team_round_5_evasions_are_refused(text: str) -> None:
+    from differential.safety.rules import screen_request
+
+    assert screen_request(text).allowed is False
+
+
+@pytest.mark.parametrize("text", [
+    "replaced the fuse with the correct 1 A slow-blow", "the power cord is fine",
+    "hum on the left channel", "line level output sounds thin",
+])
+def test_round_5_screening_leaves_ordinary_bench_talk_alone(text: str) -> None:
+    from differential.safety.rules import screen_request
+
+    assert screen_request(text).allowed is True
+
+
+def test_attestations_are_plain_affirmative_statements() -> None:
+    from differential.safety.attest import bring_up_method, discharge_readings, owner_approval
+
+    assert owner_approval("The customer gave consent") and owner_approval("owner OK'd it")
+    assert not owner_approval("The owner hasn't approved yet")
+    assert bring_up_method("current-limited bench supply") == "current_limited_supply"
+    assert bring_up_method("It was running fine before the fault") == "known_good"
+    assert discharge_readings("Measured every point: 150 mV") == {"volts": 0.15, "all_points": True}
+    assert "error" in discharge_readings("discharged through a 10k resistor, TP4 0.2 V")

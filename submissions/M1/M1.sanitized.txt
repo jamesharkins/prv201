@@ -91,19 +91,18 @@ only digital electronics [26, 27, 28, 29, 30, 31], and the EU’s obligation to 
 Annex II, such as washing machines and displays [32, 33]: vintage analog gear falls outside all of them. Differential needs
 a circuit model per product, built from the schematic, and trusts its hazard map only once the model’s healthy readings
 match the manual’s chart. Modified units are what “no single fault fits” is for; units without a schematic are out of scope.
-Labeled fault data is scarce, so we simulate it. Confirming a failed part takes unsoldering and is rarely recorded;
-shop logs are private and, after recapping, unlabeled; manuals give only healthy values. We know of no public dataset
-of bench readings with confirmed failed parts; published methods use benchmark filter circuits [34] and simulated data
-[35]. The analog-test literature built simulated fault dictionaries [36], showed that some faults cannot be told apart at the
-available test points, forming ambiguity groups [37], and applied machine learning [34, 38] to drift faults that tolerances
-hide [35]; we follow that path (Table 2). A simulated unit is one draw of every part within its tolerance, the mains within
-±5%, and one cataloged fault (an open, a short, a drift, or a part-specific mode such as a leaky transistor or a worn tube),
-with DC readings loaded by a 10 MΩ meter [39]: 253,000 units in all, 0 failing to converge. Hand calculations match every
+Labeled fault data is scarce, so we simulate it. Confirming a failed part takes unsoldering and is rarely recorded; shop
+logs are private and, after recapping, unlabeled; manuals give only healthy values. We know of no public dataset of bench
+readings with confirmed failed parts; published methods use benchmark filter circuits [34] and simulated data [35]. The
+analog-test literature built simulated fault dictionaries [36], showed that some faults cannot be told apart at the available
+test points, forming ambiguity groups [37], and applied machine learning [34, 38] to drift faults that tolerances hide [35];
+we follow that path (Table 2). A simulated unit is one draw of every part within its tolerance, the mains within ±5%, and
+one cataloged fault (an open, a short, a drift, or a part-specific mode such as a leaky transistor or a worn tube), and every
+reading carries a real instrument’s error: a 10 MΩ meter loads each DC node [39] and reads within ±(0.5% + 2 counts)
+[40], an oscilloscope within ±3% [41]. The library gave 253,000 units, 0 failing to converge. Hand calculations match every
 simulated bias point and gain within 0.5-5% or 0.1 dB (22 of 22 checks). Fault behavior has not been checked fault by fault
 (one close look exposed a simulator artifact, since fixed), so real boards are the systematic check. A complaint alone is
 weak evidence: on the channel strip a hum complaint fits 25 faults, low output 21, and 119 faults usually cause none.
-
-
 
 
                                                                    2
@@ -114,7 +113,7 @@ Table 2. The circuit library, all original designs. Groups: sets of hypotheses (
 point within tolerance. Readings: DC voltages, signal levels, hum and distortion. Points above 50 V come from an audit of every simulated unit.
  Circuit                                           Parts      Faults         Groups (of     Test points      Readings         Points > 50 V
                                                                                   one)
- Supply: zener regulator, 250 V tube supply            14          63             47 (34)              6             12       3 (0 fault only)
+ Supply: zener regulator, 250 V tube supply            14          63             47 (34)              6             12                      3
  Tube stage (12AX7)                                     8          31             27 (24)              4             11       2 (1 fault only)
  Tone stack (bass, treble)                              9          27             23 (20)              3              8                      0
  Op-amp gain stage                                     13          56             46 (36)              6             14                      0
@@ -141,25 +140,26 @@ How it will be measured. The test set holds 1,000 single-fault units (500 on the
 disjoint from training. Each case draws a fault uniformly from the catalog and keeps the unit only if it shows a symptom,
 else draws another fault, so faults count by how often they cause a symptom, not how often they fail; old electrolytics
 and tubes fail far more often than film resistors, so T14 also reweights to a capacitor-heavy mix. Complaints come from
-a phrase bank the reader was not developed on (its overall score was seen once, before the rules last changed; T18 uses a
-sealed second bank), in three voices, never name a part, and drop each symptom with probability 20% and add each other
-symptom with 2%. Readings carry the meter’s ±(0.5% + 2 counts) [40] and the oscilloscope’s ±3% [41] error. Stress sets:
-500 units outside the catalog (70% double faults, 30% a wrong-value part or a solder bridge); 300 aged units (electrolytics
-up to 30% low with up to 3× their series resistance, resistors up to 10% high, tubes up to 30% weaker); tolerances 1.5, 2 and
-3 times wider. The scripts, both engines and the full system (Table 4) diagnose every unit; the scripts share the engine’s
-inference and stopping rule and unsolder their leading suspect at 50% belief, so each margin isolates how measurements
-are chosen. A language model works alone, and with our simulator as a tool (no bar), on a stratified 300-unit subset with
-the same information, three sessions per unit.
+a phrase bank the reader was not developed on (its overall score was seen once, before the rules last changed; T18 uses
+a sealed second bank), in three voices, never name a part, and drop each symptom with probability 20% and add each
+other symptom with 2%. Stress sets: 500 units outside the catalog (70% double faults, 30% a wrong-value part or a solder
+bridge); 300 aged units (electrolytics up to 30% low with up to 3× their series resistance, resistors up to 10% high, tubes
+up to 30% weaker); tolerances 1.5, 2 and 3 times wider. The scripts, both engines and the full system (Table 4) diagnose
+every unit; the scripts share the engine’s inference and stopping rule and unsolder their leading suspect at 50% belief, so
+each margin isolates how measurements are chosen. A language model works alone, and with our simulator as a tool (no
+bar), on a stratified 300-unit subset with the same information, three sessions per unit.
 Hardware and people. For T7 a teammate who does not record inserts 60 faults, in a sealed random order, into three 24
 V driver boards (one of used parts); each test point is read once per fault and every method replayed on the recordings.
 Study S1 (pre-registered, no bar) will time at least six technicians with and without the tool, after ethics review.
 Pilots set the bars; no test unit has been run. Bars come from a pilot on units simulated for it alone (200 channel strip,
 60 per block, 250 out-of-model, 150 aged), after two earlier pilots exposed problems since fixed. Weighted like the test set
 (channel strip one half, each block one tenth), the full system named the right group first on 92.1% of pilot units, naming
-a group on 93.2% and right on 98.8% of those. On the channel strip the engine alone was right on 94.0% at a mean effort
-of 6.7, half-split tracing on 83.5% at 22.9, the chart on 77.0% at 24.1 and random probing on 80.5% at 23.0. Each bar is the
-pilot estimate moved 1.5 standard errors against the system and rounded; because the confidence bound must clear it, a
-primary can be missed even if the system matches the pilot, and a miss will be reported as one.
+a group on 93.2% and right on 98.8% of those. The engine alone, ignoring the complaint, was right on 93.8%: the noisy
+complaints saved 4.8% of the effort but cost 1.8 points of accuracy, so the complaint reader has yet to prove itself (T11,
+T18). On the channel strip the engine alone was right on 94.0% at a mean effort of 6.7, half-split tracing on 83.5% at 22.9,
+the chart on 77.0% at 24.1 and random probing on 80.5% at 23.0. Each bar is the pilot estimate moved 1.5 standard errors
+against the system and rounded; because the confidence bound must clear it, a primary can be missed even if the system
+matches the pilot, and a miss will be reported as one.
 Scope. In: single static faults (opens, shorts, drift, wear) and the hum and distortion they cause, in supplies, preamplifier
 and line-level stages. Out: power amplifiers (another catalog), intermittent and mechanical faults (static simulation cannot
 produce them), double faults (flagged only), mains-side work, units without a schematic, unattended probing.
@@ -293,11 +293,14 @@ precautions.
   every mode; T15 checks them at every step.
 
 
-References
+
 
                                                                          5
 M1 · Problem statement                                                                                                                          Differential
 
+
+
+References
 [1] “Audio Repair Los Angeles · Pro Studio Gear Service,” The Studio Doctors, n.d. [Online]. Available: https://thestudiodoctors.com/audio-repair-los-
      angeles.html (accessed Sep. 28, 2026).
 [2] “Expert Vintage Stereo Repair,” Archer High Fidelity, n.d. [Online]. Available: https://archerhifi.com/repair-and-service/vintage-stereo-repair/
@@ -373,15 +376,15 @@ References
 [33] European Commission, “Questions & Answers: Directive on repair of goods (obligation to repair),” Jul. 2024. [Online]. Available: https://
      commission.europa.eu/document/download/2d443b31-dc2a-4e54-a9ec-5fbb61c895e9_en?filename=2024_07_18_QA_Right2repair_FINAL.pdf
      (accessed Sep. 28, 2026).
-[34] T. Gao, J. Yang, and S. Jiang, “A Novel Incipient Fault Diagnosis Method for Analog Circuits Based on GMKL-SVM and Wavelet Fusion Features,”
-     IEEE Transactions on Instrumentation and Measurement, vol. 70, pp. 1–15, 2021. doi: 10.1109/TIM.2020.3024337.
-[35] J. B. Cloete, T. Stander, and D. N. Wilke, “Parametric Circuit Fault Diagnosis Through Oscillation-Based Testing in Analogue Circuits: Statistical
-     and Deep Learning Approaches,” IEEE Access, vol. 10, pp. 15671-15680, 2022. doi: 10.1109/ACCESS.2022.3149324.
 
 
                                                                              6
 M1 · Problem statement                                                                                                                             Differential
 
+[34] T. Gao, J. Yang, and S. Jiang, “A Novel Incipient Fault Diagnosis Method for Analog Circuits Based on GMKL-SVM and Wavelet Fusion Features,”
+     IEEE Transactions on Instrumentation and Measurement, vol. 70, pp. 1–15, 2021. doi: 10.1109/TIM.2020.3024337.
+[35] J. B. Cloete, T. Stander, and D. N. Wilke, “Parametric Circuit Fault Diagnosis Through Oscillation-Based Testing in Analogue Circuits: Statistical
+     and Deep Learning Approaches,” IEEE Access, vol. 10, pp. 15671-15680, 2022. doi: 10.1109/ACCESS.2022.3149324.
 [36] J. W. Bandler and A. E. Salama, “Fault diagnosis of analog circuits,” Proceedings of the IEEE, vol. 73, no. 8, pp. 1279–1325, Aug. 1985. doi: 10.1109/
      PROC.1985.13281.
 [37] G. N. Stenbakken, T. M. Souders, and G. W. Stewart, “Ambiguity groups and testability,” IEEE Transactions on Instrumentation and Measurement,

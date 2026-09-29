@@ -123,3 +123,21 @@ requirements:
     components: [Makefile, Dockerfile, .github/workflows/ci.yml]
     verification: [.github/workflows/ci.yml]
     targets: []
+  - id: R21
+    text: Keep powered readings at points that can exceed 50 V few, by pricing them in the choice of measurement
+    source: S
+    components: [differential/engine/selection.py, differential/safety/hazards.py]
+    verification: [eval/set_bars.py, eval/run_eval.py]
+    targets: [T24]
+  - id: R22
+    text: Guard against over-reliance with trainee mode, visible reasons and a pre-registered study
+    source: S
+    components: [differential/agent/agent.py, docs/study_s1.md]
+    verification: [tests/test_agent.py, docs/study_s1.md]
+    targets: [T25]
+  - id: R23
+    text: Give plain-language complaints diagnoses as good as technical ones
+    source: O3
+    components: [differential/nlp/symptoms.py, eval/cases.py]
+    verification: [eval/run_eval.py]
+    targets: [T26]

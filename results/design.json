@@ -112,6 +112,10 @@
   "half_split_band_sd": 3.0,
   "max_steps": 200,
   "scripts_confirm_at": 0.5,
+  "scripts_confirm_at_by": {
+   "fixed_order": 0.4,
+   "half_split": 0.5
+  },
   "stop_threshold": 0.9,
   "tie_tolerance": 0.001,
   "unmodeled_prior": 0.05

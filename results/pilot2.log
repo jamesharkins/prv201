@@ -25,9 +25,9 @@
    "mean_cost": 5.514
   },
   "fixed_order": {
-   "top1": 0.892,
-   "top3": 0.948,
-   "mean_cost": 18.414
+   "top1": 0.888,
+   "top3": 0.946,
+   "mean_cost": 18.698
   },
   "half_split": {
    "top1": 0.9,
@@ -62,8 +62,8 @@
    "mean_cost": 6.16
   },
   "fixed_order": {
-   "top1": 0.785,
-   "mean_cost": 25.055
+   "top1": 0.78,
+   "mean_cost": 24.785
   },
   "half_split": {
    "top1": 0.805,
@@ -78,11 +78,11 @@
    "mean_cost": 7.33
   }
  },
- "effort_ratio_vs_fixed_order": 0.3296404909308135,
+ "effort_ratio_vs_fixed_order": 0.3246336506578244,
  "effort_ratio_vs_half_split": 0.3438314263056531,
  "effort_ratio_vs_random": 0.3629948570745126,
  "hybrid_vs_engine_effort_ratio": 0.9084019769357495,
- "cs_margin_vs_fixed_order": 0.17999999999999994,
+ "cs_margin_vs_fixed_order": 0.18499999999999994,
  "cs_margin_vs_random": 0.125,
  "cs_margin_vs_half_split": 0.15999999999999992,
  "effort_weighted": {
@@ -105,12 +105,12 @@
    "flagged": 0.042499999999999996
   },
   "fixed_order": {
-   "effort": 19.520833333333336,
-   "probing": 15.017499999999998,
-   "unsoldering": 4.503333333333334,
-   "confirming_charge": 6.436666666666667,
-   "confirmed_effort": 25.9575,
-   "share_charged": 0.6166666666666667,
+   "effort": 19.7125,
+   "probing": 14.375833333333333,
+   "unsoldering": 5.336666666666667,
+   "confirming_charge": 5.951666666666668,
+   "confirmed_effort": 25.664166666666667,
+   "share_charged": 0.5700000000000001,
    "flagged": 0.043333333333333335
   },
   "half_split": {
@@ -132,8 +132,8 @@
    "flagged": 0.0275
   }
  },
- "confirmed_effort_ratio_vs_fixed_order": 0.6177726411762818,
- "raw_effort_ratio_vs_fixed_order_weighted": 0.3207257203842048,
+ "confirmed_effort_ratio_vs_fixed_order": 0.6248335876871125,
+ "raw_effort_ratio_vs_fixed_order_weighted": 0.31760727119002324,
  "confirmed_effort_ratio_vs_half_split": 0.6507168943595294,
  "raw_effort_ratio_vs_half_split_weighted": 0.33639294349422405,
  "confirmed_effort_ratio_vs_random": 0.5717214332402402,
@@ -195,5 +195,5 @@
    "top1": 0.9557894736842105
   }
  },
- "seconds": 224.73735737800598
+ "seconds": 26.69121503829956
 }

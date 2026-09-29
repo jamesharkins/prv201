@@ -3,7 +3,7 @@
   "context": {
    "accuracy_weighted": {
     "engine": 0.943333,
-    "fixed_order": 0.874167,
+    "fixed_order": 0.87,
     "half_split": 0.884167,
     "hybrid": 0.955833,
     "random": 0.895
@@ -12,7 +12,7 @@
    "complaint_effort_saving_pct": 3.486982,
    "cs_mean_effort": {
     "engine": 7.215,
-    "fixed_order": 25.055,
+    "fixed_order": 24.785,
     "half_split": 23.4,
     "hybrid": 6.16,
     "random": 24.14
@@ -20,7 +20,7 @@
    "cs_top1": {
     "engine": 0.93,
     "engine_disc": 0.875,
-    "fixed_order": 0.785,
+    "fixed_order": 0.78,
     "half_split": 0.805,
     "hybrid": 0.965,
     "random": 0.84
@@ -41,13 +41,13 @@
      "unsoldering": 0.12
     },
     "fixed_order": {
-     "confirmed_effort": 25.9575,
-     "confirming_charge": 6.436667,
-     "effort": 19.520833,
+     "confirmed_effort": 25.664167,
+     "confirming_charge": 5.951667,
+     "effort": 19.7125,
      "flagged": 0.043333,
-     "probing": 15.0175,
-     "share_charged": 0.616667,
-     "unsoldering": 4.503333
+     "probing": 14.375833,
+     "share_charged": 0.57,
+     "unsoldering": 5.336667
     },
     "half_split": {
      "confirmed_effort": 24.643333,
@@ -79,15 +79,15 @@
    },
    "engine_disc_top1_cs": 0.875,
    "engine_disc_top1_weighted": 0.9175,
-   "expected_primary_misses": 0.93511,
+   "expected_primary_misses": 1.194733,
    "hv_steps": {
     "engine": 0.303333,
-    "fixed_order": 1.899167,
+    "fixed_order": 1.849167,
     "half_split": 1.766667,
     "hybrid": 0.270833,
     "random": 1.503333
    },
-   "joint_chance_primaries": 0.361101,
+   "joint_chance_primaries": 0.251136,
    "n_pilot": {
     "channel_strip": 200,
     "driver": 60,
@@ -97,7 +97,7 @@
     "triode": 60
    },
    "raw_effort_ratio": {
-    "fixed_order": 0.320726,
+    "fixed_order": 0.317607,
     "half_split": 0.336393,
     "random": 0.348631
    }
@@ -177,6 +177,10 @@
    },
    "T14": {
     "bar": -0.01,
+    "bar_by": {
+     "capacitor_mix": -0.01,
+     "catalog_mix": -0.01
+    },
     "bar_capacitor_mix": -0.01,
     "bar_catalog_mix": -0.01,
     "chance_met": 0.685191,
@@ -233,6 +237,20 @@
     "se": 0.008983,
     "step": 0.01
    },
+   "T24": {
+    "bar": 0.19,
+    "chance_met": 0.850556,
+    "direction": "<=",
+    "engine_per_diagnosis": 0.303333,
+    "estimate": 0.171698,
+    "half_split_per_diagnosis": 1.766667,
+    "k": 1.5,
+    "n_pilot": 500,
+    "n_test": 5000,
+    "raw_bar": 0.188753,
+    "se": 0.01137,
+    "step": 0.01
+   },
    "T3": {
     "bar": 0.99,
     "bound": "exact",
@@ -250,19 +268,24 @@
    },
    "T4": {
     "bar": 0.04,
-    "bar_vs_fixed_order": 0.09,
+    "bar_by": {
+     "fixed_order": 0.1,
+     "half_split": 0.08,
+     "random": 0.04
+    },
+    "bar_vs_fixed_order": 0.1,
     "bar_vs_half_split": 0.08,
     "bar_vs_random": 0.04,
-    "chance_met": 0.852548,
+    "chance_met": 0.592925,
     "direction": ">=",
-    "estimate_vs_fixed_order": 0.145,
+    "estimate_vs_fixed_order": 0.15,
     "estimate_vs_half_split": 0.125,
     "estimate_vs_random": 0.09,
     "k": 1.5,
     "n_pilot": 200,
     "n_test": 2500,
-    "rule": "the smallest of the three margin bars, met when every margin's lower bound clears it",
-    "se_vs_fixed_order": 0.033549,
+    "rule": "each margin's lower bound must clear its own bar (ADR-046)",
+    "se_vs_fixed_order": 0.033811,
     "se_vs_half_split": 0.032437,
     "se_vs_random": 0.030234,
     "step": 0.01
@@ -288,16 +311,16 @@
     "step": 0.01
    },
    "T8": {
-    "accuracy_gap": 0.069167,
+    "accuracy_gap": 0.073333,
     "bar": 0.64,
-    "chance_met": 0.893803,
+    "chance_met": 0.755149,
     "direction": "<=",
-    "estimate": 0.617773,
+    "estimate": 0.624834,
     "k": 1.5,
     "n_pilot": 500,
     "n_test": 5000,
-    "raw_bar": 0.636011,
-    "se": 0.012159,
+    "raw_bar": 0.643111,
+    "se": 0.012185,
     "step": 0.01
    },
    "T9": {
@@ -2032,8 +2055,8 @@
     "top1": 0.93
    },
    "fixed_order": {
-    "mean_cost": 25.055,
-    "top1": 0.785
+    "mean_cost": 24.785,
+    "top1": 0.78
    },
    "half_split": {
     "mean_cost": 23.4,
@@ -2052,14 +2075,14 @@
     "top1": 0.935
    }
   },
-  "confirmed_effort_ratio_vs_fixed_order": 0.617773,
+  "confirmed_effort_ratio_vs_fixed_order": 0.624834,
   "confirmed_effort_ratio_vs_half_split": 0.650717,
   "confirmed_effort_ratio_vs_random": 0.571721,
-  "cs_margin_vs_fixed_order": 0.18,
+  "cs_margin_vs_fixed_order": 0.185,
   "cs_margin_vs_half_split": 0.16,
   "cs_margin_vs_random": 0.125,
   "cs_step_seconds_p95": 0.13829,
-  "effort_ratio_vs_fixed_order": 0.32964,
+  "effort_ratio_vs_fixed_order": 0.324634,
   "effort_ratio_vs_half_split": 0.343831,
   "effort_ratio_vs_random": 0.362995,
   "effort_weighted": {
@@ -2073,13 +2096,13 @@
     "unsoldering": 0.12
    },
    "fixed_order": {
-    "confirmed_effort": 25.9575,
-    "confirming_charge": 6.436667,
-    "effort": 19.520833,
+    "confirmed_effort": 25.664167,
+    "confirming_charge": 5.951667,
+    "effort": 19.7125,
     "flagged": 0.043333,
-    "probing": 15.0175,
-    "share_charged": 0.616667,
-    "unsoldering": 4.503333
+    "probing": 14.375833,
+    "share_charged": 0.57,
+    "unsoldering": 5.336667
    },
    "half_split": {
     "confirmed_effort": 24.643333,
@@ -2162,9 +2185,9 @@
     "top3": 0.998
    },
    "fixed_order": {
-    "mean_cost": 18.414,
-    "top1": 0.892,
-    "top3": 0.948
+    "mean_cost": 18.698,
+    "top1": 0.888,
+    "top3": 0.946
    },
    "half_split": {
     "mean_cost": 17.654,
@@ -2188,11 +2211,11 @@
    }
   },
   "protocol": "pilot split: symptomatic units simulated from their own seed stream with the test protocol; never test data",
-  "raw_effort_ratio_vs_fixed_order_weighted": 0.320726,
+  "raw_effort_ratio_vs_fixed_order_weighted": 0.317607,
   "raw_effort_ratio_vs_half_split_weighted": 0.336393,
   "raw_effort_ratio_vs_random_weighted": 0.348631,
   "recap_prior_top1_delta": -0.002,
-  "seconds": 224.737357,
+  "seconds": 26.691215,
   "wide_n": 150,
   "wide_top1": 0.933333,
   "wide_top1_drop": 0.031667
@@ -2353,6 +2376,113 @@
   "removal_steps": 118,
   "removal_steps_blocked_before_approval": 118,
   "steps_checked": 491
+ },
+ "script_threshold": {
+  "chosen": {
+   "fixed_order": 0.4,
+   "half_split": 0.5
+  },
+  "rule": "lowest effort to a confirmed answer among thresholds within 1 point of the script's best top-1 (pilot, test-mix weights)",
+  "seconds": 37.190304,
+  "table": {
+   "fixed_order": {
+    "0.3": {
+     "confirmed_effort": 25.565,
+     "probing": 13.268333,
+     "top1": 0.863333,
+     "unsoldering": 12.296667
+    },
+    "0.4": {
+     "confirmed_effort": 25.664167,
+     "probing": 14.375833,
+     "top1": 0.87,
+     "unsoldering": 11.288333
+    },
+    "0.5": {
+     "confirmed_effort": 25.9575,
+     "probing": 15.0175,
+     "top1": 0.874167,
+     "unsoldering": 10.94
+    },
+    "0.6": {
+     "confirmed_effort": 26.468333,
+     "probing": 15.991667,
+     "top1": 0.871667,
+     "unsoldering": 10.476667
+    },
+    "0.7": {
+     "confirmed_effort": 26.835,
+     "probing": 16.586667,
+     "top1": 0.871667,
+     "unsoldering": 10.248333
+    },
+    "0.8": {
+     "confirmed_effort": 27.180833,
+     "probing": 17.0075,
+     "top1": 0.87,
+     "unsoldering": 10.173333
+    },
+    "0.9": {
+     "confirmed_effort": 27.736667,
+     "probing": 17.685,
+     "top1": 0.868333,
+     "unsoldering": 10.051667
+    }
+   },
+   "half_split": {
+    "0.3": {
+     "confirmed_effort": 25.239167,
+     "probing": 12.7625,
+     "top1": 0.87,
+     "unsoldering": 12.476667
+    },
+    "0.4": {
+     "confirmed_effort": 24.805,
+     "probing": 13.195,
+     "top1": 0.88,
+     "unsoldering": 11.61
+    },
+    "0.5": {
+     "confirmed_effort": 24.643333,
+     "probing": 13.548333,
+     "top1": 0.884167,
+     "unsoldering": 11.095
+    },
+    "0.6": {
+     "confirmed_effort": 24.8425,
+     "probing": 14.3225,
+     "top1": 0.8825,
+     "unsoldering": 10.52
+    },
+    "0.7": {
+     "confirmed_effort": 25.0325,
+     "probing": 14.7625,
+     "top1": 0.8875,
+     "unsoldering": 10.27
+    },
+    "0.8": {
+     "confirmed_effort": 25.205833,
+     "probing": 15.0525,
+     "top1": 0.885833,
+     "unsoldering": 10.153333
+    },
+    "0.9": {
+     "confirmed_effort": 25.585,
+     "probing": 15.553333,
+     "top1": 0.884167,
+     "unsoldering": 10.031667
+    }
+   }
+  },
+  "thresholds": [
+   0.3,
+   0.4,
+   0.5,
+   0.6,
+   0.7,
+   0.8,
+   0.9
+  ]
  },
  "smoke": {
   "engine_gen": {

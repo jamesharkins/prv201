@@ -237,7 +237,7 @@ def effort_target(eng: pd.DataFrame, base: pd.DataFrame) -> dict[str, Any]:
 
 
 def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, Any]) -> dict[str, Any]:
-    """Every target on the locked sets. The test mix (500 channel strip, 100 per block) is
+    """Every target on the locked sets. The test mix (2,500 channel strip, 500 per block) is
     the reporting weight, so pooling the units weights them as the targets define."""
     M = metrics_io.load()
     T = {t["id"]: t for t in targets["targets"]}
@@ -264,7 +264,7 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
         d = paired_diff(a["correct"].to_numpy(float), b["correct"].to_numpy(float))
         margins[base] = {"margin": est(d), "mcnemar": mcnemar(a["correct"].to_numpy(),
                                                                b["correct"].to_numpy())}
-        states.append(judge(T["T4"], d))
+        states.append(judge(T["T4"], d, float(T["T4"]["value_by"][base])))  # a bar per margin
         full = paired_diff(*(x["correct"].to_numpy(float) for x in aligned(cs, R[base][COMPOSITE_ID])))
         margins[base]["full_system_margin"] = est(full)
     worst = min(margins, key=lambda k: margins[k]["margin"]["value"])
@@ -305,6 +305,15 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
         if st == "met" and not d["accuracy_condition"]:
             st = "missed"
         put(tid, d["ratio"], {k: v for k, v in d.items() if k != "ratio"}, st)
+    # T24 (ADR-046): powered readings at points that can exceed 50 V, engine / half-split
+    from eval.set_bars import hv_count
+
+    a24, b24 = aligned(eng, pooled(R["half_split"]))
+    hv_a = np.array([hv_count(c, k) for c, k in zip(a24["circuit"], a24["keys"], strict=True)], float)
+    hv_b = np.array([hv_count(c, k) for c, k in zip(b24["circuit"], b24["keys"], strict=True)], float)
+    put("T24", bootstrap_ratio_of_means(hv_a, hv_b),
+        {"engine_per_diagnosis": float(hv_a.mean()), "half_split_per_diagnosis": float(hv_b.mean()),
+         "n": len(a24)})
     d = effort_target(hyb_e, eng)
     st = judge(T["T11"], d["ratio"])
     put("T11", d["ratio"], {k: v for k, v in d.items() if k != "ratio"},
@@ -344,7 +353,8 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
         {"capacitor_heavy_prior_catalog_mix": est(d_cat), "uniform_prior_capacitor_mix": est(d_cap),
          "top1_capacitor_mix_full_system": float(np.sum(cap_mix_weights(hyb)
                                                         * hyb["correct"].to_numpy(float)))},
-        both(judge(T["T14"], d_cat), judge(T["T14"], d_cap)))
+        both(judge(T["T14"], d_cat, float(T["T14"]["value_by"]["catalog_mix"])),
+             judge(T["T14"], d_cap, float(T["T14"]["value_by"]["capacitor_mix"]))))
     sweep = M.get("safety_sweep", {})
     n15 = int(sweep.get("steps_checked", 0))
     cov = sweep.get("coverage")
@@ -402,6 +412,27 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
     p95 = float(np.percentile(steps, 95)) if len(steps) else float("nan")
     put("T20", Estimate(p95, p95, p95, p95, p95), {"mean": float(steps.mean()) if len(steps) else None})
     put("T21", None, {"note": "requires DIFFERENTIAL_API_KEY"})
+    # T25 (release gate): the planted wrong step in study S1 (docs/study_s1.md)
+    s1 = M.get("study_s1", {})
+    if s1.get("status") == "measured" and int(s1.get("n", 0)) >= 6:
+        k25 = int(s1["followed_without_checking"])
+        put("T25", Estimate(float(k25), float(k25), float(k25)), {"detail": s1},
+            "met" if k25 <= int(T["T25"]["value"]) else "missed")
+    else:
+        put("T25", None, {"note": "requires study S1 with at least 6 technicians (docs/study_s1.md)"})
+    # T26 (release gate): no complaint voice more than 5 points worse, interval excluding zero
+    gaps, bad = {}, 0
+    for label, frame in (("T1_units", hyb), ("T6_units", aged)):
+        voices = sorted(v for v in frame["persona"].unique() if v)
+        for v in voices:
+            mine = frame[frame["persona"] == v]["correct"].to_numpy(float)
+            rest = frame[frame["persona"] != v]["correct"].to_numpy(float)
+            g = boot_diff_indep(rest, mine)
+            gaps[f"{label}:{v}"] = est(g)
+            bad += int(g.value > 0.05 and g.lo > 0)
+    put("T26", Estimate(float(bad), float(bad), float(bad)) if gaps else None,
+        {"gaps": gaps, "rule": "gap = other voices' top-1 minus this voice's"},
+        ("met" if bad == 0 else "missed") if gaps else "pending")
     return out
 
 

@@ -1,6 +1,6 @@
 {
-  "status": "draft v3 after M1 review round 3 (ADR-033); locked at git tag targets-locked before the full evaluation, then reported exactly as written, met or missed",
-  "pass_rule": "A target is met when its one-sided 95% confidence bound clears the bar: the lower bound for an 'at least' target, the upper bound for an 'at most' target (exact Clopper-Pearson for one proportion; a stratified bootstrap over units, 2,000 resamples, for pooled rates, paired margins, ratios and calibration error). A census (T15, T17) is met only with no exception; a release gate (T15-T17) must hold before any release. Every result is reported with its two-sided 95% interval.",
+  "status": "draft v4 after M1 review round 6 (ADR-046); locked at git tag targets-locked before the full evaluation, then reported exactly as written, met or missed",
+  "pass_rule": "A target is met when its one-sided 95% confidence bound clears the bar: the lower bound for an 'at least' target, the upper bound for an 'at most' target (exact Clopper-Pearson for counts of units or prompts, ADR-044; a stratified bootstrap over units, 2,000 resamples, for paired margins, ratios and calibration error). A census (T15, T17) is met only with no exception; a release gate (T15-T17, T25, T26) must hold before any release. Every result is reported with its two-sided 95% interval.",
   "roles": {
     "primary": "the claims the project stands on",
     "gate": "must hold for any release",
@@ -123,13 +123,18 @@
       "comparator": "margin>=",
       "bound": "bootstrap",
       "value": 0.04,
-      "text": "≥ +4 points each",
+      "text": "≥ +10/+8/+4 points",
       "rationale": "Isolates how the next measurement is chosen: every method shares the same inference and stopping rule, and the scripts may unsolder their leading suspect.",
       "primary": true,
       "pilot_dependent": true,
-      "derivation": "Pilot margins of the engine alone: +14.5 points over the fixed-order chart, +9.0 over random probing and +12.5 over half-split tracing; bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 85%, taking the smallest of the three.",
-      "pilot_text": "+14.5/+9.0/+12.5",
-      "chance_met": 0.853
+      "derivation": "Pilot margins of the engine alone: +15.0 points over the fixed-order chart, +12.5 over half-split tracing and +9.0 over random probing; bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 59%, one bar per margin (ADR-046).",
+      "pilot_text": "+15.0/+12.5/+9.0",
+      "chance_met": 0.593,
+      "value_by": {
+        "fixed_order": 0.1,
+        "half_split": 0.08,
+        "random": 0.04
+      }
     },
     {
       "id": "T5",
@@ -204,10 +209,10 @@
       "rationale": "Effort saving against a service-manual chart.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 0.618 (standard error 0.012, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 89%.",
+      "derivation": "Pilot estimate 0.625 (standard error 0.012, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 76%.",
       "pilot_text": "0.62×",
-      "chance_met": 0.894,
-      "raw_bar": 0.636
+      "chance_met": 0.755,
+      "raw_bar": 0.6431
     },
     {
       "id": "T9",
@@ -345,6 +350,25 @@
       "chance_met": 0.913
     },
     {
+      "id": "T24",
+      "objective": "O4",
+      "role": "secondary",
+      "metric": "Powered readings per diagnosis at points that can exceed 50 V (the hazard map: healthy or under a cataloged fault), engine relative to half-split tracing, on the 5,000 units (means weighted like the test mix); both counts are reported",
+      "plain": "Powered readings above 50 V per diagnosis ÷ half-split's",
+      "system": "Engine",
+      "comparator": "<=",
+      "bound": "bootstrap",
+      "value": 0.19,
+      "text": "≤ 0.19×",
+      "rationale": "Hazard exposure: every powered reading at a point that can exceed 50 V is a moment of risk. The effort weights price it; this checks the result (round-6 review).",
+      "primary": false,
+      "raw_bar": 0.1888,
+      "pilot_dependent": true,
+      "derivation": "Pilot estimate 0.172 (standard error 0.011, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 85%.",
+      "pilot_text": "0.17×",
+      "chance_met": 0.851
+    },
+    {
       "id": "T14",
       "objective": "O3",
       "role": "secondary",
@@ -354,13 +378,17 @@
       "comparator": "margin>=",
       "bound": "bootstrap",
       "value": -0.01,
-      "text": "≥ −1 points each",
+      "text": "≥ −1/−1 points",
       "rationale": "Old electrolytics do fail often; the readings, not the prior, must decide.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot changes -0.1 points (capacitor-heavy prior, catalog mix) and -0.1 points (uniform prior, capacitor-heavy mix); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 69%, taking the smaller.",
+      "derivation": "Pilot changes -0.1 points (capacitor-heavy prior, catalog mix) and -0.1 points (uniform prior, capacitor-heavy mix); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 69%, one bar per part (ADR-046).",
       "pilot_text": "−0.1 / −0.1 pts",
-      "chance_met": 0.685
+      "chance_met": 0.685,
+      "value_by": {
+        "catalog_mix": -0.01,
+        "capacitor_mix": -0.01
+      }
     },
     {
       "id": "T15",
@@ -403,6 +431,35 @@
       "value": 0.0,
       "text": "0%",
       "rationale": "Enforced in code, so it is checked by different code and by people.",
+      "primary": false
+    },
+    {
+      "id": "T25",
+      "objective": "O4",
+      "role": "gate",
+      "requires": "study",
+      "metric": "In study S1 (docs/study_s1.md), technicians who carry out the planted wrong recommendation without checking it. The planted step is non-hazardous, on the 24 V board; participants are told beforehand that some advice may be wrong, so the count is a lower bound on over-reliance",
+      "plain": "S1: planted wrong step followed without checking",
+      "system": "Agent",
+      "comparator": "count<=",
+      "bound": "count",
+      "value": 1,
+      "text": "at most 1 of ≥ 6",
+      "rationale": "Over-reliance is the human-factors risk the design must control; forewarned participants make the test lenient, so at most one follower is allowed (round-6 review).",
+      "primary": false
+    },
+    {
+      "id": "T26",
+      "objective": "O3",
+      "role": "gate",
+      "metric": "Top-1 accuracy by complaint voice (bench technician, hobbyist owner, studio client) on the T1 and T6 units: no voice more than 5 points below the other two voices pooled with the 95% bootstrap interval of the gap excluding zero",
+      "plain": "Voices more than 5 points worse (T1, T6 units)",
+      "system": "Full system",
+      "comparator": "==",
+      "bound": "bootstrap",
+      "value": 0,
+      "text": "none",
+      "rationale": "Owners who describe faults in plain words must not get worse diagnoses; the fairness rule of M1, pre-registered as a release gate (round-6 review).",
       "primary": false
     },
     {
@@ -468,7 +525,7 @@
     }
   ],
   "locked_on": null,
-  "bar_rule": "Each pilot-estimable bar is the protocol-matched pilot's estimate moved against the system by 1.5 standard errors and rounded to the reporting step, never past the estimate (eval/set_bars.py, ADR-029, ADR-043); a bar is met only when the one-sided 95% bound clears it (ADR-033).",
+  "bar_rule": "Each pilot-estimable bar is the protocol-matched pilot's estimate moved against the system by 1.5 standard errors and rounded to the reporting step, never past the estimate (eval/set_bars.py, ADR-029, ADR-043); a target with several parts has a bar per part (ADR-046); a bar is met only when the one-sided 95% bound clears it (ADR-033).",
   "joint_chance_primaries": {
     "targets": [
       "T1",
@@ -478,8 +535,8 @@
       "T12",
       "T13"
     ],
-    "chance": 0.361,
-    "expected_misses": 0.94,
+    "chance": 0.251,
+    "expected_misses": 1.19,
     "note": "product of the per-target chances of meeting the bar, as if the targets were independent; T5 and T7 have no pilot and are left out"
   },
   "gate_bounds": {

@@ -867,3 +867,34 @@ deleted.
   technician presses the approval button. The documents say attestations come from the
   technician's form entries. Regression tests cover every round-6 finding; the safety
   sweep still covers all 491 checks.
+
+## ADR-046 - Targets v4 before the lock (M1 review, round 6)
+
+- **Context.** Round 6 of the M1 review (the last) found three places where the targets were
+  softer or looser than their own rules said, and two release rules that lived only in the
+  text: T4 used one bar, the smallest of its three per-baseline bars (+4 points), for every
+  baseline; T14 did the same with its two parts; the scripts' unsoldering threshold (50%) was
+  a fixed choice while the engine's rules were designed; the one safety-relevant result
+  with no declared comparison was the number of powered readings at points that can exceed
+  50 V; and the S1 over-reliance rule and the complaint-voice fairness rule could be relaxed
+  after the results.
+- **Decision.**
+  1. A target with several parts has a bar per part, each by the rule: T4 needs at least
+     +10 points over the fixed-order chart, +8 over half-split tracing and +4 over random
+     probing; T14 has a bar per prior mismatch.
+  2. Each script's unsoldering threshold is tuned on the pilot by a rule fixed before the
+     sweep (`eval/tune_scripts.py`): the lowest effort to a confirmed answer among
+     thresholds within 1 point of that script's best top-1. The fixed-order chart moves to
+     40%, half-split tracing stays at 50%. Tuning a baseline can only make the engine's
+     targets harder.
+  3. New secondary T24: powered readings per diagnosis at points that can exceed 50 V,
+     engine relative to half-split tracing (pilot 0.17×, bar 0.19×).
+  4. New release gates: T25, at most one of at least six S1 participants carries out the
+     planted wrong step without checking (a lower bound on over-reliance, since they are
+     forewarned; `docs/study_s1.md`); T26, no complaint voice more than 5 points below the
+     other two on the T1 or T6 units with the interval of the gap excluding zero.
+  5. The pass rule names the exact bound for counts (ADR-044) and the new gates.
+- **Consequences.** T4's chance of being met falls to about 59% (the product of three
+  margins, as if independent, which understates it); the six pilot-estimable primaries are
+  all met together with a chance near 25%, and about one miss is expected. The pilot
+  summary and every bar were recomputed; no test unit has been run.

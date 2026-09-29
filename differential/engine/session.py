@@ -46,6 +46,10 @@ SCRIPTED = ("fixed_order", "half_split")
 # share of the belief) they unsolder it to test it, and when their chart is used up
 # they test the leading suspect (ADR-033). Random probing never unsolders.
 CONFIRM_AT = 0.5
+# Tuned for each script on the pilot by a rule fixed before the sweep (ADR-046,
+# eval/tune_scripts.py): the lowest effort to a confirmed answer within 1 point of the
+# script's best top-1.
+SCRIPT_CONFIRM_AT = {"fixed_order": 0.4, "half_split": 0.5}
 NORMAL_BAND_SD = 3.0
 LIKELIHOODS = ("generative", "discriminative")
 DEFAULT_BUDGET = 40.0
@@ -117,6 +121,7 @@ class DiagnosisSession:
         eig_min: float = 1e-3,
         cost_scale: tuple[float, float, float] = (1.0, 1.0, 1.0),
         complaint_prior: bool | None = None,
+        confirm_at: float | None = None,
     ) -> None:
         if likelihood not in LIKELIHOODS:
             raise ValueError(likelihood)
@@ -129,6 +134,9 @@ class DiagnosisSession:
         self.likelihood = likelihood
         self.disc_exact_eig = False  # True: score sampled readings with the classifier (slow)
         self.policy = policy
+        # the scripts' unsoldering threshold (ADR-033, tuned for them on the pilot: ADR-046)
+        self.confirm_at = (SCRIPT_CONFIRM_AT.get(policy, CONFIRM_AT) if confirm_at is None
+                           else float(confirm_at))
         H = self.gen.n_hyp
         p = np.full(H, 1.0 / H) if prior is None else np.asarray(prior, dtype=float)
         p = p / p.sum()
@@ -298,7 +306,7 @@ class DiagnosisSession:
             return None
         if self.policy in SCRIPTED:
             avail = {c.key for c in cands}
-            nxt = self._confirm_lift(avail, CONFIRM_AT)
+            nxt = self._confirm_lift(avail, self.confirm_at)
             if nxt is None and self.policy == "half_split":
                 nxt = self._half_split_next(avail)
             if nxt is None:

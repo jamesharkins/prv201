@@ -40,6 +40,7 @@ class SystemSpec:
     model_variant: str = ""  # "" or e.g. "n50" for the sample-size ablation
     text_field: str = "complaint"  # which complaint text feeds the extractor
     cost_scale: tuple[float, float, float] = (1.0, 1.0, 1.0)  # (scope, lift, hv) weight scales
+    confirm_at: float | None = None  # scripts only: belief at which they unsolder their suspect
 
 
 SYSTEMS: dict[str, SystemSpec] = {
@@ -144,7 +145,8 @@ def run_one(args: tuple[SystemSpec, str, dict[str, Any], dict[str, Any]]) -> dic
     t0 = time.perf_counter()
     s = DiagnosisSession(bundle, policy=spec.policy, likelihood=spec.likelihood, prior=prior,
                          seed=noise_seed(case_id, "policy") % (2**31),
-                         cost_scale=spec.cost_scale, complaint_prior=from_complaint)
+                         cost_scale=spec.cost_scale, complaint_prior=from_complaint,
+                         confirm_at=spec.confirm_at)
     res = s.run(measure)
     groups = bundle.groups
     truth_group = int(groups.group_of[bundle.hypotheses.index(truth)]) if single else -1

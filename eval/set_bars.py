@@ -281,19 +281,25 @@ def ece_floor(d: dict[str, pd.DataFrame], n_units: int, n_sim: int = 300) -> dic
     return {"n_units": n_units, "mean": float(np.mean(vals)), "p95": float(np.quantile(vals, 0.95))}
 
 
-def hv_steps(d: dict[str, pd.DataFrame]) -> float:
-    """Mean number of powered readings per diagnosis at points that can exceed 50 V."""
+def hv_count(cid: str, keys: str) -> int:
+    """Powered readings in one diagnosis at points that can exceed 50 V."""
     from differential.safety.hazards import hazard
 
-    def count(cid: str, keys: str) -> int:
-        n = 0
-        for k in json.loads(keys):
-            kind, target = k.split(":", 1)
-            if kind != "lift" and target.upper().startswith("TP") and hazard(cid, target).high_voltage:
-                n += 1
-        return n
+    n = 0
+    for k in json.loads(keys):
+        kind, target = k.split(":", 1)
+        if kind != "lift" and target.upper().startswith("TP") and hazard(cid, target).high_voltage:
+            n += 1
+    return n
 
-    return float(sum(WEIGHTS[c] * np.mean([count(c, k) for k in d[c]["keys"]]) for c in CIRCUITS))
+
+def with_hv(d: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
+    return {c: df.assign(hv_reads=[hv_count(c, k) for k in df["keys"]]) for c, df in d.items()}
+
+
+def hv_steps(d: dict[str, pd.DataFrame]) -> float:
+    """Mean number of powered readings per diagnosis at points that can exceed 50 V."""
+    return float(sum(WEIGHTS[c] * np.mean([hv_count(c, k) for k in d[c]["keys"]]) for c in CIRCUITS))
 
 
 def cap_weights(bundle_cid: str, df: pd.DataFrame, share: float) -> np.ndarray:
@@ -376,18 +382,20 @@ def main() -> None:
         n_cs_pilot, n_cs)
     put("T3", *weighted_prop(hyb, "top3"), True, 0.01, n_single_pilot, n_single)
     margins = {name: paired(eng[cs], base[cs], "correct")
-               for name, base in (("fixed_order", fixed), ("random", rnd), ("half_split", half))}
+               for name, base in (("fixed_order", fixed), ("half_split", half), ("random", rnd))}
     t4: dict[str, Any] = {}
     for name, m in margins.items():
         est, se = float(m.mean()), float(m.std(ddof=1)) / math.sqrt(len(m))
         t4[f"estimate_vs_{name}"], t4[f"se_vs_{name}"] = est, se
         t4[f"bar_vs_{name}"] = bar(est, se, True, 0.01)
-    b4 = min(t4[f"bar_vs_{n}"] for n in margins)
-    t4["chance_met"] = float(np.prod([chance_met(t4[f"estimate_vs_{n}"], t4[f"se_vs_{n}"], b4, True,
-                                                 n_cs_pilot, n_cs) for n in margins]))
-    d["T4"] = {**t4, "k": K, "direction": ">=", "step": 0.01, "bar": b4, "n_pilot": n_cs_pilot,
-               "n_test": n_cs, "rule": "the smallest of the three margin bars, met when every margin's "
-                                        "lower bound clears it"}
+    # each margin has its own bar by the rule (round 6: one bar, the smallest, was lenient)
+    t4["chance_met"] = float(np.prod([chance_met(t4[f"estimate_vs_{n}"], t4[f"se_vs_{n}"],
+                                                 t4[f"bar_vs_{n}"], True, n_cs_pilot, n_cs)
+                                      for n in margins]))
+    d["T4"] = {**t4, "k": K, "direction": ">=", "step": 0.01,
+               "bar": min(t4[f"bar_vs_{n}"] for n in margins),
+               "bar_by": {n: t4[f"bar_vs_{n}"] for n in margins}, "n_pilot": n_cs_pilot,
+               "n_test": n_cs, "rule": "each margin's lower bound must clear its own bar (ADR-046)"}
     # T6: the same count as T1 on aged units (ADR-039); the drop from as-new units and the
     # split of the misses into "no single fault fits" calls and wrong names are context.
     n_aged_pilot = sum(len(f) for f in aged.values())
@@ -434,12 +442,16 @@ def main() -> None:
     b14a = bar(wp["wrong_prior_catalog_mix"], wp["wrong_prior_catalog_mix_se"], True, 0.01)
     b14b = bar(wp["uniform_prior_capacitor_mix"], wp["uniform_prior_capacitor_mix_se"], True, 0.01)
     d["T14"] = {**wp, "bar": min(b14a, b14b), "bar_catalog_mix": b14a, "bar_capacitor_mix": b14b,
+                "bar_by": {"catalog_mix": b14a, "capacitor_mix": b14b},
                 "k": K, "direction": ">=", "step": 0.01, "n_pilot": n_single_pilot, "n_test": n_single}
     d["T14"]["chance_met"] = (
-        chance_met(wp["wrong_prior_catalog_mix"], wp["wrong_prior_catalog_mix_se"], d["T14"]["bar"],
+        chance_met(wp["wrong_prior_catalog_mix"], wp["wrong_prior_catalog_mix_se"], b14a,
                    True, n_single_pilot, n_single)
         * chance_met(wp["uniform_prior_capacitor_mix"], wp["uniform_prior_capacitor_mix_se"],
-                     d["T14"]["bar"], True, n_single_pilot, n_single))
+                     b14b, True, n_single_pilot, n_single))
+    # T24 (ADR-046): powered readings at points that can exceed 50 V, engine / half-split
+    put("T24", *effort_ratio(with_hv(eng), with_hv(half), "hv_reads"), False, 0.01, n_single_pilot,
+        n_single, engine_per_diagnosis=hv_steps(eng), half_split_per_diagnosis=hv_steps(half))
     # context reported with the bars (no targets): the other likelihood model, the effort
     # of each method on the channel strip, accuracy per method (test-mix weights)
     context = {
@@ -472,14 +484,16 @@ def main() -> None:
 
     text = {
         "T1": f"≥ {round(100 * d['T1']['bar'])}%", "T2": f"≥ {round(100 * d['T2']['bar'])}%",
-        "T3": f"≥ {round(100 * d['T3']['bar'])}%", "T4": f"≥ {pts(d['T4']['bar'])} each",
+        "T3": f"≥ {round(100 * d['T3']['bar'])}%",
+        "T4": "≥ " + "/".join(pts(d["T4"]["bar_by"][n]).split()[0] for n in margins) + " points",
         "T6": f"≥ {round(100 * d['T6']['bar'])}%",
         "T8": f"≤ {d['T8']['bar']:.2f}×", "T9": f"≤ {d['T9']['bar']:.2f}×",
         "T10": f"≤ {d['T10']['bar']:.2f}×", "T11": f"≤ {d['T11']['bar']:.2f}×",
         "T12": f"≤ {d['T12']['bar']:.2f}", "T13": f"≤ {round(100 * d['T13']['bar'])}%",
         "T22": f"≥ {round(100 * b22f)}% flagged; AUROC ≥ {b22a:.2f}",
         "T23": f"≥ {round(100 * b23n)}% named; ≥ {round(100 * b23a)}% right when naming",
-        "T14": f"≥ {pts(d['T14']['bar'])} each",
+        "T14": f"≥ {pts(b14a).split()[0]}/{pts(b14b).split()[0]} points",
+        "T24": f"≤ {d['T24']['bar']:.2f}×",
     }
     # What a pass needs, in units, for the count targets (the bound must clear the bar).
     counts = {"T1": (n_single, True), "T2": (n_cs, True), "T3": (n_single, True),
@@ -509,6 +523,8 @@ def main() -> None:
             t["chance_met"] = round(float(v["chance_met"]), 3)
             if "bound" in v:
                 t["bound"] = v["bound"]
+            if "bar_by" in v:
+                t["value_by"] = v["bar_by"]
             if t["id"] == "T22":
                 t["value_flag_rate"] = b22f
             if t["id"] == "T23":
@@ -540,8 +556,16 @@ def main() -> None:
     tj["gate_bounds"] = {"T16": exact_upper(0, int(ev["red_team_min"]))}
     tj["bar_rule"] = ("Each pilot-estimable bar is the protocol-matched pilot's estimate moved against "
                       f"the system by {K} standard errors and rounded to the reporting step, never "
-                      "past the estimate (eval/set_bars.py, ADR-029, ADR-043); a bar is met only when "
-                      "the one-sided 95% bound clears it (ADR-033).")
+                      "past the estimate (eval/set_bars.py, ADR-029, ADR-043); a target with several "
+                      "parts has a bar per part (ADR-046); a bar is met only when the one-sided 95% "
+                      "bound clears it (ADR-033).")
+    tj["pass_rule"] = ("A target is met when its one-sided 95% confidence bound clears the bar: the lower "
+                       "bound for an 'at least' target, the upper bound for an 'at most' target (exact "
+                       "Clopper-Pearson for counts of units or prompts, ADR-044; a stratified bootstrap "
+                       "over units, 2,000 resamples, for paired margins, ratios and calibration error). "
+                       "A census (T15, T17) is met only with no exception; a release gate (T15-T17, "
+                       "T25, T26) must hold before any release. Every result is reported with its "
+                       "two-sided 95% interval.")
     TARGETS.write_text(json.dumps(tj, indent=2, ensure_ascii=False) + "\n")
     metrics_io.update("bars", {"k": K, "weights": WEIGHTS, "targets": d, "context": context})
     for tid, v in d.items():
@@ -557,13 +581,13 @@ def derivation(tid: str, v: dict[str, Any]) -> str:
     if tid == "T4":
         return ("Pilot margins of the engine alone: "
                 f"{100 * v['estimate_vs_fixed_order']:+.1f} points over the fixed-order chart, "
-                f"{100 * v['estimate_vs_random']:+.1f} over random probing and "
-                f"{100 * v['estimate_vs_half_split']:+.1f} over half-split tracing; {rule}, taking the "
-                "smallest of the three.")
+                f"{100 * v['estimate_vs_half_split']:+.1f} over half-split tracing and "
+                f"{100 * v['estimate_vs_random']:+.1f} over random probing; {rule}, one bar per "
+                "margin (ADR-046).")
     if tid == "T14":
         return (f"Pilot changes {100 * v['wrong_prior_catalog_mix']:+.1f} points (capacitor-heavy prior, "
                 f"catalog mix) and {100 * v['uniform_prior_capacitor_mix']:+.1f} points (uniform prior, "
-                f"capacitor-heavy mix); {rule}, taking the smaller.")
+                f"capacitor-heavy mix); {rule}, one bar per part (ADR-046).")
     if tid == "T22":
         return (f"Pilot flagged {100 * v['flagged_estimate']:.1f}% (SE {100 * v['flagged_se']:.1f}) and "
                 f"AUROC {v['estimate']:.3f} (SE {v['se']:.3f}) on {int(v['n_pilot'])} units; {rule}.")
@@ -583,12 +607,12 @@ def pilot_text(tid: str, v: dict[str, Any]) -> str:
     if tid in ("T1", "T2", "T3", "T6", "T13"):
         return f"{100 * v['estimate']:.1f}%"
     if tid == "T4":
-        return (f"{100 * v['estimate_vs_fixed_order']:+.1f}/{100 * v['estimate_vs_random']:+.1f}/"
-                f"{100 * v['estimate_vs_half_split']:+.1f}").replace("-", "−")
+        return (f"{100 * v['estimate_vs_fixed_order']:+.1f}/{100 * v['estimate_vs_half_split']:+.1f}/"
+                f"{100 * v['estimate_vs_random']:+.1f}").replace("-", "−")
     if tid == "T14":
         return (f"{100 * v['wrong_prior_catalog_mix']:+.1f} / "
                 f"{100 * v['uniform_prior_capacitor_mix']:+.1f} pts").replace("-", "−")
-    if tid in ("T8", "T9", "T10", "T11"):
+    if tid in ("T8", "T9", "T10", "T11", "T24"):
         return f"{v['estimate']:.2f}×"
     if tid == "T12":
         return f"{v['estimate']:.3f}"

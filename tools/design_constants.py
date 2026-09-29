@@ -78,6 +78,7 @@ def collect() -> dict[str, Any]:
             "unmodeled_prior": DEFAULT_UNMODELED_PRIOR,
             "half_split_band_sd": session.NORMAL_BAND_SD,
             "scripts_confirm_at": session.CONFIRM_AT,
+            "scripts_confirm_at_by": dict(session.SCRIPT_CONFIRM_AT),
         },
         "symptoms": {
             "no_output_db": sp.NO_OUTPUT_DB, "low_gain_db": sp.LOW_GAIN_DB,

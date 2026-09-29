@@ -19,8 +19,10 @@ takes on the responsibilities below without the team's involvement.
 
 ## What it may not be used for
 
-4. Rating, ranking, monitoring or disciplining staff. Tickets record roles and the job, not a
-   person's performance, and they may not be used to evaluate a technician or a trainee.
+4. Rating, ranking, monitoring, disciplining or setting the pay of staff. Tickets record roles
+   and the job, not a person's performance, and they may not be used to evaluate a technician
+   or a trainee. Tickets stay in the business's system; the technician who signs one may
+   export it.
 5. Work on the mains side of a unit (plug, fuse holder, power switch, mains wiring, primary
    of the power transformer). Differential refuses these steps.
 6. Unattended probing, or any use in which a person does not choose, take and confirm every
@@ -39,6 +41,21 @@ takes on the responsibilities below without the team's involvement.
 10. Photos and complaints stay on the business's machine in offline mode. In live mode,
     complaint text and photos (with metadata removed) are sent to the model provider under
     its terms.
+
+## Safety records
+
+11. How a unit was first powered, the owner's approval to remove parts, discharge readings
+    and a trainee's supervisor are recorded only by the technician in the application's
+    forms. The chat and the language model cannot record them.
+
+## Performance claims and corrections
+
+12. The team quotes only results measured under the locked targets, each labelled as
+    simulated or measured on hardware, with its interval; no accuracy claim about real
+    equipment is made before the hardware results exist.
+13. A business that finds a wrong hazard warning, a missing lock or a wrong recommendation
+    reports it to the team; the team corrects the hazard map or code, versions the change and
+    tells every business using the affected circuit model.
 
 ## Changes
 

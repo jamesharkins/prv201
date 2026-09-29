@@ -43,7 +43,7 @@ This supplement accompanies the M1 problem statement. The statement stands on it
   table(
     columns: (0.3fr, 2.1fr, 1.1fr, 0.3fr, 2.1fr, 1.1fr),
     table.header([ID], [Secondary target], [Bar], [ID], [Secondary target], [Bar]),
-    [T2], [Named first, channel strip only], [≥ 94%], [T23], [Single faults named; accuracy when naming], [≥ 94% named; ≥ 99% right when naming],    [T3], [True group among the first three shown], [≥ 99%], [T14], [Accuracy change with a wrong prior, either way], [≥ −1 points each],    [T8], [Confirmed-answer effort ÷ fixed-order chart's], [≤ 0.64×], [T18], [Symptom-reading micro-F1 on a sealed bank (API key)], [≥ 0.90 (Claude); ≥ 0.80 (rules)],    [T10], [Confirmed-answer effort ÷ random probing's], [≤ 0.59×], [T19], [Exact reading of ≥ 200 meter photos (API key)], [≥ 95% (Claude); ≥ 90% (offline)],    [T11], [Confirmed-answer effort, complaint read ÷ ignored], [≤ 0.98×], [T20], [95th-percentile time per recommendation], [≤ 0.5 s],    [T22], [Out-of-model units flagged; separation (AUROC)], [≥ 51% flagged; AUROC ≥ 0.77], [T21], [Mean API cost per diagnosis at list prices (API key)], [≤ \$0.10],  ),
+    [T2], [Named first, channel strip only], [≥ 94%], [T24], [Powered readings above 50 V per diagnosis ÷ half-split's], [≤ 0.19×],    [T3], [True group among the first three shown], [≥ 99%], [T14], [Accuracy change with a wrong prior, either way], [≥ −1/−1 points],    [T8], [Confirmed-answer effort ÷ fixed-order chart's], [≤ 0.64×], [T18], [Symptom-reading micro-F1 on a sealed bank (API key)], [≥ 0.90 (Claude); ≥ 0.80 (rules)],    [T10], [Confirmed-answer effort ÷ random probing's], [≤ 0.59×], [T19], [Exact reading of ≥ 200 meter photos (API key)], [≥ 95% (Claude); ≥ 90% (offline)],    [T11], [Confirmed-answer effort, complaint read ÷ ignored], [≤ 0.98×], [T20], [95th-percentile time per recommendation], [≤ 0.5 s],    [T22], [Out-of-model units flagged; separation (AUROC)], [≥ 51% flagged; AUROC ≥ 0.77], [T21], [Mean API cost per diagnosis at list prices (API key)], [≤ \$0.10],    [T23], [Single faults named; accuracy when naming], [≥ 94% named; ≥ 99% right when naming], [], [], [],  ),
   caption: [Secondary targets: same rule, reported, not deciding success. Micro-F1: symptom reading scored over all (complaint, symptom) pairs; AUROC: chance an out-of-catalog unit gets a higher "no single fault fits" probability than a single-fault unit.],
 ) <tab:secondary>
 
@@ -60,12 +60,12 @@ Every bar that a pilot can estimate follows one rule, fixed before the pilot ran
     [T6], [Failed part's group named first, aged units], [93.2%], [1.2], [91.3%], [≥ 91%], [at least 4584 of 5,000], [88%],
     [T13], [Out-of-catalog units sent only to healthy parts], [8.8%], [2.0], [11.8%], [≤ 12%], [at most 272 of 2,500], [84%],
     [T9], [Confirmed-answer effort ÷ half-split tracing's], [0.651], [0.012], [0.669], [≤ 0.67×], [bound clears the bar], [85%],
-    [T8], [Confirmed-answer effort ÷ fixed-order chart's], [0.618], [0.012], [0.636], [≤ 0.64×], [bound clears the bar], [89%],
+    [T8], [Confirmed-answer effort ÷ fixed-order chart's], [0.625], [0.012], [0.643], [≤ 0.64×], [bound clears the bar], [76%],
     [T10], [Confirmed-answer effort ÷ random probing's], [0.572], [0.011], [0.588], [≤ 0.59×], [bound clears the bar], [86%],
     [T11], [Confirmed-answer effort, complaint read ÷ ignored], [0.965], [0.010], [0.980], [≤ 0.98×], [bound clears the bar], [84%],
     [T12], [Calibration error of the shown probabilities at the stop], [0.012], [0.006], [0.020], [≤ 0.02], [bound clears the bar], [81%],
   ),
-  caption: [Bar derivations from the pilot (weighted like the test set). SE: standard error (points for rates). Raw bar: estimate moved 1.5 SE against the system; the bar rounds it to the reporting step, never past the estimate. For rates, "a pass needs" is the count whose one-sided bound clears the bar. The chance that every pilot-estimable primary is met, if they were independent, is about 36%; about 1 are expected to miss.],
+  caption: [Bar derivations from the pilot (weighted like the test set). SE: standard error (points for rates). Raw bar: estimate moved 1.5 SE against the system; the bar rounds it to the reporting step, never past the estimate. For rates, "a pass needs" is the count whose one-sided bound clears the bar. The chance that every pilot-estimable primary is met, if they were independent, is about 25%; about 1 are expected to miss.],
 )
 
 #heading(level: 1, numbering: none)[References]

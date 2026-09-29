@@ -54,7 +54,7 @@
   set table(stroke: (x, y) => (
     top: if y == 0 { 0.8pt + ink } else if y == 1 { 0.5pt + ink } else { 0pt },
     bottom: 0.5pt + rule-col,
-  ), inset: (x: 4pt, y: 3pt), align: left + top)
+  ), inset: (x: 4pt, y: 2pt), align: left + top)
   show table: set text(size: 8.4pt)
   show table: set par(justify: false, leading: 0.5em)
   show table.cell.where(y: 0): set text(font: "Inter", weight: "semibold", size: 8pt)

@@ -29,7 +29,7 @@
   caption: [M1 review findings that changed the design (all five rounds). Text-only fixes are in the log.],
 ) <tab:feedback>
 
-*Requirements.* 20 requirements trace the M1 objectives (O1-O5), safety (S) and engineering practice (P) to the code that implements them and the tests or evaluations that verify them (Appendix A, @tab:reqs). 14 of them are checked by at least one locked target; the others (circuit library, fault catalog, simulation, ticket, modes and the clean-clone build) by unit tests and continuous integration. Every locked target is traced by at least one requirement. The matrix lives in `docs/requirements.yaml`; `tools/check_requirements.py` fails if a listed file or target disappears or a target is traced by no requirement.
+*Requirements.* 23 requirements trace the M1 objectives (O1-O5), safety (S) and engineering practice (P) to the code that implements them and the tests or evaluations that verify them (Appendix A, @tab:reqs). 17 of them are checked by at least one locked target; the others (circuit library, fault catalog, simulation, ticket, modes and the clean-clone build) by unit tests and continuous integration. Every locked target is traced by at least one requirement. The matrix lives in `docs/requirements.yaml`; `tools/check_requirements.py` fails if a listed file or target disappears or a target is traced by no requirement.
 
 
 *Architecture.* @fig:arch shows the three layers. Offline, each circuit model and its fault catalog are simulated with ngspice under part tolerances and learned into a model bundle (likelihoods, ambiguity groups, calibrated thresholds). Online, one Python process serves the web interface: the agent (Claude in live mode, templates offline, recorded responses in replay) calls tools that act only on an engine session, and the safety layer sits between every step and the technician. The evaluation layer runs every system on held-out simulated units and writes `results/metrics.json`, from which every number in these documents is rendered. Three invariants hold throughout: the ranking shown and written on the ticket comes only from the engine; only code decides what is safe; and no number reaches the technician unless it traces to a tool result or a reading the technician confirmed.
@@ -353,6 +353,9 @@
     [R18], [Talk to real instruments over SCPI at 24 V or less, refusing high-voltage points], [S], [test\_instruments.py], [T7],
     [R19], [Answer each step fast and each diagnosis cheaply], [O5], [run\_eval.py, agent\_eval.py], [T20, T21],
     [R20], [Run from a clean clone in three commands, offline, with tests, types and coverage in CI], [P], [.github/workflows/ci.yml], [—],
+    [R21], [Keep powered readings at points that can exceed 50 V few, by pricing them in the choice of measurement], [S], [set\_bars.py, run\_eval.py], [T24],
+    [R22], [Guard against over-reliance with trainee mode, visible reasons and a pre-registered study], [S], [test\_agent.py, docs/study\_s1.md], [T25],
+    [R23], [Give plain-language complaints diagnoses as good as technical ones], [O3], [run\_eval.py], [T26],
   ),
   caption: [Requirements traceability. "From": M1 objective (O1 accuracy, O2 effort, O3 honesty, O4 safety, O5 practicality), safety (S) or engineering practice (P). Test files are in `tests/`, evaluation scripts in `eval/`.],
 ) <tab:reqs>

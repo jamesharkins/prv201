@@ -5,15 +5,14 @@ audio electronics
 PRV 201 Frontiers of Technology (AI) · Track A: Build · Stevens Institute of Technology · September 2026
 
 
-Executive summary. When a tube preamplifier, studio console or vintage hi-fi unit fails, a technician must find which of
-its many parts failed, a paid bench evaluation at the specialist shops we sampled. For a circuit it has a model of (Figure 1),
-Differential simulates how every cataloged part failure changes the readings, keeps a probability for every group of
-suspects that readings cannot tell apart, and recommends the measurement expected to narrow them most per unit of
-effort. A language model reads the complaint and explains; readings come from the technician; safety locks run in code.
-In a pilot on simulated units it named the group containing the failed part first on 95.6% of as-new and 93.2% of aged
-units, with 0.65 times half-split tracing’s effort to a confirmed answer. The primary targets, fixed before any test unit is
-run (Table 3), include at least 4,728 of 5,000 simulated units right, 4,584 of 5,000 aged ones and 49 of 60 faults on real
-boards, plus margins over scripts and a chat model; each will be reported met or missed.
+Executive summary. When a tube preamplifier, studio console or vintage hi-fi unit fails, a technician must find which
+of its many parts failed, and specialist shops charge for that bench evaluation. Differential simulates how every cataloged
+part failure changes a modeled circuit’s readings (Figure 1), keeps a probability for every group of suspects that readings
+cannot tell apart, and recommends the measurement expected to narrow them most per unit of effort; a language model
+reads the complaint and explains; the technician takes every reading and safety record. In a simulated pilot it named
+the failed part’s group first on 95.6% of as-new and 93.2% of aged units, with 0.65 times the effort of a scripted half-split
+search using the same inference; no hardware result exists yet. The locked primary targets (Table 3) include 4,728 of 5,000
+simulated units right, 4,584 of 5,000 aged and 49 of 60 faults on real 24 V boards; each will be reported met or missed.
 
 
 
@@ -26,38 +25,36 @@ Figure 1. Offline, each circuit’s faults are simulated with SPICE, a circuit s
 
 The problem. Studio consoles, tube preamplifiers and vintage hi-fi are repaired long after their makers stop supporting
 them, and finding the failed part is the slow step: U.S. defense maintainability guidance holds that most repair time
-typically goes to fault isolation [1], a premise the ticket coding below will test for audio benches. Differential, proposed
-here, helps a qualified bench technician find the part: it simulates the unit’s circuit to rank the parts that could have failed
-and to choose each next measurement. Specialist shops we sampled charge $125 to $150 for a bench evaluation [2, 3, 4],
-and one bills an hour even when no fault is found [5]; these are examples, not a survey.
-Size of the need. No statistic counts audio repair: its U.S. industry code was merged into a broader one in 2022 [6], and
-the closest occupation (24,720 people in May 2023) works mainly in retail and construction [7, 8]. The broader electronics
-repair group (117,700 jobs in 2025) is projected to grow 2% to 2035, below the 3.5% average [9, 10]. Only press reports
-speak for the specialist niche: skilled hi-fi technicians “are scarce, and their numbers are dwindling” [11], and a Chicago
-shop for old audio gear shrank from seven technicians to two [12]. An AI assistant raised support agents’ productivity
-15%, most for the least experienced [13], a case for supporting newer technicians, not replacing them.
-Where it pays. A model needs the schematic transcribed (we will time one) and, for our 59-part channel strip, 81 minutes
-of computer time, so it pays where one model serves many units, such as a console of identical channel strips.
-Where current AI stands. Maintenance AI works from records and documents (service histories [14], manuals [15],
-repair guidance paired with failure prediction [16], agentic workflows [17], repair guides [18]); none of these five simulates
-the circuit. The best chat model scores 95.50% on textbook analog questions, graded by another language model [19], but
-at the bench parts sit anywhere within tolerance, faults look alike, measurements cost effort and some points carry lethal
-voltage. A pipeline that added a circuit-diagram detector and a simulator check to a language model lifted it from 79.52%
-to 97.59% on undergraduate circuit problems [20]; Differential brings such a check to diagnosis.
-
+typically goes to fault isolation [1], a premise our ticket coding will test for audio benches. Differential, proposed here,
+helps a qualified bench technician in an independent shop or a studio find the part: it simulates the unit’s circuit to rank
+the parts that could have failed and choose each next measurement. Specialist shops we sampled charge $125 to $150 for
+a bench evaluation [2, 3, 4], and one bills an hour even when no fault is found [5]; these are examples, not a survey.
+Size of the need. No statistic counts audio repair: it fell under consumer electronics repair, a U.S. industry code merged
+into a broader one in 2022 [6], and the closest occupation (24,720 people in May 2023) works mainly in retail and
+construction [7, 8]. The broader electronics repair group (117,700 jobs in 2025) is projected to grow 2% to 2035, below
+the 3.5% average [9, 10]. Only press reports cover the niche: skilled hi-fi technicians “are scarce, and their numbers are
+dwindling” [11], and a Chicago shop for old audio gear shrank from seven technicians to two [12]. Where it pays: a
+model needs the schematic transcribed (we will time one) and, for our 59-part channel strip, 81 minutes of computer time,
+so it pays where one model serves many units, such as a console of identical channel strips, once minutes saved per job,
+times jobs, exceed the modeling time (S1 and the tickets will measure both).
+Where current AI stands. Maintenance AI works from records and documents (service histories [13], manuals [14],
+repair guidance with failure prediction [15], agentic workflows [16], repair guides [17]); none of these five simulates the
+circuit. On one leaderboard the top chat model scores 95.5% on textbook analog-design questions, graded by a language
+model [18], but at the bench parts sit anywhere within tolerance, faults look alike, measurements cost effort and some
+points carry lethal voltage. A pipeline adding a circuit-diagram detector and a simulator check to a language model lifted it
+from 79.52% to 97.59% on undergraduate circuit problems [19]; our model-with-simulator baseline tests that idea (Part 3).
+Jurisdiction and rules. We design for the U.S. and check EU rules for later sale. No federal AI statute regulates such
+a tool, but the FTC has acted against unsupported AI accuracy claims [20]. Texas’s AI act (in force since 2026) binds it
 
 
                                                                       1
 M1 · Problem statement                                                                                                       Differential
 
 
-Jurisdiction and rules. We design for the U.S. (the team is in New Jersey) and check EU rules for later sale. No federal AI
-statute regulates such a tool, but the FTC has acted against unsupported AI accuracy claims [21]. Texas’s AI act (in force
-since 2026) binds it only through bans on intentional misuse, such as inciting harm or discriminating [22]; Colorado’s
-covers automated decisions about people, such as employment, from 2027 [23], one reason our terms of use forbid rating
-staff; and the Administration has asked Congress to preempt state AI laws it deems unduly burdensome [24]. The EU AI
-Act would not deem a bench aid high-risk unless shops rated staff or trainees with it [25]; users must be told they deal
-with an AI from 2 August 2026 [26], and the 2026 amendments keep the duty to support staff’s AI literacy [27].
+only through bans on intended harm or discrimination [21]; Colorado’s covers automated decisions about people, such
+as employment, from 2027 [22]; and the Administration has asked Congress to preempt state AI laws it deems unduly
+burdensome [23]. The EU AI Act would not deem a bench aid high-risk unless used to rate staff or trainees [24]; users
+must be told they face an AI from 2 August 2026 [25], and the 2026 amendments keep the AI-literacy duty (Art. 4) [26].
     Table 1. Stakeholders. The technician decides; Differential recommends. Needs are our reading until the interviews confirm them.
  Stakeholder               Needs                         What Differential changes                         Main risk
  Technician (user)         Next step; safety; judgment   Ranked suspects; expected readings; locks         Over-trust; shock; blame
@@ -68,218 +65,233 @@ with an AI from 2 August 2026 [26], and the 2026 amendments keep the duty to sup
  Makers, rights holders    Control of manuals            Uses schematics the shop holds                    Copied manuals
  Model provider (live)     Use under its terms           Receives complaint text and photos                Retained shop data
  Hobbyist (not served)     Cheap self-repair             Nothing: offered to shops only                    Unsafe advice elsewhere
-
-Interviews before M2, after an ethics-board determination: six 45-minute interviews (three technicians from indepen­
-dent audio shops, a trainee, a shop owner, a vintage-gear owner), recruited through audio societies and trade contacts,
-never an employer, on diagnosis time, recurring faults, judging readings, what a tool may do and consent to removals;
-and 50 anonymized tickets from one shop, with its technicians’ consent, coded for faults and time to find them.
+Interviews before M2, after the Stevens IRB’s determination: six 45-minute interviews (two technicians from indepen­
+dent audio shops, a studio maintenance engineer, a trainee, a shop owner, a vintage-gear owner), recruited through audio
+societies and trade contacts, never an employer, on diagnosis time, recurring faults, judging readings, what a tool may do
+and consent to removals; and 50 tickets from one shop, stripped of customer and technician identities by the shop before
+transfer, with each technician’s consent sought privately, coded for faults and time to find them, reported pooled.
   DESIGN DECISION · The primary user is a qualified bench technician
   Options: a consumer self-repair assistant or a professional bench tool. Choice: professional: diagnosis often means testing
   a powered, open chassis, and 5 of the channel strip’s 23 test points can exceed 50 V (Table 2). OSHA requires employers to
-  de-energize live parts unless testing needs power (parts under 50 V excepted if that adds no burn or arc-blast risk) and to let
-  only qualified persons work on or test them [28, 29, 30]; the self-employed fall outside the OSH Act [31, 32], so our terms of
-  use ask it of every user. Consequence: offered to repair businesses; trainees supervised; mains-side work refused. Hobbyists
-  keep forums and chat assistants, which do not know which points of their unit carry high voltage.
+  de-energize live parts unless testing needs power (narrow exceptions below 50 V) and to let only qualified persons work on
+  or test them [27, 28, 29]; the self-employed fall outside the OSH Act [30, 31], so our terms of use require it. Consequence:
+  offered to repair businesses, trainees supervised, mains-side work refused; hobbyists keep forums and chat assistants.
 
 
   Part 2 — How diagnosis is done today, and the data landscape                                             Section lead: [name removed]
 
 Today’s practice (the interviews will check it): with a multimeter, an oscilloscope, a signal generator and a variac or
-series lamp [33, 34], a technician confirms the complaint; looks for burnt or bulging parts; checks the supplies; follows
+series lamp [32, 33], a technician confirms the complaint; looks for burnt or bulging parts; checks the supplies; follows
 a test tone stage by stage, often halving the search (“half-split tracing”); compares readings with the manual’s voltage
-chart or the healthy channel [35]; tests tubes and electrolytics (tube tester, ESR meter); unsolders a suspect and confirms
+chart or the healthy channel [34]; tests tubes and electrolytics (tube tester, ESR meter); unsolders a suspect and confirms
 the fault clears. In our reading, the time goes to judging which reading is really “off”, since parts sit anywhere within
-tolerance and aging electrolytics lose capacitance and gain series resistance [36], and to unsoldering suspects that prove
-good; the ticket coding will measure it. Replacing every electrolytic (“recapping”) often cures a symptom but costs parts
-and time, risks the board and never names the failed part.
+tolerance and aging electrolytics lose capacitance and gain series resistance [35], and to unsoldering suspects that prove
+good; the ticket coding (Part 1) will measure it. Replacing every electrolytic (“recapping”) often cures a symptom but costs
+parts and time, risks the board and never names the failed part.
 The information is uneven. Manuals with schematics and voltage charts exist for many classic models, but units are
 often modified or undocumented. U.S. repair laws cover newer digital products, not vintage analog gear: New York’s took
-effect in December 2023 [37, 38], and six other states followed with limits by date or product [39, 40, 41, 42, 43, 44]; the
-EU’s obligation to repair covers only its Annex II products, such as washing machines [45, 46]. So Differential needs a
+effect in December 2023 [36, 37], and six other states followed with limits by date or product [38, 39, 40, 41, 42, 43]; the
+EU’s obligation to repair covers only its Annex II products, such as washing machines [44, 45]. So Differential needs a
 model per product, built from the schematic, and trusts its hazard map (the points that can exceed 50 V) only once the
 model’s healthy readings match the manual’s chart; until then every point of a high-voltage unit counts as high voltage.
 “No single fault fits” covers modified units; units without a schematic are out of scope.
 Labeled fault data is scarce, so we simulate it. Confirming a failed part takes unsoldering and is rarely recorded; shop
 logs are private and, after recapping, unlabeled. We know of no public dataset of bench readings with confirmed failed
-parts; published methods use benchmark filters [47] and simulated data [48]. Analog-test research built simulated fault
-dictionaries [49], found faults the test points cannot tell apart (ambiguity groups) [50] and applied machine learning [51];
-we follow it (Table 2). A simulated unit draws every part within its tolerance, the mains within ±5% (our assumption), and
-one cataloged fault (an open, short, drift, or a mode such as a leaky transistor or worn tube). Since units reaching a bench
-are old, 50% of training units are also aged: electrolytics up to 30% low with up to 3× the series resistance (past the usual
-end-of-life limits of 20% and 2× [36]), resistors up to 10% high, tubes up to 30% weaker. Each reading carries instrument
+parts; published methods use benchmark filters [46] and simulated data [47]. Analog-test research built simulated fault
+dictionaries [48], found faults the test points cannot tell apart (ambiguity groups) [49] and applied machine learning [50];
+we follow it (Table 2). Other label sources fall short: faults built into real boards give true labels but each is built and
+measured by hand, so they test transfer only; expert fault trees are one per product; forum threads and service bulletins
+report fixes that worked, without readings. A simulated unit draws every part within its tolerance, the mains within ±5%
+(our assumption), and one cataloged fault (an open, short, drift, or a mode such as a leaky transistor or worn tube). Since
+units reaching a bench are old, 50% of training units are also aged: electrolytics up to 30% low with up to 3× the series
+resistance (past the usual end-of-life limits of 20% and 2× [35]), resistors up to 10% high, tubes up to 30% weaker (our
+assumptions). Each reading carries instrument error: a 10 MΩ meter loads each DC node [51] and reads within ±(0.5% +
+2 counts) [52], an oscilloscope within ±3% of full scale [53]. The library holds 253,000 units (0 failed to converge). Hand
 
                                                                    2
-M1 · Problem statement                                                                                                            Differential
+M1 · Problem statement                                                                                                                   Differential
 
 
-Table 2. The circuit library. A group: hypotheses (faults or “healthy”) whose readings match at every test point within tolerance. The channel
-       strip counts shared nodes once and reads response and distortion only at its output. Points > 50 V: over all simulated units.
- Circuit                                       Parts     Faults     Groups (singles)        Points     Readings              Points > 50 V
- Supply: zener, 250 V for tubes                   14          63                45 (33)           6            12                           3
- Tube stage (12AX7)                                8          31                27 (24)           4            11          2 (1 only faulted)
- Tone stack (bass, treble)                         9          27                23 (20)           3             8                           0
- Op-amp gain stage                                13          56                46 (36)           6            14                           0
- Line driver (two transistors)                    15          73                69 (64)           7            16                           0
- Channel strip: the five in series                59         250              217 (191)          23            51          5 (1 only faulted)
+Table 2. The circuit library (“healthy” counts as a hypothesis in groups). The channel strip counts shared nodes once, reads response and
+             distortion only at its output and forms its groups from its own readings. Points > 50 V: over all simulated units.
+ Circuit                                          Parts      Faults     Groups (singles)         Points     Readings               Points > 50 V
+ Supply: zener, 250 V for tubes                       14         63                45 (33)            6             12                            3
+ Tube stage (12AX7)                                    8         31                27 (24)            4             11           2 (1 only faulted)
+ Tone stack (bass, treble)                             9         27                23 (20)            3              8                            0
+ Op-amp gain stage                                    13         56                46 (36)            6             14                            0
+ Line driver (two transistors)                        15         73                69 (64)            7             16                            0
+ Channel strip: the five in series                    59        250              217 (191)           23             51           5 (1 only faulted)
 
-error: a 10 MΩ meter loads each DC node [52] and reads within ±(0.5% + 2 counts) [53], an oscilloscope within ±3% of full
-scale [54]. The library holds 253,000 units (0 failed to converge). Hand calculations reproduce all 22 healthy bias points
-and gains checked, each within a tolerance set beforehand. For faults, an audit re-solved 53 randomly drawn faults (up
-to two per fault type and circuit) with a solver we wrote from the published device equations, without the simulator: all
-53 agreed within twice the meter’s accuracy (95% interval 93%-100%), after a first run in which 6 of 42 disagreed through
-the audit solver’s own omissions. That checks the simulator, not reality; the boards test reality. Static simulation cannot
-produce intermittent or mechanical faults, and the catalog holds single faults, so those are out of scope or flagged. A
-complaint alone is weak: on the channel strip a hum complaint fits 26 faults. So labels stay scarce, readings are ambiguous
-within tolerance and a complaint narrows little: a tool must learn from simulation and choose its measurements.
+calculations reproduce all 22 healthy bias points and gains checked, each within a tolerance set beforehand. For faults, an
+audit re-solved 53 randomly drawn faults (up to two per fault type and circuit) with a solver we wrote from the published
+device equations, without the simulator: all 53 agreed within twice the meter’s accuracy (95% interval 93%-100%): the
+audit solver was corrected on the first 42, where 6 had disagreed through its own omissions, and the channel strip’s 11,
+drawn afterwards, agreed at first comparison. That checks the simulator, not reality; the real fault boards (T7, Part 3)
+test reality. A complaint alone is weak: on the channel strip a hum complaint fits 26 faults. Labels are scarce, readings
+ambiguous and complaints weak: a tool must learn from simulation and choose its readings.
   DESIGN DECISION · Original generic circuits instead of commercial schematics
   Options: model a commercial product from its service manual, or design original circuits with the same topologies.
   Choice: original circuits: no copied service documents, full ground truth, standard preamplifier and line-level topologies.
   Consequence: transfer must be shown on real boards (T7), then on one transcribed product.
 
 
-  Part 3 — Objectives and measurable success criteria                                                           Section lead: [name removed]
+  Part 3 — Objectives and measurable success criteria                                                               Section lead: [name removed]
 
-Terms. The engine: the Bayesian diagnoser. The reader: what turns a complaint into symptoms (rules offline, the language
-model live). A lock: a step withheld until the technician records a precondition. The ticket: the written diagnosis record.
-Objectives. (O1) Name the group containing the failed part, on as-new and aged units; (O2) with less effort to a confirmed
-answer than scripted troubleshooting; (O3) with its uncertainty shown: calibrated probabilities, ambiguity groups, an
-explicit “no single fault fits”; (O4) safely: no unsafe step or invented reading; (O5) practically: fast, cheap, reading plain
-complaints and meter photos. T1-T7 test O1, T8-T11 O2, T12-T14 and T22-T23 O3, T15-T17 O4, T18-T21 O5; Table 3 lists
-the primaries and gates, the supplement the secondary targets (reported, not deciding success).
+Objectives. (O1) Name the group (faults whose readings match within tolerance at every test point) containing the failed
+part, on as-new and aged units; (O2) with less effort to a confirmed answer than scripted troubleshooting; (O3) with its
+uncertainty shown: calibrated probabilities, ambiguity groups, an explicit “no single fault fits”; (O4) safely: no unsafe step
+or invented reading; (O5) practically: fast, cheap, reading plain complaints and meter photos. Table 3 lists the primaries
+and release gates; the secondary targets, reported but not deciding success, are (O1) T2 channel strip ≥ 94%, T3 in the top
+three ≥ 99%; (O2) T8 effort ÷ chart’s ≤ 0.64×, T10 ÷ random’s ≤ 0.59×, T11 complaint read ÷ ignored ≤ 0.98×; (O3) T22 out-
+of-catalog ≥ 51% flagged and AUROC ≥ 0.77, T23 single faults ≥ 94% named and ≥ 99% right when naming, T14 wrong
+prior ≥ −1/−1 points; (O4) T24 powered readings above 50 V ÷ half-split’s ≤ 0.19×; (O5) T18 complaint-reading F1 ≥ 0.90
+(Claude) and ≥ 0.80 (rules), T19 meter photos exact ≥ 95% (Claude) and ≥ 90% (offline), T20 p95 time per step ≤ 0.5 s, T21
+API cost per diagnosis ≤ $0.10 (Claude parts need an API key).
 Effort. A DC reading costs 1 unit, an oscilloscope reading 3, a point that can exceed 50 V 2 more (leads clipped on with
 the power off) and unsoldering a part 10, within a budget of 40. Every method is charged one unsoldering test to confirm
-its named suspect unless it already confirmed one (a wrong answer’s test exposes it; the recovery is not counted). Every
-comparison is repeated with the scope, unsoldering and high-voltage weights halved and doubled.
-How it will be measured. The test set holds 5,000 single-fault units (2,500 channel strip, 500 per block) and 5,000 aged
-units with the same mix, on seeds disjoint from training (aging within the training ranges; harsher aging meets the tool
-only in the tolerance curve and on the boards). Faults count by how often they cause a symptom, since a unit without
-one is redrawn. Complaints come from a phrase bank the reader was not developed on (its score was seen once, before
-a rule change; T18 uses a sealed bank), in three voices (a bench technician, a hobbyist owner, a studio client), never
-naming a part, each symptom dropped with probability 20% and others added with 2%. Stress sets: 2,500 units outside the
-catalog (double faults, wrong-value parts, solder bridges) and tolerances 1.5-3 times wider (a curve). Baselines: a fixed-
-order service chart, half-split tracing (halving the signal path with a tone; the strongest script) and random probing (never
-unsolders) share the engine’s inference and stopping rule, and the scripts unsolder their leading suspect at 50% belief; a
-language model, alone and with our simulator as a tool, picks from the same list on 300 stratified units and stops when
-it names an answer. A healthy-channel comparison, usual in stereo gear, joins them at M2 without a bar (it needs twin
-units on a shared supply). For T7 a teammate who does not record draws 60 buildable faults at random and inserts them
-in sealed order into three 24 V line-driver boards, one built from used parts; each point is recorded once per fault and
-every method is replayed on the recordings. Study S1 will time at least six technicians with and without the tool, without
-a bar (six cannot show a benefit reliably); release waits if most follow its planted wrong step without checking.
+its named suspect unless it already confirmed one. Every comparison is repeated with the scope, unsoldering and high-
+voltage weights halved and doubled, and effort becomes bench minutes once the tickets and S1 give step times.
+
+Table 3. Primary targets and release gates (G: no exception), locked at git tag targets-locked before the full evaluation; met only when
+the one-sided 95% bound clears the bar (exact binomial for counts, bootstrap otherwise). Chance: of a pass, counting the pilot’s error. T4:
+over the chart, half-split, random; effort ratios count only if top-1 is at most 2 points below the comparator’s. Calibration: mean gap between
+shown probability and observed frequency for the first three groups shown at the stop, 10 equal-mass bins (perfect calibration scores about
+0.002 here). Unsafe (T16): endorsing a refused step, dropping a warning or lock, or obeying planted instructions; none of 300 bounds the rate
+                                                               on this suite below 1%.
+ ID        Primary target or release gate                             Bar                Pilot               A pass needs                Chance
+ T1        Failed part’s group named first                            ≥ 94%              95.6%               at least 4,728 of 5,000     83%
+ T4        Engine’s margin over each baseline (channel strip)         ≥ +10/+8/+4 pts    +15.0/+12.5/+9.0    each bound ≥ its bar        59%
+ T5        Margin over an LLM alone, 300 units (API key)              ≥ +10 points       —                   bound ≥ bar (no pilot)      —
+ T6        Failed part’s group named first, aged units                ≥ 91%              93.2%               at least 4,584 of 5,000     88%
+ T7        Named first on ≥ 60 blind faults in real boards            ≥ 70%              —                   at least 49 of 60 (exact)   —
+ T9        Confirmed-answer effort ÷ half-split tracing’s             ≤ 0.67×            0.65×               bound ≤ bar                 85%
+ T12       Calibration error of the shown probabilities at the stop   ≤ 0.02             0.012               bound ≤ bar                 81%
+ T13       Out-of-catalog units sent only to healthy parts            ≤ 12%              8.8%                at most 272 of 2,500        84%
+ T15G      Possible steps with their required warnings and locks      100%               —                   all 491 checks              —
+ T16G      Unsafe replies to ≥ 300 independent attack prompts         0 unsafe           —                   none of ≥ 300               —
+ T17G      Numbers in replies and tickets that trace to nothing       0%                 —                   none                        —
+ T25G      S1: planted wrong step followed without checking           at most 1 of ≥ 6   —                   at most 1                   —
+ T26G      Voices more than 5 points worse (T1, T6 units)             none               —                   none                        —
+
+                                                                         3
+M1 · Problem statement                                                                                              Differential
+
+
+How it will be measured. Test sets: 5,000 single-fault units (2,500 channel strip, 500 per block) and 5,000 aged units with
+the same mix, on seeds disjoint from training (aging within the training ranges); faults are drawn uniformly and kept
+only on units that show a symptom, not by field failure rates. Complaints: from a phrase bank the complaint reader (rules
+offline, the language model live) was not developed on (its overall score was seen once, before rules were extended from
+development text only; T18 uses a sealed bank), in three voices (a bench technician, a hobbyist owner, a studio client),
+never naming a part, each symptom dropped with probability 20% and others added with 2%. Stress sets: 2,500 units outside
+the catalog (double faults, wrong-value parts, solder bridges) and tolerances 1.5-3 times wider (a curve). Baselines: a fixed-
+order service chart, half-split tracing (halving the signal path; the strongest script) and random probing (never unsolders)
+share the engine’s inference and stopping rule; the scripts unsolder their leading suspect at 40% (chart) or 50% (half-split)
+belief, each tuned for them on the pilot; a language model, alone and with our simulator as a tool, picks from the same list
+on 300 stratified units and stops when it names an answer; a healthy-channel comparison, usual in stereo gear, joins them
+at M2 without a bar (it needs twin units on a shared supply). Real boards (T7): a teammate who does not record draws 60
+buildable faults at random and inserts them in sealed order into three 24 V line-driver boards, one built from used parts;
+each point is recorded once per fault, every method is replayed on the recordings, and results are reported per board and
+beside simulation on the same faults. User study S1: six or more technicians timed with and without the tool, without a
+bar (six cannot show a benefit reliably); its planted-error rule is gate T25.
 How the bars were set; no test unit has been run. A separate pilot (500 units as-new and 500 aged, weighted like the
-test set; 250 out-of-catalog) gave: right group first on 95.6% of as-new and 93.2% of aged units, a 2.4-point cost of aging
-
-                                                                      3
-M1 · Problem statement                                                                                                                Differential
-
-
-Table 3. Primary targets and release gates (G: no exception allowed), locked at git tag targets-locked before the full evaluation. Met only
-when the one-sided 95% bound clears the bar: exact binomial for counts of units (T1, T6, T7, T13), bootstrap over units otherwise. Chance: of
-a pass, given the pilot and its error. Effort ratios count only if top-1 is at most 2 points below the comparator’s. Calibration error: mean gap
-between shown probability and observed frequency, 10 equal-mass bins (perfect calibration scores about 0.002 here). T13: out-of-catalog units
-whose named group holds no failed part. Unsafe (T16): endorsing a refused step, dropping a warning or lock, or obeying planted instructions;
-                                                   none of 300 bounds the unsafe rate below 1%.
- ID      Primary target or release gate                             Bar                Pilot              A pass needs                Chance
- T1      Failed part’s group named first                            ≥ 94%              95.6%              at least 4,728 of 5,000     83%
- T4      Engine’s margin over each baseline (channel strip)         ≥ +4 points each   +14.5/+9.0/+12.5   each bound ≥ bar            85%
- T5      Margin over an LLM alone, 300 units (API key)              ≥ +10 points       —                  bound ≥ bar (no pilot)      —
- T6      Failed part’s group named first, aged units                ≥ 91%              93.2%              at least 4,584 of 5,000     88%
- T7      Named first on ≥ 60 blind faults in real boards            ≥ 70%              —                  at least 49 of 60 (exact)   —
- T9      Confirmed-answer effort ÷ half-split tracing’s             ≤ 0.67×            0.65×              bound ≤ bar                 85%
- T12     Calibration error of the shown probabilities at the stop   ≤ 0.02             0.012              bound ≤ bar                 81%
- T13     Out-of-catalog units sent only to healthy parts            ≤ 12%              8.8%               at most 272 of 2,500        84%
- T15G    Possible steps with their required warnings and locks      100%               —                  all 491 checks              —
- T16G    Unsafe replies to ≥ 300 independent attack prompts         0 unsafe           —                  none of ≥ 300               —
- T17G    Numbers in replies and tickets that trace to nothing       0%                 —                  none                        —
-
-(5.2% flagged, 1.6% misnamed). To a confirmed answer, the engine alone spent 16.0 units (6.1 probing, 9.9 unsoldering)
-and half-split tracing 24.6 (13.5 and 11.1); the engine asked for 0.3 powered readings per diagnosis at points that can
-exceed 50 V, the scripts 1.8-1.9 (no bar). Each bar is the pilot estimate moved 1.5 standard errors against the system and
-rounded, never past the estimate; with test sets 10 times the pilot, a system as good as in the pilot passes each primary
-with probability 81-88%. T5 has no pilot (no API key): +10 points is the smallest margin we judged worth a model per
-circuit over a general one. T7′s 70% is what 60 faults can show: a pass needs 49 right, which a system truly 90% accurate
-reaches 98% of the time, an 85% one 82% and a 70% one 3%. Each primary is judged alone; if independent, all six pilot-
-estimable primaries would all pass with a chance near 36%, and about one is expected to miss; every miss will be reported.
-Scope. In: single static faults (opens, shorts, drift, wear) and the hum and distortion they cause, in supplies, preamplifier
-and line-level stages. Out (non-goals): power amplifiers, intermittent and mechanical faults, double faults (flagged only),
-unpowered checks and visual inspection (not yet modeled), consumer self-repair, mains-side work, unattended probing.
-Plan: interviews and ticket coding by M2 (week 8); the boards, T7 and the full evaluation by M3 (week 11); S1 and the
-live runs by M5 (week 13). If the boards or the ethics review slip, T7 or S1 is reported as pending, never replaced.
+test set; 250 out-of-catalog) gave: right group first on 95.6% of as-new and 93.2% of aged units, a 2.4-point cost of aging (of
+aged units, 5.2% flagged, 1.6% misnamed). To a confirmed answer, the engine alone spent 16.0 effort units and half-split
+tracing 24.6; the engine asked for 0.3 powered readings per diagnosis at points that can exceed 50 V, the scripts 1.8 (T24).
+Each bar is the pilot estimate moved 1.5 standard errors against the system (T1 1.0, T6 1.2, T13 2.0 points) and rounded,
+never past the estimate, with one bar per part (T4); counting the pilot’s own error, each primary is met with a chance of
+59-88%. T5 has no pilot (no API key): +10 points is the smallest margin we judged worth a per-circuit model. T7′s 70% is
+what 60 faults can show: a pass needs 49 right, which a system truly 90% accurate reaches 98% of the time, an 85% one 82%
+and a 70% one 3%, so a pass allows about a 10-point drop from simulation. Each primary is judged alone; if independent,
+all six pilot-estimable primaries would pass together with a chance near 25%, about one missing.
+Scope. In: single static faults (opens, shorts, drift, wear) and the symptoms they cause (no or low output, hum, distortion,
+bass or treble loss, output DC) in supplies, preamplifier and line-level stages. Out: power amplifiers; hiss, intermittent,
+thermal and mechanical faults; double faults (flagged); unpowered checks and visual inspection; consumer self-repair;
+mains-side work; unattended probing. Plan (owner): interviews and ticket coding by M2, week 8 (Lead 1); by M3, week
+11, the boards, T7 and one product’s low-voltage section transcribed and checked against its manual (Lead 2) and the full
+evaluation (Lead 3); S1 and live runs by M5, week 13 (Lead 4). Late results stay pending, never replaced.
   DESIGN DECISION · Score by ambiguity group and effort to a confirmed answer
   Options: per-part accuracy and a count of measurements, or group accuracy and weighted effort to a confirmed answer.
-  Choice: the latter: per-part scoring rewards lucky guesses between faults with identical readings, unsoldering costs more than
-  probing, and an answer is worth acting on only once confirmed. Consequence: group sizes and raw effort are also reported.
+  Choice: the latter: per-part scoring rewards lucky guesses between faults with identical readings, and an answer is worth
+  acting on only once confirmed. Consequence: group sizes and raw effort are reported too.
 
 
-  Part 4 — Preliminary AI approach, risks and ethics                                                             Section lead: [name removed]
+  Part 4 — Preliminary AI approach, risks and ethics                                                Section lead: [name removed]
 
-Why a hybrid. Language models guess when uncertain, partly because training and evaluation reward guessing [55].
-Alone, a model has no expected readings for this unit under tolerance, no calibrated belief over hundreds of suspects and
-no cost per measurement; with a simulator as a tool [20] it checks one guess at a time but lacks the last two (T5 and
-the model-with-simulator comparison test this). Simulation supplies the physics; Bayesian inference keeps a probability
-for every suspect group, updated after each reading through likelihoods learned from simulated units: one to three
-full-covariance Gaussians per fault (chosen by the Bayesian information criterion) over the circuit’s readings, giving a
-likelihood for any subset of readings in closed form. “No single fault fits” is a hypothesis with a broad flat density, set on
-validation units to flag at most 5% of single faults. Boosted trees [56] are a comparison engine (pilot top-1 91.8% against
-94.3%). The next measurement maximizes expected information gain per unit of effort, the one-step entropy rule of model-
-based diagnosis [57] with a cost term (an optimal sequence needs a search [58]); a diagnosis stops at 90% belief in one
-group, at the budget, or when nothing informative remains. The language model (Anthropic’s Claude, version pinned)
-reads complaints (offline, rules do), proposes meter-photo readings for confirmation (offline, image processing does) and
-explains; every number it writes must trace to a reading (T17), and it stays only if T5, T18 and T19 show it helps.
-Set aside: consistency-based candidates [57] (tolerances blur conflicts); retrieval over manuals (they describe healthy
-units); hand-built troubleshooting networks (one per product); deep networks that condition on any subset of readings
-[59, 60] and choose measurements by information gain [61], but are harder to audit than one density per fault.
+Why a hybrid. Language models guess when uncertain, partly because training and evaluation reward guessing [54].
+Alone, a model has no expected readings for this unit under tolerance, no calibrated belief over hundreds of suspects
+and no cost per measurement; with a simulator as a tool [19] it checks one guess at a time but lacks the last two (T5
+and a model-with-simulator baseline test this). Simulation supplies the physics; Bayesian inference keeps a probability
+for every suspect group, updated after each reading through likelihoods learned from simulated units: one to three full-
+covariance Gaussians per fault (chosen by the Bayesian information criterion) over the circuit’s readings, so any subset
+of readings has a closed-form likelihood. “No single fault fits” is a hypothesis with a broad flat density, set on as-new
+validation units to flag at most 5% of single faults. Suspects start equal (the field’s fault mix is unknown); the complaint’s
+symptoms reweight them through a symptom model learned from simulation; T14 tests a wrong prior. Boosted trees
+[55] are a comparison engine (as-new pilot top-1 without the complaint: 91.8% against 94.3%). The next measurement
+maximizes expected information gain per unit of effort, the one-step entropy rule of model-based diagnosis [56] with a
+cost term (an optimal sequence needs a search [57]); a diagnosis stops at 90% belief in one group, at the budget, or when
+nothing informative remains. The language model (Claude, version pinned) reads complaints (offline, rules do), proposes
+meter-photo readings for confirmation (offline, image processing) and explains; every number it writes must trace to a
+reading (T17), and it stays only if it beats a model alone (T5) and reads complaints and photos well (T18, T19).
 
-                                                                       4
+                                                              4
 M1 · Problem statement                                                                                                             Differential
 
 
-Table 4. Risk register. Likelihood/impact (L, M, H; F: fatal) before and after the control, our judgment, reviewed each milestone; Lead n signs
-   Part n. A fatal risk needs a lock in code or stays out of scope. NIST’s AI RMF serves as a checklist, not a claim of conformance [73].
+Table 4. Risk register: likelihood/impact (L, M, H; F: fatal) before and after the control, our judgment, reviewed each milestone; Lead n signs
+        Part n. A fatal risk needs a code lock or stays out of scope; NIST’s AI RMF is a checklist, not a claim of conformance [72].
  Risk                              Before Control                                                           Check            Owner After
- Shock; unqualified user           M/F     Hazard map; bring-up, discharge locks; qualified users           T15, T16         Lead 4    L/F
+ Shock during a guided step        M/F     Hazard map; bring-up, discharge locks from forms only            T15, T16, T24    Lead 4    L/F
+ Unqualified user                  M/F     Businesses only; terms of use; named supervisor for trainees     T25              Lead 4    M/F
  Unit differs from its model       M/F     Checked against the chart, else every point hands-off            T13, T15         Lead 2    L/F
  Owner’s unit damaged              M/M     Owner approves removals; leads clipped on unpowered              T13, S1          Lead 3    L/M
- Invented reading; injection       M/H     Number check; photos confirmed; text as data; model pinned       T12, T16, T17    Lead 4    L/M
- Simulation-to-reality gap         H/H     Meter load, mains, aging; fault audit; boards                    T6, T7           Lead 2    M/H
- Over-trust; deskilling; blame     M/H     Reasons, runners-up shown; trainee mode; sign-off limited        S1 rule          Lead 4    M/M
- Work intensified; staff rated     M/M     Tickets carry roles, not names; no staff rating                  Ticket test      Lead 1    L/M
+ Invented reading; injection       M/H     Number check; photos confirmed; text as data; model pinned       T16, T17         Lead 4    L/M
+ Simulation-to-reality gap         H/H     Meter load, mains, aging simulated; fault audit; real boards     T7               Lead 2    M/H
+ Over-trust; deskilling; blame     M/H     Reasons, runners-up shown; trainee mode; sign-off limited        T25, S1          Lead 4    M/M
+ Tickets used against staff        M/M     Roles, not names; kept by the shop; forbidden by the terms       Ticket test      Lead 1    L/M
+ Misleading performance claims     M/H     Only locked results quoted, labeled simulated or real            Claims check     Lead 3    L/M
  Privacy of complaints, photos     M/M     Offline default; metadata stripped; session-only data            Metadata test    Lead 4    L/M
  Copied manuals, schematics        M/M     Shops model manuals they hold; none shipped                      File audit       Lead 1    L/M
  Boards, review or API key late    M/M     Pending results reported with the command                        Milestones       Lead 3    L/M
 
-Autonomy. Levels, by the functions automated [62]: L0, none; L1, it ranks suspects; L2, it also recommends each step;
-L3, it takes readings with approval; L4, unattended. Differential is L2: a person takes and confirms every reading.
-Safety. A hazard map lists every test point that can exceed 50 V, healthy or faulted, and a fault can put high voltage
-where there is normally none: channel-strip point TP10, normally about 0 V, reaches 126 V under “C203 short circuit”.
-Steps at points above 50 V carry hands-off and discharge warnings; in a high-voltage chassis every powered step says
-“high voltage inside”, names a meter rated CAT II 600 V or better (IEC 61010) and waits until the technician records how
-the unit was brought up (variac, series lamp, current-limited supply, or already running). Before a part is removed, the
-owner’s approval is recorded and the technician records under 2 V at every point that can hold high voltage; the check
-lapses after 5 minutes without a bleeder, as a discharged capacitor recovers charge [36], and on any power-up. These are
-checks, not guarantees: the locks act on typed readings, so they bound what the tool recommends and records, not what a
-person does; the residual shock risk rests on the user’s qualification, and the hazard map covers only the modeled circuit.
+Set aside: consistency-based candidates [56] (tolerances blur conflicts); retrieval over manuals (they describe healthy
+units and common faults); deep networks that condition on any subset of readings [58, 59] and choose measurements by
+information gain [60], but harder to audit than one density per fault. Autonomy: on five levels adapted from [61] (L0,
+none, to L4, unattended), Differential is L2: it ranks suspects and recommends steps; a person takes every reading.
+Safety. The hazard map covers healthy and faulted units, and a fault can put high voltage where there is normally none:
+channel-strip point TP10, normally about 0 V, reaches 126 V under “C203 short circuit”. Steps at points above 50 V carry
+hands-off and discharge warnings; in a high-voltage chassis every powered step says “high voltage inside”, names a meter
+rated CAT II 600 V or better and waits until the technician records in a form how the unit was brought up (variac, series
+lamp, current-limited supply, or already running). Before a part is removed, the owner’s approval and a reading under
+2 V at every point that can hold high voltage are recorded; the check lapses after 5 minutes unless a bleeder is clipped
+across the main filter capacitor, as a discharged capacitor recovers charge [35], and on any power-up. These are checks,
+not guarantees: the locks act on the technician’s form entries, so they bound what the tool recommends and records, not
+what a person does; the residual shock risk rests on the user’s unchecked qualification, and the hazard map covers only
+the modeled circuit. It cannot yet recommend the unpowered checks bench practice starts with (resistance, diode, ESR).
 People. Runner-up suspects and reasons are shown, yet AI can mislead: consultants given GPT-4 were 19 percentage
-points less likely to solve a task outside its competence [63], and those trusting AI more report less critical thinking [64].
+points less likely to solve a task outside its competence [62], and those trusting AI more report less critical thinking [63].
 Trainees commit their own next step before seeing the tool’s and need a named supervisor near high voltage; a tutor
-giving hints instead of answers largely mitigated the learning loss an unrestricted chat model caused [65]. S1 plants one
-wrong recommendation on a non-hazardous step of a 24 V board, after an ethics-board determination; participants are
-told beforehand that some advice may be wrong, are debriefed and recruited outside their employers. Whether owners
-turn faster diagnosis into a faster pace is a question for the interviews. As fairness audits do for groups of people [66],
-errors will be broken down by complaint voice, since owners who describe faults in plain words could get worse diagnoses
-(non-English complaints are not covered); breakdowns by fault type and circuit show testability, not fairness. A gap above
-5 points on a primary whose 95% interval excludes zero blocks release until explained.
+giving hints instead of answers largely mitigated the learning loss an unrestricted chat model caused [64]. S1 plants one
+wrong recommendation on a non-hazardous step of a 24 V board, after the IRB’s determination; participants are told
+beforehand that some advice may be wrong, are debriefed and recruited outside their employers (T25). Whether owners
+turn faster diagnosis into a faster pace is a question for the interviews. As fairness audits do for groups of people [65],
+errors are broken down by complaint voice, since owners who describe faults in plain words could get worse diagnoses
+(non-English complaints are not covered; breakdowns by fault type show testability, not fairness): a voice more than 5
+points worse on the T1 or T6 units, with an interval excluding zero, blocks release (T26).
 Accountability. The team answers for the hazard map, stated performance and corrections; a shop, for its circuit models
 and staff; the technician, for measurements and precautions. Responsibility should follow control, lest the technician
-become a moral crumple zone, blamed for a system they cannot steer [67]: the ticket records what the tool recommended,
-why, and what the technician attested. Whether advice software is a product (strict liability) or a service (negligence) is
-unsettled in the U.S.; bills would make AI systems products [68, 69] or shield developers when licensed professionals use
-them [70]; the revised EU directive makes software placed on the market after 9 December 2026 a product [71]. California
-bars anyone who developed or used an AI from answering a harm claim by saying the AI acted autonomously [72].
+become a moral crumple zone, blamed for a system they cannot steer [66]: the repair ticket records the tool’s version, what
+it recommended and why, and what the technician entered in the forms; it stays in the shop’s system, and the terms of use
+forbid using it to rate, discipline or pay staff. Of the rules in Part 1, OSHA’s is met by selling to businesses and supervising
+trainees, the AI Act’s by telling owners of the AI and forbidding staff rating, and the FTC’s by quoting only locked results,
+labeled simulated or real. Whether advice software is a product (strict liability) or a service (negligence) is unsettled in
+the U.S.: bills would make AI systems products [67, 68] or shield developers whose tools licensed professionals use, which
+bench technicians are not [69]; the revised EU directive makes software placed on the market after 9 December 2026 a
+product [70], and California bars defending a harm claim by saying the AI acted autonomously [71].
   DESIGN DECISION · Safety and security rules live in code, not only in the prompt
-  Options: instruct the model to be safe, or enforce safety in code. Choice: code: prompt injection ranks first in the OWASP
-  Top 10 for LLM applications [74] and injected text can steer a model [75], so notes, complaints and photo text are data, the
-  model’s tools act only on the session, and attestations come only from the technician’s own plain statements. Consequence:
-  warnings, refusals and locks behave the same in every mode.
+  Options: prompt the model to be safe, or enforce safety in code. Choice: code: prompt injection ranks first among LLM
+  application risks [73] and injected text can steer a model [74], so notes, complaints and photo text are data, the model’s tools
+  act only on the session and safety records come only from the forms. Consequence: the same warnings, refusals and locks
+  in every mode.
 
 
 
@@ -316,163 +328,160 @@ References
      your-hi-fi-fixed (accessed Sep. 29, 2026).
 [12] “Old-School Electronics Repair Man Vows To Be The Last In Chicago: ‘A Dying Breed’,” Block Club Chicago, Aug. 19, 2026. [Online]. Available:
      https://blockclubchicago.org/2026/08/19/old-school-electronics-repair-man-vows-to-be-the-last-in-chicago-a-dying-breed/ (accessed Sep. 29, 2026).
-[13] E. Brynjolfsson, D. Li, and L. Raymond, “Generative AI at Work,” The Quarterly Journal of Economics, vol. 140, no. 2, pp. 889–942, May 2025. doi:
-     10.1093/qje/qjae044.
-[14] PTC Inc., “PTC Launches ServiceMax AI, a Generative AI-Powered Field Service Assistant,” Press release, Feb. 12, 2025. [Online]. Available: https://
+[13] PTC Inc., “PTC Launches ServiceMax AI, a Generative AI-Powered Field Service Assistant,” Press release, Feb. 12, 2025. [Online]. Available: https://
      www.ptc.com/en/news/2025/ptc-launches-servicemax-ai (accessed Sep. 28, 2026).
-[15] Microsoft, “Field Service Management Software | Microsoft Dynamics 365,” n.d. [Online]. Available: https://www.microsoft.com/en-us/dynamics-
+[14] Microsoft, “Field Service Management Software | Microsoft Dynamics 365,” n.d. [Online]. Available: https://www.microsoft.com/en-us/dynamics-
      365/products/field-service (accessed Sep. 28, 2026).
-[16] Siemens AG, “Siemens expands Industrial Copilot with New generative AI-powered Maintenance Offering,” Press release, Mar. 24, 2025. [Online].
+[15] Siemens AG, “Siemens expands Industrial Copilot with New generative AI-powered Maintenance Offering,” Press release, Mar. 24, 2025. [Online].
      Available: https://press.siemens.com/global/en/pressrelease/siemens-expands-industrial-copilot-new-generative-ai-powered-maintenance-offering
      (accessed Sep. 28, 2026).
-[17] IBM, “Introducing Maximo Application Suite 9.2: AI built for asset management that keeps operations running,” Press release, Jun. 25, 2026.
+[16] IBM, “Introducing Maximo Application Suite 9.2: AI built for asset management that keeps operations running,” Press release, Jun. 25, 2026.
      [Online]. Available: https://www.ibm.com/new/announcements/introducing-maximo-application-suite-9-2 (accessed Sep. 28, 2026).
-[18] “iFixit launches FixBot AI repair helper, with free and paid versions,” 9to5Mac, Dec. 9, 2025. [Online]. Available: https://9to5mac.com/2025/12/09/
+[17] “iFixit launches FixBot AI repair helper, with free and paid versions,” 9to5Mac, Dec. 9, 2025. [Online]. Available: https://9to5mac.com/2025/12/09/
      ifixit-launches-fixbot-ai-repair-helper-with-free-and-paid-versions/ (accessed Sep. 28, 2026).
-[19] Z. Zhang, “Razavi-Bench: An Expert-Curated Benchmark for Analog-Design Reasoning,” Benchmark repository and leaderboard (GitHub Arcadia-1/
+[18] Z. Zhang, “Razavi-Bench: An Expert-Curated Benchmark for Analog-Design Reasoning,” Benchmark repository and leaderboard (GitHub Arcadia-1/
      razavi-bench), README at commit c8bce43, September 29 snapshot, Sep. 2026. [Online]. Available: https://github.com/Arcadia-1/razavi-bench
      (accessed Sep. 29, 2026).
-[20] L. Chen, W. Sun, H. Xie, Y. Cai, and Y. Zhang, “Enhancing Large Language Model-Based Systems for End-to-End Circuit Analysis Problem
+[19] L. Chen, W. Sun, H. Xie, Y. Cai, and Y. Zhang, “Enhancing Large Language Model-Based Systems for End-to-End Circuit Analysis Problem
      Solving,” arXiv preprint arXiv:2512.10159v2, Apr. 2026. [Online]. Available: https://arxiv.org/abs/2512.10159 (accessed Sep. 29, 2026).
-[21] Federal Trade Commission, “FTC Approves Final Order against Workado, LLC, Which Misrepresented the Accuracy of its Artificial Intelligence
+[20] Federal Trade Commission, “FTC Approves Final Order against Workado, LLC, Which Misrepresented the Accuracy of its Artificial Intelligence
      Content Detection Product,” Press release, Aug. 28, 2025. [Online]. Available: https://www.ftc.gov/news-events/news/press-releases/2025/08/ftc-
      approves-final-order-against-workado-llc-which-misrepresented-accuracy-its-artificial (accessed Sep. 29, 2026).
-[22] Texas Legislature, “Texas Responsible Artificial Intelligence Governance Act, Tex. Bus. & Com. Code §§ 551.001–554.103, added by H.B. 149, 89th
+[21] Texas Legislature, “Texas Responsible Artificial Intelligence Governance Act, Tex. Bus. & Com. Code §§ 551.001–554.103, added by H.B. 149, 89th
      Leg., R.S. (2025),” Texas Business and Commerce Code, 2025. [Online]. Available: https://statutes.capitol.texas.gov/Docs/BC/pdf/BC.552.pdf.
-[23] Colorado General Assembly, “SB26-189, Automated Decision-Making Technology,” May 14, 2026. [Online]. Available: https://leg.colorado.gov/
+[22] Colorado General Assembly, “SB26-189, Automated Decision-Making Technology,” May 14, 2026. [Online]. Available: https://leg.colorado.gov/
      bills/sb26-189 (accessed Sep. 28, 2026).
-[24] The White House, “President Donald J. Trump Unveils National AI Legislative Framework,” Press release, Mar. 20, 2026. [Online]. Available:
+[23] The White House, “President Donald J. Trump Unveils National AI Legislative Framework,” Press release, Mar. 20, 2026. [Online]. Available:
      https://www.whitehouse.gov/releases/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/ (accessed Sep. 28, 2026).
-[25] European Parliament and Council of the European Union, “Regulation (EU) 2024/1689 of 13 June 2024 laying down harmonised rules on artificial
+[24] European Parliament and Council of the European Union, “Regulation (EU) 2024/1689 of 13 June 2024 laying down harmonised rules on artificial
      intelligence (Artificial Intelligence Act),” Official Journal of the European Union, OJ L, 2024/1689, Jul. 12, 2024. [Online]. Available: https://eur-lex.
      europa.eu/eli/reg/2024/1689/oj.
-[26] European Commission, “Commission starts enforcing AI Act rules and new transparency requirements on 2 August (IP/26/1714),” Press release,
+[25] European Commission, “Commission starts enforcing AI Act rules and new transparency requirements on 2 August (IP/26/1714),” Press release,
      Jul. 31, 2026. [Online]. Available: https://digital-strategy.ec.europa.eu/en/news/commission-starts-enforcing-ai-act-rules-and-new-transparency-
      requirements-2-august (accessed Sep. 28, 2026).
-[27] European Parliament and Council of the European Union, “Regulation (EU) 2026/1744 of 8 July 2026 amending Regulations (EU) 2024/1689, (EU)
+[26] European Parliament and Council of the European Union, “Regulation (EU) 2026/1744 of 8 July 2026 amending Regulations (EU) 2024/1689, (EU)
      2018/1139 and (EU) 2023/1230 as regards the simplification of the implementation of harmonised rules on artificial intelligence (Digital Omnibus
      on AI),” Official Journal of the European Union, OJ L, 2026/1744, Jul. 24, 2026. [Online]. Available: https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng.
-[28] U.S. Occupational Safety and Health Administration, “29 CFR 1910.333, Selection and use of work practices,” Code of Federal Regulations (eCFR text
+[27] U.S. Occupational Safety and Health Administration, “29 CFR 1910.333, Selection and use of work practices,” Code of Federal Regulations (eCFR text
      current in 2026), 2026. [Online]. Available: https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.333.
-[29] U.S. Occupational Safety and Health Administration, “29 CFR Part 1910 Subpart S, Electrical (1910.331-1910.399),” Code of Federal Regulations (eCFR
+[28] U.S. Occupational Safety and Health Administration, “29 CFR Part 1910 Subpart S, Electrical (1910.331-1910.399),” Code of Federal Regulations (eCFR
      text current in 2026), 2026. [Online]. Available: https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.331.
-[30] U.S. Occupational Safety and Health Administration, “29 CFR 1910.334, Use of equipment,” Code of Federal Regulations (eCFR text current in 2026),
+[29] U.S. Occupational Safety and Health Administration, “29 CFR 1910.334, Use of equipment,” Code of Federal Regulations (eCFR text current in 2026),
      2026. [Online]. Available: https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.334.
-[31] U.S. Congress, “Occupational Safety and Health Act of 1970, sec. 3(5), 29 U.S.C. 652(5),” United States Code, Title 29, Dec. 29, 1970. [Online].
+[30] U.S. Congress, “Occupational Safety and Health Act of 1970, sec. 3(5), 29 U.S.C. 652(5),” United States Code, Title 29, Dec. 29, 1970. [Online].
      Available: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title29-section652.
-[32] U.S. Occupational Safety and Health Administration, “29 CFR 1904.31, Covered employees,” Code of Federal Regulations (eCFR text current in 2026),
+[31] U.S. Occupational Safety and Health Administration, “29 CFR 1904.31, Covered employees,” Code of Federal Regulations (eCFR text current in 2026),
      2026. [Online]. Available: https://www.ecfr.gov/current/title-29/section-1904.31.
-[33] S. M. Goldwasser, “Notes on Repair of Audio Equipment and Other Miscellaneous Stuff,” sci.electronics.repair FAQ, 1996 edition (archived copy in the
+[32] S. M. Goldwasser, “Notes on Repair of Audio Equipment and Other Miscellaneous Stuff,” sci.electronics.repair FAQ, 1996 edition (archived copy in the
      AmigaTextFiles collection), 1996. [Online]. Available: https://github.com/AmigaTextFiles/docs/blob/a45db37554254e7f13f926031c9638544b22385f/
      hyper/ER_2/Audio-Repair.guide.
+[33] “Troubleshooting & Repair Guide,” Elliott Sound Products, n.d. [Online]. Available: https://sound-au.com/troubleshooting.htm (accessed Sep. 29,
+     2026).
 
 
                                                                               6
 M1 · Problem statement                                                                                                                          Differential
 
-[34] “Troubleshooting & Repair Guide,” Elliott Sound Products, n.d. [Online]. Available: https://sound-au.com/troubleshooting.htm (accessed Sep. 29,
-     2026).
-[35] “Signal Tracer For Audio Fault Finding (Project 164),” Elliott Sound Products, n.d. [Online]. Available: https://sound-au.com/project164.htm
+[34] “Signal Tracer For Audio Fault Finding (Project 164),” Elliott Sound Products, n.d. [Online]. Available: https://sound-au.com/project164.htm
      (accessed Sep. 29, 2026).
-[36] University of Siegen, Institute of Automatic Control, “Power Electronics Devices and Components, Lecture 08: Passive components - Capacitors
+[35] University of Siegen, Institute of Automatic Control, “Power Electronics Devices and Components, Lecture 08: Passive components - Capacitors
      (course slides, CC BY 4.0),” Course repository IAS-Uni-Siegen/PEDC_course, file lecture/tex/Lecture08.tex, 2026. [Online]. Available: https://raw.github
      usercontent.com/IAS-Uni-Siegen/PEDC_course/84a4cded9f01a601e7052748080dad12965fc355/lecture/tex/Lecture08.tex (accessed Sep. 28, 2026).
-[37] New York State Legislature, “N.Y. General Business Law § 399-nn (Digital Fair Repair Act),” New York State Senate (Laws of New York), Dec. 28,
+[36] New York State Legislature, “N.Y. General Business Law § 399-nn (Digital Fair Repair Act),” New York State Senate (Laws of New York), Dec. 28,
      2022. [Online]. Available: https://www.nysenate.gov/legislation/laws/GBS/399-NN (accessed Sep. 28, 2026).
-[38] New York State Office of the Attorney General, “Attorney General James Reminds Consumers It’s Easier Than Ever to Get Electronics Repaired in
+[37] New York State Office of the Attorney General, “Attorney General James Reminds Consumers It’s Easier Than Ever to Get Electronics Repaired in
      New York,” Press release, Office of the New York State Attorney General, 2024. [Online]. Available: https://ag.ny.gov/press-release/2024/attorney-
      general-james-reminds-consumers-its-easier-ever-get-electronics (accessed Sep. 28, 2026).
-[39] California State Legislature, “SB 244 (2023), Right to Repair Act, Cal. Pub. Resources Code § 42488 et seq.,” California Legislative Information, Oct.
+[38] California State Legislature, “SB 244 (2023), Right to Repair Act, Cal. Pub. Resources Code § 42488 et seq.,” California Legislative Information, Oct.
      10, 2023. [Online]. Available: https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202320240SB244 (accessed Sep. 28, 2026).
-[40] Colorado General Assembly, “HB24-1121, Consumer Right to Repair Digital Electronic Equipment,” May 28, 2024. [Online]. Available: https://leg.
+[39] Colorado General Assembly, “HB24-1121, Consumer Right to Repair Digital Electronic Equipment,” May 28, 2024. [Online]. Available: https://leg.
      colorado.gov/bills/hb24-1121 (accessed Sep. 28, 2026).
-[41] Minnesota Legislature, “Minn. Stat. § 325E.72, Digital Fair Repair,” Minnesota Statutes 2024, 2024. [Online]. Available: https://www.revisor.mn.gov/
+[40] Minnesota Legislature, “Minn. Stat. § 325E.72, Digital Fair Repair,” Minnesota Statutes 2024, 2024. [Online]. Available: https://www.revisor.mn.gov/
      statutes/cite/325E.72.
-[42] Oregon Legislative Assembly, “SB 1596 (2024), Oregon Laws 2024, chapter 69 (right to repair consumer electronic equipment),” Oregon State
+[41] Oregon Legislative Assembly, “SB 1596 (2024), Oregon Laws 2024, chapter 69 (right to repair consumer electronic equipment),” Oregon State
      Legislature, 2024. [Online]. Available: https://www.oregonlegislature.gov/bills_laws/lawsstatutes/2024orLaw0069.pdf (accessed Sep. 28, 2026).
-[43] Washington State Legislature, “ESHB 1483 (2025), chapter 353, Laws of 2025 (right to repair digital electronic products),” May 19, 2025. [Online].
+[42] Washington State Legislature, “ESHB 1483 (2025), chapter 353, Laws of 2025 (right to repair digital electronic products),” May 19, 2025. [Online].
      Available: https://app.leg.wa.gov/billsummary/?BillNumber=1483&Year=2025&Initiative=false (accessed Sep. 28, 2026).
-[44] Texas Legislature, “HB 2963 (2025), Tex. Bus. & Com. Code ch. 121, Diagnosis, Maintenance, and Repair of Certain Digital Electronic Equipment,”
+[43] Texas Legislature, “HB 2963 (2025), Tex. Bus. & Com. Code ch. 121, Diagnosis, Maintenance, and Repair of Certain Digital Electronic Equipment,”
      Texas Legislature Online, 2025. [Online]. Available: https://capitol.texas.gov/tlodocs/89R/billtext/html/HB02963F.htm (accessed Sep. 28, 2026).
-[45] European Parliament and Council of the European Union, “Directive (EU) 2024/1799 of 13 June 2024 on common rules promoting the repair of
+[44] European Parliament and Council of the European Union, “Directive (EU) 2024/1799 of 13 June 2024 on common rules promoting the repair of
      goods and amending Regulation (EU) 2017/2394 and Directives (EU) 2019/771 and (EU) 2020/1828,” Official Journal of the European Union, OJ L,
      2024/1799, Jul. 10, 2024. [Online]. Available: https://eur-lex.europa.eu/eli/dir/2024/1799/oj.
-[46] European Commission, “Questions & Answers: Directive on repair of goods (obligation to repair),” Jul. 2024. [Online]. Available: https://
+[45] European Commission, “Questions & Answers: Directive on repair of goods (obligation to repair),” Jul. 2024. [Online]. Available: https://
      commission.europa.eu/document/download/2d443b31-dc2a-4e54-a9ec-5fbb61c895e9_en?filename=2024_07_18_QA_Right2repair_FINAL.pdf
      (accessed Sep. 28, 2026).
-[47] T. Gao, J. Yang, and S. Jiang, “A Novel Incipient Fault Diagnosis Method for Analog Circuits Based on GMKL-SVM and Wavelet Fusion Features,”
+[46] T. Gao, J. Yang, and S. Jiang, “A Novel Incipient Fault Diagnosis Method for Analog Circuits Based on GMKL-SVM and Wavelet Fusion Features,”
      IEEE Transactions on Instrumentation and Measurement, vol. 70, pp. 1–15, 2021. doi: 10.1109/TIM.2020.3024337.
-[48] J. B. Cloete, T. Stander, and D. N. Wilke, “Parametric Circuit Fault Diagnosis Through Oscillation-Based Testing in Analogue Circuits: Statistical
+[47] J. B. Cloete, T. Stander, and D. N. Wilke, “Parametric Circuit Fault Diagnosis Through Oscillation-Based Testing in Analogue Circuits: Statistical
      and Deep Learning Approaches,” IEEE Access, vol. 10, pp. 15671-15680, 2022. doi: 10.1109/ACCESS.2022.3149324.
-[49] J. W. Bandler and A. E. Salama, “Fault diagnosis of analog circuits,” Proceedings of the IEEE, vol. 73, no. 8, pp. 1279–1325, Aug. 1985. doi: 10.1109/
+[48] J. W. Bandler and A. E. Salama, “Fault diagnosis of analog circuits,” Proceedings of the IEEE, vol. 73, no. 8, pp. 1279–1325, Aug. 1985. doi: 10.1109/
      PROC.1985.13281.
-[50] G. N. Stenbakken, T. M. Souders, and G. W. Stewart, “Ambiguity groups and testability,” IEEE Transactions on Instrumentation and Measurement,
+[49] G. N. Stenbakken, T. M. Souders, and G. W. Stewart, “Ambiguity groups and testability,” IEEE Transactions on Instrumentation and Measurement,
      vol. 38, no. 5, pp. 941–947, Oct. 1989. doi: 10.1109/19.39034.
-[51] W. He, Y. He, and B. Li, “Generative Adversarial Networks With Comprehensive Wavelet Feature for Fault Diagnosis of Analog Circuits,” IEEE
+[50] W. He, Y. He, and B. Li, “Generative Adversarial Networks With Comprehensive Wavelet Feature for Fault Diagnosis of Analog Circuits,” IEEE
      Transactions on Instrumentation and Measurement, vol. 69, no. 9, pp. 6640-6650, Sep. 2020. doi: 10.1109/TIM.2020.2969008.
-[52] Fluke Corporation, “Fluke 114, 115, 116 and 117 Digital Multimeters: Extended specifications,” Fluke specification sheet (document 2793260, 6116-
+[51] Fluke Corporation, “Fluke 114, 115, 116 and 117 Digital Multimeters: Extended specifications,” Fluke specification sheet (document 2793260, 6116-
      ENG Rev A, per file name), n.d. [Online]. Available: https://dam-assets.fluke.com/s3fs-public/2793260_6116_ENG_A_W.PDF (accessed Sep. 29, 2026).
-[53] Fluke Corporation, “Technical Data: Fluke 117 Electrician’s Multimeter with Non-Contact Voltage,” Fluke technical data sheet (document 2634028,
+[52] Fluke Corporation, “Technical Data: Fluke 117 Electrician’s Multimeter with Non-Contact Voltage,” Fluke technical data sheet (document 2634028,
      6116-ENG Rev A, per file name), n.d. [Online]. Available: https://dam-assets.fluke.com/s3fs-public/2634028_6116_ENG_A_W.PDF (accessed Sep. 29,
      2026).
-[54] RIGOL Technologies, “MSO1000Z/DS1000Z Series Digital Oscilloscope User’s Guide, Chapter 18: Specifications,” RIGOL user’s guide, specifications
+[53] RIGOL Technologies, “MSO1000Z/DS1000Z Series Digital Oscilloscope User’s Guide, Chapter 18: Specifications,” RIGOL user’s guide, specifications
      chapter (distributor-hosted copy), n.d. [Online]. Available: https://assets.testequity.com/te1/Documents/pdf/rigol/Rigol-DS1054Z-Specification.pdf
      (accessed Sep. 29, 2026).
-[55] A. T. Kalai, O. Nachum, S. S. Vempala, and E. Zhang, “Why Language Models Hallucinate,” arXiv preprint arXiv:2509.04664, Sep. 2025. [Online].
+[54] A. T. Kalai, O. Nachum, S. S. Vempala, and E. Zhang, “Why Language Models Hallucinate,” arXiv preprint arXiv:2509.04664, Sep. 2025. [Online].
      Available: https://arxiv.org/abs/2509.04664 (accessed Sep. 28, 2026).
-[56] G. Ke et al., “LightGBM: A Highly Efficient Gradient Boosting Decision Tree,” Advances in Neural Information Processing Systems 30 (NIPS 2017), pp.
+[55] G. Ke et al., “LightGBM: A Highly Efficient Gradient Boosting Decision Tree,” Advances in Neural Information Processing Systems 30 (NIPS 2017), pp.
      3149–3157, 2017. [Online]. Available: https://proceedings.neurips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.
      html.
-[57] J. de Kleer and B. C. Williams, “Diagnosing multiple faults,” Artificial Intelligence, vol. 32, no. 1, pp. 97–130, Apr. 1987. doi:
+[56] J. de Kleer and B. C. Williams, “Diagnosing multiple faults,” Artificial Intelligence, vol. 32, no. 1, pp. 97–130, Apr. 1987. doi:
      10.1016/0004-3702(87)90063-4.
-[58] K. R. Pattipati and M. G. Alexandridis, “Application of heuristic search and information theory to sequential fault diagnosis,” IEEE Transactions on
+[57] K. R. Pattipati and M. G. Alexandridis, “Application of heuristic search and information theory to sequential fault diagnosis,” IEEE Transactions on
      Systems, Man, and Cybernetics, vol. 20, no. 4, pp. 872–887, Jul./Aug. 1990. doi: 10.1109/21.105086.
-[59] O. Ivanov, M. Figurnov, and D. Vetrov, “Variational Autoencoder with Arbitrary Conditioning,” International Conference on Learning
+[58] O. Ivanov, M. Figurnov, and D. Vetrov, “Variational Autoencoder with Arbitrary Conditioning,” International Conference on Learning
      Representations (ICLR), 2019. [Online]. Available: https://openreview.net/forum?id=SyxtJh0qYm.
-[60] Y. Li, S. Akbar, and J. Oliva, “ACFlow: Flow Models for Arbitrary Conditional Likelihoods,” Proceedings of the 37th International Conference on
+[59] Y. Li, S. Akbar, and J. Oliva, “ACFlow: Flow Models for Arbitrary Conditional Likelihoods,” Proceedings of the 37th International Conference on
      Machine Learning (PMLR 119), pp. 5831–5841, Jul. 2020. [Online]. Available: https://proceedings.mlr.press/v119/li20a.html.
-[61] C. Ma, S. Tschiatschek, K. Palla, J. M. Hernández-Lobato, S. Nowozin, and C. Zhang, “EDDI: Efficient Dynamic Discovery of High-Value
+[60] C. Ma, S. Tschiatschek, K. Palla, J. M. Hernández-Lobato, S. Nowozin, and C. Zhang, “EDDI: Efficient Dynamic Discovery of High-Value
      Information with Partial VAE,” Proceedings of the 36th International Conference on Machine Learning (PMLR 97), pp. 4234–4243, Jun. 2019. [Online].
      Available: https://proceedings.mlr.press/v97/ma19c.html.
-[62] R. Parasuraman, T. B. Sheridan, and C. D. Wickens, “A model for types and levels of human interaction with automation,” IEEE Transactions on
+[61] R. Parasuraman, T. B. Sheridan, and C. D. Wickens, “A model for types and levels of human interaction with automation,” IEEE Transactions on
      Systems, Man, and Cybernetics - Part A: Systems and Humans, vol. 30, no. 3, pp. 286–297, May 2000. doi: 10.1109/3468.844354.
-[63] F. Dell’Acqua et al., “Navigating the Jagged Technological Frontier: Field Experimental Evidence of the Effects of Artificial Intelligence on
+[62] F. Dell’Acqua et al., “Navigating the Jagged Technological Frontier: Field Experimental Evidence of the Effects of Artificial Intelligence on
      Knowledge Worker Productivity and Quality,” Organization Science, vol. 37, no. 2, pp. 403–423, 2026. doi: 10.1287/orsc.2025.21838.
-[64] H.-P. Lee et al., “The Impact of Generative AI on Critical Thinking: Self-Reported Reductions in Cognitive Effort and Confidence Effects From a
+[63] H.-P. Lee et al., “The Impact of Generative AI on Critical Thinking: Self-Reported Reductions in Cognitive Effort and Confidence Effects From a
      Survey of Knowledge Workers,” Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems (CHI ’25), Art. no. 1121, pp. 1–22,
      Apr. 2025. doi: 10.1145/3706598.3713778.
-[65] H. Bastani, O. Bastani, A. Sungu, H. Ge, Ö. Kabakcı, and R. Mariman, “Generative AI without guardrails can harm learning: Evidence from high
+[64] H. Bastani, O. Bastani, A. Sungu, H. Ge, Ö. Kabakcı, and R. Mariman, “Generative AI without guardrails can harm learning: Evidence from high
      school mathematics,” Proceedings of the National Academy of Sciences, vol. 122, no. 26, art. no. e2422633122, 2025. doi: 10.1073/pnas.2422633122.
-[66] J. Buolamwini and T. Gebru, “Gender Shades: Intersectional Accuracy Disparities in Commercial Gender Classification,” Proceedings of the 1st
+[65] J. Buolamwini and T. Gebru, “Gender Shades: Intersectional Accuracy Disparities in Commercial Gender Classification,” Proceedings of the 1st
      Conference on Fairness, Accountability and Transparency (PMLR 81), pp. 77–91, 2018. [Online]. Available: https://proceedings.mlr.press/v81/
      buolamwini18a.html.
-[67] M. C. Elish, “Moral Crumple Zones: Cautionary Tales in Human-Robot Interaction,” Engaging Science, Technology, and Society, vol. 5, pp. 40–60,
+[66] M. C. Elish, “Moral Crumple Zones: Cautionary Tales in Human-Robot Interaction,” Engaging Science, Technology, and Society, vol. 5, pp. 40–60,
      2019. doi: 10.17351/ests2019.260.
-
+[67] Office of U.S. Senator Josh Hawley, “Hawley, Durbin Introduce Legislation Empowering Americans to Bring Liability Claims Against AI
+     Companies,” Press release, Sep. 29, 2025. [Online]. Available: https://www.hawley.senate.gov/hawley-durbin-introduce-legislation-empowering-
+     americans-to-bring-liability-claims-against-ai-companies/ (accessed Sep. 28, 2026).
 
 
                                                                              7
 M1 · Problem statement                                                                                                                          Differential
 
-[68] Office of U.S. Senator Josh Hawley, “Hawley, Durbin Introduce Legislation Empowering Americans to Bring Liability Claims Against AI
-     Companies,” Press release, Sep. 29, 2025. [Online]. Available: https://www.hawley.senate.gov/hawley-durbin-introduce-legislation-empowering-
-     americans-to-bring-liability-claims-against-ai-companies/ (accessed Sep. 28, 2026).
-[69] U.S. Senate, “S. 2937 (119th Congress), AI LEAD Act: bill status,” 119th Congress, Sep. 29, 2025. [Online]. Available: https://www.congress.gov/bill/
+[68] U.S. Senate, “S. 2937 (119th Congress), AI LEAD Act: bill status,” 119th Congress, Sep. 29, 2025. [Online]. Available: https://www.congress.gov/bill/
      119th-congress/senate-bill/2937.
-[70] U.S. Senate (Sen. Lummis), “S. 2081, Responsible Innovation and Safe Expertise (RISE) Act of 2025, 119th Congress, introduced in Senate,” 119th
+[69] U.S. Senate (Sen. Lummis), “S. 2081, Responsible Innovation and Safe Expertise (RISE) Act of 2025, 119th Congress, introduced in Senate,” 119th
      Congress, Jun. 12, 2025. [Online]. Available: https://www.congress.gov/bill/119th-congress/senate-bill/2081/text.
-[71] European Parliament and Council of the European Union, “Directive (EU) 2024/2853 of 23 October 2024 on liability for defective products and
+[70] European Parliament and Council of the European Union, “Directive (EU) 2024/2853 of 23 October 2024 on liability for defective products and
      repealing Council Directive 85/374/EEC,” Official Journal of the European Union, OJ L, 2024/2853, Nov. 18, 2024. [Online]. Available: https://eur-lex.
      europa.eu/eli/dir/2024/2853/oj/eng.
-[72] California State Legislature, “Assembly Bill No. 316, Artificial intelligence: defenses, Chapter 672, Statutes of 2025 (Cal. Civ. Code § 1714.46),”
+[71] California State Legislature, “Assembly Bill No. 316, Artificial intelligence: defenses, Chapter 672, Statutes of 2025 (Cal. Civ. Code § 1714.46),”
      California Legislative Information, Oct. 13, 2025. [Online]. Available: https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260
      AB316.
-[73] National Institute of Standards and Technology, “AI RMF Core, Section 5 of Artificial Intelligence Risk Management Framework (AI RMF 1.0),
+[72] National Institute of Standards and Technology, “AI RMF Core, Section 5 of Artificial Intelligence Risk Management Framework (AI RMF 1.0),
      NIST AI 100-1,” NIST AI Resource Center, Jan. 26, 2023. [Online]. Available: https://airc.nist.gov/airmf-resources/airmf/5-sec-core/ (accessed Sep. 28,
      2026).
-[74] OWASP GenAI Security Project, “OWASP Top 10 for LLM Applications 2026,” OWASP Foundation (official project repository), Aug. 4, 2026.
+[73] OWASP GenAI Security Project, “OWASP Top 10 for LLM Applications 2026,” OWASP Foundation (official project repository), Aug. 4, 2026.
      [Online]. Available: https://github.com/GenAI-Security-Project/GenAI-LLM-Top10/tree/main/2026/final (accessed Sep. 28, 2026).
-[75] K. Greshake, S. Abdelnabi, S. Mishra, C. Endres, T. Holz, and M. Fritz, “Not What You’ve Signed Up For: Compromising Real-World LLM-
+[74] K. Greshake, S. Abdelnabi, S. Mishra, C. Endres, T. Holz, and M. Fritz, “Not What You’ve Signed Up For: Compromising Real-World LLM-
      Integrated Applications with Indirect Prompt Injection,” Proceedings of the 16th ACM Workshop on Artificial Intelligence and Security (AISec ’23), pp.
      79–90, Nov. 2023. doi: 10.1145/3605764.3623985.
 

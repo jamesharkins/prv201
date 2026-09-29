@@ -485,7 +485,7 @@ def main() -> None:
     text = {
         "T1": f"≥ {round(100 * d['T1']['bar'])}%", "T2": f"≥ {round(100 * d['T2']['bar'])}%",
         "T3": f"≥ {round(100 * d['T3']['bar'])}%",
-        "T4": "≥ " + "/".join(pts(d["T4"]["bar_by"][n]).split()[0] for n in margins) + " points",
+        "T4": "≥ " + "/".join(pts(d["T4"]["bar_by"][n]).split()[0] for n in margins) + " pts",
         "T6": f"≥ {round(100 * d['T6']['bar'])}%",
         "T8": f"≤ {d['T8']['bar']:.2f}×", "T9": f"≤ {d['T9']['bar']:.2f}×",
         "T10": f"≤ {d['T10']['bar']:.2f}×", "T11": f"≤ {d['T11']['bar']:.2f}×",

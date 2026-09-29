@@ -123,7 +123,7 @@
       "comparator": "margin>=",
       "bound": "bootstrap",
       "value": 0.04,
-      "text": "≥ +10/+8/+4 points",
+      "text": "≥ +10/+8/+4 pts",
       "rationale": "Isolates how the next measurement is chosen: every method shares the same inference and stopping rule, and the scripts may unsolder their leading suspect.",
       "primary": true,
       "pilot_dependent": true,

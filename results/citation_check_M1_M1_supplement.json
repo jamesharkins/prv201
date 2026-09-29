@@ -3,11 +3,11 @@
   "submissions/M1/M1.typ",
   "submissions/M1/M1_supplement.typ"
  ],
- "n_sources": 77,
+ "n_sources": 76,
  "summary": {
-  "canonical:unreachable": 72,
+  "canonical:unreachable": 71,
   "source:ok": 16,
-  "source:unreachable": 4,
+  "source:unreachable": 3,
   "source:site-block": 15,
   "canonical:site-block": 3,
   "canonical:ok": 2
@@ -19,7 +19,6 @@
   "bls_ep_2025_35",
   "bls_oews_492097_2023",
   "bls_ooh_eeir",
-  "brynjolfsson_genai_at_work_2023",
   "ca_prc_42488",
   "co_hb24_1121",
   "co_sb26_189",
@@ -109,22 +108,6 @@
    "key": "bls_ooh_eeir",
    "role": "canonical",
    "url": "https://www.bls.gov/ooh/installation-maintenance-and-repair/electrical-and-electronics-installers-and-repairers.htm",
-   "status": "unreachable",
-   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
-   "verified": "search_snippet_only"
-  },
-  {
-   "key": "brynjolfsson_genai_at_work_2023",
-   "role": "canonical",
-   "url": "https://doi.org/10.1093/qje/qjae044",
-   "status": "unreachable",
-   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
-   "verified": "search_snippet_only"
-  },
-  {
-   "key": "brynjolfsson_genai_at_work_2023",
-   "role": "source",
-   "url": "https://www.nber.org/papers/w31161",
    "status": "unreachable",
    "detail": "URLError: Tunnel connection failed: 403 Forbidden",
    "verified": "search_snippet_only"

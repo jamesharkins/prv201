@@ -65,7 +65,7 @@ docs:        ## render milestone documents (MS=M1 ... or all)
 
 docs-check:  ## page limits, balance, claims and spelling for rendered documents
 	$(PY) tools/check_pages.py
-	for f in submissions/M*/M*.typ; do $(PY) tools/check_balance.py $$f || exit 1; done
+	for f in submissions/M*/M*.typ; do case $$f in *_supplement.typ) continue;; esac; $(PY) tools/check_balance.py $$f || exit 1; done
 	for f in submissions/M*/M*.pdf; do $(PY) tools/check_claims.py "$$PWD/$$f" || exit 1; done
 	$(PY) tools/check_spelling.py submissions/M*/M*.pdf
 

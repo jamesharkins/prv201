@@ -19,7 +19,7 @@ GRAY, GRAY_T = "#52514e", "#f1f0ec"
 INK = "#0b0b0b"
 # Drawn at its printed size (full text width, shown at 100 %), so the type sizes
 # below are the sizes on paper (round 5: at 56 % width the labels printed near 4 pt).
-FIG_W, FIG_H = 6.5, 1.92
+FIG_W, FIG_H = 6.5, 1.72
 BODY_PT, TITLE_PT = 7.4, 8.2
 LINE = BODY_PT * 1.3 / 72 / FIG_H  # body line height in axes units
 TITLE = TITLE_PT / 72 / FIG_H
@@ -88,8 +88,8 @@ def main() -> None:
     lane_label(ax, y1 + h1 / 2, "OFFLINE")
 
     # Row 2: online diagnosis loop
-    hb = box_height(3)
-    yb = y1 - inch(0.24) - hb
+    hb = box_height(2)
+    yb = y1 - inch(0.2) - hb
     widths = [0.12, 0.15, 0.2, 0.2, 0.185]
     g2 = (0.91 - sum(widths)) / 4
     x2 = [0.075]
@@ -99,8 +99,8 @@ def main() -> None:
     yc = yb + (hb - h2) / 2
     box(ax, x2[0], yc, widths[0], "Complaint", "“hums and\nsounds thin”", GRAY, GRAY_T)
     box(ax, x2[1], yc, widths[1], "LLM reads it", "symptoms only;\nno fault guessing", ORANGE, ORANGE_T)
-    box(ax, x2[2], yb, widths[2], "Bayesian belief",
-        "every suspect and\n“no single fault fits”;\nat ≥ 90 %: repair ticket", BLUE, BLUE_T)
+    box(ax, x2[2], yc, widths[2], "Bayesian belief",
+        "all suspects, “no single\nfault fits”; ticket at ≥ 90 %", BLUE, BLUE_T)
     box(ax, x2[3], yc, widths[3], "Next measurement", "rules out most suspects\nper unit of effort", BLUE, BLUE_T)
     box(ax, x2[4], yc, widths[4], "Technician", "measures and\nconfirms each reading", AQUA, AQUA_T)
     colors = [GRAY, ORANGE, BLUE, BLUE]
@@ -114,7 +114,7 @@ def main() -> None:
 
     # Guardrails band
     band_y, band_h = inch(0.03), inch(0.2)
-    assert yb - inch(0.16) > band_y + band_h, (yb, band_y + band_h)
+    assert yb - inch(0.14) > band_y + band_h, (yb, band_y + band_h)
     ax.add_patch(FancyBboxPatch((0.075, band_y), 0.91, band_h,
                                 boxstyle="round,pad=0.004,rounding_size=0.012",
                                 linewidth=0.9, edgecolor="#c3c2b7", facecolor="#f7f6f3"))

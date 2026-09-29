@@ -42,20 +42,20 @@
     "channel_strip": 150
    },
    "test": {
-    "channel_strip": 500,
-    "driver": 100,
-    "opamp": 100,
-    "psu": 100,
-    "tone": 100,
-    "triode": 100
+    "channel_strip": 2500,
+    "driver": 500,
+    "opamp": 500,
+    "psu": 500,
+    "tone": 500,
+    "triode": 500
    },
    "test_aged": {
-    "channel_strip": 500,
-    "driver": 100,
-    "opamp": 100,
-    "psu": 100,
-    "tone": 100,
-    "triode": 100
+    "channel_strip": 2500,
+    "driver": 500,
+    "opamp": 500,
+    "psu": 500,
+    "tone": 500,
+    "triode": 500
    },
    "test_wide": {
     "channel_strip": 300
@@ -75,12 +75,12 @@
     "triode": 25
    },
    "unmodeled_test": {
-    "channel_strip": 250,
-    "driver": 50,
-    "opamp": 50,
-    "psu": 50,
-    "tone": 50,
-    "triode": 50
+    "channel_strip": 1250,
+    "driver": 250,
+    "opamp": 250,
+    "psu": 250,
+    "tone": 250,
+    "triode": 250
    },
    "unmodeled_val": {
     "channel_strip": 60,

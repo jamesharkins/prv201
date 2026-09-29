@@ -1653,3 +1653,183 @@
     (not fetched). A separate search summary (source page uncertain) said specifications are guaranteed except ''Typical''
     values, after more than 30 minutes of operation at the specified temperature. Values agree with existing keys rigol_ds1000z_user_guide_2014
     and rigol_ds1000ze_manual_de_2021 (fetched transcriptions).'
+
+# ---- round-5 fixes (research 2026-09-29; notes in docs/research/round5_fixes_notes.md, search text in round5_search_snippets.txt) ----
+- key: goldwasser_audio_repair_notes_1996
+  type: web
+  authors: ["Samuel M. Goldwasser"]
+  title: "Notes on Repair of Audio Equipment and Other Miscellaneous Stuff"
+  container: "sci.electronics.repair FAQ, 1996 edition (copyright 1994-1996). Read in the AmigaGuide conversion by Mike Fuller (26 July 1996) archived in GitHub repo AmigaTextFiles/docs, hyper/ER_2/Audio-Repair.guide (commit a45db37). The current edition, 'Notes on the Troubleshooting and Repair of Audio Equipment and Other Miscellaneous Stuff', is at https://www.repairfaq.org/sam/audiofaq.htm (blocked here)."
+  publisher: "Samuel M. Goldwasser (sci.electronics.repair FAQ)"
+  date: "1996"
+  url: "https://raw.githubusercontent.com/AmigaTextFiles/docs/a45db37554254e7f13f926031c9638544b22385f/hyper/ER_2/Audio-Repair.guide"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "Goldwasser names a DMM or VOM as the necessary basic meter."
+    quote: "A DMM or VOM is necessary for checking of power supply voltages and testing of sensors, LEDs, switches, and other small components."
+  - claim: "He calls an inexpensive dual-trace oscilloscope very handy."
+    quote: "However, a relatively inexpensive 5 or 10 MHz dual trace scope is very handy and you will find all kinds of uses for it."
+  - claim: "For audio work he lists a signal source; an audio signal generator is useful but not essential."
+    quote: "Stereo tuner or other audio signal source. An audio signal generator is nice but not really essential."
+  - claim: "He recommends an amplifier-based signal tracer to find where a signal is lost."
+    quote: "This is useful for tracing an audio circuit to determine where a signal is getting lost. Inexpensive signal tracers are also available but this option is likely free."
+  - claim: "He suggests a series light bulb as a current limiter when powering up a faulty supply."
+    quote: "The use of a series current limiting resistor - a low wattage light bulb, for example - may be useful to allow you to make measurements without undo risk of damage and an unlimited supply of fuses."
+  - claim: "He warns that a Variac is not an isolation transformer."
+    quote: "A Variac(tm) is not an isolation transformer!"
+  - claim: "With stereo amplifiers he treats the working channel as the reference, swapping parts between the working and dead channels (if the output is not shorted)."
+    quote: "With stereo amplifiers, it is normally safe - and most effective - to swap components between the working and dead channels as long as you are sure there is no short circuit on the output."
+  - claim: "He contrasts what intermediate test points look like in a working channel and in a dead channel."
+    quote: "Intermediate signals in a working channel may look like power supply ripple and noise. In a dead channel these same points may appear to be normal or highly distorted audio depending on which stage you test."
+  - claim: "Tests are done unpowered where possible; for example, semiconductors can be checked for shorts with an ohmmeter."
+    quote: "Perform as many tests as possible with power off and the equipment unplugged. For example, the semiconductors in the power supply section of a TV or monitor can be tested for short circuits with an ohmmeter."
+  - claim: "Before touching circuits with power off, large filter capacitors are discharged through a resistor."
+    quote: "If you need to probe, solder, or otherwise touch circuits with power off, discharge (across) large power supply filter capacitors with a 2 W or greater resistor of 100-500 ohms/V approximate value"
+  - claim: "The absence of residual charge is then verified with a voltmeter."
+    quote: "Monitor while discharging and/or verify that there is no residual charge with a suitable voltmeter."
+  notes: "This is the 1996 edition; the wording of the current repairfaq.org edition may differ. It is a widely used technician's FAQ, not a peer-reviewed text. 'undo' in the series-lamp sentence is [sic]. This edition has no sentence that explicitly says 'compare DC voltages with the good channel'. The safety quotes come from its section 3.2 'Safety guidelines'."
+
+- key: goldwasser_cd_repair_notes_1996
+  type: web
+  authors: ["Samuel M. Goldwasser"]
+  title: "Notes on CD Technology and Repair of CD players and CDROM drives"
+  container: "sci.electronics.repair FAQ, 1996 edition (copyright 1994-1996). Read in the AmigaGuide conversion by Mike Fuller (25 July 1996) archived in GitHub repo AmigaTextFiles/docs, hyper/ER_2/CD-Repair.guide (commit a45db37). The current edition is on repairfaq.org (URL not checked)."
+  publisher: "Samuel M. Goldwasser (sci.electronics.repair FAQ)"
+  date: "1996"
+  url: "https://raw.githubusercontent.com/AmigaTextFiles/docs/a45db37554254e7f13f926031c9638544b22385f/hyper/ER_2/CD-Repair.guide"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "In a CD player's analog section (apart from any shared D/A parts) there are identical left and right channels to compare when an audio problem develops."
+    quote: "Except for parts of the D/A which may be shared, there will be identical left and right channels to compare if an audio problem develops."
+  - claim: "A fault confined to one channel points away from the shared disc-reading path."
+    quote: "If only one channel is affected, then the problem most likely has nothing to do with tracking, the laser, or the mechanism."
+  notes: "From section 10.3, 'Problems with the analog circuitry'."
+
+- key: esp_p164_signal_tracer
+  type: web
+  authors: ["Elliott Sound Products"]
+  title: "Signal Tracer For Audio Fault Finding (Project 164)"
+  container: "Elliott Sound Products (sound-au.com); blocked here, wording from web-search result text restricted to sound-au.com"
+  publisher: "Elliott Sound Products"
+  date: "n.d."
+  url: "https://sound-au.com/project164.htm"
+  accessed: "2026-09-29"
+  verified: search_snippet_only
+  claims:
+  - claim: "In a stereo circuit, the technician compares the signal at the same point in each channel."
+    quote: "In a stereo circuit, you can compare the level and sound from each channel at the same point in the circuit."
+  - claim: "The faulty stage is the one whose signal does not match what is expected, or what the other channel gives."
+    quote: "The stage that provides a signal that doesn't match what you expect (or hear from the other channel) is the one at fault."
+  notes: "The byline and date were not seen. Most ESP pages are by Rod Elliott, but attribute this one to Elliott Sound Products unless the page is checked."
+
+- key: esp_p119_signature_analyser
+  type: web
+  authors: ["Elliott Sound Products"]
+  title: "Component Signature Analyser (Project 119)"
+  container: "Elliott Sound Products (sound-au.com); blocked here, wording from web-search result text restricted to sound-au.com"
+  publisher: "Elliott Sound Products"
+  date: "n.d."
+  url: "https://sound-au.com/project119.htm"
+  accessed: "2026-09-29"
+  verified: search_snippet_only
+  claims:
+  - claim: "Signature analysis is most useful when one working and one faulty item are available."
+    quote: "Signature analysis is especially useful if you have one working and one non-working item."
+  - claim: "In a stereo amplifier the working channel gives a reference pattern at each test point, and the pattern changes at the faulty part in the other channel."
+    quote: "The working amplifier gives you a pattern for each test location, and when the faulty component(s) are probed in the other amp the pattern will change."
+  - claim: "These in-circuit signature tests are made with the circuit powered off."
+    quote: "make sure that the circuit is powered off before you start to probe anything."
+  notes: "Search text places the pattern sentence right after 'in a stereo amplifier it is rare that both channels will fail'. One search summary wrongly called the page a 'Sound on Sound' article; the result URL is sound-au.com. Byline and date were not seen."
+
+- key: esp_p22_audio_oscillator
+  type: web
+  authors: ["Elliott Sound Products"]
+  title: "Audio Test Oscillator (Project 22)"
+  container: "Elliott Sound Products (sound-au.com); blocked here, wording from web-search result text restricted to sound-au.com"
+  publisher: "Elliott Sound Products"
+  date: "n.d."
+  url: "https://sound-au.com/project22.htm"
+  accessed: "2026-09-29"
+  verified: search_snippet_only
+  claims:
+  - claim: "ESP calls an audio oscillator (signal generator) essential test equipment for hi-fi work."
+    quote: "As a piece of test equipment, an audio oscillator has to be considered essential for anyone working in with hi-fi gear."
+  notes: "'working in with' [sic], as in the search text. The same text pairs the oscillator with an audio millivoltmeter and an oscilloscope, in summary wording. Byline and date were not seen."
+
+- key: esp_troubleshooting_repair_guide
+  type: web
+  authors: ["Elliott Sound Products"]
+  title: "Troubleshooting & Repair Guide"
+  container: "Elliott Sound Products (sound-au.com); blocked here, wording from web-search result text restricted to sound-au.com"
+  publisher: "Elliott Sound Products"
+  date: "n.d."
+  url: "https://sound-au.com/troubleshooting.htm"
+  accessed: "2026-09-29"
+  verified: search_snippet_only
+  claims:
+  - claim: "With a Variac, the supply to an amplifier under test is raised slowly while its output (and supply current) is monitored."
+    quote: "the amplifier voltage can be slowly increased while monitoring the amplifier's output voltage"
+  - claim: "A series 'lamp lead' (a 100 W incandescent bulb in the mains lead) is the cheaper alternative: a shorted amplifier lights it fully, a healthy one only briefly."
+    quote: "An amp with a short circuit fault will cause the lamp to glow at full brightness, but a normal load will cause the lamp to flash brightly for a moment, then settle down to a steady dull glow."
+  notes: "The page attribution rests on search ranking. This page was the top result for the exact lamp-lead phrase. For the Variac phrase the top result was ESP's 'Transformers - The Variac' (https://sound-au.com/articles/variac.htm), with this page second, so confirm on the page. Byline and date were not seen."
+
+- key: liec_v1_ch3_safe_meter_usage
+  type: book
+  authors: ["Tony R. Kuphaldt"]
+  title: "Lessons In Electric Circuits, Volume I - DC (5th ed.), Chapter 3 'Electrical Safety', section 'Safe meter usage'"
+  container: "Open textbook (Design Science License). Read in the author's SubML source file DC/src/safety.sml as redistributed in GitHub repo FauxFaux/lessons-in-electric-circuits (commit 594fe93). The official online edition is under https://www.ibiblio.org/kuphaldt/electricCircuits/DC/ (blocked here; chapter page not opened) and is also hosted by All About Circuits."
+  publisher: "Tony R. Kuphaldt (Design Science License)"
+  date: "2006"
+  url: "https://raw.githubusercontent.com/FauxFaux/lessons-in-electric-circuits/594fe93dbf3d12d188000fb901f04f08b6627e8d/DC/src/safety.sml"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "Resistance and continuity must not be measured on an energized circuit."
+    quote: "Never try to read resistance or continuity with a multimeter on a circuit that is energized."
+  - claim: "Doing so gives inaccurate readings and can damage the meter or injure the user."
+    quote: "At best, the resistance readings you obtain from the meter will be inaccurate, and at worst the meter may be damaged and you may be injured."
+  - claim: "The reason: in resistance mode the meter drives its own small test current from an internal battery."
+    quote: "When the meter is in \"resistance\" mode, it uses a small internal battery to generate a tiny current through the component to be measured."
+  - claim: "Any external voltage in the measuring loop corrupts the reading."
+    quote: "If there is any additional source of voltage in the meter-lead-component-lead-meter loop to either aid or oppose the resistance-measuring current produced by the meter, faulty readings will result."
+  notes: "Volume I is the 5th edition, last revised 18 Oct 2006, with a minor revision of 19 Sep 2017 (per the copy's Home/index.html). The section also says resistance 'must only be done on de-energized components!', but that sentence carries an <italic> tag in the source, so it is not quoted here."
+
+- key: liec_v1_ch8_ohmmeter_design
+  type: book
+  authors: ["Tony R. Kuphaldt"]
+  title: "Lessons In Electric Circuits, Volume I - DC (5th ed.), Chapter 8 'DC Metering Circuits', section 'Ohmmeter design'"
+  container: "Open textbook (Design Science License). Read in the author's SubML source file DC/src/dcmeter.sml as redistributed in GitHub repo FauxFaux/lessons-in-electric-circuits (commit 594fe93). The All About Circuits edition is https://www.allaboutcircuits.com/textbook/direct-current/chpt-8/ohmmeter-design/ (seen only in search results)."
+  publisher: "Tony R. Kuphaldt (Design Science License)"
+  date: "2006"
+  url: "https://raw.githubusercontent.com/FauxFaux/lessons-in-electric-circuits/594fe93dbf3d12d188000fb901f04f08b6627e8d/DC/src/dcmeter.sml"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "Ohmmeters read correctly only on resistance that is not powered: resistance cannot be measured on a live circuit."
+    quote: "they only function correctly when measuring resistance that is not being powered by a voltage or current source. In other words, you cannot measure resistance with an ohmmeter on a \"live\" circuit!"
+  - claim: "Any voltage applied to the test leads invalidates the reading."
+    quote: "Any voltage applied to the test leads of an ohmmeter will invalidate its reading."
+  notes: "The section's review bullet 'Ohmmeters should never be connected to an energized circuit' has <italic>never</italic> in the source. Its rendered wording was confirmed in search-result text for the All About Circuits edition. An unattributed Markdown copy of this chapter (bgoonz/electrical-engineering-review, notes/dc-metering-circuits.md, commit c482bb1) has the same wording."
+
+- key: fluke_11x_safety_2019_discharge_warning
+  type: report
+  authors: ["Fluke Corporation"]
+  title: "110/113/114/115/116/117 True-rms Multimeter Safety Information (PN 5073105, December 2019): capacitor-discharge warning"
+  container: "Fluke product safety sheet, p. 3 ('Warnings'). Read in a structured third-party transcription: GitHub repo bouldinnathan/calibration-atlas, data/gold_standards/digital_multimeter/fluke-117/model.yaml (commit 90e144f), records fluke-117__warning-discharge-*. The Fluke PDF itself is not in the repository."
+  publisher: "Fluke Corporation"
+  date: "2019-12"
+  url: "https://raw.githubusercontent.com/bouldinnathan/calibration-atlas/90e144f26930b690992d4d8df2b8bf8cb2833809/data/gold_standards/digital_multimeter/fluke-117/model.yaml"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "Fluke: disconnect power and discharge high-voltage capacitors before measuring resistance."
+    quote: "Disconnect power and discharge all high-voltage capacitors before you measure resistance"
+  - claim: "The same warning is transcribed for continuity tests."
+    quote: "Disconnect power and discharge all high-voltage capacitors before you measure ... continuity"
+  - claim: "The same warning is transcribed for capacitance tests."
+    quote: "Disconnect power and discharge all high-voltage capacitors before you measure ... capacitance"
+  - claim: "The same warning is transcribed for diode-junction tests."
+    quote: "Disconnect power and discharge all high-voltage capacitors before you measure ... a diode junction"
+  notes: "The ellipses are the transcriber's. The transcription splits one warning into four records, one per test mode, and the full sentence was not seen. Typed 'report' to fit the requested type set (existing Fluke keys use 'manual'). These claims could instead be added to existing key fluke_11x_safety_information_2019 (same document, CAT-rating claims)."

@@ -436,6 +436,8 @@
   claims:
     - claim: "On 20 March 2026 the Administration issued a national AI legislative framework of recommendations to Congress."
       quote: "On March 20, 2026, the Trump Administration issued a comprehensive national legislative framework addressing the most pressing policy topics that AI presents."
+    - claim: "Search-result text (29 September 2026) says the framework asks Congress to preempt state AI laws deemed unduly burdensome, while preserving some generally applicable state laws."
+      quote: "The framework expressly calls on Congress to preempt state AI laws deemed unduly burdensome or inconsistent with federal policy, while preserving room for certain generally applicable state laws"
 
 - key: ftc_ai_accuracy_policy_2026
   type: docs
@@ -1307,3 +1309,291 @@
       quote: "the sustained and ODD-specific performance by an ADS of the entire DDT and DDT fallback, without any expectation that a user will respond to a request to intervene"
     - claim: "Level 5, per J3016 APR2021 section 5.6: the same as Level 4 but unconditional, with no ODD limit."
       quote: "the sustained and unconditional (i.e., not ODD-specific) performance by an ADS of the entire DDT and DDT fallback without any expectation that a user will respond to a request to intervene"
+
+- key: elish_2019_moral_crumple_zones
+  type: article
+  authors: ["M. C. Elish"]
+  title: "Moral Crumple Zones: Cautionary Tales in Human-Robot Interaction"
+  container: "Engaging Science, Technology, and Society, vol. 5, pp. 40-60 (2019). estsjournal.org and doi.org were blocked from the build sandbox; the abstract was read in a 2019 blog aggregation that reproduces it, kept in GitHub repo sunjackson/SunJackson.github.io (commit 40b29df). Canonical DOI in citation_overrides.yaml."
+  publisher: "Society for Social Studies of Science"
+  date: "2019"
+  url: "https://github.com/sunjackson/SunJackson.github.io/blob/40b29df8caba0bc1d8a0c122b4e4f79977290182/_posts/2019-04/2019-04-06-dafdafc8c3353bd28153abcd69f62f98.md"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+    - claim: "Elish defines the moral crumple zone: responsibility misattributed to a human who had limited control over an automated system."
+      quote: "I introduce the concept of a moral crumple zone to describe how responsibility for an action may be misattributed to a human actor who had limited control over the behavior of an automated or autonomous system."
+    - claim: "The human in an automated system may become the component that bears the moral and legal responsibility when the system fails."
+      quote: "the human in a highly complex and automated system may become simply a component – accidentally or intentionally – that bears the brunt of the moral and legal responsibilities when the overall system malfunctions."
+
+# ---- round-5 fixes (research 2026-09-29; notes in docs/research/round5_fixes_notes.md, search text in round5_search_snippets.txt) ----
+- key: mn_325e72_digital_fair_repair
+  type: statute
+  authors: ["Minnesota Legislature"]
+  title: "Minn. Stat. § 325E.72, Digital Fair Repair (the \"Digital Fair Repair Act\")"
+  container: "Minnesota Statutes. Read in a copy of the Revisor's page for § 325E.72 scraped from www.revisor.mn.gov and committed to GitHub repo piers109uk/json-lawgic on 14-16 Nov 2024 (data/default/000036371.json, commit 222771b), i.e. the statute text current in Nov 2024. Official text: https://www.revisor.mn.gov/statutes/cite/325E.72 (blocked here). The copy drops subdivision numbers and the History line."
+  publisher: "Minnesota Office of the Revisor of Statutes"
+  date: "2023"
+  url: "https://raw.githubusercontent.com/piers109uk/json-lawgic/222771bcd8031308fe9e514724876a55fba84bda/data/default/000036371.json"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "The Act applies to equipment sold on or after 1 July 2021. The statute says 'sold'; it does not say 'sold or in use'."
+    quote: "This section applies to equipment sold on or after July 1, 2021."
+  - claim: "The core duty covers digital electronic equipment and parts sold or used in Minnesota: the manufacturer must make documentation, parts and tools available to independent repair providers and owners on fair and reasonable terms."
+    quote: "For digital electronic equipment and parts for the equipment sold or used in Minnesota, an original equipment manufacturer must make available to any independent repair provider or to the owner"
+  - claim: "Parts, tools and documentation must be available within 60 days after the product's first sale in Minnesota."
+    quote: "Such parts, tools, and documentation shall be made available within 60 days after the first sale of the digital electronic equipment in Minnesota."
+  - claim: "Covered 'digital electronic equipment' is hardware that depends, at least in part, on embedded or attached digital electronics in order to function."
+    quote: "means any hardware product that depends, in whole or in part, on digital electronics embedded in or attached to the product in order for the product to function,"
+  - claim: "The definition is limited to products for which the manufacturer supplies tools, parts or documentation to authorized repair providers."
+    quote: "for which the original equipment manufacturer makes available tools, parts, or documentation to authorized repair providers."
+  - claim: "Exclusion: motor vehicle manufacturers, manufacturers of motor vehicle equipment and motor vehicle dealers (and, per the next clause, their products and services)."
+    quote: "Nothing in this section applies to: (1) a motor vehicle manufacturer, manufacturer of motor vehicle equipment, or motor vehicle dealer acting in that capacity"
+  - claim: "Exclusion: manufacturers and distributors of medical devices as defined in the Federal Food, Drug, and Cosmetic Act."
+    quote: "Nothing in this section applies to manufacturers or distributors of a medical device as defined in the Federal Food, Drug, and Cosmetic Act"
+  - claim: "The medical exclusion also covers digital electronic products or software made for use in a medical setting."
+    quote: "or a digital electronic product or software manufactured for use in a medical setting including diagnostic, monitoring, or control equipment"
+  - claim: "Exclusion: off-road and nonroad equipment, including farm and utility tractors, farm implements and farm machinery."
+    quote: "Nothing in this section applies to manufacturers, distributors, importers, or dealers of any off-road or nonroad equipment, including without limitation farm and utility tractors; farm implements; farm machinery;"
+  - claim: "Exclusion: manufacturers need not supply parts, tools or documentation for the repair of video game consoles."
+    quote: "Nothing in this section shall be construed to require any original equipment manufacturer or authorized repair provider to make available any parts, tools, or documentation required for the diagnosis, maintenance, or repair of a video game console"
+  - claim: "Exclusion: energy storage systems."
+    quote: "Nothing in this section applies to an energy storage system, as defined in section 216B.2422, subdivision 1, paragraph (f)."
+  - claim: "Exclusion: information technology equipment intended for use in critical infrastructure."
+    quote: "Nothing in this section applies to information technology equipment that is intended for use in critical infrastructure, as defined in United States Code, title 42, section 5195c(e)."
+  - claim: "Cybersecurity-related parts, documentation and tools need be supplied only as necessary for repair or maintenance."
+    quote: "Nothing in this section requires an original equipment manufacturer to make available parts, documentation, or tools related to cybersecurity, except as necessary for the repair or maintenance of equipment."
+  - claim: "A violation is an unlawful practice under § 325D.44, and the Attorney General enforces it with the remedies of § 8.31."
+    quote: "A violation of this section is an unlawful practice under section 325D.44. All remedies, penalties, and authority granted to the attorney general under section 8.31 are available to the attorney general to enforce this section."
+  - claim: "Manufacturers and authorized repair providers are not liable for damage or injury resulting from repair, diagnosis, maintenance or modification done by others (the sentence continues: by an independent repair provider or owner)."
+    quote: "No original equipment manufacturer or authorized repair provider shall be liable for any damage or injury caused to any digital electronic equipment, person, or property that occurs as a result of repair, diagnosis, maintenance, or modification"
+  notes: "'Sold or in use' was not found in any official text reached. 'Used' appears only in the geographic scope ('sold or used in Minnesota'); the date limit is 'sold on or after July 1, 2021'. The AG's page (existing key mn_ag_r2r, search snippet) says the same and adds 'Used products are included.' The off-road list also names forestry, industrial, utility and construction equipment, EV-charging equipment, mining equipment, turf/yard/garden and outdoor power equipment, portable generators, marine and recreational vehicles, engines, generator sets and power tools. Subdivision numbers are not in the copy. Do not cite 'subd. N' without checking the Revisor page. Currency: 2025-2026 bills SF 2484/HF 2519 (motorcycles) and HF 970/SF 2030 (farm equipment) proposed amending 'Minnesota Statutes 2024, section 325E.72' (search text). Whether any was enacted was not verified, so re-check the official page before submission."
+
+- key: mn_325e72_revisor_effective_note
+  type: statute
+  authors: ["Minnesota Legislature"]
+  title: "Minn. Stat. § 325E.72 (Minnesota Statutes 2023 page and effective-date note; added by Laws 2023, ch. 57, art. 4, § 11)"
+  container: "Minnesota Statutes 2023, Office of the Revisor of Statutes (blocked here; wording from web-search result text restricted to revisor.mn.gov)"
+  publisher: "Minnesota Office of the Revisor of Statutes"
+  date: "2023"
+  url: "https://www.revisor.mn.gov/statutes/2023/cite/325E.72"
+  accessed: "2026-09-29"
+  verified: search_snippet_only
+  claims:
+  - claim: "Section 325E.72 was added by Laws 2023, chapter 57, article 4, section 11, and took effect on 1 July 2024."
+    quote: "Section 325E.72, as added by Laws 2023, chapter 57, article 4, section 11, is effective July 1, 2024."
+  - claim: "Search text for the Revisor's § 325E.72 pages repeats the application clause (equipment sold on or after 1 July 2021)."
+    quote: "This section applies to equipment sold on or after July 1, 2021."
+  notes: "The search tool's text is a summary; the effective-date sentence probably paraphrases the Revisor's 'NOTE: This section, as added by ..., is effective July 1, 2024', whose exact wording was not seen. The top results for that query were the 2023-edition page (url above) and the Laws 2023 chapter 57 page, so which one supplied the sentence is not certain. Independent support for 1 July 2024: existing key mn_ag_r2r (AG page, search snippet)."
+
+- key: tx_hb149_traiga_codified
+  type: statute
+  authors: ["Texas Legislature"]
+  title: "Texas Responsible Artificial Intelligence Governance Act, Tex. Bus. & Com. Code §§ 551.001-554.103 (Title 11, Subtitle D), added by Acts 2025, 89th Leg., R.S., ch. 1174 (H.B. 149)"
+  container: "Texas Business and Commerce Code. Read in a Markdown copy of the codified chapters in GitHub repo sjtroxel/Patchwork-Assurance, corpus/tx-traiga.md (commit 62ee79a). Per its metadata file the copy was taken from the official statutes site (https://statutes.capitol.texas.gov/Docs/BC/pdf/BC.552.pdf) on 2026-07-03. statutes.capitol.texas.gov and capitol.texas.gov are blocked here."
+  publisher: "Texas Legislature (Texas Constitution and Statutes website)"
+  date: "2025"
+  url: "https://raw.githubusercontent.com/sjtroxel/Patchwork-Assurance/62ee79aa374af8aef875e439ccd4705604b2bfa0/corpus/tx-traiga.md"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "Every TRAIGA section carries the history note: added by H.B. 149 (Acts 2025, ch. 1174), effective 1 January 2026."
+    quote: "Added by Acts 2025, 89th Leg., R.S., Ch. 1174 (H.B. 149), Sec. 4, eff. January 1, 2026."
+  - claim: "The Act reaches anyone who does business in Texas, produces a product or service used by Texas residents, or develops or deploys an AI system in Texas (§ 551.002)."
+    quote: "applies only to a person who: (1) promotes, advertises, or conducts business in this state; (2) produces a product or service used by residents of this state; or (3) develops or deploys an artificial intelligence system in this state."
+  - claim: "'AI system' is defined broadly as any machine-based system that infers from inputs how to generate outputs (§ 551.001(1))."
+    quote: "\"Artificial intelligence system\" means any machine-based system that, for any explicit or implicit objective, infers from the inputs the system receives how to generate outputs, including content, decisions, predictions, or recommendations, that can influence physical or virtual environments."
+  - claim: "'Consumer' excludes an individual acting in a commercial or employment context (§ 551.001(2))."
+    quote: "\"Consumer\" means an individual who is a resident of this state acting only in an individual or household context. The term does not include an individual acting in a commercial or employment context."
+  - claim: "The duty to tell consumers they are interacting with AI falls on governmental agencies (§ 552.051(b))."
+    quote: "A governmental agency that makes available an artificial intelligence system intended to interact with consumers shall disclose to each consumer, before or at the time of interaction, that the consumer is interacting with an artificial intelligence system."
+  - claim: "Within § 552.051 the disclosure reaches private parties only in health care: a provider that uses AI in relation to a health care service or treatment must give it to the patient (§ 552.051(f))."
+    quote: "If an artificial intelligence system is used in relation to health care service or treatment, the provider of the service or treatment shall provide the disclosure under Subsection (b)"
+  - claim: "Prohibition on any person: developing or deploying AI in a manner that intentionally aims to incite self-harm, harm to others or criminal activity (§ 552.052)."
+    quote: "A person may not develop or deploy an artificial intelligence system in a manner that intentionally aims to incite or encourage a person to: (1) commit physical self-harm, including suicide; (2) harm another person; or (3) engage in criminal activity."
+  - claim: "Prohibition on any person: developing or deploying AI with the sole intent of infringing constitutional rights (§ 552.055(a))."
+    quote: "A person may not develop or deploy an artificial intelligence system with the sole intent for the artificial intelligence system to infringe, restrict, or otherwise impair an individual's rights guaranteed under the United States Constitution."
+  - claim: "Prohibition on any person: developing or deploying AI with intent to unlawfully discriminate against a protected class (§ 552.056(b))."
+    quote: "A person may not develop or deploy an artificial intelligence system with the intent to unlawfully discriminate against a protected class in violation of state or federal law."
+  - claim: "Disparate impact alone does not show intent to discriminate (§ 552.056(c))."
+    quote: "For purposes of this section, a disparate impact is not sufficient by itself to demonstrate an intent to discriminate."
+  - claim: "Prohibition on any person: developing or distributing AI with the sole intent of producing or distributing certain unlawful sexual material (Penal Code §§ 43.26 and 21.165) (§ 552.057)."
+    quote: "A person may not: (1) develop or distribute an artificial intelligence system with the sole intent of producing, assisting or aiding in producing, or distributing:"
+  - claim: "The social-scoring ban applies only to governmental entities (§ 552.053)."
+    quote: "A governmental entity may not use or deploy an artificial intelligence system that evaluates or classifies a natural person or group of natural persons based on social behavior or personal characteristics"
+  - claim: "The ban on AI biometric identification without consent applies only to governmental entities (§ 552.054(b))."
+    quote: "A governmental entity may not develop or deploy an artificial intelligence system for the purpose of uniquely identifying a specific individual using biometric data"
+  - claim: "The Texas Attorney General has exclusive enforcement authority (§ 552.101(a))."
+    quote: "The attorney general has exclusive authority to enforce this chapter, except to the extent provided by Section 552.106."
+  - claim: "There is no private right of action (§ 552.101(b))."
+    quote: "This chapter does not provide a basis for, and is not subject to, a private right of action for a violation of this chapter or any other law."
+  - claim: "After a complaint, the AG's civil investigative demand may ask for the system's performance metrics and known limitations (§ 552.103(b))."
+    quote: "(5) any metrics the person uses to evaluate the performance of the artificial intelligence system; (6) any known limitations of the artificial intelligence system;"
+  - claim: "The AG must give written notice and may not sue before the 60th day; a cure plus a written statement within that period bars the suit (§ 552.104)."
+    quote: "The attorney general may not bring an action against the person: (1) before the 60th day after the date the attorney general provides the notice under Subsection (a)"
+  - claim: "Civil penalty for a curable violation: $10,000 to $12,000 (§ 552.105(a)(1))."
+    quote: "not less than $10,000 and not more than $12,000"
+  - claim: "Civil penalties: $80,000 to $200,000 per uncurable violation; $2,000 to $40,000 per day for a continuing violation (§ 552.105(a)(2)-(3))."
+    quote: "(2) for each violation the court determines to be uncurable, not less than $80,000 and not more than $200,000; and (3) for a continued violation, not less than $2,000 and not more than $40,000 for each day the violation continues."
+  - claim: "A person is presumed to have used reasonable care (§ 552.105(c))."
+    quote: "There is a rebuttable presumption that a person used reasonable care as required under this chapter."
+  - claim: "Liability is excluded where the defendant finds the violation through, among other routes, an internal review process while substantially complying with the NIST AI RMF Generative AI Profile or a comparable framework (§ 552.105(e)(2)(D))."
+    quote: "if the defendant substantially complies with the most recent version of the \"Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile\" published by the National Institute of Standards and Technology"
+  - claim: "No civil-penalty action lies for an AI system that has not been deployed (§ 552.105(f))."
+    quote: "The attorney general may not bring an action to collect a civil penalty under this section against a person for an artificial intelligence system that has not been deployed."
+  notes: "Third-party Markdown rendering of the codified text; section symbols and headings are the copy's. Every quote here except the history note was also found verbatim in the enrolled-bill extraction (key tx_hb149_enrolled). H.B. 149 also amended Bus. & Com. Code § 503.001 (the existing biometric-identifier statute, whose subsection (b) carries a notice-and-consent rule for commercial capture) and § 541.104 (data-privacy processor duties), and created a regulatory sandbox (ch. 553) and the Texas Artificial Intelligence Council (ch. 554). Section numbers in the claims are read from the copy's headings."
+
+- key: tx_hb149_enrolled
+  type: statute
+  authors: ["Texas Legislature"]
+  title: "H.B. No. 149, 89th Legislature, Regular Session (2025), enrolled version: An Act relating to regulation of the use of artificial intelligence systems in this state; providing civil penalties"
+  container: "Enrolled bill. Read as a pdftotext extraction of the enrolled PDF in GitHub repo jbloewencolon/regs-checker, output/law_texts/TMP-TX-AITEXASRESPONS.txt (commit d88acd8). Official: https://capitol.texas.gov/tlodocs/89R/billtext/html/HB00149F.htm (blocked here). Quotes are given without the extraction's line numbers and its 'A' characters that stand in for non-breaking spaces."
+  publisher: "Texas Legislature"
+  date: "2025"
+  url: "https://raw.githubusercontent.com/jbloewencolon/regs-checker/d88acd81f51d1b5ed8e1b46a91a84455a89ba6ea/output/law_texts/TMP-TX-AITEXASRESPONS.txt"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "SECTION 10 of H.B. 149 sets its effective date: 1 January 2026."
+    quote: "This Act takes effect January 1, 2026."
+  - claim: "SECTION 1 gives the short title."
+    quote: "This Act may be cited as the Texas Responsible Artificial Intelligence Governance Act."
+  - claim: "The House passed H.B. 149 on 23 April 2025 (146-3)."
+    quote: "I certify that H.B. No. 149 was passed by the House on April 23, 2025, by the following vote: Yeas 146, Nays 3, 1 present, not voting;"
+  - claim: "The Senate passed it with amendments on 23 May 2025 (31-0)."
+    quote: "I certify that H.B. No. 149 was passed by the Senate, with amendments, on May 23, 2025, by the following vote: Yeas 31, Nays 0."
+  - claim: "The House concurred in the Senate amendments on 30 May 2025 (121-17)."
+    quote: "the House concurred in Senate amendments to H.B. No. 149 on May 30, 2025, by the following vote: Yeas 121, Nays 17, 2 present, not voting."
+  notes: "The PDF stored beside this text in the same repository (output/law_sources/TMP-TX-AITEXASRESPONS.pdf) is a West Virginia bill (SB 198), a file mix-up in that repo. The .txt itself is the Texas enrolled bill: it carries 'H.B. No. 149' page headers and the Texas House and Senate certifications. The Governor's approval line is blank in the enrolled text; for the signing date see tx_hb149_legiscan_history."
+
+- key: tx_hb149_legiscan_history
+  type: web
+  authors: ["LegiScan"]
+  title: "TX HB149 | 2025-2026 | 89th Legislature"
+  container: "LegiScan bill page (http://legiscan.com/TX/bill/HB149), read as a Markdown capture headed 'URL Source: http://legiscan.com/TX/bill/HB149' in GitHub repo jbloewencolon/regs-checker, output/law_sources/US-TX-HB149.txt (commit d88acd8; file committed 2026-03-31). Official history: https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB149 (blocked here)."
+  publisher: "LegiScan"
+  date: "n.d."
+  url: "https://raw.githubusercontent.com/jbloewencolon/regs-checker/d88acd81f51d1b5ed8e1b46a91a84455a89ba6ea/output/law_sources/US-TX-HB149.txt"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "The Governor signed H.B. 149 on 22 June 2025."
+    quote: "| 2025-06-22 |  | Signed by the Governor |"
+  - claim: "The recorded effective date is 1 January 2026."
+    quote: "Action: 2025-06-22 - Effective on 1/1/26"
+  notes: "LegiScan is a secondary aggregator of the official history. The date agrees with the copy-maker's metadata for tx_hb149_traiga_codified (signed_date 2025-06-22), which is not an official source. The chapter number (ch. 1174) comes from the codified history note."
+
+- key: ca_ab316_2025_chaptered
+  type: statute
+  authors: ["California State Legislature"]
+  title: "Assembly Bill No. 316 (Krell), Artificial intelligence: defenses; Chapter 672, Statutes of 2025 (adds Cal. Civ. Code § 1714.46)"
+  container: "Chaptered bill text from the Legislative Counsel's PUBINFO database (bill-version record 20250AB__031695CHP). Read in a copy of the PUBINFO export dated 9 July 2026 in GitHub repo aaronjuar-ez/PUBINFO-2025, BILL_VERSION_TBL_9521.lob (commit 7158ec8). Official: https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB316 (blocked here)."
+  publisher: "California Legislative Counsel"
+  date: "2025-10-13"
+  url: "https://raw.githubusercontent.com/aaronjuar-ez/PUBINFO-2025/7158ec80e6872dc4a5c45fb634dc77effc0b474e/BILL_VERSION_TBL_9521.lob"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "AB 316 adds Section 1714.46 to the Civil Code."
+    quote: "An act to add Section 1714.46 to the Civil Code, relating to civil actions."
+  - claim: "Legislative Counsel's digest: the bill bars a defendant who developed, modified or used AI from asserting that the AI autonomously caused the harm."
+    quote: "This bill would prohibit a defendant who developed, modified, or used artificial intelligence, as defined, from asserting a defense that the artificial intelligence autonomously caused the harm to the plaintiff."
+  - claim: "Scope of § 1714.46(b): actions against a defendant who developed, modified or used AI that allegedly harmed the plaintiff."
+    quote: "In an action against a defendant who developed, modified, or used artificial intelligence that is alleged to have caused a harm to the plaintiff,"
+  - claim: "Operative rule of § 1714.46(b): in such an action it is not a defense, and the defendant may not assert, that the AI autonomously caused the harm."
+    quote: "it shall not be a defense, and the defendant may not assert, that the artificial intelligence autonomously caused the harm to the plaintiff."
+  - claim: "§ 1714.46(c)(1): other affirmative defenses, including causation and foreseeability evidence, remain available."
+    quote: "Any other affirmative defense, including evidence relevant to causation or foreseeability."
+  - claim: "§ 1714.46(c)(2): evidence of other persons' comparative fault remains available."
+    quote: "Other evidence relevant to the comparative fault of any other person or entity."
+  - claim: "§ 1714.46(a) defines 'artificial intelligence'."
+    quote: "“Artificial intelligence” means an engineered or machine-based system that varies in its level of autonomy and that can, for explicit or implicit objectives, infer from the input it receives how to generate outputs that can influence physical or virtual environments."
+  - claim: "The bill's author is Assembly Member Krell."
+    quote: "Introduced by Assembly Member Krell"
+  notes: "PUBINFO is the Legislative Counsel's bulk data; this is a third-party upload of the 2026-07-09 export (its README names leginfo.legislature.ca.gov as the source). The record's flags are Urgency NO and ImmediateEffect NO, so the ordinary 1 January start applies (see ca_civ_1714_46_history_pubinfo). The record's action dates are ENROLLED 2025-09-11 and CHAPTERED, APPROVED and FILED 2025-10-13. AB 316 does not create strict liability: subdivision (c) keeps causation, foreseeability and comparative-fault arguments."
+
+- key: ca_civ_1714_46_history_pubinfo
+  type: statute
+  authors: ["California State Legislature"]
+  title: "Cal. Civ. Code § 1714.46 (law-section record and history note)"
+  container: "Legislative Counsel's PUBINFO database, LAW_SECTION_TBL row CIV1714.46.20256721 (section text in LAW_SECTION_TBL_27589.lob). Read in the GitHub copy aaronjuar-ez/PUBINFO-2025 (commit 7158ec8, export of 2026-07-09). Official display: https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1714.46 (blocked here)."
+  publisher: "California Legislative Counsel"
+  date: "2025"
+  url: "https://raw.githubusercontent.com/aaronjuar-ez/PUBINFO-2025/7158ec80e6872dc4a5c45fb634dc77effc0b474e/LAW_SECTION_TBL.dat"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "Civil Code § 1714.46 was added by Stats. 2025, ch. 672, § 1 (AB 316) and took effect on 1 January 2026."
+    quote: "Added by Stats. 2025, Ch. 672, Sec. 1.   (AB 316)   Effective January 1, 2026."
+  notes: "The same row gives an effective-date field of 2026-01-01 00:00:00 and points to LAW_SECTION_TBL_27589.lob. That file's text matches § 1714.46(a)-(c) in the chaptered bill (checked by script). The .dat file is 43 MB, so a link checker may prefer https://raw.githubusercontent.com/aaronjuar-ez/PUBINFO-2025/7158ec80e6872dc4a5c45fb634dc77effc0b474e/LAW_SECTION_TBL_27589.lob for the text."
+
+- key: ca_ab316_history_pubinfo
+  type: statute
+  authors: ["California State Legislature"]
+  title: "AB 316 (2025-2026 Regular Session) bill history"
+  container: "Legislative Counsel's PUBINFO database, BILL_HISTORY_TBL rows for bill 202520260AB316. Read in the GitHub copy aaronjuar-ez/PUBINFO-2025 (commit 7158ec8, export of 2026-07-09). Official history: https://leginfo.legislature.ca.gov/faces/billHistoryClient.xhtml?bill_id=202520260AB316 (not opened; host blocked)."
+  publisher: "California Legislative Counsel"
+  date: "2025-10-13"
+  url: "https://raw.githubusercontent.com/aaronjuar-ez/PUBINFO-2025/7158ec80e6872dc4a5c45fb634dc77effc0b474e/BILL_HISTORY_TBL.dat"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "The Governor approved AB 316 on 13 October 2025."
+    quote: "2025-10-13 00:00:00 `Approved by the Governor.`"
+  - claim: "The Secretary of State chaptered it on 13 October 2025 as Chapter 672, Statutes of 2025."
+    quote: "2025-10-13 00:00:00 `Chaptered by Secretary of State - Chapter 672, Statutes of 2025.`"
+  - claim: "The Assembly passed AB 316 70-1 (row dated 2025-05-19)."
+    quote: "Read third time. Passed. Ordered to the Senate. (Ayes 70. Noes  1. Page 1595.)"
+  - claim: "The Senate passed it 38-0 (row dated 2025-09-08)."
+    quote: "Read third time. Passed. Ordered to the Assembly. (Ayes 38. Noes  0. Page 2621.)."
+  - claim: "The Assembly concurred in Senate amendments 78-0 (row dated 2025-09-09)."
+    quote: "Senate amendments concurred in. To Engrossing and Enrolling. (Ayes 78. Noes  0. Page 3102.)."
+  notes: "The rows are tab-delimited with back-quoted text fields; the quotes replace tabs with single spaces. The history URL in container follows leginfo's pattern but was not opened."
+
+- key: ca_ab2575_2026_digest_pubinfo
+  type: statute
+  authors: ["California State Legislature"]
+  title: "Assembly Bill No. 2575 (Ortega), Health care services: artificial intelligence (as amended in Senate, 18 June 2026)"
+  container: "Legislative Counsel's PUBINFO database, bill-version record 20250AB__257594AMD (BILL_VERSION_TBL_15305.lob). Read in the GitHub copy aaronjuar-ez/PUBINFO-2025 (commit 7158ec8, export of 2026-07-09)."
+  publisher: "California Legislative Counsel"
+  date: "2026-06-18"
+  url: "https://raw.githubusercontent.com/aaronjuar-ez/PUBINFO-2025/7158ec80e6872dc4a5c45fb634dc77effc0b474e/BILL_VERSION_TBL_15305.lob"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+  - claim: "A June 2026 Legislative Counsel's digest describes the AB 316 rule as existing law."
+    quote: "Existing law prohibits a defendant who developed, modified, or used artificial intelligence, as defined, from asserting a defense that the artificial intelligence autonomously caused the harm to the plaintiff."
+  - claim: "AB 2575 would add a new Civil Code § 1714.48 (clinical decision support systems) rather than amend § 1714.46."
+    quote: "An act to add Section 1714.48 to the Civil Code, to add Section 1339.76 to the Health and Safety Code,"
+  notes: "AB 2575 was pending at the time of the 2026-07-09 export; its last recorded action there is AMENDED_SENATE 2026-06-18. Its later fate was not checked."
+
+- key: ftc_keep_ai_claims_in_check_2023
+  type: web
+  authors: ["Michael Atleson"]
+  title: "Keep your AI claims in check"
+  container: "FTC Business Blog (Division of Advertising Practices). ftc.gov is blocked here; the sentence below appeared verbatim in web-search result text, and two GitHub-hosted third-party copies quote it identically (see notes)."
+  publisher: "Federal Trade Commission"
+  date: "2023-02-27"
+  url: "https://www.ftc.gov/business-guidance/blog/2023/02/keep-your-ai-claims-check"
+  accessed: "2026-09-29"
+  verified: search_snippet_only
+  claims:
+  - claim: "FTC staff guidance: claims about what an AI product can do are deceptive if they lack scientific support or hold only for some users or conditions."
+    quote: "Your performance claims would be deceptive if they lack scientific support or if they apply only to certain types of users or under certain conditions."
+  notes: "Corroborating copies (fetched): (1) a research note, TanmaySangam18/competitor-inc, docs/research/THE-MAXIMAL-CLAIM.md (commit 5816665), which says it read the post via the Internet Archive and gives author and date; (2) an Epoch Times article of 2023-03-03 as scraped in aemooooon/puppeteer-scraping (data/EpochTimes/articles/2023-03-03_FTC_Warns_Tech_Companies_to_Keep_AI_Claims_in_Check.txt). STATUS CAVEAT: the research note claims the live ftc.gov URL now returns 404, which is unverified. Search results report that the FTC removed over 300 Khan-era blog posts in 2025 and three AI posts in October 2025; this post was not named. Its current status could not be checked. It is staff business guidance, not a Commission rule. Cite it as 2023 FTC staff guidance and pair it with a current enforcement action (ftc_workado_final_order_2025)."
+
+- key: ftc_workado_final_order_2025
+  type: web
+  authors: ["Federal Trade Commission"]
+  title: "FTC Approves Final Order against Workado, LLC, Which Misrepresented the Accuracy of its Artificial Intelligence Content Detection Product"
+  container: "FTC press release (ftc.gov blocked here; wording from web-search result text)"
+  publisher: "Federal Trade Commission"
+  date: "2025-08-28"
+  url: "https://www.ftc.gov/news-events/news/press-releases/2025/08/ftc-approves-final-order-against-workado-llc-which-misrepresented-accuracy-its-artificial"
+  accessed: "2026-09-29"
+  verified: search_snippet_only
+  claims:
+  - claim: "In August 2025 the FTC finalized an order that bars Workado from advertising the accuracy or efficacy of its AI content-detection products unless it has competent and reliable evidence that they are as accurate as claimed."
+    quote: "unless it has competent and reliable evidence showing those products are as accurate as claimed"
+  notes: "The date 2025-08-28 comes from the title of the FTC legal-library item 'Content at Scale AI (timeline item) - August 28, 2025' in search results; the release itself was not opened. Search text also gives a 3-0 Commission vote (not otherwise verified). The April 2025 proposed-order release (https://www.ftc.gov/news-events/news/press-releases/2025/04/ftc-order-requires-workado-back-artificial-intelligence-detection-claims) uses the same 'competent and reliable evidence' test in search text. Existing round-5 keys ftc_operation_ai_comply_2024_capture and ftc_operation_ai_comply_2024_khan_quote cover the September 2024 Operation AI Comply release."

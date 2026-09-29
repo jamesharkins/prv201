@@ -3,14 +3,14 @@
   "submissions/M1/M1.typ",
   "submissions/M1/M1_supplement.typ"
  ],
- "n_sources": 68,
+ "n_sources": 77,
  "summary": {
-  "canonical:unreachable": 64,
-  "source:ok": 12,
+  "canonical:unreachable": 72,
+  "source:ok": 16,
   "source:unreachable": 4,
-  "source:site-block": 13,
-  "canonical:ok": 2,
-  "canonical:site-block": 2
+  "source:site-block": 15,
+  "canonical:site-block": 3,
+  "canonical:ok": 2
  },
  "reference_points_at_mirror": [],
  "snippet_only": [
@@ -26,9 +26,12 @@
   "dellacqua_jagged_frontier_2023",
   "ec_ip_26_1714",
   "ec_r2r_qa_2024",
+  "esp_p164_signal_tracer",
+  "esp_troubleshooting_repair_guide",
   "eu_r2r_directive_2024_1799",
   "fluke_117_technical_data",
   "fluke_11x_extended_specs",
+  "ftc_workado_final_order_2025",
   "greshake_2023",
   "ibm_mas_92_2026",
   "ifixit_fixbot_2025",
@@ -138,6 +141,22 @@
    "key": "buolamwini_gebru_2018",
    "role": "source",
    "url": "https://raw.githubusercontent.com/mlresearch/v81/gh-pages/buolamwini18a/buolamwini18a.pdf",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "ca_ab316_2025_chaptered",
+   "role": "canonical",
+   "url": "https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB316",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "ca_ab316_2025_chaptered",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/aaronjuar-ez/PUBINFO-2025/7158ec80e6872dc4a5c45fb634dc77effc0b474e/BILL_VERSION_TBL_9521.lob",
    "status": "ok",
    "detail": "200",
    "verified": "fetched"
@@ -271,6 +290,38 @@
    "verified": "fetched"
   },
   {
+   "key": "elish_2019_moral_crumple_zones",
+   "role": "canonical",
+   "url": "https://doi.org/10.17351/ests2019.260",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "elish_2019_moral_crumple_zones",
+   "role": "source",
+   "url": "https://github.com/sunjackson/SunJackson.github.io/blob/40b29df8caba0bc1d8a0c122b4e4f79977290182/_posts/2019-04/2019-04-06-dafdafc8c3353bd28153abcd69f62f98.md",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "esp_p164_signal_tracer",
+   "role": "canonical",
+   "url": "https://sound-au.com/project164.htm",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
+   "key": "esp_troubleshooting_repair_guide",
+   "role": "canonical",
+   "url": "https://sound-au.com/troubleshooting.htm",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
    "key": "eu_ai_act_consolidated_2026",
    "role": "canonical",
    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02024R1689-20260727",
@@ -367,6 +418,14 @@
    "verified": "search_snippet_only"
   },
   {
+   "key": "ftc_workado_final_order_2025",
+   "role": "canonical",
+   "url": "https://www.ftc.gov/news-events/news/press-releases/2025/08/ftc-approves-final-order-against-workado-llc-which-misrepresented-accuracy-its-artificial",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "search_snippet_only"
+  },
+  {
    "key": "gao_yang_jiang_2021_incipient_tim",
    "role": "canonical",
    "url": "https://doi.org/10.1109/TIM.2020.3024337",
@@ -378,6 +437,22 @@
    "key": "gao_yang_jiang_2021_incipient_tim",
    "role": "source",
    "url": "https://raw.githubusercontent.com/NicolasV15/CIRDC-Pro/d9ac67fa108032e41467f8fa26c7c221ae184e44/articleInfo/Journals/19/2021.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
+   "key": "goldwasser_audio_repair_notes_1996",
+   "role": "canonical",
+   "url": "https://github.com/AmigaTextFiles/docs/blob/a45db37554254e7f13f926031c9638544b22385f/hyper/ER_2/Audio-Repair.guide",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "goldwasser_audio_repair_notes_1996",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/AmigaTextFiles/docs/a45db37554254e7f13f926031c9638544b22385f/hyper/ER_2/Audio-Repair.guide",
    "status": "ok",
    "detail": "200",
    "verified": "fetched"
@@ -519,6 +594,22 @@
    "verified": "fetched"
   },
   {
+   "key": "mn_325e72_digital_fair_repair",
+   "role": "canonical",
+   "url": "https://www.revisor.mn.gov/statutes/cite/325E.72",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "mn_325e72_digital_fair_repair",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/piers109uk/json-lawgic/222771bcd8031308fe9e514724876a55fba84bda/data/default/000036371.json",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
    "key": "msft_d365_field_service_page",
    "role": "canonical",
    "url": "https://www.microsoft.com/en-us/dynamics-365/products/field-service",
@@ -565,6 +656,22 @@
    "status": "unreachable",
    "detail": "URLError: Tunnel connection failed: 403 Forbidden",
    "verified": "search_snippet_only"
+  },
+  {
+   "key": "osh_act_1970_sec3_5_employer",
+   "role": "canonical",
+   "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title29-section652",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "osh_act_1970_sec3_5_employer",
+   "role": "source",
+   "url": "https://github.com/usgpo/uslm/blob/4ec9db2f4d5d8c18d54cbee5fd64cee9992e9311/previous/sample-files/COMPS-1523.xml",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
   },
   {
    "key": "osha_1910_331_399",
@@ -757,6 +864,22 @@
    "status": "unreachable",
    "detail": "URLError: Tunnel connection failed: 403 Forbidden",
    "verified": "search_snippet_only"
+  },
+  {
+   "key": "tx_hb149_traiga_codified",
+   "role": "canonical",
+   "url": "https://statutes.capitol.texas.gov/Docs/BC/pdf/BC.552.pdf",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "tx_hb149_traiga_codified",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/sjtroxel/Patchwork-Assurance/62ee79aa374af8aef875e439ccd4705604b2bfa0/corpus/tx-traiga.md",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
   },
   {
    "key": "tx_hb2963_2025",

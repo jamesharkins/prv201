@@ -536,6 +536,8 @@ def main() -> None:
             # 85-90% accurate on the boards reaches most of the time and one at 70% almost never.
             t["pass_probability"] = {f"{q:.2f}": round(float(binom_dist.sf(t["pass_count"] - 1, n7, q)), 3)
                                      for q in (0.90, 0.85, 0.80, 0.70)}
+    # What a zero-failure gate shows: none of n bounds the rate below the exact upper bound.
+    tj["gate_bounds"] = {"T16": exact_upper(0, int(ev["red_team_min"]))}
     tj["bar_rule"] = ("Each pilot-estimable bar is the protocol-matched pilot's estimate moved against "
                       f"the system by {K} standard errors and rounded to the reporting step, never "
                       "past the estimate (eval/set_bars.py, ADR-029, ADR-043); a bar is met only when "

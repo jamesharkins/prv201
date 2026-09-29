@@ -42,6 +42,22 @@ This supplement accompanies the M1 problem statement. The statement stands on it
   caption: [Course topics and where the project uses them, with parts named by title.],
 )
 
+#heading(level: 1, numbering: none)[Secondary targets]
+<% set needs = {'api_key': 'API key'} %>
+<% macro req(t) %><% if t.get('requires') and t.requires.split(' ')[0] in needs %> (<< needs[t.requires.split(' ')[0]] >>)<% endif %><% endmacro %>
+<% set sec = targets.targets | selectattr('role', 'equalto', 'secondary') | list %>
+<% set half = ((sec | length) + 1) // 2 %>
+#figure(
+  table(
+    columns: (0.3fr, 2.1fr, 1.1fr, 0.3fr, 2.1fr, 1.1fr),
+    table.header([ID], [Secondary target], [Bar], [ID], [Secondary target], [Bar]),
+<% for i in range(half) %><% set a = sec[i] %>
+    [<< a.id >>], [<< a.plain | esc >><< req(a) >>], [<< a.text | esc >>], <% if i + half < (sec | length) %><% set b = sec[i + half] %>[<< b.id >>], [<< b.plain | esc >><< req(b) >>], [<< b.text | esc >>],<% else %>[], [], [],<% endif %>
+<% endfor %>
+  ),
+  caption: [Secondary targets: same rule, reported, not deciding success. Micro-F1: symptom reading scored over all (complaint, symptom) pairs; AUROC: chance an out-of-catalog unit gets a higher "no single fault fits" probability than a single-fault unit.],
+) <tab:secondary>
+
 #heading(level: 1, numbering: none)[How each bar was set]
 <% set T = {} %><% for t in targets.targets %><% set _ = T.update({t.id: t}) %><% endfor %>
 <% set bt = m('bars.targets') %>

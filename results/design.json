@@ -1,8 +1,9 @@
 {
  "agent": {
+  "form_only_tools": 3,
   "grounding_small_count_max": 12,
   "modes": 3,
-  "tools": 14
+  "tools": 11
  },
  "calibration": {
   "false_alarm_budget": 0.05,

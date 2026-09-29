@@ -104,7 +104,9 @@ def collect() -> dict[str, Any]:
             "bar_k": set_bars.K, "bar_weights": dict(set_bars.WEIGHTS),
         },
         "agent": {
-            "tools": len(tools.TOOL_NAMES), "modes": len(agent.MODES),
+            # the tools the language model may call; the safety records are form-only (ADR-045)
+            "tools": len(tools.MODEL_TOOL_SPECS), "form_only_tools": len(tools.FORM_ONLY_TOOLS),
+            "modes": len(agent.MODES),
             "grounding_small_count_max": grounding.SMALL_COUNT_MAX,
         },
         "safety": {

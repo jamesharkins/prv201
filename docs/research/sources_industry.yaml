@@ -981,6 +981,8 @@
       quote: "Automated judge scores, when present, are experiment metadata for transparency and re-grading. They are not a substitute for independent expert review."
     - claim: "The benchmark includes an experimental simulator-assisted (ngspice) agentic evaluation mode."
       quote: "direct multimodal QA, agentic multimodal QA, and an experimental agentic-ngspice-sky130 mode"
+    - claim: "The active leaderboard scores are graded by a single language-model judge, DeepSeek V4 Pro, as its mean score over three rollouts."
+      quote: "The active score is DeepSeek V4 Pro alone: each value is its mean score over three rollouts, with the Q15 hard-rule correction applied consistently."
   notes: "Community benchmark (not peer-reviewed); tests textbook analysis questions, not diagnosis of physical equipment. Contrast with razavi_ai_analog_part1_2025 (ChatGPT about 60% wrong on Part 1 in 2025)."
 
 - key: vungarala_spicepilot_2024
@@ -1069,7 +1071,7 @@
       quote: "access to a generative AI-based tool increases productivity, as measured by issues resolved per hour, by 14% on average, including a 34% improvement for novice and low-skilled workers but with minimal impact on experienced and highly skilled workers"
     - claim: "The authors interpret the tool as spreading top workers' best practices and speeding newer workers along the experience curve."
       quote: "The evidence suggests that the AI model disseminates the best practices of more able workers and helps newer workers move down the experience curve."
-  notes: "Quoted figures match the NBER working-paper abstract. The published QJE version (https://academic.oup.com/qje/article/140/2/889/7990658) may report slightly different point estimates; check it before attaching these numbers to the QJE citation."
+  notes: "The first two claims quote the abstract of the published version (The Quarterly Journal of Economics 140(2): 889-942, 2025; doi:10.1093/qje/qjae044; https://academic.oup.com/qje/article/140/2/889/7990658), which gives 15% on average and 5,172 agents. On 2026-09-29 both quotes were matched word for word against that abstract in the Crossref record for the DOI, read from a GitHub mirror (ledwindra/replication-code-economics, commit 0dafb39, data/crossref/s-oup-qjecon/10.1093-qje-qjae044.json); the OUP page itself was not opened. The other three claims (5,179 agents; 14% on average and 34% for novice and low-skilled workers; spread of best practices) come from the NBER working-paper version at `url`. Cite 15% only with the QJE article and 14% or 34% only with the NBER working paper."
 
 - key: dellacqua_jagged_frontier_2023
   type: paper
@@ -1087,6 +1089,10 @@
       quote: "subjects using AI outperformed those not using AI, completing 12.2% more tasks and completing them 25.1% more quickly on average while also delivering solutions of significantly improved quality"
     - claim: "On a task outside the frontier, AI users were 19 percentage points less likely to reach a correct solution."
       quote: "However, for a task outside the frontier, subjects using AI were 19 percentage points less likely to produce correct solutions."
+    - claim: "Working-paper abstract (HBS Working Paper 24-013, 22 September 2023, as posted on SSRN): subjects were randomly assigned to no AI access, GPT-4 access, or GPT-4 access with a prompt-engineering overview. SSRN, HBS, MIT Sloan and INFORMS were blocked, so the abstract was read on 2026-09-29 in two independent GitHub text copies of that PDF (repositories vitorsabbagh/doutorado_proj_pesquisa and GyehyuKim/kaist-case-hub), which agree word for word."
+      quote: "After establishing a performance baseline on a similar task, subjects were randomly assigned to one of three conditions: no AI access, GPT-4 AI access, or GPT-4 AI access with a prompt engineering overview."
+    - claim: "Working-paper abstract (same version and copies as the previous claim): on a task selected to be outside the frontier, consultants using AI were 19 percentage points less likely than those without AI to produce correct solutions."
+      quote: "For a task selected to be outside the frontier, however, consultants using AI were 19 percentage points less likely to produce correct solutions compared to those without AI."
   notes: "2023 date supported by contemporaneous coverage (Harvard Crimson, 2023-10-13). Organization Science DOI appeared in search results; its publication date was not captured."
 
 - key: bastani_genai_learning_2025
@@ -1247,10 +1253,15 @@
     quote: Thus it is imperative to provide the most effective diagnostic (troubleshooting) routines.
   notes: An exact-phrase search returned this page as the top hit for the first sentence. A second summary gave the variant
     word order 'is typically attributable'. The statement is general ('any item, subsystem, or system'), not specific to audio
-    electronics, and gives no percentage. The renaming of DAU as WarU by a Secretary of War memo dated 2025-11-07 comes from
-    search text quoting Wikipedia and is not independently verified. A related ACQuipedia article, 'Corrective Maintenance
-    Time (CMT)', appears in search results at both https://www.dau.edu/acquipedia-article/corrective-maintenance-time-cmt
-    and https://www.waru.edu/acquipedia-article/corrective-maintenance-time-cmt (not read).
+    electronics, and gives no percentage. The DAU-to-WarU renaming is corroborated by USAJOBS agency code-list data, read on
+    2026-09-29 through GitHub mirrors because data.usajobs.gov was blocked. Agency code DD81 (acronym DAU) is named Defense
+    Acquisition University in a 2021 snapshot (elgreaso/GS13Bot, commit 6374fc4, data/codes_agency_subelements.json,
+    LastModified 2021-04-30) and Warfighting Acquisition University in a 2026 snapshot refreshed daily from the USAJOBS API
+    (fartbagxp/fedjobs, commit 370aaf0, data/raw/agency_codes.csv, LastModified 2026-02-20). The Secretary of War memo dated
+    2025-11-07 that search text credits with the renaming (media.defense.gov) was blocked and not read, so the memo and its
+    date still rest on search text only. A related ACQuipedia article, 'Corrective Maintenance Time (CMT)', appears in search
+    results at both https://www.dau.edu/acquipedia-article/corrective-maintenance-time-cmt and
+    https://www.waru.edu/acquipedia-article/corrective-maintenance-time-cmt (not read).
 - key: onet_492097_details
   type: statistics
   authors:

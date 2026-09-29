@@ -648,6 +648,9 @@
       breakdown, severe overvoltage or thermal stress).'
     quote: 'Aluminum electrolytic capacitors can fail by early-life, random, or wear-out mechanisms.Important failure modes
       include:'
+  - claim: 'Ageing of aluminium electrolytic capacitors: capacitance decreases and ESR increases (slide lead-in sentence joined
+      to its first two bullet items; LaTeX list markup omitted).'
+    quote: 'The usual ageing effects are: capacitance decreases, ESR increases'
 - key: wikipedia_vacuum_tube_mirror
   type: web
   authors:
@@ -910,6 +913,10 @@
   - claim: Parametric faults are hard to detect in the presence of normal component tolerance variation; deep learning beat
       harmonic analysis on simulated data.
     quote: Parametric faults in the presence of normal component tolerance variation are challenging to detect and diagnose.
+  - claim: Cloete et al. evaluate on simulated data; their deep-learning approach outperforms harmonic analysis by an average
+      of 11.77% in classification accuracy over three parametric fault magnitudes (abstract).
+    quote: The deep learning approach outperforms the harmonic analysis approach on simulated data by an average of 11.77% in
+      classification accuracy for the three parametric fault magnitudes considered in this work.
 - key: miao_2024_attention_fcn_access
   type: paper
   authors:

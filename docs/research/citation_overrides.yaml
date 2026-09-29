@@ -305,3 +305,6 @@ us_rise_act_s2081:
 us_s2937_ai_lead_act_billstatus:
   container: "119th Congress"
   url: "https://www.congress.gov/bill/119th-congress/senate-bill/2937"
+census_naics_2017_to_2022_concordance:
+  container: "U.S. Census Bureau, NAICS concordances"
+  url: "https://www.census.gov/naics/concordances/concordances.html"

@@ -2,19 +2,18 @@
  "documents": [
   "submissions/M2/M2.typ"
  ],
- "n_sources": 10,
+ "n_sources": 13,
  "summary": {
-  "canonical:unreachable": 10,
-  "source:site-block": 3,
-  "source:ok": 1
+  "canonical:unreachable": 13,
+  "source:ok": 2,
+  "source:site-block": 6
  },
  "reference_points_at_mirror": [],
  "snippet_only": [
   "bastani_genai_learning_2025",
   "bcg_field_service_ai_2026",
   "ec_ip_26_1714",
-  "eu_ai_omnibus_2026_1744",
-  "eu_pld_2024_2853",
+  "fluke_11x_extended_specs",
   "musically_riaa_h1_2026"
  ],
  "results": [
@@ -35,12 +34,44 @@
    "verified": "search_snippet_only"
   },
   {
+   "key": "dekleer_williams_1987",
+   "role": "canonical",
+   "url": "https://doi.org/10.1016/0004-3702(87)90063-4",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "dekleer_williams_1987",
+   "role": "source",
+   "url": "https://raw.githubusercontent.com/vintageplayer/SciBase-ACMTemp/ffc9cb3f5cb7cbf0a9d9c91d485b1a63bc421db4/Journals/TODS/Volumes/Volume%2013%20Issue%202%2C%20June%201988/Pages%3A%20167-196/references.txt",
+   "status": "ok",
+   "detail": "200",
+   "verified": "fetched"
+  },
+  {
    "key": "ec_ip_26_1714",
    "role": "canonical",
    "url": "https://digital-strategy.ec.europa.eu/en/news/commission-starts-enforcing-ai-act-rules-and-new-transparency-requirements-2-august",
    "status": "unreachable",
    "detail": "URLError: Tunnel connection failed: 403 Forbidden",
    "verified": "search_snippet_only"
+  },
+  {
+   "key": "ecfr_29_1904_31",
+   "role": "canonical",
+   "url": "https://www.ecfr.gov/current/title-29/section-1904.31",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "ecfr_29_1904_31",
+   "role": "source",
+   "url": "https://github.com/AlextheYounga/ecfr/blob/2acf280edfab169375fe2d0639bdf9e85b37002c/ecfr/title-29-Labor/subtitle-B-Regulations-Relating-Labor/chapter-XVII-Occupational-Safety-Health-Administration-Department-Labor/part-1904-Recording-Reporting-Occupational-Injuries-Illnesses/subpart-D-Other-OSHA-Injury-Illness-Recordkeeping-Requirements/section-1904.31.md",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
   },
   {
    "key": "eu_ai_act_text_mirror",
@@ -64,12 +95,36 @@
    "url": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng",
    "status": "unreachable",
    "detail": "URLError: Tunnel connection failed: 403 Forbidden",
-   "verified": "search_snippet_only"
+   "verified": "fetched"
+  },
+  {
+   "key": "eu_ai_omnibus_2026_1744",
+   "role": "source",
+   "url": "https://github.com/lexbeam-software/eu-ai-act-mcp/blob/c05f88f31ce0c3efa1f091ef9ca9608dc8c1c10d/law/celex-32026R1744-omnibus.txt",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
   },
   {
    "key": "eu_pld_2024_2853",
    "role": "canonical",
    "url": "https://eur-lex.europa.eu/eli/dir/2024/2853/oj/eng",
+   "status": "unreachable",
+   "detail": "URLError: Tunnel connection failed: 403 Forbidden",
+   "verified": "fetched"
+  },
+  {
+   "key": "eu_pld_2024_2853",
+   "role": "source",
+   "url": "https://github.com/Shauryagulati/eu-law-agent/blob/ac905e4ba93102e50acef68fc83077510dc9a680/data/txt/OJ_L_202402853_EN_TXT.txt",
+   "status": "site-block",
+   "detail": "403",
+   "verified": "fetched"
+  },
+  {
+   "key": "fluke_11x_extended_specs",
+   "role": "canonical",
+   "url": "https://dam-assets.fluke.com/s3fs-public/2793260_6116_ENG_A_W.PDF",
    "status": "unreachable",
    "detail": "URLError: Tunnel connection failed: 403 Forbidden",
    "verified": "search_snippet_only"

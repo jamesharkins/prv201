@@ -50,7 +50,14 @@ audit:       ## fault-signature audit: sampled faults re-solved without ngspice 
 sweep:       ## exhaustive safety sweep (T15)
 	$(PY) -m eval.safety_sweep
 
-eval:        ## full evaluation -> results/metrics.json and results/figures/
+eval:        ## full evaluation (after the targets-locked tag) -> results/metrics.json and results/figures/
+	$(PY) -m eval.safety_sweep
+	$(PY) -m eval.nlp_benchmark
+	$(PY) -m eval.meter_eval
+	$(PY) -m eval.agent_eval --mode offline
+	$(PY) -m eval.redteam.harness --suite eval/redteam/cases.yaml --mode offline
+	$(PY) -m eval.twin simulate --split test
+	$(PY) -m eval.twin run --split test
 	$(PY) -m eval.run_eval
 
 eval-smoke:  ## quick end-to-end check (< 5 minutes)

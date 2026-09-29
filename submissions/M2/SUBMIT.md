@@ -40,4 +40,4 @@ python tools/check_requirements.py
    and replace the first table of Part 1 with the instructor's points and your
    responses; today that table lists the findings of the team's own review.
 3. Re-check the sources cited only from search snippets
-   (6 of 10; `results/citation_check_M2.json`).
+   (5 of 13; `results/citation_check_M2.json`).

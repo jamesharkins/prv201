@@ -390,22 +390,22 @@ channels finds the stage quickly, but paying for both readings leaves less for t
 
 
                                                                        7
-M2 · Design and approach                                                                                                           Differential
+M2 · Design and approach                                                                                                            Differential
 
 
-                                     Table 11. Engine and evaluation alternatives and trade-offs.
- Choice                Options                              Chosen, because                                    Cost accepted
- Likelihood            Gaussian mixtures; kernel density;   Mixtures: exact on any subset of readings, few     Assumes smooth, roughly
-                       normalizing flows; boosted trees;    parameters per fault; boosted trees kept as a      unimodal spreads
-                       Bayesian network                     check
- Measurement choice    Fixed chart; half-splitting;         Information gain per unit effort, one step         Can be myopic on long plans
-                       information gain; multi-step         ahead: cheap per step, the entropy rule of
-                       lookahead                            model-based diagnosis [8] with a cost term;
-                                                            optimal sequencing needs a search [9]
- Unmodeled units       None; fixed threshold; calibrated    Calibrated flat hypothesis: fits the Bayesian      Flags only part of double
-                       flat hypothesis; learned detector    update, tunable to a false-alarm budget            faults
- Statistics            Normal approximations; bootstrap;    Bootstrap and exact tests: no normality            Compute
-                       exact tests                          assumption at 0 % or 100 %
+                                      Table 11. Engine and evaluation alternatives and trade-offs.
+ Choice                 Options                              Chosen, because                                    Cost accepted
+ Likelihood             Gaussian mixtures; kernel density;   Mixtures: exact on any subset of readings, few     Assumes smooth, roughly
+                        normalizing flows; boosted trees;    parameters per fault; boosted trees kept as a      unimodal spreads
+                        Bayesian network                     check
+ Measurement choice     Fixed chart; half-splitting;         Information gain per unit effort, one step         Can be myopic on long plans
+                        information gain; multi-step         ahead: cheap per step, the entropy rule of
+                        lookahead                            model-based diagnosis [8] with a cost term;
+                                                             optimal sequencing needs a search [9]
+ Unmodeled units        None; fixed threshold; calibrated    Calibrated flat hypothesis: fits the Bayesian      Flags only part of double
+                        flat hypothesis; learned detector    update, tunable to a false-alarm budget            faults
+ Statistics             Normal approximations; bootstrap;    Bootstrap and exact tests: no normality            Compute
+                        exact tests                          assumption at 0 % or 100 %
 
   DESIGN DECISION · Choose one measurement at a time by information per unit of effort
   Options: follow a fixed chart, plan several steps ahead, or pick the single next measurement with the highest expected
@@ -416,32 +416,31 @@ channels finds the stage quickly, but paying for both readings leaves less for t
   and the comparison with half-split tracing show how much this costs.
 
 
-  Part 4 — Agent, safety, security and interface                                                               Section lead: [name removed]
+  Part 4 — Agent, safety, security and interface                                                                Section lead: [name removed]
 
 Agent. The agent runs in three modes: live (Claude, with the key read only from DIFFERENTIAL_API_KEY and every
 response cached), offline (the rule-based complaint reader and templated explanations, with no network) and replay
 (cached responses, falling back to offline on any miss). Each turn runs in a fixed order: request screening, then tool calls,
-then the grounding check, then the output check (Figure 2). The model can call 14 tools (Table 12), all acting only on the
+then the grounding check, then the output check (Figure 2). The model can call 11 tools (Table 12), all acting only on the
 current diagnosis session: none writes files, drives an instrument or reaches any service other than the language model
 itself. Its instructions say to use the tools for every fact, to report probabilities and ambiguity groups as the tools give
 them, and to treat service notes as untrusted data; no safety property depends on the model following them.
-                                                      Table 12. The agent’s tools.
- Tool                                   What it returns or does
- list_circuits,                         Available circuits; stages, test points and parts, with service notes wrapped as untrusted text
+Table 12. The tools the language model may call. The 3 safety records (the owner’s approval, discharge readings, how the unit was first
+                                        powered) run only from the app’s forms (ADR-045).
+ Tool                                    What it returns or does
+ list_circuits,                          Available circuits; stages, test points and parts, with service notes wrapped as untrusted text
  describe_circuit
- parse_symptoms                         Symptom features read from the complaint (Claude, or the rules offline); sets the prior
- get_belief, ambiguity_groups           Ranked fault groups, the probability that no single fault fits, effort spent, whether the engine
-                                        would stop; groups the test points cannot separate
- recommend_measurement                  The next step: what, where and how, effort, information, alternatives, predictions and the safety
-                                        text from code
- expected_readings                      Each suspect’s predicted reading and 95 % range for a measurement
- record_measurement                     Stores a reading; accepted only if the technician typed or confirmed that value
- safety_brief,                          High-voltage and discharge instructions; records the owner’s approval for removing parts;
- confirm_discharge,                     readings below 2 V at every point that can hold high voltage, which unlock part removal for 5
- approve_part_removal,                  minutes (or until the next powered reading with a bleeder attached); how the unit was first
- confirm_bring_up                       powered
- read_meter_photo                       A proposed reading with plausibility checks; recorded only after confirmation
- generate_repair_ticket                 Diagnosis, evidence trail, actions and safety lines, for sign-off
+ parse_symptoms                          Symptom features read from the complaint (Claude, or the rules offline); sets the prior
+ get_belief, ambiguity_groups            Ranked fault groups, the probability that no single fault fits, effort spent, whether the engine
+                                         would stop; groups the test points cannot separate
+ recommend_measurement                   The next step: what, where and how, effort, information, alternatives, predictions and the safety
+                                         text from code
+ expected_readings                       Each suspect’s predicted reading and 95 % range for a measurement
+ record_measurement                      Stores a reading; accepted only if the technician typed or confirmed that value
+ safety_brief                            High-voltage and discharge instructions for a point, and which safety records the next step still
+                                         needs (the technician makes them in the forms)
+ read_meter_photo                        A proposed reading with plausibility checks; recorded only after confirmation
+ generate_repair_ticket                  Diagnosis, evidence trail, actions and safety lines, for sign-off
 
 Grounding. Every number in a reply that looks like a reading (it has a unit or a decimal point, or exceeds 12) must match
 a number in a tool result, the technician’s messages or a confirmed photo reading, up to the rounding of the digits shown
@@ -454,26 +453,26 @@ calibrated language. (2) Each step at a point that can exceed 50 V, normally or 
 clip-lead instructions and discharge through a resistor tool; in a chassis with a high-voltage supply every powered step
 carries a “high voltage inside” notice; oscilloscope steps carry a ground-clip warning; a point missing from the hazard
 map counts as high voltage, and so does every point of a unit whose model has not been checked against an independent
+reference when its supply can exceed 50 V. (3) Removing a part needs the owner’s recorded approval and, in a high-
 
 
-                                                                    8
+                                                                     8
 M2 · Design and approach                                                                                                     Differential
 
 
-reference when its supply can exceed 50 V. (3) Removing a part needs the owner’s recorded approval and, in a high-
 voltage unit, a reading below 2 V at every point that can hold high voltage (one reading counts for the first point only,
 and exactly 2 V is still charged); the check lapses after 5 minutes unless the technician records a bleeder clipped across the
 main filter capacitor, because a discharged capacitor recovers some charge, and any later powered reading locks removal
 again. (4) Bench practice (ADR-042): in a unit with a high-voltage supply or its own mains rectifier, no powered step is
 shown and no powered reading accepted until the technician records how the unit was first powered (variac, series lamp,
 current-limited supply, or already running normally); powered steps in a high-voltage unit name a meter rated CAT II
-600 V or better (IEC 61010) and say to clip the leads on with the power off. These records, and a trainee’s supervisor, come
-only from the technician’s entries in the app’s forms: the chat never makes them from text and the live model has no
-tool for them (ADR-045), since three red-team rounds found free text read as a record. Non-finite readings are refused. (5)
-Outgoing text is checked: an unsafe instruction replaces the whole message, false certainty is reworded, and missing high-
-voltage text is appended. The exhaustive sweep behind T15 checks every possible step of every circuit; in development
-it checked 491 required steps with 0 false high-voltage alarms on low-voltage steps, and on the photos it was developed
-on the offline meter reader read 99.3% exactly.
+600 V or better and say to clip the leads on with the power off. These records, and a trainee’s supervisor, come only from
+the technician’s entries in the app’s forms: the chat never makes them from text and the live model has no tool for them
+(ADR-045), since three red-team rounds found free text read as a record. Non-finite readings are refused. (5) Outgoing text
+is checked: an unsafe instruction replaces the whole message, false certainty is reworded, and missing high-voltage text
+is appended. The exhaustive sweep behind T15 checks every possible step of every circuit; in development it checked 491
+required steps with 0 false high-voltage alarms on low-voltage steps, and on the photos it was developed on the offline
+meter reader read 99.3% exactly.
 Prompt-injection defense. Three layers. First, retrieved text is data: service notes carry a trust label and are flagged
 when they match any of 11 instruction patterns, and complaints reach the extractor inside tags as data. Second, a
 persuaded model still cannot act: its tools touch only the session, readings need the technician, and the grounding and
@@ -500,6 +499,7 @@ release gate T25: at least six technicians diagnose inserted faults with and wit
 to the correct part, parts unsoldered, wrong replacements), and one session plants a wrong recommendation on a non-
 hazardous step to measure over-reliance, only after an ethics-board determination, with consent that discloses it and a
 debrief.
+
 
                                                                    9
 M2 · Design and approach                                                                                                                          Differential

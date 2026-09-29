@@ -20,6 +20,7 @@ This supplement accompanies the M1 problem statement. The statement stands on it
 - *Colorado re-enacted its AI law* as a regime for automated decision-making technology in consequential decisions, approved on 14 May 2026 and in force from 1 January 2027 << cite('co_sb26_189') >>. A shop that used repair tickets to decide about its staff could come within such rules; Differential's license forbids that use.
 - *Investment is flowing to AI for the trades, starting with dispatch.* Probook announced \$40 million on 23 June 2026, a \$34 million Series A led by Andreessen Horowitz and a \$6 million seed round led by Sequoia, for an AI operating system for HVAC, plumbing and electrical contractors that it built dispatch-first << cite('probook_series_a_2026') >>. Our reading: investors are funding AI for scheduling and dispatch in repair businesses, while the diagnosis a technician does at the bench is not what this money buys; that is the gap Differential addresses, and repair businesses may meet AI first in their front office.
 
+#pagebreak(weak: true)
 #heading(level: 1, numbering: none)[Course coverage map]
 #figure(
   table(
@@ -46,7 +47,7 @@ This supplement accompanies the M1 problem statement. The statement stands on it
 <% set bt = m('bars.targets') %>
 <% macro v(tid, x, kind) %><% if x is none %>—<% elif kind == 'pct' %><< num(100 * x, 1) >>%<% elif kind == 'pts' %><< num(100 * x, 1) >><% elif kind == 'ratio' %><< num(x, 3) >><% else %><< num(x, 3) >><% endif %><% endmacro %>
 <% set kinds = {'T1': 'pct', 'T2': 'pct', 'T3': 'pct', 'T6': 'pct', 'T13': 'pct', 'T8': 'ratio', 'T9': 'ratio', 'T10': 'ratio', 'T11': 'ratio', 'T12': 'ratio'} %>
-Every bar that a pilot can estimate follows one rule, fixed before the pilot ran: the pilot estimate moved << m('bars.k') >> standard errors against the system, rounded to the reporting step (1 point for rates, 0.05 for effort ratios, 0.01 for calibration error). A target is met only when the test's one-sided 95% confidence bound clears the bar. The chance column counts both the pilot's own error and the test's. T4, T14, T22 and T23 have two or three parts; their derivations are in `results/targets.json`. T5 (no pilot without an API key) and T7 (hardware) were fixed in advance; T15-T17 are release gates.
+Every bar that a pilot can estimate follows one rule, fixed before the pilot ran: the pilot estimate moved << m('bars.k') >> standard errors against the system, rounded to the reporting step. One refinement came after the pilot and before any test unit: rounding never carries a bar past the pilot estimate, and effort ratios round to 0.01 instead of 0.05. The coarser step had rounded T9's bar onto its own pilot estimate, and nearest rounding had set T23's accuracy bar at 100%, which no confidence bound can clear; the refinement loosened those two and tightened T8, T10 and T11. A target is met only when the test's one-sided 95% confidence bound clears the bar. The chance column counts both the pilot's own error and the test's. T4, T14, T22 and T23 have two or three parts; their derivations are in `results/targets.json`. T5 (no pilot without an API key) and T7 (hardware) were fixed in advance; T15-T17 are release gates.
 #figure(
   table(
     columns: (0.4fr, 1.9fr, 0.85fr, 0.75fr, 0.85fr, 0.7fr, 1.1fr, 0.65fr),
@@ -56,7 +57,7 @@ Every bar that a pilot can estimate follows one rule, fixed before the pilot ran
     [<< tid >>], [<< t.plain | esc >>], [<< v(tid, b.estimate, kinds[tid]) >>], [<< v(tid, b.se, 'pts' if kinds[tid] == 'pct' else 'ratio') >>], [<< v(tid, t.get('raw_bar'), kinds[tid]) >>], [<< t.text | esc >>], [<% if t.get('pass_count') is not none %><% if tid == 'T13' %>at most<% else %>at least<% endif %> << t.pass_count >> of << num(t.n_units, 0) >><% else %>bound clears the bar<% endif %>], [<< (100 * t.chance_met) | round | int >>%],
 <% endfor %>
   ),
-  caption: [Bar derivations from the pilot (weighted like the test set). SE: standard error (points for rates). For rates, "a pass needs" is the count whose one-sided bound clears the bar. The chance that every pilot-estimable primary is met, if they were independent, is about << (100 * targets.joint_chance_primaries.chance) | round | int >>%.],
+  caption: [Bar derivations from the pilot (weighted like the test set). SE: standard error (points for rates). Raw bar: estimate moved 1.5 SE against the system; the bar rounds it to the reporting step, never past the estimate. For rates, "a pass needs" is the count whose one-sided bound clears the bar. The chance that every pilot-estimable primary is met, if they were independent, is about << (100 * targets.joint_chance_primaries.chance) | round | int >>%; about << targets.joint_chance_primaries.expected_misses | round | int >> are expected to miss.],
 )
 
 #heading(level: 1, numbering: none)[References]

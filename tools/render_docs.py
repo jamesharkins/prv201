@@ -79,7 +79,7 @@ def context(tracker: PartTracker | None = None) -> dict[str, object]:
     citer = Citer(bib)
     # A layout dry run may point at a scratch copy; documents are always rendered from the real file.
     metrics = Metrics(load_json(Path(os.environ.get("DIFFERENTIAL_DRYRUN_METRICS", RESULTS / "metrics.json"))))
-    targets = load_json(RESULTS / "targets.json")
+    targets = load_json(Path(os.environ.get("DIFFERENTIAL_DRYRUN_TARGETS", RESULTS / "targets.json")))
     team = load_team()
     tmap = {t["id"]: t for t in targets.get("targets", [])}
 
@@ -144,7 +144,7 @@ def render(ms: str) -> Path:
     env.filters["esc"] = typst_str
     env.filters["lower_first"] = lower_first
     tpl_dir = ROOT / "templates" / ms
-    out_dir = ROOT / "submissions" / ms
+    out_dir = Path(os.environ["DIFFERENTIAL_DRYRUN_OUT"]) / ms if os.environ.get("DIFFERENTIAL_DRYRUN_OUT") else ROOT / "submissions" / ms
     out_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "templates" / "base.typ", out_dir / "base.typ")
     produced = None

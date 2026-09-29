@@ -1,7 +1,7 @@
 {
   "circuit": "tone",
-  "components_total": 30,
-  "disc_temperature": 0.9680172581844553,
+  "components_total": 52,
+  "disc_temperature": 0.9215862512586246,
   "groups": 23,
   "nontrivial_groups": [
     [
@@ -19,7 +19,7 @@
       "C304:open"
     ]
   ],
-  "seconds": 21.892648696899414,
+  "seconds": 23.515401124954224,
   "symptom_eps": 0.01,
   "symptom_lambda": 0.0,
   "train_rows": 11200,
@@ -28,66 +28,56 @@
     "n_single": 80,
     "n_unmodeled": 20,
     "offsets": {
-      "unmod_offset": 2.0,
-      "unmod_offset_nocomplaint": 1.5
+      "unmod_offset": 1.9,
+      "unmod_offset_nocomplaint": 1.2
     },
     "protocol": "eval/recalibrate_unmodeled.py; negatives: uniform sample of symptomatic single-fault validation units; positives: unmodeled_val split",
     "regimes": {
       "complaint": {
         "chosen": {
           "fpr": 0.05,
-          "offset": 2.0,
-          "tpr": 0.75
+          "offset": 1.9,
+          "tpr": 0.7
         },
         "grid": [
           {
             "fpr": 0.0,
             "offset": 0.0,
-            "tpr": 0.65
+            "tpr": 0.6
           },
           {
             "fpr": 0.0,
             "offset": 1.0,
+            "tpr": 0.65
+          },
+          {
+            "fpr": 0.0125,
+            "offset": 1.5,
+            "tpr": 0.65
+          },
+          {
+            "fpr": 0.05,
+            "offset": 1.8,
             "tpr": 0.7
           },
           {
             "fpr": 0.05,
-            "offset": 2.0,
-            "tpr": 0.75
-          },
-          {
-            "fpr": 0.0625,
-            "offset": 2.1,
-            "tpr": 0.75
+            "offset": 1.9,
+            "tpr": 0.7
           },
           {
             "fpr": 0.1,
-            "offset": 2.2,
-            "tpr": 0.75
-          },
-          {
-            "fpr": 0.4875,
-            "offset": 2.5,
-            "tpr": 0.75
-          },
-          {
-            "fpr": 0.75,
-            "offset": 3.0,
-            "tpr": 0.75
-          },
-          {
-            "fpr": 0.85,
-            "offset": 4.0,
-            "tpr": 0.75
+            "offset": 2.0,
+            "tpr": 0.7
           }
         ],
         "system": "hybrid"
       },
       "no_complaint": {
         "chosen": {
-          "fpr": 0.05,
-          "offset": 1.5,
-          "tpr": 0.8
+          "fpr": 0.0375,
+          "offset": 1.2,
+          "tpr": 0.75
         },
         "grid": [
           {
@@ -98,25 +88,30 @@
           {
             "fpr": 0.0125,
             "offset": 1.0,
+            "tpr": 0.7
+          },
+          {
+            "fpr": 0.0375,
+            "offset": 1.2,
             "tpr": 0.75
           },
           {
             "fpr": 0.05,
-            "offset": 1.5,
-            "tpr": 0.8
+            "offset": 1.3,
+            "tpr": 0.75
           },
           {
             "fpr": 0.0625,
-            "offset": 1.6,
-            "tpr": 0.8
+            "offset": 1.4,
+            "tpr": 0.85
           },
           {
-            "fpr": 0.1625,
-            "offset": 1.8,
-            "tpr": 0.8
+            "fpr": 0.0625,
+            "offset": 1.5,
+            "tpr": 0.85
           },
           {
-            "fpr": 0.975,
+            "fpr": 1.0,
             "offset": 2.0,
             "tpr": 1.0
           }
@@ -124,19 +119,19 @@
         "system": "engine_gen"
       }
     },
-    "seconds": 3.2
+    "seconds": 3.4
   },
   "unmodeled_calibration_v1": {
     "chosen": {
       "fpr": 0.008333333333333333,
       "offset": 1.0,
-      "tpr": 0.7
+      "tpr": 0.8
     },
     "grid": [
       {
         "fpr": 0.0,
         "offset": 0.0,
-        "tpr": 0.55
+        "tpr": 0.5
       },
       {
         "fpr": 0.0,
@@ -146,15 +141,15 @@
       {
         "fpr": 0.008333333333333333,
         "offset": 1.0,
-        "tpr": 0.7
+        "tpr": 0.8
       },
       {
-        "fpr": 0.041666666666666664,
+        "fpr": 0.025,
         "offset": 1.5,
-        "tpr": 0.7
+        "tpr": 0.8
       },
       {
-        "fpr": 0.9333333333333333,
+        "fpr": 1.0,
         "offset": 2.0,
         "tpr": 1.0
       },

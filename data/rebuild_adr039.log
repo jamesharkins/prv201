@@ -49,3 +49,95 @@ channel_strip test_wide2: 300 cases (69 rejected draws)
 channel_strip test_wide3: 300 cases (36 rejected draws)
 complaint texts written (bank B present; 0 bank-B texts with leakage); nothing scored
 [03:56:31] STAGE cases done
+[04:53:49] STAGE train done
+psu {'test_points': 6, 'hv_normal': 3, 'hv_under_fault': 0, 'low_voltage': 3}
+   TP4   hv              normal   295.5 V  worst   295.8 V  faults>50V: 61  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP5   hv              normal   286.6 V  worst   295.7 V  faults>50V: 59  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP6   hv              normal   267.6 V  worst   286.0 V  faults>50V: 57  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+triode {'test_points': 4, 'hv_normal': 1, 'hv_under_fault': 1, 'low_voltage': 2, 'showcase': {'tp': 'TP10', 'name': 'Triode stage output / tone input', 'normal_max_v': 0.0, 'worst_case_v': 105.49, 'fault': 'C203:short', 'fault_label': 'C203 short circuit'}}
+   TP9   hv              normal   181.7 V  worst   250.0 V  faults>50V: 30  e.g. ['C201:open', 'C201:short', 'C202:cap_loss_50']
+   TP10  hv_under_fault  normal     0.0 V  worst   105.5 V  faults>50V: 1  e.g. ['C203:short']
+tone {'test_points': 3, 'hv_normal': 0, 'hv_under_fault': 0, 'low_voltage': 3}
+opamp {'test_points': 6, 'hv_normal': 0, 'hv_under_fault': 0, 'low_voltage': 6}
+driver {'test_points': 7, 'hv_normal': 0, 'hv_under_fault': 0, 'low_voltage': 7}
+channel_strip {'test_points': 23, 'hv_normal': 4, 'hv_under_fault': 1, 'low_voltage': 18, 'showcase': {'tp': 'TP10', 'name': 'Tone-control input (triode stage output)', 'normal_max_v': 0.0, 'worst_case_v': 126.41, 'fault': 'C203:short', 'fault_label': 'C203 short circuit'}}
+   TP4   hv              normal   295.5 V  worst   295.8 V  faults>50V: 248  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP5   hv              normal   287.8 V  worst   295.8 V  faults>50V: 246  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP6   hv              normal   270.9 V  worst   295.8 V  faults>50V: 244  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP9   hv              normal   192.4 V  worst   295.7 V  faults>50V: 243  e.g. ['C101:cap_loss_50', 'C101:cap_loss_90', 'C101:high_esr']
+   TP10  hv_under_fault  normal     0.0 V  worst   126.4 V  faults>50V: 1  e.g. ['C203:short']
+[04:53:51] STAGE hv_audit done
+{
+ "blocks": 5,
+ "fault_modes_per_kind": {
+  "resistor": 5,
+  "film_cap": 2,
+  "electrolytic": 5,
+  "potentiometer": 2,
+  "diode": 2,
+  "zener": 2,
+  "bjt": 4,
+  "triode": 2,
+  "opamp": 2
+ },
+ "fault_mode_count": 18,
+ "total_hypotheses": 506,
+ "simulations": {
+  "datasets": {
+   "channel_strip__train": {
+    "draws_per_hypothesis": 400,
+    "failed_draws": 0,
+    "failures_logged": 0,
+    "hypotheses": 251,
+    "path": "channel_strip__train.parquet",
+    "retried_draws": 0,
+    "rows": 100400
+   },
+   "channel_strip__val": {
+    "draws_per_hypothesis": 100,
+    "failed_draws": 0,
+    "failures_logged": 0,
+    "hypotheses": 251,
+    "path": "channel_strip__val.parquet",
+    "retried_draws": 0,
+    "rows": 25100
+   },
+   "driver__train": {
+    "draws_per_hypothesis": 400,
+    "failed_draws": 0,
+    "failures_logged": 0,
+    "hypotheses": 74,
+    "path": "driver__train.parquet",
+    "retried_draws": 0,
+    "rows": 29600
+   },
+   "driver__val": {
+    "draws_per_hypothesis": 100,
+    "failed_draws": 0,
+    "failures_logged": 0,
+    "hypotheses": 74,
+    "path": "driver__val.parquet",
+    "retried_draws": 0,
+    "rows": 7400
+   },
+   "opamp__train": {
+    "draws_per_hypothesis": 400,
+    "failed_draws": 0,
+    "failures_logged": 0,
+    "hypotheses": 57,
+    "path": "opamp__train.parquet",
+    "retried_draws": 0,
+    "rows": 22800
+   },
+   "opamp__val": {
+    "draws_per_hypothesis": 100,
+    "failed_draws": 0,
+    "failures_logged": 0,
+    "hypotheses": 57,
+    "path": "opamp__val.p
+[04:53:54] STAGE library_stats done
+[05:00:27] STAGE calibrate done
+[05:04:13] STAGE pilot done
+[05:05:27] STAGE set_bars done
+[05:05:34] STAGE sweep done
+[05:05:34] REBUILD_OK

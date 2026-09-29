@@ -7,7 +7,15 @@
  "chassis_steps_with_notice": 50,
  "removal_steps": 118,
  "removal_steps_blocked_before_approval": 118,
- "steps_checked": 273,
+ "bench_practice": {
+  "bring_up_steps": 74,
+  "bring_up_steps_locked": 74,
+  "discharge_expiry_lifts": 81,
+  "discharge_expiry_ok": 81,
+  "scope_steps": 63,
+  "scope_steps_with_ground_note": 63
+ },
+ "steps_checked": 491,
  "independent_check": {
   "agrees": true,
   "disagreements": [],

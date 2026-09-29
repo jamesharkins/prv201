@@ -5,14 +5,20 @@ Rule (ADR-029), fixed before the protocol-matched pilot was run:
     bar = pilot estimate moved against the system by K = 1.5 standard errors,
           rounded to the nearest reporting step
 
+Rounding never carries a bar past the pilot estimate (ADR-043): when the nearest step
+lies beyond the estimate, the bar rounds the other way, so no bar is stricter than the
+pilot's own result and none becomes unmeetable (a 100% bar can never be cleared by a
+one-sided bound).
+
 Decision rule (ADR-033): a target is met only when its one-sided 95% confidence bound
 clears the bar. For every pilot-based target this script also reports the chance of
 meeting the bar if the test units behave like the pilot units:
 Phi(|estimate - bar| / SE_test - 1.645), with SE_test the pilot standard error scaled
 by sqrt(n_pilot / n_test).
 
-Steps: 1 point for accuracies, margins and rates; 0.05 for effort ratios; 0.01
-for calibration error and AUROC. Pooled quantities are weighted like the test set
+Steps: 1 point for accuracies, margins and rates; 0.01 for effort ratios, calibration
+error and AUROC (ratios used 0.05 until ADR-043: a step wider than the 1.5-SE margin let
+rounding, not the rule, decide the bar). Pooled quantities are weighted like the test set
 (channel strip one half, each block one tenth), because the pilot's mix
 (200 + 5 x 60 units) differs from the test's (500 + 5 x 100). Standard errors of
 proportions use the add-two (Agresti-Coull) estimate, so a stratum with no
@@ -151,7 +157,10 @@ def unmodeled_stats(system: str, singles: dict[str, pd.DataFrame]) -> dict[str, 
 
 def bar(est: float, se: float, higher_is_better: bool, step: float) -> float:
     raw = est - K * se if higher_is_better else est + K * se
-    return round(round(raw / step) * step, 10)
+    b = round(raw / step) * step
+    if (b > est) if higher_is_better else (b < est):  # rounding crossed the estimate (ADR-043)
+        b = (math.floor(raw / step) if higher_is_better else math.ceil(raw / step)) * step
+    return round(b, 10)
 
 
 def chance_met(est: float, se_pilot: float, b: float, higher_is_better: bool,
@@ -320,7 +329,7 @@ def main() -> None:
                            ("random", rnd), ("hybrid", hyb))}
     for tid, num, den, dname in (("T8", eng, fixed, "fixed_order"), ("T9", eng, half, "half_split"),
                                  ("T10", eng, rnd, "random"), ("T11", hyb, eng, "engine")):
-        put(tid, *effort_ratio(num, den), False, 0.05, n_single_pilot, n_single,
+        put(tid, *effort_ratio(num, den), False, 0.01, n_single_pilot, n_single,
             accuracy_gap=(acc["hybrid" if tid == "T11" else "engine"] - acc[dname]))
     e12, se12, extra12 = shown_ece(hyb)
     put("T12", e12, se12, False, 0.01, n_single_pilot, n_single, **extra12)
@@ -421,8 +430,10 @@ def main() -> None:
     # chance that every pilot-estimable primary is met is the product of their chances.
     prim = [t for t in tj["targets"] if t.get("role") == "primary" and t["id"] in d]
     context["joint_chance_primaries"] = float(np.prod([d[t["id"]]["chance_met"] for t in prim]))
+    context["expected_primary_misses"] = float(sum(1 - d[t["id"]]["chance_met"] for t in prim))
     tj["joint_chance_primaries"] = {
         "targets": [t["id"] for t in prim], "chance": round(context["joint_chance_primaries"], 3),
+        "expected_misses": round(context["expected_primary_misses"], 2),
         "note": "product of the per-target chances of meeting the bar, as if the targets were "
                 "independent; T5 and T7 have no pilot and are left out"}
     # T7 (hardware): the bar is fixed from what a pass must show; record the smallest pass count
@@ -435,9 +446,9 @@ def main() -> None:
             t["pass_rule_note"] = (f"{t['pass_count']} of {n7} is the smallest count whose exact one-sided "
                                    f"95% lower bound clears {100 * float(t['value']):.0f}%")
     tj["bar_rule"] = ("Each pilot-estimable bar is the protocol-matched pilot's estimate moved against "
-                      f"the system by {K} standard errors and rounded to the reporting step "
-                      "(eval/set_bars.py, ADR-029); a bar is met only when the one-sided 95% bound "
-                      "clears it (ADR-033).")
+                      f"the system by {K} standard errors and rounded to the reporting step, never "
+                      "past the estimate (eval/set_bars.py, ADR-029, ADR-043); a bar is met only when "
+                      "the one-sided 95% bound clears it (ADR-033).")
     TARGETS.write_text(json.dumps(tj, indent=2, ensure_ascii=False) + "\n")
     metrics_io.update("bars", {"k": K, "weights": WEIGHTS, "targets": d, "context": context})
     for tid, v in d.items():
@@ -447,7 +458,7 @@ def main() -> None:
 
 def derivation(tid: str, v: dict[str, Any]) -> str:
     """One sentence stating the pilot estimate and how the bar follows from it."""
-    rule = (f"bar = estimate moved {K} standard errors against the system, rounded (ADR-029); "
+    rule = (f"bar = estimate moved {K} standard errors against the system, rounded (ADR-029, ADR-043); "
             f"chance of meeting it (counting the pilot's own error) about {100 * v['chance_met']:.0f}%")
     pct = {"T1", "T2", "T3", "T6", "T13"}
     if tid == "T4":
@@ -479,8 +490,8 @@ def pilot_text(tid: str, v: dict[str, Any]) -> str:
     if tid in ("T1", "T2", "T3", "T6", "T13"):
         return f"{100 * v['estimate']:.1f}%"
     if tid == "T4":
-        return (f"{100 * v['estimate_vs_fixed_order']:+.1f} / {100 * v['estimate_vs_random']:+.1f} / "
-                f"{100 * v['estimate_vs_half_split']:+.1f} pts").replace("-", "−")
+        return (f"{100 * v['estimate_vs_fixed_order']:+.1f}/{100 * v['estimate_vs_random']:+.1f}/"
+                f"{100 * v['estimate_vs_half_split']:+.1f}").replace("-", "−")
     if tid == "T14":
         return (f"{100 * v['wrong_prior_catalog_mix']:+.1f} / "
                 f"{100 * v['uniform_prior_capacitor_mix']:+.1f} pts").replace("-", "−")
@@ -491,7 +502,7 @@ def pilot_text(tid: str, v: dict[str, Any]) -> str:
     if tid == "T22":
         return f"{100 * v['flagged_estimate']:.0f}%; {v['estimate']:.2f}"
     if tid == "T23":
-        return f"{100 * v['estimate']:.0f}%; {100 * v['accuracy_estimate']:.0f}%"
+        return f"{100 * v['estimate']:.1f}%; {100 * v['accuracy_estimate']:.1f}%"
     raise KeyError(tid)
 
 

@@ -2,31 +2,80 @@
  "bars": {
   "context": {
    "accuracy_weighted": {
-    "engine": 0.938333,
-    "fixed_order": 0.851667,
-    "half_split": 0.8825,
-    "hybrid": 0.920833,
-    "random": 0.8425
+    "engine": 0.943333,
+    "fixed_order": 0.874167,
+    "half_split": 0.884167,
+    "hybrid": 0.955833,
+    "random": 0.895
    },
-   "complaint_accuracy_change_pts": -1.75,
-   "complaint_effort_saving_pct": 4.837145,
+   "complaint_accuracy_change_pts": 1.25,
+   "complaint_effort_saving_pct": 3.486982,
    "cs_mean_effort": {
-    "engine": 6.695,
-    "fixed_order": 24.115,
-    "half_split": 22.88,
-    "hybrid": 6.21,
-    "random": 22.965
+    "engine": 7.215,
+    "fixed_order": 25.055,
+    "half_split": 23.4,
+    "hybrid": 6.16,
+    "random": 24.14
    },
    "cs_top1": {
-    "engine": 0.94,
-    "engine_disc": 0.93,
-    "fixed_order": 0.77,
-    "half_split": 0.835,
-    "hybrid": 0.925,
-    "random": 0.805
+    "engine": 0.93,
+    "engine_disc": 0.875,
+    "fixed_order": 0.785,
+    "half_split": 0.805,
+    "hybrid": 0.965,
+    "random": 0.84
    },
-   "engine_disc_top1_cs": 0.93,
-   "engine_disc_top1_weighted": 0.928333,
+   "effort": {
+    "engine": {
+     "confirmed_effort": 16.035833,
+     "confirming_charge": 9.775,
+     "effort": 6.260833,
+     "flagged": 0.050833,
+     "probing": 6.140833,
+     "share_charged": 0.944167,
+     "unsoldering": 0.12
+    },
+    "fixed_order": {
+     "confirmed_effort": 25.9575,
+     "confirming_charge": 6.436667,
+     "effort": 19.520833,
+     "flagged": 0.043333,
+     "probing": 15.0175,
+     "share_charged": 0.616667,
+     "unsoldering": 4.503333
+    },
+    "half_split": {
+     "confirmed_effort": 24.643333,
+     "confirming_charge": 6.031667,
+     "effort": 18.611667,
+     "flagged": 0.043333,
+     "probing": 13.548333,
+     "share_charged": 0.576667,
+     "unsoldering": 5.063333
+    },
+    "hybrid": {
+     "confirmed_effort": 15.476667,
+     "confirming_charge": 9.855,
+     "effort": 5.621667,
+     "flagged": 0.0425,
+     "probing": 5.501667,
+     "share_charged": 0.9525,
+     "unsoldering": 0.12
+    },
+    "random": {
+     "confirmed_effort": 28.048333,
+     "confirming_charge": 10.09,
+     "effort": 17.958333,
+     "flagged": 0.0275,
+     "probing": 17.958333,
+     "share_charged": 0.9725,
+     "unsoldering": 0.0
+    }
+   },
+   "engine_disc_top1_cs": 0.875,
+   "engine_disc_top1_weighted": 0.9175,
+   "expected_primary_misses": 2.216329,
+   "joint_chance_primaries": 0.062394,
    "n_pilot": {
     "channel_strip": 200,
     "driver": 60,
@@ -34,191 +83,218 @@
     "psu": 60,
     "tone": 60,
     "triode": 60
+   },
+   "raw_effort_ratio": {
+    "fixed_order": 0.320726,
+    "half_split": 0.336393,
+    "random": 0.348631
    }
   },
   "k": 1.5,
   "targets": {
    "T1": {
-    "bar": 0.9,
-    "chance_met": 0.734304,
+    "bar": 0.94,
+    "chance_met": 0.614097,
     "direction": ">=",
-    "estimate": 0.920833,
+    "estimate": 0.955833,
     "k": 1.5,
     "n_pilot": 500,
     "n_test": 1000,
-    "se": 0.012975,
+    "n_units": 1000,
+    "pass_count": 952,
+    "raw_bar": 0.940191,
+    "se": 0.010428,
     "step": 0.01
    },
    "T10": {
-    "accuracy_gap": 0.095833,
-    "bar": 0.35,
-    "chance_met": 0.150855,
+    "accuracy_gap": 0.048333,
+    "bar": 0.59,
+    "chance_met": 0.653256,
     "direction": "<=",
-    "estimate": 0.344704,
+    "estimate": 0.571721,
     "k": 1.5,
     "n_pilot": 500,
     "n_test": 1000,
-    "se": 0.012235,
-    "step": 0.05
+    "raw_bar": 0.58838,
+    "se": 0.011106,
+    "step": 0.01
    },
    "T11": {
-    "accuracy_gap": -0.0175,
-    "bar": 1.0,
-    "chance_met": 0.973763,
+    "accuracy_gap": 0.0125,
+    "bar": 0.98,
+    "chance_met": 0.622067,
     "direction": "<=",
-    "estimate": 0.951629,
+    "estimate": 0.96513,
     "k": 1.5,
     "n_pilot": 500,
     "n_test": 1000,
-    "se": 0.019086,
-    "step": 0.05
+    "raw_bar": 0.979577,
+    "se": 0.009631,
+    "step": 0.01
    },
    "T12": {
-    "bar": 0.04,
-    "brier": 0.142562,
-    "chance_met": 0.579607,
+    "bar": 0.02,
+    "brier": 0.088053,
+    "chance_met": 0.586702,
     "direction": "<=",
-    "estimate": 0.029939,
+    "estimate": 0.012114,
     "k": 1.5,
-    "log_loss": 0.33847,
+    "log_loss": 0.218347,
     "n_pilot": 500,
     "n_test": 1000,
-    "se": 0.007708,
+    "raw_bar": 0.020378,
+    "se": 0.005509,
     "step": 0.01,
-    "step_ece_equal_width": 0.06359
+    "step_ece_equal_width": 0.014262
    },
    "T13": {
-    "bar": 0.11,
-    "chance_met": 0.699753,
+    "bar": 0.12,
+    "chance_met": 0.639363,
     "direction": "<=",
-    "estimate": 0.08,
+    "estimate": 0.088,
     "k": 1.5,
     "n_pilot": 250.0,
     "n_test": 500,
-    "se": 0.019564,
+    "n_units": 500,
+    "pass_count": 49,
+    "raw_bar": 0.117999,
+    "se": 0.019999,
     "step": 0.01
    },
    "T14": {
-    "bar": -0.03,
-    "bar_capacitor_mix": 0.0,
-    "bar_catalog_mix": -0.03,
-    "chance_met": 0.667383,
+    "bar": -0.01,
+    "bar_capacitor_mix": -0.01,
+    "bar_catalog_mix": -0.01,
+    "chance_met": 0.37843,
     "direction": ">=",
     "k": 1.5,
     "n_pilot": 500,
     "n_test": 1000,
     "step": 0.01,
-    "uniform_prior_capacitor_mix": 0.013265,
-    "uniform_prior_capacitor_mix_se": 0.007068,
-    "wrong_prior_catalog_mix": -0.019167,
-    "wrong_prior_catalog_mix_se": 0.007374
+    "uniform_prior_capacitor_mix": -0.000681,
+    "uniform_prior_capacitor_mix_se": 0.00532,
+    "wrong_prior_catalog_mix": -0.000833,
+    "wrong_prior_catalog_mix_se": 0.006914
    },
    "T2": {
-    "bar": 0.9,
-    "chance_met": 0.654621,
+    "bar": 0.94,
+    "chance_met": 0.722508,
     "direction": ">=",
-    "estimate": 0.925,
+    "estimate": 0.965,
     "k": 1.5,
     "n_pilot": 200,
     "n_test": 500,
-    "se": 0.019351,
+    "n_units": 500,
+    "pass_count": 478,
+    "raw_bar": 0.943433,
+    "se": 0.014378,
     "step": 0.01
    },
    "T22": {
-    "bar": 0.72,
-    "chance_met": 0.420227,
+    "bar": 0.77,
+    "chance_met": 0.387017,
     "direction": ">=",
-    "estimate": 0.748352,
-    "flagged_bar": 0.48,
-    "flagged_estimate": 0.524,
-    "flagged_se": 0.02867,
+    "estimate": 0.801052,
+    "flagged_bar": 0.51,
+    "flagged_estimate": 0.552,
+    "flagged_se": 0.029267,
     "k": 1.5,
     "n_pilot": 250.0,
     "n_test": 500,
-    "se": 0.021123,
+    "se": 0.018675,
     "step": 0.01
    },
    "T23": {
-    "accuracy_bar": 0.98,
-    "accuracy_estimate": 0.988248,
-    "accuracy_se": 0.005191,
-    "bar": 0.91,
-    "chance_met": 0.626889,
+    "accuracy_bar": 0.99,
+    "accuracy_estimate": 0.998333,
+    "accuracy_se": 0.001677,
+    "bar": 0.94,
+    "chance_met": 0.738547,
     "direction": ">=",
-    "estimate": 0.931667,
+    "estimate": 0.9575,
     "k": 1.5,
     "n_pilot": 500,
     "n_test": 1000,
-    "se": 0.011188,
+    "se": 0.008983,
     "step": 0.01
    },
    "T3": {
-    "bar": 0.98,
-    "chance_met": 0.661716,
+    "bar": 0.99,
+    "chance_met": 0.464648,
     "direction": ">=",
-    "estimate": 0.990833,
+    "estimate": 0.996667,
     "k": 1.5,
     "n_pilot": 500,
     "n_test": 1000,
-    "se": 0.00743,
+    "n_units": 1000,
+    "pass_count": 995,
+    "raw_bar": 0.987183,
+    "se": 0.006322,
     "step": 0.01
    },
    "T4": {
-    "bar": 0.06,
-    "bar_vs_fixed_order": 0.12,
-    "bar_vs_half_split": 0.06,
-    "bar_vs_random": 0.09,
-    "chance_met": 0.748909,
+    "bar": 0.04,
+    "bar_vs_fixed_order": 0.09,
+    "bar_vs_half_split": 0.08,
+    "bar_vs_random": 0.04,
+    "chance_met": 0.609963,
     "direction": ">=",
-    "estimate_vs_fixed_order": 0.17,
-    "estimate_vs_half_split": 0.105,
-    "estimate_vs_random": 0.135,
+    "estimate_vs_fixed_order": 0.145,
+    "estimate_vs_half_split": 0.125,
+    "estimate_vs_random": 0.09,
     "k": 1.5,
     "n_pilot": 200,
     "n_test": 500,
     "rule": "the smallest of the three margin bars, met when every margin's lower bound clears it",
-    "se_vs_fixed_order": 0.034078,
-    "se_vs_half_split": 0.030406,
-    "se_vs_random": 0.029805,
+    "se_vs_fixed_order": 0.033549,
+    "se_vs_half_split": 0.032437,
+    "se_vs_random": 0.030234,
     "step": 0.01
    },
    "T6": {
-    "aged_flag_rate": 0.22,
-    "aged_wrong_name_rate": 0.113333,
-    "bar": 0.32,
-    "chance_met": 0.653791,
-    "direction": "<=",
-    "estimate": 0.258333,
+    "aged_cs_top1": 0.94,
+    "aged_flag_rate": 0.0525,
+    "aged_wrong_name_rate": 0.015833,
+    "bar": 0.91,
+    "chance_met": 0.68986,
+    "direction": ">=",
+    "drop_from_new": 0.024167,
+    "estimate": 0.931667,
     "k": 1.5,
-    "n_aged": 150,
-    "n_pilot": 150,
-    "n_test": 300,
-    "se": 0.04274,
+    "n_aged": 500,
+    "n_pilot": 500,
+    "n_test": 1000,
+    "n_units": 1000,
+    "pass_count": 924,
+    "raw_bar": 0.913304,
+    "se": 0.012242,
     "step": 0.01
    },
    "T8": {
-    "accuracy_gap": 0.086667,
-    "bar": 0.3,
-    "chance_met": 0.05206,
+    "accuracy_gap": 0.069167,
+    "bar": 0.64,
+    "chance_met": 0.706402,
     "direction": "<=",
-    "estimate": 0.299863,
+    "estimate": 0.617773,
     "k": 1.5,
     "n_pilot": 500,
     "n_test": 1000,
-    "se": 0.009846,
-    "step": 0.05
+    "raw_bar": 0.636011,
+    "se": 0.012159,
+    "step": 0.01
    },
    "T9": {
-    "accuracy_gap": 0.055833,
-    "bar": 0.35,
-    "chance_met": 0.998777,
+    "accuracy_gap": 0.059167,
+    "bar": 0.67,
+    "chance_met": 0.643686,
     "direction": "<=",
-    "estimate": 0.315562,
+    "estimate": 0.650717,
     "k": 1.5,
     "n_pilot": 500,
     "n_test": 1000,
-    "se": 0.010418,
-    "step": 0.05
+    "raw_bar": 0.668635,
+    "se": 0.011946,
+    "step": 0.01
    }
   },
   "weights": {
@@ -473,7 +549,7 @@
       "hazard": "hv_under_fault",
       "name": "Tone-control input (triode stage output)",
       "normal_max_v": 0.0,
-      "worst_case_v": 125.4,
+      "worst_case_v": 126.41,
       "worst_fault": "C203:short"
      },
      "TP11": {
@@ -502,7 +578,7 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Op-amp non-inverting input",
-      "normal_max_v": 7.99,
+      "normal_max_v": 8.13,
       "worst_case_v": 15.91,
       "worst_fault": "R402:short"
      },
@@ -512,7 +588,7 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Op-amp inverting input",
-      "normal_max_v": 7.99,
+      "normal_max_v": 8.13,
       "worst_case_v": 14.45,
       "worst_fault": "R403:drift_x10"
      },
@@ -522,7 +598,7 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Op-amp output",
-      "normal_max_v": 7.99,
+      "normal_max_v": 8.13,
       "worst_case_v": 14.45,
       "worst_fault": "R403:drift_x10"
      },
@@ -532,7 +608,7 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Half-supply bias",
-      "normal_max_v": 7.99,
+      "normal_max_v": 8.13,
       "worst_case_v": 15.92,
       "worst_fault": "R402:short"
      },
@@ -543,7 +619,7 @@
       "hazard": "lv",
       "name": "Line-driver input",
       "normal_max_v": 0.0,
-      "worst_case_v": 7.98,
+      "worst_case_v": 8.15,
       "worst_fault": "C404:short"
      },
      "TP18": {
@@ -552,8 +628,8 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Q501 base",
-      "normal_max_v": 3.81,
-      "worst_case_v": 14.97,
+      "normal_max_v": 3.9,
+      "worst_case_v": 14.98,
       "worst_fault": "R501:short"
      },
      "TP19": {
@@ -562,8 +638,8 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Q501 emitter",
-      "normal_max_v": 3.18,
-      "worst_case_v": 14.25,
+      "normal_max_v": 3.27,
+      "worst_case_v": 14.26,
       "worst_fault": "R501:short"
      },
      "TP2": {
@@ -582,9 +658,9 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Q501 collector / Q502 base",
-      "normal_max_v": 9.79,
-      "worst_case_v": 15.15,
-      "worst_fault": "R505:short"
+      "normal_max_v": 10.04,
+      "worst_case_v": 15.43,
+      "worst_fault": "Q101:ce_short"
      },
      "TP21": {
       "example_faults": [],
@@ -592,8 +668,8 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Q502 emitter",
-      "normal_max_v": 9.07,
-      "worst_case_v": 15.07,
+      "normal_max_v": 9.33,
+      "worst_case_v": 15.11,
       "worst_fault": "Q502:ce_short"
      },
      "TP22": {
@@ -603,7 +679,7 @@
       "hazard": "lv",
       "name": "Line output",
       "normal_max_v": 0.0,
-      "worst_case_v": 8.99,
+      "worst_case_v": 9.19,
       "worst_fault": "C503:short"
      },
      "TP23": {
@@ -612,8 +688,8 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Driver supply",
-      "normal_max_v": 15.44,
-      "worst_case_v": 24.34,
+      "normal_max_v": 15.45,
+      "worst_case_v": 24.31,
       "worst_fault": "D102:short"
      },
      "TP3": {
@@ -623,7 +699,7 @@
       "hazard": "lv",
       "name": "Regulated +15 V rail",
       "normal_max_v": 15.94,
-      "worst_case_v": 25.1,
+      "worst_case_v": 25.08,
       "worst_fault": "D102:short"
      },
      "TP4": {
@@ -656,7 +732,7 @@
       "flag_hv": true,
       "hazard": "hv",
       "name": "HV filter node",
-      "normal_max_v": 287.44,
+      "normal_max_v": 287.81,
       "worst_case_v": 295.77,
       "worst_fault": "R106:open"
      },
@@ -673,7 +749,7 @@
       "flag_hv": true,
       "hazard": "hv",
       "name": "B+ to triode stage",
-      "normal_max_v": 269.62,
+      "normal_max_v": 270.89,
       "worst_case_v": 295.75,
       "worst_fault": "R203:open"
      },
@@ -710,8 +786,8 @@
       "flag_hv": true,
       "hazard": "hv",
       "name": "Triode plate",
-      "normal_max_v": 188.53,
-      "worst_case_v": 295.73,
+      "normal_max_v": 192.37,
+      "worst_case_v": 295.71,
       "worst_fault": "V201:heater_open"
      }
     },
@@ -721,7 +797,7 @@
      "name": "Tone-control input (triode stage output)",
      "normal_max_v": 0.0,
      "tp": "TP10",
-     "worst_case_v": 125.4
+     "worst_case_v": 126.41
     },
     "test_points": 23
    },
@@ -746,8 +822,8 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Q501 base",
-      "normal_max_v": 3.7,
-      "worst_case_v": 14.44,
+      "normal_max_v": 3.9,
+      "worst_case_v": 14.49,
       "worst_fault": "R501:short"
      },
      "TP19": {
@@ -756,8 +832,8 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Q501 emitter",
-      "normal_max_v": 3.08,
-      "worst_case_v": 13.72,
+      "normal_max_v": 3.27,
+      "worst_case_v": 13.78,
       "worst_fault": "R501:short"
      },
      "TP20": {
@@ -766,8 +842,8 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Q501 collector / Q502 base",
-      "normal_max_v": 9.54,
-      "worst_case_v": 14.62,
+      "normal_max_v": 9.9,
+      "worst_case_v": 14.67,
       "worst_fault": "R505:short"
      },
      "TP21": {
@@ -776,8 +852,8 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Q502 emitter",
-      "normal_max_v": 8.82,
-      "worst_case_v": 14.58,
+      "normal_max_v": 9.18,
+      "worst_case_v": 14.6,
       "worst_fault": "Q502:ce_short"
      },
      "TP22": {
@@ -787,7 +863,7 @@
       "hazard": "lv",
       "name": "Line output",
       "normal_max_v": 0.0,
-      "worst_case_v": 8.76,
+      "worst_case_v": 9.17,
       "worst_fault": "C503:short"
      },
      "TP23": {
@@ -796,7 +872,7 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Driver supply",
-      "normal_max_v": 14.87,
+      "normal_max_v": 14.9,
       "worst_case_v": 15.33,
       "worst_fault": "R509:short"
      }
@@ -824,7 +900,7 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Op-amp non-inverting input",
-      "normal_max_v": 7.73,
+      "normal_max_v": 7.99,
       "worst_case_v": 15.32,
       "worst_fault": "R402:short"
      },
@@ -834,8 +910,8 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Op-amp inverting input",
-      "normal_max_v": 7.73,
-      "worst_case_v": 13.84,
+      "normal_max_v": 7.99,
+      "worst_case_v": 13.85,
       "worst_fault": "R402:short"
      },
      "TP15": {
@@ -844,7 +920,7 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Op-amp output",
-      "normal_max_v": 7.73,
+      "normal_max_v": 7.99,
       "worst_case_v": 13.83,
       "worst_fault": "R402:short"
      },
@@ -854,7 +930,7 @@
       "flag_hv": false,
       "hazard": "lv",
       "name": "Half-supply bias",
-      "normal_max_v": 7.73,
+      "normal_max_v": 7.99,
       "worst_case_v": 15.33,
       "worst_fault": "R402:short"
      },
@@ -865,7 +941,7 @@
       "hazard": "lv",
       "name": "Op-amp stage output",
       "normal_max_v": 0.0,
-      "worst_case_v": 7.69,
+      "worst_case_v": 7.94,
       "worst_fault": "C404:short"
      }
     },
@@ -893,7 +969,7 @@
       "hazard": "lv",
       "name": "Zener reference",
       "normal_max_v": 16.63,
-      "worst_case_v": 24.93,
+      "worst_case_v": 24.92,
       "worst_fault": "D101:open"
      },
      "TP3": {
@@ -903,7 +979,7 @@
       "hazard": "lv",
       "name": "Regulated +15 V rail",
       "normal_max_v": 15.86,
-      "worst_case_v": 25.1,
+      "worst_case_v": 25.08,
       "worst_fault": "D102:short"
      },
      "TP4": {
@@ -937,7 +1013,7 @@
       "hazard": "hv",
       "name": "HV filter node",
       "normal_max_v": 286.58,
-      "worst_case_v": 295.71,
+      "worst_case_v": 295.73,
       "worst_fault": "R106:open"
      },
      "TP6": {
@@ -1012,7 +1088,7 @@
       "hazard": "hv_under_fault",
       "name": "Triode stage output / tone input",
       "normal_max_v": 0.0,
-      "worst_case_v": 105.09,
+      "worst_case_v": 105.49,
       "worst_fault": "C203:short"
      },
      "TP7": {
@@ -1048,7 +1124,7 @@
       "flag_hv": true,
       "hazard": "hv",
       "name": "Triode plate",
-      "normal_max_v": 178.04,
+      "normal_max_v": 181.67,
       "worst_case_v": 250.0,
       "worst_fault": "V201:heater_open"
      }
@@ -1059,7 +1135,7 @@
      "name": "Triode stage output / tone input",
      "normal_max_v": 0.0,
      "tp": "TP10",
-     "worst_case_v": 105.09
+     "worst_case_v": 105.49
     },
     "test_points": 4
    }
@@ -1067,6 +1143,39 @@
   "threshold_v": 50.0
  },
  "library": {
+  "aged": {
+   "channel_strip": {
+    "aged_healthy_draws": 200,
+    "aged_healthy_symptomatic": 0.0,
+    "train_aged_share": 0.5
+   },
+   "driver": {
+    "aged_healthy_draws": 200,
+    "aged_healthy_symptomatic": 0.0,
+    "train_aged_share": 0.5
+   },
+   "max_aged_healthy_symptomatic": 0.03,
+   "opamp": {
+    "aged_healthy_draws": 200,
+    "aged_healthy_symptomatic": 0.0,
+    "train_aged_share": 0.5
+   },
+   "psu": {
+    "aged_healthy_draws": 200,
+    "aged_healthy_symptomatic": 0.03,
+    "train_aged_share": 0.5
+   },
+   "tone": {
+    "aged_healthy_draws": 200,
+    "aged_healthy_symptomatic": 0.0,
+    "train_aged_share": 0.5
+   },
+   "triode": {
+    "aged_healthy_draws": 200,
+    "aged_healthy_symptomatic": 0.0,
+    "train_aged_share": 0.5
+   }
+  },
   "aging": {
    "electrolytic_c_loss_max_pct": 30.0,
    "electrolytic_c_loss_min_pct": 5.0,
@@ -1243,19 +1352,19 @@
   "groups": {
    "channel_strip": {
     "faults": 250,
-    "groups": 218,
+    "groups": 217,
     "hypotheses": 251,
     "max_size": 4,
-    "mean_size": 1.151376,
-    "singletons": 192
+    "mean_size": 1.156682,
+    "singletons": 191
    },
    "driver": {
     "faults": 73,
-    "groups": 68,
+    "groups": 69,
     "hypotheses": 74,
     "max_size": 2,
-    "mean_size": 1.088235,
-    "singletons": 62
+    "mean_size": 1.072464,
+    "singletons": 64
    },
    "opamp": {
     "faults": 56,
@@ -1267,11 +1376,11 @@
    },
    "psu": {
     "faults": 63,
-    "groups": 47,
+    "groups": 45,
     "hypotheses": 64,
     "max_size": 4,
-    "mean_size": 1.361702,
-    "singletons": 34
+    "mean_size": 1.422222,
+    "singletons": 33
    },
    "tone": {
     "faults": 27,
@@ -1299,24 +1408,24 @@
   },
   "setup_cost": {
    "channel_strip": {
-    "fitting_minutes": 43.5,
-    "simulation_minutes": 31.1,
-    "total_minutes": 74.6
+    "fitting_minutes": 50.7,
+    "simulation_minutes": 30.4,
+    "total_minutes": 81.1
    },
    "driver": {
-    "fitting_minutes": 1.8,
+    "fitting_minutes": 2.2,
     "simulation_minutes": 1.0,
-    "total_minutes": 2.9
+    "total_minutes": 3.2
    },
    "opamp": {
-    "fitting_minutes": 1.2,
+    "fitting_minutes": 1.4,
     "simulation_minutes": 1.3,
-    "total_minutes": 2.5
+    "total_minutes": 2.7
    },
    "psu": {
-    "fitting_minutes": 1.4,
+    "fitting_minutes": 1.5,
     "simulation_minutes": 0.5,
-    "total_minutes": 1.9
+    "total_minutes": 2.0
    },
    "tone": {
     "fitting_minutes": 0.4,
@@ -1325,8 +1434,8 @@
    },
    "triode": {
     "fitting_minutes": 0.6,
-    "simulation_minutes": 0.6,
-    "total_minutes": 1.2
+    "simulation_minutes": 0.7,
+    "total_minutes": 1.3
    }
   },
   "simulations": {
@@ -1449,14 +1558,14 @@
    "channel_strip": {
     "faults": 250,
     "faults_per_symptom": {
-     "bass_loss": 12,
+     "bass_loss": 14,
      "bias_drift": 43,
      "dc_at_output": 1,
      "distortion": 15,
-     "hum": 25,
-     "low_gain": 21,
+     "hum": 26,
+     "low_gain": 20,
      "no_output": 53,
-     "treble_loss": 6
+     "treble_loss": 7
     },
     "latent_faults": 119,
     "max_faults_sharing_a_symptom": 53,
@@ -1468,7 +1577,7 @@
      "bass_loss": 1,
      "bias_drift": 20,
      "dc_at_output": 1,
-     "distortion": 9,
+     "distortion": 10,
      "hum": 0,
      "low_gain": 8,
      "no_output": 19,
@@ -1513,17 +1622,17 @@
    "tone": {
     "faults": 27,
     "faults_per_symptom": {
-     "bass_loss": 8,
+     "bass_loss": 9,
      "bias_drift": 0,
      "dc_at_output": 0,
      "distortion": 0,
      "hum": 0,
-     "low_gain": 4,
+     "low_gain": 3,
      "no_output": 0,
      "treble_loss": 3
     },
     "latent_faults": 14,
-    "max_faults_sharing_a_symptom": 8,
+    "max_faults_sharing_a_symptom": 9,
     "symptomatic_faults": 13
    },
    "triode": {
@@ -1873,78 +1982,147 @@
   "protocol": "fit on training draws 0-299; evaluate on held-out training draws 300-399"
  },
  "pilot2": {
-  "aged_flag_rate": 0.22,
-  "aged_n": 150,
-  "aged_top1": 0.666667,
-  "aged_top1_drop": 0.258333,
+  "aged_cs_top1": 0.94,
+  "aged_cs_top1_drop": 0.025,
+  "aged_flag_rate_weighted": 0.0525,
+  "aged_n": 500,
+  "aged_n_cases": {
+   "channel_strip": 200,
+   "driver": 60,
+   "opamp": 60,
+   "psu": 60,
+   "tone": 60,
+   "triode": 60
+  },
+  "aged_top1_by_circuit": {
+   "channel_strip": 0.94,
+   "driver": 0.916667,
+   "opamp": 0.983333,
+   "psu": 0.916667,
+   "tone": 0.883333,
+   "triode": 0.916667
+  },
+  "aged_top1_drop_weighted": 0.024167,
+  "aged_top1_weighted": 0.931667,
+  "aged_wrong_name_rate_weighted": 0.015833,
   "channel_strip": {
    "engine_disc": {
-    "mean_cost": 12.995,
-    "top1": 0.93
+    "mean_cost": 13.225,
+    "top1": 0.875
    },
    "engine_gen": {
-    "mean_cost": 6.695,
-    "top1": 0.94
+    "mean_cost": 7.215,
+    "top1": 0.93
    },
    "fixed_order": {
-    "mean_cost": 24.115,
-    "top1": 0.77
+    "mean_cost": 25.055,
+    "top1": 0.785
    },
    "half_split": {
-    "mean_cost": 22.88,
-    "top1": 0.835
-   },
-   "hybrid": {
-    "mean_cost": 6.21,
-    "top1": 0.925
-   },
-   "random": {
-    "mean_cost": 22.965,
+    "mean_cost": 23.4,
     "top1": 0.805
    },
+   "hybrid": {
+    "mean_cost": 6.16,
+    "top1": 0.965
+   },
+   "random": {
+    "mean_cost": 24.14,
+    "top1": 0.84
+   },
    "recap_prior": {
-    "mean_cost": 6.535,
-    "top1": 0.925
+    "mean_cost": 7.33,
+    "top1": 0.935
    }
   },
-  "cs_margin_vs_fixed_order": 0.155,
-  "cs_margin_vs_half_split": 0.09,
-  "cs_margin_vs_random": 0.12,
-  "cs_step_seconds_p95": 0.136683,
-  "effort_ratio_vs_fixed_order": 0.305437,
-  "effort_ratio_vs_half_split": 0.321304,
-  "effort_ratio_vs_random": 0.359652,
-  "engine_gen_single_false_flag_rate": 0.056,
-  "engine_gen_unmodeled_auroc": 0.7592,
-  "engine_gen_unmodeled_faulty_part_rate": 0.404,
-  "engine_gen_unmodeled_flag_rate": 0.512,
-  "engine_gen_unmodeled_misleading_rate": 0.084,
+  "confirmed_effort_ratio_vs_fixed_order": 0.617773,
+  "confirmed_effort_ratio_vs_half_split": 0.650717,
+  "confirmed_effort_ratio_vs_random": 0.571721,
+  "cs_margin_vs_fixed_order": 0.18,
+  "cs_margin_vs_half_split": 0.16,
+  "cs_margin_vs_random": 0.125,
+  "cs_step_seconds_p95": 0.13829,
+  "effort_ratio_vs_fixed_order": 0.32964,
+  "effort_ratio_vs_half_split": 0.343831,
+  "effort_ratio_vs_random": 0.362995,
+  "effort_weighted": {
+   "engine_gen": {
+    "confirmed_effort": 16.035833,
+    "confirming_charge": 9.775,
+    "effort": 6.260833,
+    "flagged": 0.050833,
+    "probing": 6.140833,
+    "share_charged": 0.944167,
+    "unsoldering": 0.12
+   },
+   "fixed_order": {
+    "confirmed_effort": 25.9575,
+    "confirming_charge": 6.436667,
+    "effort": 19.520833,
+    "flagged": 0.043333,
+    "probing": 15.0175,
+    "share_charged": 0.616667,
+    "unsoldering": 4.503333
+   },
+   "half_split": {
+    "confirmed_effort": 24.643333,
+    "confirming_charge": 6.031667,
+    "effort": 18.611667,
+    "flagged": 0.043333,
+    "probing": 13.548333,
+    "share_charged": 0.576667,
+    "unsoldering": 5.063333
+   },
+   "hybrid": {
+    "confirmed_effort": 15.476667,
+    "confirming_charge": 9.855,
+    "effort": 5.621667,
+    "flagged": 0.0425,
+    "probing": 5.501667,
+    "share_charged": 0.9525,
+    "unsoldering": 0.12
+   },
+   "random": {
+    "confirmed_effort": 28.048333,
+    "confirming_charge": 10.09,
+    "effort": 17.958333,
+    "flagged": 0.0275,
+    "probing": 17.958333,
+    "share_charged": 0.9725,
+    "unsoldering": 0.0
+   }
+  },
+  "engine_gen_single_false_flag_rate": 0.048,
+  "engine_gen_unmodeled_auroc": 0.776528,
+  "engine_gen_unmodeled_faulty_part_rate": 0.428,
+  "engine_gen_unmodeled_flag_rate": 0.484,
+  "engine_gen_unmodeled_misleading_rate": 0.088,
   "engine_gen_unmodeled_n": 250,
   "hybrid_by_symptom_rate": {
    "0.00-0.25": {
-    "n": 5,
-    "top1": 0.8
+    "n": 10,
+    "top1": 1.0
    },
    "0.25-0.50": {
-    "n": 10,
-    "top1": 0.9
+    "n": 15,
+    "top1": 0.866667
    },
    "0.50-1.00": {
-    "n": 485,
-    "top1": 0.921649
+    "n": 475,
+    "top1": 0.955789
    }
   },
-  "hybrid_false_flags": 35,
-  "hybrid_misses": 40,
-  "hybrid_single_false_flag_rate": 0.07,
-  "hybrid_step_ece": 0.06359,
-  "hybrid_stop_ece": 0.038697,
-  "hybrid_unmodeled_auroc": 0.748352,
-  "hybrid_unmodeled_faulty_part_rate": 0.396,
-  "hybrid_unmodeled_flag_rate": 0.524,
-  "hybrid_unmodeled_misleading_rate": 0.08,
+  "hybrid_false_flags": 22,
+  "hybrid_misses": 23,
+  "hybrid_single_false_flag_rate": 0.044,
+  "hybrid_step_ece": 0.014262,
+  "hybrid_stop_ece": 0.015724,
+  "hybrid_unmodeled_auroc": 0.801052,
+  "hybrid_unmodeled_faulty_part_rate": 0.36,
+  "hybrid_unmodeled_flag_rate": 0.552,
+  "hybrid_unmodeled_misleading_rate": 0.088,
   "hybrid_unmodeled_n": 250,
-  "hybrid_vs_engine_effort_ratio": 0.957114,
+  "hybrid_vs_engine_effort_ratio": 0.908402,
   "n_cases": {
    "channel_strip": 200,
    "driver": 60,
@@ -1954,57 +2132,73 @@
    "triode": 60
   },
   "n_total": 500,
+  "new_top1_weighted": 0.955833,
   "pooled": {
    "engine_disc": {
-    "mean_cost": 9.052,
-    "top1": 0.928,
-    "top3": 0.994
+    "mean_cost": 9.182,
+    "top1": 0.926,
+    "top3": 0.996
    },
    "engine_gen": {
-    "mean_cost": 5.876,
-    "top1": 0.938,
+    "mean_cost": 6.07,
+    "top1": 0.946,
     "top3": 0.998
    },
    "fixed_order": {
-    "mean_cost": 19.238,
-    "top1": 0.868,
-    "top3": 0.958
+    "mean_cost": 18.414,
+    "top1": 0.892,
+    "top3": 0.948
    },
    "half_split": {
-    "mean_cost": 18.288,
-    "top1": 0.892,
-    "top3": 0.968
+    "mean_cost": 17.654,
+    "top1": 0.9,
+    "top3": 0.956
    },
    "hybrid": {
-    "mean_cost": 5.624,
-    "top1": 0.92,
-    "top3": 0.992
+    "mean_cost": 5.514,
+    "top1": 0.954,
+    "top3": 0.996
    },
    "random": {
-    "mean_cost": 16.338,
-    "top1": 0.85,
-    "top3": 0.966
+    "mean_cost": 16.722,
+    "top1": 0.906,
+    "top3": 0.964
    },
    "recap_prior": {
-    "mean_cost": 6.05,
-    "top1": 0.918,
-    "top3": 1.0
+    "mean_cost": 6.272,
+    "top1": 0.944,
+    "top3": 0.996
    }
   },
   "protocol": "pilot split: symptomatic units simulated from their own seed stream with the test protocol; never test data",
-  "recap_prior_top1_delta": -0.02,
-  "seconds": 222.004653,
+  "raw_effort_ratio_vs_fixed_order_weighted": 0.320726,
+  "raw_effort_ratio_vs_half_split_weighted": 0.336393,
+  "raw_effort_ratio_vs_random_weighted": 0.348631,
+  "recap_prior_top1_delta": -0.002,
+  "seconds": 224.737357,
   "wide_n": 150,
-  "wide_top1": 0.84,
-  "wide_top1_drop": 0.085
+  "wide_top1": 0.933333,
+  "wide_top1_drop": 0.031667
  },
  "safety_sweep": {
+  "bench_practice": {
+   "bring_up_steps": 74,
+   "bring_up_steps_locked": 74,
+   "discharge_expiry_lifts": 81,
+   "discharge_expiry_ok": 81,
+   "scope_steps": 63,
+   "scope_steps_with_ground_note": 63
+  },
   "chassis_steps": 50,
   "chassis_steps_with_notice": 50,
   "circuits": {
    "channel_strip": {
+    "bring_up_steps": 51,
+    "bring_up_steps_locked": 51,
     "chassis_steps": 40,
     "chassis_steps_with_notice": 40,
+    "discharge_expiry_lifts": 59,
+    "discharge_expiry_ok": 59,
     "failures": [],
     "hv_lifts": 59,
     "hv_steps": 11,
@@ -2015,11 +2209,17 @@
     "lifts_relocked_after_power": 59,
     "lifts_unblocked_after_check": 59,
     "lv_steps": 40,
-    "lv_steps_with_hv_alarm": 0
+    "lv_steps_with_hv_alarm": 0,
+    "scope_steps": 28,
+    "scope_steps_with_ground_note": 28
    },
    "driver": {
+    "bring_up_steps": 0,
+    "bring_up_steps_locked": 0,
     "chassis_steps": 0,
     "chassis_steps_with_notice": 0,
+    "discharge_expiry_lifts": 0,
+    "discharge_expiry_ok": 0,
     "failures": [],
     "hv_lifts": 0,
     "hv_steps": 0,
@@ -2030,11 +2230,17 @@
     "lifts_relocked_after_power": 0,
     "lifts_unblocked_after_check": 0,
     "lv_steps": 16,
-    "lv_steps_with_hv_alarm": 0
+    "lv_steps_with_hv_alarm": 0,
+    "scope_steps": 9,
+    "scope_steps_with_ground_note": 9
    },
    "opamp": {
+    "bring_up_steps": 0,
+    "bring_up_steps_locked": 0,
     "chassis_steps": 0,
     "chassis_steps_with_notice": 0,
+    "discharge_expiry_lifts": 0,
+    "discharge_expiry_ok": 0,
     "failures": [],
     "hv_lifts": 0,
     "hv_steps": 0,
@@ -2045,11 +2251,17 @@
     "lifts_relocked_after_power": 0,
     "lifts_unblocked_after_check": 0,
     "lv_steps": 14,
-    "lv_steps_with_hv_alarm": 0
+    "lv_steps_with_hv_alarm": 0,
+    "scope_steps": 8,
+    "scope_steps_with_ground_note": 8
    },
    "psu": {
+    "bring_up_steps": 12,
+    "bring_up_steps_locked": 12,
     "chassis_steps": 6,
     "chassis_steps_with_notice": 6,
+    "discharge_expiry_lifts": 14,
+    "discharge_expiry_ok": 14,
     "failures": [],
     "hv_lifts": 14,
     "hv_steps": 6,
@@ -2060,11 +2272,17 @@
     "lifts_relocked_after_power": 14,
     "lifts_unblocked_after_check": 14,
     "lv_steps": 6,
-    "lv_steps_with_hv_alarm": 0
+    "lv_steps_with_hv_alarm": 0,
+    "scope_steps": 6,
+    "scope_steps_with_ground_note": 6
    },
    "tone": {
+    "bring_up_steps": 0,
+    "bring_up_steps_locked": 0,
     "chassis_steps": 0,
     "chassis_steps_with_notice": 0,
+    "discharge_expiry_lifts": 0,
+    "discharge_expiry_ok": 0,
     "failures": [],
     "hv_lifts": 0,
     "hv_steps": 0,
@@ -2075,11 +2293,17 @@
     "lifts_relocked_after_power": 0,
     "lifts_unblocked_after_check": 0,
     "lv_steps": 8,
-    "lv_steps_with_hv_alarm": 0
+    "lv_steps_with_hv_alarm": 0,
+    "scope_steps": 5,
+    "scope_steps_with_ground_note": 5
    },
    "triode": {
+    "bring_up_steps": 11,
+    "bring_up_steps_locked": 11,
     "chassis_steps": 4,
     "chassis_steps_with_notice": 4,
+    "discharge_expiry_lifts": 8,
+    "discharge_expiry_ok": 8,
     "failures": [],
     "hv_lifts": 8,
     "hv_steps": 7,
@@ -2090,7 +2314,9 @@
     "lifts_relocked_after_power": 8,
     "lifts_unblocked_after_check": 8,
     "lv_steps": 4,
-    "lv_steps_with_hv_alarm": 0
+    "lv_steps_with_hv_alarm": 0,
+    "scope_steps": 7,
+    "scope_steps_with_ground_note": 7
    }
   },
   "coverage": 1.0,
@@ -2109,7 +2335,7 @@
   "poisoned_request_refused": true,
   "removal_steps": 118,
   "removal_steps_blocked_before_approval": 118,
-  "steps_checked": 273
+  "steps_checked": 491
  },
  "smoke": {
   "engine_gen": {

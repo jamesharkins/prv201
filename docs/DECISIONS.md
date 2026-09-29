@@ -781,3 +781,27 @@ deleted.
   chat accepts plain answers ("brought it up on a variac") and, like owner approval,
   records nothing when the sentence contains a negation. Low-voltage bench boards are
   not gated. Tests cover each rule; the sweep reports each count.
+
+## ADR-043 - Rounding never carries a bar past its pilot estimate
+
+- **Context.** Setting the round-5 bars (ADR-029's rule: the pilot estimate moved 1.5
+  standard errors against the system, rounded to the nearest reporting step) gave two
+  bars the rule did not intend. T23's accuracy when naming (pilot 99.83%, raw bar 99.57%)
+  rounded up to 100%, which no one-sided 95% bound can ever clear (ADR-033), so the
+  target was unmeetable by construction. T9's effort ratio (pilot 0.651, raw bar 0.669)
+  rounded to 0.65 on the 0.05 step used for ratios, a bar at the pilot's own result
+  with a 16% chance of being met, while T8 and T10 rounded the other way. For ratios
+  the 0.05 step was wider than the 1.5-standard-error margin (about 0.018), so rounding,
+  not the rule, set the bar.
+- **Decision.** Effort ratios round to 0.01, like calibration error and AUROC; and
+  when the nearest step lies beyond the pilot estimate, the bar rounds the other way,
+  so no bar is stricter than the pilot's own result. Found after the pilot, before the
+  lock and before any test unit was run; recorded here with its effect. Against the
+  earlier rounding, T8 tightens from 0.65 to 0.64, T10 from 0.60 to 0.59 and T11 from
+  1.00 to 0.98; T9 loosens from 0.65 to 0.67 and T23's accuracy bar from 100% to 99%;
+  no other bar moves. Each primary's chance of being met (counting the pilot's own
+  error) is now 59-69%; if the six pilot-estimable primaries were independent, all
+  would pass together with a chance near 6%, about two are expected to miss, and every
+  miss is reported.
+- **Consequences.** `eval/set_bars.py` states the rule, and `results/targets.json`
+  records the expected number of primary misses beside the joint chance.

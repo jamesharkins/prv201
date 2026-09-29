@@ -1,9 +1,9 @@
-channel_strip done 123 s
-psu done 127 s
-triode done 130 s
-tone done 131 s
-opamp done 135 s
-driver done 139 s
+channel_strip done 118 s
+psu done 122 s
+triode done 124 s
+tone done 126 s
+opamp done 129 s
+driver done 134 s
 {
  "protocol": "pilot split: symptomatic units simulated from their own seed stream with the test protocol; never test data",
  "n_cases": {
@@ -16,117 +16,190 @@ driver done 139 s
  },
  "pooled": {
   "engine_gen": {
-   "top1": 0.938,
+   "top1": 0.946,
    "top3": 0.998,
-   "mean_cost": 5.876
+   "mean_cost": 6.07
   },
   "engine_disc": {
-   "top1": 0.928,
-   "top3": 0.994,
-   "mean_cost": 9.052
+   "top1": 0.926,
+   "top3": 0.996,
+   "mean_cost": 9.182
   },
   "hybrid": {
-   "top1": 0.92,
-   "top3": 0.992,
-   "mean_cost": 5.624
+   "top1": 0.954,
+   "top3": 0.996,
+   "mean_cost": 5.514
   },
   "fixed_order": {
-   "top1": 0.868,
-   "top3": 0.958,
-   "mean_cost": 19.238
+   "top1": 0.892,
+   "top3": 0.948,
+   "mean_cost": 18.414
   },
   "half_split": {
-   "top1": 0.892,
-   "top3": 0.968,
-   "mean_cost": 18.288
+   "top1": 0.9,
+   "top3": 0.956,
+   "mean_cost": 17.654
   },
   "random": {
-   "top1": 0.85,
-   "top3": 0.966,
-   "mean_cost": 16.338
+   "top1": 0.906,
+   "top3": 0.964,
+   "mean_cost": 16.722
   },
   "recap_prior": {
-   "top1": 0.918,
-   "top3": 1.0,
-   "mean_cost": 6.05
+   "top1": 0.944,
+   "top3": 0.996,
+   "mean_cost": 6.272
   }
  },
  "n_total": 500,
- "hybrid_misses": 40,
- "hybrid_false_flags": 35,
+ "hybrid_misses": 23,
+ "hybrid_false_flags": 22,
  "channel_strip": {
   "engine_gen": {
-   "top1": 0.94,
-   "mean_cost": 6.695
+   "top1": 0.93,
+   "mean_cost": 7.215
   },
   "engine_disc": {
-   "top1": 0.93,
-   "mean_cost": 12.995
+   "top1": 0.875,
+   "mean_cost": 13.225
   },
   "hybrid": {
-   "top1": 0.925,
-   "mean_cost": 6.21
+   "top1": 0.965,
+   "mean_cost": 6.16
   },
   "fixed_order": {
-   "top1": 0.77,
-   "mean_cost": 24.115
+   "top1": 0.785,
+   "mean_cost": 25.055
   },
   "half_split": {
-   "top1": 0.835,
-   "mean_cost": 22.88
+   "top1": 0.805,
+   "mean_cost": 23.4
   },
   "random": {
-   "top1": 0.805,
-   "mean_cost": 22.965
+   "top1": 0.84,
+   "mean_cost": 24.14
   },
   "recap_prior": {
-   "top1": 0.925,
-   "mean_cost": 6.535
+   "top1": 0.935,
+   "mean_cost": 7.33
   }
  },
- "effort_ratio_vs_fixed_order": 0.3054371556294833,
- "effort_ratio_vs_half_split": 0.32130358705161854,
- "effort_ratio_vs_random": 0.3596523442281797,
- "hybrid_vs_engine_effort_ratio": 0.9571136827773995,
- "cs_margin_vs_fixed_order": 0.15500000000000003,
- "cs_margin_vs_random": 0.12,
- "cs_margin_vs_half_split": 0.09000000000000008,
- "hybrid_step_ece": 0.06359043321299637,
- "hybrid_stop_ece": 0.038696804647253114,
- "recap_prior_top1_delta": -0.019999999999999907,
- "cs_step_seconds_p95": 0.1366829999999999,
- "wide_top1": 0.84,
- "wide_top1_drop": 0.08500000000000008,
+ "effort_ratio_vs_fixed_order": 0.3296404909308135,
+ "effort_ratio_vs_half_split": 0.3438314263056531,
+ "effort_ratio_vs_random": 0.3629948570745126,
+ "hybrid_vs_engine_effort_ratio": 0.9084019769357495,
+ "cs_margin_vs_fixed_order": 0.17999999999999994,
+ "cs_margin_vs_random": 0.125,
+ "cs_margin_vs_half_split": 0.15999999999999992,
+ "effort_weighted": {
+  "engine_gen": {
+   "effort": 6.260833333333332,
+   "probing": 6.140833333333333,
+   "unsoldering": 0.12,
+   "confirming_charge": 9.774999999999999,
+   "confirmed_effort": 16.035833333333336,
+   "share_charged": 0.9441666666666666,
+   "flagged": 0.05083333333333333
+  },
+  "hybrid": {
+   "effort": 5.621666666666666,
+   "probing": 5.501666666666666,
+   "unsoldering": 0.12,
+   "confirming_charge": 9.855,
+   "confirmed_effort": 15.476666666666667,
+   "share_charged": 0.9524999999999999,
+   "flagged": 0.042499999999999996
+  },
+  "fixed_order": {
+   "effort": 19.520833333333336,
+   "probing": 15.017499999999998,
+   "unsoldering": 4.503333333333334,
+   "confirming_charge": 6.436666666666667,
+   "confirmed_effort": 25.9575,
+   "share_charged": 0.6166666666666667,
+   "flagged": 0.043333333333333335
+  },
+  "half_split": {
+   "effort": 18.611666666666665,
+   "probing": 13.548333333333334,
+   "unsoldering": 5.0633333333333335,
+   "confirming_charge": 6.031666666666666,
+   "confirmed_effort": 24.643333333333334,
+   "share_charged": 0.5766666666666667,
+   "flagged": 0.043333333333333335
+  },
+  "random": {
+   "effort": 17.958333333333332,
+   "probing": 17.958333333333332,
+   "unsoldering": 0.0,
+   "confirming_charge": 10.09,
+   "confirmed_effort": 28.048333333333336,
+   "share_charged": 0.9725,
+   "flagged": 0.0275
+  }
+ },
+ "confirmed_effort_ratio_vs_fixed_order": 0.6177726411762818,
+ "raw_effort_ratio_vs_fixed_order_weighted": 0.3207257203842048,
+ "confirmed_effort_ratio_vs_half_split": 0.6507168943595294,
+ "raw_effort_ratio_vs_half_split_weighted": 0.33639294349422405,
+ "confirmed_effort_ratio_vs_random": 0.5717214332402402,
+ "raw_effort_ratio_vs_random_weighted": 0.34863109048723895,
+ "hybrid_step_ece": 0.014261777777777807,
+ "hybrid_stop_ece": 0.015723949776032226,
+ "recap_prior_top1_delta": -0.0020000000000000018,
+ "cs_step_seconds_p95": 0.13829049999999998,
+ "wide_top1": 0.9333333333333333,
+ "wide_top1_drop": 0.03166666666666662,
  "wide_n": 150,
- "aged_top1": 0.6666666666666666,
- "aged_top1_drop": 0.2583333333333334,
- "aged_flag_rate": 0.22,
- "aged_n": 150,
- "hybrid_unmodeled_auroc": 0.748352,
- "hybrid_unmodeled_flag_rate": 0.524,
- "hybrid_unmodeled_faulty_part_rate": 0.396,
- "hybrid_unmodeled_misleading_rate": 0.08,
+ "aged_n_cases": {
+  "channel_strip": 200,
+  "psu": 60,
+  "triode": 60,
+  "tone": 60,
+  "opamp": 60,
+  "driver": 60
+ },
+ "aged_n": 500,
+ "aged_top1_by_circuit": {
+  "channel_strip": 0.94,
+  "psu": 0.9166666666666666,
+  "triode": 0.9166666666666666,
+  "tone": 0.8833333333333333,
+  "opamp": 0.9833333333333333,
+  "driver": 0.9166666666666666
+ },
+ "new_top1_weighted": 0.9558333333333333,
+ "aged_top1_weighted": 0.9316666666666668,
+ "aged_top1_drop_weighted": 0.02416666666666656,
+ "aged_flag_rate_weighted": 0.0525,
+ "aged_wrong_name_rate_weighted": 0.015833333333333335,
+ "aged_cs_top1": 0.94,
+ "aged_cs_top1_drop": 0.025000000000000022,
+ "hybrid_unmodeled_auroc": 0.801052,
+ "hybrid_unmodeled_flag_rate": 0.552,
+ "hybrid_unmodeled_faulty_part_rate": 0.36,
+ "hybrid_unmodeled_misleading_rate": 0.088,
  "hybrid_unmodeled_n": 250,
- "hybrid_single_false_flag_rate": 0.07,
- "engine_gen_unmodeled_auroc": 0.7592,
- "engine_gen_unmodeled_flag_rate": 0.512,
- "engine_gen_unmodeled_faulty_part_rate": 0.404,
- "engine_gen_unmodeled_misleading_rate": 0.084,
+ "hybrid_single_false_flag_rate": 0.044,
+ "engine_gen_unmodeled_auroc": 0.776528,
+ "engine_gen_unmodeled_flag_rate": 0.484,
+ "engine_gen_unmodeled_faulty_part_rate": 0.428,
+ "engine_gen_unmodeled_misleading_rate": 0.088,
  "engine_gen_unmodeled_n": 250,
- "engine_gen_single_false_flag_rate": 0.056,
+ "engine_gen_single_false_flag_rate": 0.048,
  "hybrid_by_symptom_rate": {
   "0.00-0.25": {
-   "n": 5,
-   "top1": 0.8
+   "n": 10,
+   "top1": 1.0
   },
   "0.25-0.50": {
-   "n": 10,
-   "top1": 0.9
+   "n": 15,
+   "top1": 0.8666666666666667
   },
   "0.50-1.00": {
-   "n": 485,
-   "top1": 0.9216494845360824
+   "n": 475,
+   "top1": 0.9557894736842105
   }
  },
- "seconds": 222.00465297698975
+ "seconds": 224.73735737800598
 }

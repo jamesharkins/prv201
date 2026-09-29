@@ -629,6 +629,10 @@
   accessed: '2026-09-28'
   verified: fetched
   claims:
+  - claim: A discharged capacitor can regain a small voltage when left open-circuited (dielectric absorption).
+    quote: 'Dielectric absorption is when a capacitor regains a small voltage after being discharged and left open-circuited:'
+  - claim: Because of this recovery voltage, discharge resistors and voltage verification are needed before handling large capacitors.
+    quote: Large capacitors may show recovery voltage after discharge due to dielectric absorption. Discharge resistors and voltage verification are required before handling high-energy capacitor banks.
   - claim: 'End-of-life criterion used in ripple-life testing: C < 80% of initial, or ESR > 200% of initial, or leakage above
       initial, or mechanical damage/leakage.'
     quote: $C < 80\%\,C_0 \quad \text{or}  \quad ESR > 200\%\,ESR_0  \quad \text{or}  \quad DCL > DCL_0$ or mechanical damage
@@ -1580,3 +1584,72 @@
       quote: "combine it with an acquisition function that maximizes expected information gain on a set of target variables."
   notes: "PMLR's own site source on GitHub (mlresearch/v97). The abstract's word 'problematically' is as printed."
 
+# ---- round 5 (2026-09-29): manufacturer-hosted instrument specifications ----
+- key: fluke_117_technical_data
+  type: manual
+  authors:
+  - Fluke Corporation
+  title: 'Technical Data: Fluke 117 Electrician''s Multimeter with Non-Contact Voltage'
+  container: Fluke technical data sheet (document 2634028, 6116-ENG Rev A, per file name)
+  publisher: Fluke Corporation
+  date: n.d.
+  url: https://dam-assets.fluke.com/s3fs-public/2634028_6116_ENG_A_W.PDF
+  accessed: '2026-09-29'
+  verified: search_snippet_only
+  claims:
+  - claim: 'Fluke 117 DC millivolts: 600.0 mV range, 0.1 mV resolution, accuracy +/-(0.5% + 2 counts).'
+    quote: For DC millivolts, the Fluke 117 has a range of 600.0 mV with 0.1 mV resolution and an accuracy of 0.5% + 2 counts.
+  - claim: 'Fluke 117 DC volts: 6.000, 60.00 and 600.0 V ranges, all at +/-(0.5% + 2 counts).'
+    quote: 'For DC volts, the Fluke 117 offers three ranges: 6.000 V, 60.00 V, and 600.0 V, each with resolutions of 0.001
+      V, 0.01 V, and 0.1 V respectively, all with an accuracy of 0.5% + 2 counts.'
+  notes: The search was restricted to Fluke domains, and this PDF was the top result, so the summary is taken from Fluke-hosted
+    material. The values agree with the fetched transcription of the March 2020 Users Manual, Table 6 (existing keys fluke_11x_manual_dcv_accuracy,
+    fluke_117_dcv_accuracy). The document number and revision are inferred from the file name; the printed revision and date
+    were not seen.
+- key: fluke_11x_extended_specs
+  type: manual
+  authors:
+  - Fluke Corporation
+  title: 'Fluke 114, 115, 116 and 117 Digital Multimeters: Extended specifications'
+  container: Fluke specification sheet (document 2793260, 6116-ENG Rev A, per file name)
+  publisher: Fluke Corporation
+  date: n.d.
+  url: https://dam-assets.fluke.com/s3fs-public/2793260_6116_ENG_A_W.PDF
+  accessed: '2026-09-29'
+  verified: search_snippet_only
+  claims:
+  - claim: On DC volts the Fluke 114-117 input impedance is above 10 MOhm, with less than 100 pF.
+    quote: For Volts DC, the input impedance is > 10 MΩ with < 100 pF capacitance.
+  - claim: In Auto-V/LoZ mode (114, 116, 117) the input impedance is only about 3 kOhm, so that mode loads high-impedance
+      circuits heavily.
+    quote: the Auto-V LoZ mode (available on models 114, 116, and 117 only) has an input impedance of approximately 3 kΩ with
+      < 500 pF capacitance.
+  notes: The search was not domain-restricted. The same Fluke document also appeared on distributor hosts (markertek.com,
+    farnell.com, fluke-direct.com, midstateinstruments.com) and at https://media.fluke.com/ce54d963-3be9-4e70-8a3e-b1060070fdfd_original%20file.pdf
+    ('DETAILED SPECIFICATIONS Fluke 114, 115, 116 and 117'). The summary may draw on any of these copies. The values agree
+    with the fetched transcription of Users Manual Table 7 (existing key fluke_117_input_characteristics). The LoZ remark
+    in the claim is our inference.
+- key: rigol_ds1000z_user_guide_ch18
+  type: manual
+  authors:
+  - RIGOL Technologies
+  title: 'MSO1000Z/DS1000Z Series Digital Oscilloscope User''s Guide, Chapter 18: Specifications'
+  container: RIGOL user's guide, specifications chapter (distributor-hosted copy)
+  publisher: RIGOL Technologies
+  date: n.d.
+  url: https://assets.testequity.com/te1/Documents/pdf/rigol/Rigol-DS1054Z-Specification.pdf
+  accessed: '2026-09-29'
+  verified: search_snippet_only
+  claims:
+  - claim: The RIGOL DS1000Z vertical resolution is 8 bits on analog channels.
+    quote: 'Vertical Resolution: Analog channel: 8 bit'
+  - claim: RIGOL DS1000Z DC gain accuracy is +/-3% of full scale at 10 mV/div and above, and +/-4% below 10 mV/div.
+    quote: 'DC Gain Accuracy: <10 mV: ±4% full scale; ≥10 mV: ±3% full scale'
+  notes: 'THIRD-PARTY HOST. The manufacturer-hosted datasheet is at https://www.rigol.com/dam/global/downloads/brochures/en/data-sheet/oscilloscopes/DS1000Z_DataSheet_EN.pdf.
+    Older copies are at https://int.rigol.com/Images/DS1000ZDataSheetEN_tcm7-3026.pdf and http://int.rigol.com/File/TechDoc/20151218/MSO_DS1000Z_Datasheet_EN.pdf.
+    All were blocked for fetching, and search text did not show their specification rows. The rows above come from search
+    text for this TestEquity-hosted copy of RIGOL''s own User''s Guide chapter. Edition: bitsavers archives UGA19103-1110
+    (May 2014) at https://bitsavers.org/test_equipment/rigol/DS1000Z/UGA19103-1110_MSO1000Z_DS1000Z_Series_Digital_Oscilloscope_Users_Guide_201405.pdf
+    (not fetched). A separate search summary (source page uncertain) said specifications are guaranteed except ''Typical''
+    values, after more than 30 minutes of operation at the specified temperature. Values agree with existing keys rigol_ds1000z_user_guide_2014
+    and rigol_ds1000ze_manual_de_2021 (fetched transcriptions).'

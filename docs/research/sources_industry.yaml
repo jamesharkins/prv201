@@ -178,19 +178,27 @@
 
 - key: stereophile_retales_13
   type: article
-  authors: ["Stereophile"]
-  title: "Re-Tales #13: Getting your hi-fi fix(ed)"
-  container: "Stereophile"
-  date: "n.d."
-  url: "https://www.stereophile.com/content/re-tales-13-getting-your-hi-fi-fixed"
-  accessed: "2026-09-28"
+  authors:
+  - Stereophile
+  title: 'Re-Tales #13: Getting your hi-fi fix(ed)'
+  container: Stereophile
+  publisher: Stereophile
+  date: '2021-09-30'
+  url: https://www.stereophile.com/content/re-tales-13-getting-your-hi-fi-fixed
+  accessed: '2026-09-29'
   verified: search_snippet_only
   claims:
-    - claim: "Stereophile's retail column reports that skilled, experienced hi-fi technicians are scarce and dwindling and that analog circuitry is not taught at two-year colleges."
-      quote: "Skilled, experienced technicians are scarce and their numbers are dwindling, with analog circuitry not being taught at 2-year colleges"
-    - claim: "The column reports that demand for electronics repair surged even before the pandemic, and lockdowns led audiophiles to revive stored components."
-      quote: "demand for electronics repair services surged even before the pandemic, and when lockdowns occurred, audiophiles pulled out old hi-fi components from storage, hoping to resurrect them"
-  notes: "Byline and date not visible in search results (content refers to pandemic lockdowns). Quotes are search-summary text; confirm exact wording on the page."
+  - claim: A Stereophile retail column reports that skilled, experienced hi-fi service technicians are scarce and dwindling.
+    quote: Skilled, experienced technicians are scarce, and their numbers are dwindling.
+  - claim: John Pravel of Luxman's North American sales division is quoted saying analog circuitry is not taught at two-year
+      colleges.
+    quote: Analog circuitry isn't being taught at 2-year colleges
+  - claim: Pravel calls for mentoring of younger technicians by older ones.
+    quote: We need to find older guys to mentor younger guys. We need more people doing this.
+  notes: Date 2021-09-30 comes from search text. The byline was not visible; the column's author is not verified. The two
+    Pravel quotes appeared inside quotation marks in the search text and are probably verbatim. The first quote was shown
+    once in quotation marks and once as paraphrase, so confirm it on the page. Supersedes the quote wording in existing key
+    stereophile_retales_13.
 
 - key: berklee_maintenance_engineer
   type: web
@@ -912,13 +920,13 @@
   - Y. Zhang
   title: Enhancing Large Language Model-Based Systems for End-to-End Circuit Analysis Problem Solving
   container: arXiv:2512.10159 (v2)
-  date: 2025-12
+  date: 2026-04
   url: https://arxiv.org/abs/2512.10159
   accessed: '2026-09-29'
   verified: mirror_checked
   claims:
-    - claim: "The pipeline reaches 97.59% on 83 undergraduate circuit problems against a Gemini 2.5 Pro baseline of 79.52% (v2, 16 April 2026; search-result text of the abstract)."
-      quote: "the proposed pipeline achieves 97.59% accuracy on 83 undergraduate circuit problems, substantially outperforming Gemini's baseline of 79.52%"
+  - claim: "The pipeline reaches 97.59% on 83 undergraduate circuit problems against a Gemini 2.5 Pro baseline of 79.52% (v2, 16 April 2026; search-result text of the abstract)."
+    quote: "the proposed pipeline achieves 97.59% accuracy on 83 undergraduate circuit problems, substantially outperforming Gemini's baseline of 79.52%"
   - claim: The system combines a fine-tuned YOLO source detector and OpenCV processing with an ngspice-driven verification
       loop (with optional human feedback) and reaches 97.59%, against 79.52% for its Gemini baseline.
     quote: "we integrate a fine-tuned YOLO detector and OpenCV-based processing ... we introduce an ngspice-driven verification
@@ -1218,3 +1226,103 @@
     - claim: "Probook builds an AI operating system for HVAC, plumbing and electrical contractors, built dispatch first."
       quote: "The company is building what is called an AI operating system for home service businesses—the HVAC shops, plumbing outfits, and electrical contractors that collectively power a $700 billion industry. Probook built dispatch first"
   notes: "Page fetch blocked by the build network (GlobeNewswire, Crunchbase News); facts confirmed from search results that summarise the press release, Fortune's exclusive of 2026-06-23 (https://fortune.com/2026/06/23/exclusive-this-startup-wants-to-be-the-ai-brain-for-home-services-and-it-just-raised-40-million-from-sequoia-and-a16z/) and syndicated copies (HVAC Insider, National Law Review). The $700 billion industry figure is the company's own framing and is not quoted in our documents."
+
+# ---- round 5 (2026-09-29): repair time, occupation mix, specialist scarcity, industry codes ----
+- key: waru_acquipedia_rtat
+  type: web
+  authors:
+  - Warfighting Acquisition University (WarU), formerly Defense Acquisition University (DAU)
+  title: Repair Turnaround Time (RTAT)
+  container: ACQuipedia
+  publisher: U.S. Department of Defense (Department of War), Warfighting Acquisition University
+  date: n.d.
+  url: https://www.waru.edu/acquipedia-article/repair-turnaround-time-rtat
+  accessed: '2026-09-29'
+  verified: search_snippet_only
+  claims:
+  - claim: DoD acquisition guidance states that most repair time is typically spent on fault isolation.
+    quote: The preponderance of repair time required for any item, subsystem, or system typically is attributable to fault
+      isolation.
+  - claim: The same article concludes that effective diagnostic (troubleshooting) routines are therefore essential.
+    quote: Thus it is imperative to provide the most effective diagnostic (troubleshooting) routines.
+  notes: An exact-phrase search returned this page as the top hit for the first sentence. A second summary gave the variant
+    word order 'is typically attributable'. The statement is general ('any item, subsystem, or system'), not specific to audio
+    electronics, and gives no percentage. The renaming of DAU as WarU by a Secretary of War memo dated 2025-11-07 comes from
+    search text quoting Wikipedia and is not independently verified. A related ACQuipedia article, 'Corrective Maintenance
+    Time (CMT)', appears in search results at both https://www.dau.edu/acquipedia-article/corrective-maintenance-time-cmt
+    and https://www.waru.edu/acquipedia-article/corrective-maintenance-time-cmt (not read).
+- key: onet_492097_details
+  type: statistics
+  authors:
+  - National Center for O*NET Development
+  title: 49-2097.00 - Audiovisual Equipment Installers and Repairers (Details)
+  container: O*NET OnLine
+  publisher: U.S. Department of Labor, Employment and Training Administration
+  date: n.d.
+  url: https://www.onetonline.org/link/details/49-2097.00
+  accessed: '2026-09-29'
+  verified: search_snippet_only
+  claims:
+  - claim: The May 2024 median wage for SOC 49-2097 was $24.34 per hour ($50,620 per year).
+    quote: The median wage for audiovisual equipment installers and repairers in 2024 is $24.34 hourly or $50,620 annual,
+      according to wage data from the Bureau of Labor Statistics.
+  - claim: The wage figure is from the BLS OEWS May 2024 estimates.
+    quote: This wage information comes from the Bureau of Labor Statistics, Occupational Employment and Wage Statistics Program,
+      May 2024 estimates.
+  - claim: The BLS 2024-34 projections, as shown by O*NET, give 24,600 jobs in 2024, much-faster-than-average growth (7% or
+      higher) and 2,600 projected openings.
+    quote: 24,600 employees in this occupation in 2024, with projected growth that is much faster than average (7% or higher)
+      from 2024-2034, and 2,600 projected job openings during that period.
+  - claim: Most workers in this occupation are employed in retail trade (40%) and construction (24%), which points to installation
+      work rather than bench repair.
+    quote: The top industries employing these workers in 2024 are Retail Trade (40% employed) and Construction (24%).
+  notes: Search-summary text. The result list mixed O*NET, My Next Move and CareerOneStop pages. The field layout (Median
+    wages (2024), Employment (2024), Projected growth (2024-2034), Top industries (2024)) matches the O*NET details page,
+    but attribution to this exact URL is probable, not certain. Another search summary said the O*NET summary page now cites
+    'Bureau of Labor Statistics 2025 wage data', so the page may since have moved to May 2025 wages. The 24,600 comes from
+    the Employment Projections matrix, which includes self-employed workers. Do not compare it directly with OEWS counts.
+    The 'retail/construction implies installation' reading is our inference.
+- key: blockclub_electronic_engineers_2026
+  type: article
+  authors:
+  - Block Club Chicago
+  title: 'Old-School Electronics Repair Man Vows To Be The Last In Chicago: ''A Dying Breed'''
+  container: Block Club Chicago
+  publisher: Block Club Chicago (nonprofit newsroom)
+  date: '2026-08-19'
+  url: https://blockclubchicago.org/2026/08/19/old-school-electronics-repair-man-vows-to-be-the-last-in-chicago-a-dying-breed/
+  accessed: '2026-09-29'
+  verified: search_snippet_only
+  claims:
+  - claim: A Chicago repair shop for old audio equipment is down from seven technicians to the owner and his twin brother;
+      the others died or retired.
+    quote: previously had seven technicians, most of whom have died or retired; he now works only with his twin brother, Dmitriy.
+  - claim: The owner describes his trade as dying out.
+    quote: '"We''re a dying breed," Sokolov said while his brother sat silently at a worktable.'
+  - claim: The shop repairs amplifiers, stereos, turntables and tape machines that few other local shops can fix.
+    quote: Electronic Engineers is stuffed to the brim with old amplifiers, stereos, speakers, turntables, reel-to-reel tape
+      players, CD players and other equipment that few other local places can fix.
+  notes: 'A single-shop anecdote from local news; it is not a statistic. Byline not visible. The first quote came from a search
+    summary and may be lightly reworded. The second and third read as article text. Syndicated copy: https://www.newsbreak.com/block-club-chicago-509960/4837614193427-old-school-electronics-repair-man-vows-to-be-the-last-in-chicago-a-dying-breed
+    (not fetched).'
+- key: census_naics_2017_to_2022_concordance
+  type: statistics
+  authors:
+  - U.S. Census Bureau
+  title: 2017 NAICS U.S. Matched to 2022 NAICS U.S. (Full Concordance)
+  container: Copy in USEPA/flowsa repository (GitHub), flowsa/data/external_data/2017_to_2022_NAICS.csv
+  publisher: U.S. Census Bureau (table); U.S. Environmental Protection Agency (repository copy)
+  date: n.d.
+  url: https://raw.githubusercontent.com/USEPA/flowsa/d3f9d787ad941ecb36fb7bbac01055cf6b295c3a/flowsa/data/external_data/2017_to_2022_NAICS.csv
+  accessed: '2026-09-29'
+  verified: fetched
+  claims:
+  - claim: The file reproduces the Census Bureau's 2017-to-2022 NAICS concordance.
+    quote: 2017 NAICS U.S. Matched to 2022 NAICS U.S. (Full Concordance)
+  - claim: In NAICS 2022, Consumer Electronics Repair and Maintenance (811211) was merged into 811210, Electronic and Precision
+      Equipment Repair and Maintenance, so it is no longer a separate industry.
+    quote: 811211,Consumer Electronics Repair and Maintenance,811210,Electronic and Precision Equipment Repair and Maintenance
+  notes: 'The same file maps 811212, 811213 and 811219 to 811210. Statistics coded to NAICS 2022 therefore cannot isolate
+    consumer-electronics repair. No County Business Patterns or Economic Census counts (establishments, employees, receipts)
+    for 811211 or 811210 could be retrieved this round: census.gov and api.census.gov were blocked and the search budget was
+    exhausted. See labor_tech_notes.md item 12.'

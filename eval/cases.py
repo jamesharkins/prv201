@@ -45,6 +45,7 @@ from differential.sim.draws import BRIDGE
 from differential.sim.faults import fault_catalog, parse_fault_id
 from differential.sim.montecarlo import (
     BASE_SEED,
+    CASE_INDEX_BASE,
     SPLIT_INDEX,
     Job,
     circuit_index,
@@ -53,9 +54,9 @@ from differential.sim.montecarlo import (
 )
 
 N_CASES = {
-    "test": {COMPOSITE_ID: 500, **dict.fromkeys(BLOCK_IDS, 100)},
+    "test": {COMPOSITE_ID: 2500, **dict.fromkeys(BLOCK_IDS, 500)},
     "pilot": {COMPOSITE_ID: 200, **dict.fromkeys(BLOCK_IDS, 60)},
-    "test_aged": {COMPOSITE_ID: 500, **dict.fromkeys(BLOCK_IDS, 100)},
+    "test_aged": {COMPOSITE_ID: 2500, **dict.fromkeys(BLOCK_IDS, 500)},
     "pilot_aged": {COMPOSITE_ID: 200, **dict.fromkeys(BLOCK_IDS, 60)},
     "test_wide": {COMPOSITE_ID: 300},
     "test_wide2": {COMPOSITE_ID: 300},
@@ -63,7 +64,7 @@ N_CASES = {
     "pilot_wide": {COMPOSITE_ID: 150},
     "unmodeled_val": {COMPOSITE_ID: 60, **dict.fromkeys(BLOCK_IDS, 20)},
     "unmodeled_pilot": {COMPOSITE_ID: 125, **dict.fromkeys(BLOCK_IDS, 25)},
-    "unmodeled_test": {COMPOSITE_ID: 250, **dict.fromkeys(BLOCK_IDS, 50)},
+    "unmodeled_test": {COMPOSITE_ID: 1250, **dict.fromkeys(BLOCK_IDS, 250)},
 }
 UNMODELED_SPLITS = ("unmodeled_val", "unmodeled_pilot", "unmodeled_test")
 MAX_ATTEMPTS = 200
@@ -156,12 +157,12 @@ def build_split(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, obje
     pending = list(range(n))
     while pending:
         hyps = {i: pick(_case_rng(cid, split, i, attempts[i])) for i in pending}
-        jobs = [Job(cid, split, hyps[i], 100000 + i, (attempts[i],)) for i in pending]
+        jobs = [Job(cid, split, hyps[i], CASE_INDEX_BASE + i, (attempts[i],)) for i in pending]
         df, _ = run_jobs(jobs, tag=f"{cid}__{split}__round{max(attempts[i] for i in pending)}")
         df = df.set_index(["hyp_index", "draw"])
         nxt = []
         for i in pending:
-            hits = df.loc[[(100000 + i, attempts[i])]]
+            hits = df.loc[[(CASE_INDEX_BASE + i, attempts[i])]]
             row = hits[hits["hypothesis"] == hyps[i]].iloc[-1]
             tried[i].append(hyps[i])
             facts = derive_facts(circ, sm.reference, row) if bool(row["ok"]) else None
@@ -169,7 +170,7 @@ def build_split(cid: str, split: str) -> tuple[pd.DataFrame, list[dict[str, obje
                 rec = row.to_dict()
                 rec.update({"case_id": f"{cid}-{split}-{i:04d}", "case_index": i, "circuit": cid,
                             "hypothesis": hyps[i], "redraws": attempts[i], "draw": attempts[i],
-                            "hyp_index": 100000 + i, "_facts": facts})
+                            "hyp_index": CASE_INDEX_BASE + i, "_facts": facts})
                 kept[i] = rec
             elif attempts[i] + 1 < MAX_ATTEMPTS:
                 attempts[i] += 1

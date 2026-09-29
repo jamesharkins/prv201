@@ -88,6 +88,9 @@ def seed_label(circuit_id: str, split: str, hyp_index: int, draw: int) -> str:
     return f"{BASE_SEED}-{circuit_index(circuit_id)}-{SPLIT_INDEX[split]}-{hyp_index}-{draw}"
 
 
+CASE_INDEX_BASE = 100_000  # hyp_index of evaluation case i is CASE_INDEX_BASE + i
+
+
 @dataclass(frozen=True)
 class Job:
     circuit_id: str
@@ -99,7 +102,11 @@ class Job:
 
     @property
     def key(self) -> str:
-        return f"{self.circuit_id}|{self.split}|{self.hypothesis}|{self.draws[0]}-{self.draws[-1]}"
+        base = f"{self.circuit_id}|{self.split}|{self.hypothesis}|{self.draws[0]}-{self.draws[-1]}"
+        # Evaluation cases (numbered from CASE_INDEX_BASE by eval/cases.py) can repeat a
+        # hypothesis, so their checkpoint key carries the case number; catalog jobs keep the
+        # key their checkpoints were written with.
+        return base if self.hyp_index < CASE_INDEX_BASE else f"{base}|{self.hyp_index}"
 
 
 def is_aged(split: str, hyp_index: int, draw: int) -> bool:

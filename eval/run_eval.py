@@ -252,9 +252,11 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
                     "value": None if e is None else e.value,
                     "ci": None if e is None else est(e), "status": st, **detail}
 
-    put("T1", bootstrap_mean(hyb["correct"].to_numpy(float)), {"n": len(hyb)})
+    # Counts of units are judged with the exact binomial bound (ADR-044): every test unit
+    # carries the same weight, so a pooled rate is a plain proportion.
+    put("T1", count_bound(hyb["correct"]), {"n": len(hyb)})
     put("T2", exact_binomial(int(cs["correct"].sum()), len(cs)), {"n": len(cs)})
-    put("T3", bootstrap_mean(hyb["top3"].to_numpy(float)), {"n": len(hyb)})
+    put("T3", count_bound(hyb["top3"]), {"n": len(hyb)})
     margins, states = {}, []
     eng_cs = R["engine_gen"][COMPOSITE_ID]
     for base in ("fixed_order", "random", "half_split"):
@@ -282,7 +284,7 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
     drop = boot_diff_indep(hyb["correct"].to_numpy(float), aged["correct"].to_numpy(float))
     curve = {k: float(R[f"{k}_hybrid"][COMPOSITE_ID]["correct"].mean())
              for k in ("test_wide", "test_wide2", "test_wide3")}
-    put("T6", bootstrap_mean(aged["correct"].to_numpy(float)),
+    put("T6", count_bound(aged["correct"]),
         {"n": len(aged), "drop_from_new": est(drop),
          "by_circuit": {c: float(f["correct"].mean()) for c, f in R["aged_hybrid"].items()},
          "aged_flagged": float((aged["top_group"] == -1).mean()),
@@ -317,7 +319,7 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
     unm = pooled(R["unmodeled_hybrid"])
     oc = pd.Series([unmodeled_outcome(load_bundle(c, with_disc=False), t, int(g))
                     for c, t, g in zip(unm["circuit"], unm["truth"], unm["top_group"], strict=True)])
-    misleading = bootstrap_mean((oc == "misleading").to_numpy(float))
+    misleading = count_bound(oc == "misleading")
     by_kind = {k: float((oc[unm["truth"].str.contains(pat, regex=True).to_numpy()] == "misleading").mean())
                for k, pat in (("double_fault", r"\+"), ("modification", r"value_x|BRIDGE"))}
     put("T13", misleading, {"n_unmodeled": len(unm), "misleading_by_kind": by_kind,
@@ -540,6 +542,12 @@ def figures(R: dict[str, dict[str, pd.DataFrame]], tr: dict[str, Any]) -> list[s
     figstyle.save(fig, FIGURES_DIR / "fig_unmodeled_roc")
     made.append("fig_unmodeled_roc")
     return made
+
+
+def count_bound(flags: pd.Series | np.ndarray) -> Estimate:
+    """Exact (Clopper-Pearson) interval for the share of units flagged true."""
+    x = np.asarray(flags, dtype=bool)
+    return exact_binomial(int(x.sum()), len(x))
 
 
 def main(argv: list[str] | None = None) -> None:

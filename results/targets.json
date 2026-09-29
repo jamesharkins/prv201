@@ -7,15 +7,15 @@
     "secondary": "reported with bars; not part of the headline claim"
   },
   "evaluation_sets": {
-    "single_fault_cases": 1000,
-    "channel_strip_cases": 500,
-    "cases_per_block": 100,
+    "single_fault_cases": 5000,
+    "channel_strip_cases": 2500,
+    "cases_per_block": 500,
     "test_weights": {
       "channel_strip": 0.5,
       "block": 0.1
     },
-    "unmodeled_cases": 500,
-    "aged_cases": 1000,
+    "unmodeled_cases": 2500,
+    "aged_cases": 5000,
     "tolerance_curve": [
       1.5,
       2.0,
@@ -58,17 +58,17 @@
       "plain": "Failed part's group named first, 1,000 units",
       "system": "Full system",
       "comparator": ">=",
-      "bound": "bootstrap",
+      "bound": "exact",
       "value": 0.94,
       "text": "≥ 94%",
       "rationale": "The headline accuracy claim; complaint-reading errors count against the full system.",
       "primary": true,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 95.6% (standard error 1.0 points, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 61%.",
+      "derivation": "Pilot estimate 95.6% (standard error 1.0 points, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 83%.",
       "pilot_text": "95.6%",
-      "chance_met": 0.614,
-      "pass_count": 952,
-      "n_units": 1000,
+      "chance_met": 0.83,
+      "pass_count": 4728,
+      "n_units": 5000,
       "raw_bar": 0.9402
     },
     {
@@ -85,11 +85,11 @@
       "rationale": "The channel strip has about five times the suspects of any block.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 96.5% (standard error 1.4 points, 200 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 72%.",
+      "derivation": "Pilot estimate 96.5% (standard error 1.4 points, 200 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 88%.",
       "pilot_text": "96.5%",
-      "chance_met": 0.723,
-      "pass_count": 478,
-      "n_units": 500,
+      "chance_met": 0.876,
+      "pass_count": 2370,
+      "n_units": 2500,
       "raw_bar": 0.9434
     },
     {
@@ -100,17 +100,17 @@
       "plain": "True group among the first three shown",
       "system": "Full system",
       "comparator": ">=",
-      "bound": "bootstrap",
+      "bound": "exact",
       "value": 0.99,
       "text": "≥ 99%",
       "rationale": "Technicians confirm a short list; it must almost always contain the fault.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 99.7% (standard error 0.6 points, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 46%.",
+      "derivation": "Pilot estimate 99.7% (standard error 0.6 points, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 76%.",
       "pilot_text": "99.7%",
-      "chance_met": 0.465,
-      "pass_count": 995,
-      "n_units": 1000,
+      "chance_met": 0.756,
+      "pass_count": 4962,
+      "n_units": 5000,
       "raw_bar": 0.9872
     },
     {
@@ -127,9 +127,9 @@
       "rationale": "Isolates how the next measurement is chosen: every method shares the same inference and stopping rule, and the scripts may unsolder their leading suspect.",
       "primary": true,
       "pilot_dependent": true,
-      "derivation": "Pilot margins of the engine alone: +14.5 points over the fixed-order chart, +9.0 over random probing and +12.5 over half-split tracing; bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 61%, taking the smallest of the three.",
+      "derivation": "Pilot margins of the engine alone: +14.5 points over the fixed-order chart, +9.0 over random probing and +12.5 over half-split tracing; bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 85%, taking the smallest of the three.",
       "pilot_text": "+14.5/+9.0/+12.5",
-      "chance_met": 0.61
+      "chance_met": 0.853
     },
     {
       "id": "T5",
@@ -154,17 +154,17 @@
       "plain": "Failed part's group named first, 1,000 aged units",
       "system": "Full system",
       "comparator": ">=",
-      "bound": "bootstrap",
+      "bound": "exact",
       "value": 0.91,
       "text": "≥ 91%",
       "rationale": "Units that reach a bench are old: the engine is trained on as-new and aged units alike and must hold its accuracy on aged ones. Still simulation; T7 tests reality.",
       "primary": true,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 93.2% (standard error 1.2 points, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 69%.",
+      "derivation": "Pilot estimate 93.2% (standard error 1.2 points, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 88%.",
       "pilot_text": "93.2%",
-      "chance_met": 0.69,
-      "pass_count": 924,
-      "n_units": 1000,
+      "chance_met": 0.879,
+      "pass_count": 4584,
+      "n_units": 5000,
       "raw_bar": 0.9133
     },
     {
@@ -182,7 +182,13 @@
       "rationale": "Fixed before any hardware run from what a pass must show: at least 49 of 60 named first (the exact one-sided 95% lower bound then clears 70%). That happens 99% of the time if the real accuracy is 90%, 82% if it is 85%, and 3% if it is 70%.",
       "primary": true,
       "pass_count": 49,
-      "pass_rule_note": "49 of 60 is the smallest count whose exact one-sided 95% lower bound clears 70%"
+      "pass_rule_note": "49 of 60 is the smallest count whose exact one-sided 95% lower bound clears 70%",
+      "pass_probability": {
+        "0.90": 0.985,
+        "0.85": 0.819,
+        "0.80": 0.449,
+        "0.70": 0.029
+      }
     },
     {
       "id": "T8",
@@ -198,9 +204,9 @@
       "rationale": "Effort saving against a service-manual chart.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 0.618 (standard error 0.012, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 71%.",
+      "derivation": "Pilot estimate 0.618 (standard error 0.012, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 89%.",
       "pilot_text": "0.62×",
-      "chance_met": 0.706,
+      "chance_met": 0.894,
       "raw_bar": 0.636
     },
     {
@@ -217,9 +223,9 @@
       "rationale": "Effort saving against half-split signal tracing, the strongest scripted baseline (a textbook procedure, not a measured expert); every method pays for confirming its answer.",
       "primary": true,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 0.651 (standard error 0.012, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 64%.",
+      "derivation": "Pilot estimate 0.651 (standard error 0.012, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 85%.",
       "pilot_text": "0.65×",
-      "chance_met": 0.644,
+      "chance_met": 0.852,
       "raw_bar": 0.6686
     },
     {
@@ -236,9 +242,9 @@
       "rationale": "Effort saving against unguided probing.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 0.572 (standard error 0.011, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 65%.",
+      "derivation": "Pilot estimate 0.572 (standard error 0.011, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 86%.",
       "pilot_text": "0.57×",
-      "chance_met": 0.653,
+      "chance_met": 0.858,
       "raw_bar": 0.5884
     },
     {
@@ -255,9 +261,9 @@
       "rationale": "What a noisy written complaint adds to the measurements.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 0.965 (standard error 0.010, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 62%.",
+      "derivation": "Pilot estimate 0.965 (standard error 0.010, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 84%.",
       "pilot_text": "0.97×",
-      "chance_met": 0.622,
+      "chance_met": 0.835,
       "raw_bar": 0.9796
     },
     {
@@ -274,9 +280,9 @@
       "rationale": "Stopping at 90% is safe only if the shown probabilities mean what they say.",
       "primary": true,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 0.012 (standard error 0.006, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 59%.",
+      "derivation": "Pilot estimate 0.012 (standard error 0.006, 500 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 81%.",
       "pilot_text": "0.012",
-      "chance_met": 0.587,
+      "chance_met": 0.808,
       "raw_bar": 0.0204
     },
     {
@@ -287,17 +293,17 @@
       "plain": "Out-of-model units sent only to healthy parts (500)",
       "system": "Full system",
       "comparator": "<=",
-      "bound": "bootstrap",
+      "bound": "exact",
       "value": 0.12,
       "text": "≤ 12%",
       "rationale": "Sending a technician to a healthy part is the harm to avoid on units the catalog does not cover.",
       "primary": true,
       "pilot_dependent": true,
-      "derivation": "Pilot estimate 8.8% (standard error 2.0 points, 250 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 64%.",
+      "derivation": "Pilot estimate 8.8% (standard error 2.0 points, 250 units); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 84%.",
       "pilot_text": "8.8%",
-      "chance_met": 0.639,
-      "pass_count": 49,
-      "n_units": 500,
+      "chance_met": 0.844,
+      "pass_count": 272,
+      "n_units": 2500,
       "raw_bar": 0.118
     },
     {
@@ -315,9 +321,9 @@
       "rationale": "How often the explicit 'no single fault fits' outcome catches a unit outside the catalog.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot flagged 55.2% (SE 2.9) and AUROC 0.801 (SE 0.019) on 250 units; bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 39%.",
+      "derivation": "Pilot flagged 55.2% (SE 2.9) and AUROC 0.801 (SE 0.019) on 250 units; bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 70%.",
       "pilot_text": "55%; 0.80",
-      "chance_met": 0.387
+      "chance_met": 0.697
     },
     {
       "id": "T23",
@@ -334,9 +340,9 @@
       "rationale": "Separates abstentions from wrong names, which T1 counts together.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot named 95.7% of single faults (SE 0.9) and was right on 99.8% of those (SE 0.2); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 74%.",
+      "derivation": "Pilot named 95.7% of single faults (SE 0.9) and was right on 99.8% of those (SE 0.2); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 91%.",
       "pilot_text": "95.7%; 99.8%",
-      "chance_met": 0.739
+      "chance_met": 0.913
     },
     {
       "id": "T14",
@@ -352,9 +358,9 @@
       "rationale": "Old electrolytics do fail often; the readings, not the prior, must decide.",
       "primary": false,
       "pilot_dependent": true,
-      "derivation": "Pilot changes -0.1 points (capacitor-heavy prior, catalog mix) and -0.1 points (uniform prior, capacitor-heavy mix); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 38%, taking the smaller.",
+      "derivation": "Pilot changes -0.1 points (capacitor-heavy prior, catalog mix) and -0.1 points (uniform prior, capacitor-heavy mix); bar = estimate moved 1.5 standard errors against the system, rounded (ADR-029, ADR-043); chance of meeting it (counting the pilot's own error) about 69%, taking the smaller.",
       "pilot_text": "−0.1 / −0.1 pts",
-      "chance_met": 0.378
+      "chance_met": 0.685
     },
     {
       "id": "T15",
@@ -472,8 +478,8 @@
       "T12",
       "T13"
     ],
-    "chance": 0.062,
-    "expected_misses": 2.22,
+    "chance": 0.361,
+    "expected_misses": 0.94,
     "note": "product of the per-target chances of meeting the bar, as if the targets were independent; T5 and T7 have no pilot and are left out"
   }
 }

@@ -44,6 +44,8 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from scipy.stats import beta as beta_dist
+from scipy.stats import binom as binom_dist
 
 from differential.circuits.library import BLOCK_IDS, COMPOSITE_ID
 from differential.config import RESULTS_DIR
@@ -55,6 +57,7 @@ from eval.stats import auroc, brier_shown, ece, ece_equal_mass, log_loss, shown_
 
 K = 1.5
 Z_ONE_SIDED = 1.6449
+ONE_SIDED_ALPHA = 0.05
 N_BOOT = 2000
 SEED = 20260928
 CIRCUITS = [COMPOSITE_ID, *BLOCK_IDS]
@@ -179,17 +182,47 @@ def chance_met(est: float, se_pilot: float, b: float, higher_is_better: bool,
     return float(0.5 * (1 + math.erf(((gap - Z_ONE_SIDED * se_t) / spread) / math.sqrt(2))))
 
 
-def pass_count(bar_value: float, n: int, higher_is_better: bool = True) -> int:
-    """Smallest (or, for an 'at most' target, largest) count of n units whose normal
-    one-sided 95% bound clears the bar: what a pass needs, in units."""
-    def bound(k: int) -> float:
-        q = k / n
-        half = Z_ONE_SIDED * math.sqrt(max(q * (1 - q), 1e-12) / n)
-        return q - half if higher_is_better else q + half
+def exact_lower(k: int, n: int) -> float:
+    """Clopper-Pearson one-sided 95% lower bound for k successes in n (eval.stats.exact_binomial)."""
+    return 0.0 if k <= 0 else float(beta_dist.ppf(ONE_SIDED_ALPHA, k, n - k + 1))
 
+
+def exact_upper(k: int, n: int) -> float:
+    return 1.0 if k >= n else float(beta_dist.ppf(1 - ONE_SIDED_ALPHA, k + 1, n - k))
+
+
+def pass_count(bar_value: float, n: int, higher_is_better: bool = True) -> int:
+    """Smallest (or, for an 'at most' target, largest) count of n units whose exact
+    (Clopper-Pearson) one-sided 95% bound clears the bar: what a pass needs, in units.
+    Counts of units are judged with the exact bound (ADR-044); every unit of a pooled
+    test set carries the same weight, so the pooled rate is a plain proportion."""
     if higher_is_better:
-        return next(k for k in range(n + 1) if bound(k) >= bar_value)
-    return max(k for k in range(n + 1) if bound(k) <= bar_value)
+        lo, hi = 0, n  # smallest k with exact_lower(k) >= bar (monotone in k)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if exact_lower(mid, n) >= bar_value:
+                hi = mid
+            else:
+                lo = mid + 1
+        return lo
+    lo, hi = 0, n  # largest k with exact_upper(k) <= bar
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if exact_upper(mid, n) <= bar_value:
+            lo = mid
+        else:
+            hi = mid - 1
+    return lo
+
+
+def chance_count(est: float, se_pilot: float, k: int, n: int, higher_is_better: bool) -> float:
+    """Predictive chance that a count target passes under the exact rule: the true rate is
+    normal around the pilot estimate with the pilot's standard error, and the test count is
+    binomial at that rate (ADR-044)."""
+    nodes, weights = np.polynomial.hermite_e.hermegauss(80)
+    p = np.clip(est + se_pilot * nodes, 1e-9, 1 - 1e-9)
+    tail = binom_dist.sf(k - 1, n, p) if higher_is_better else binom_dist.cdf(k, n, p)
+    return float(np.sum(weights * tail) / np.sum(weights))
 
 
 def pts(x: float) -> str:
@@ -225,6 +258,42 @@ def shown_ece(d: dict[str, pd.DataFrame]) -> tuple[float, float, dict[str, float
              "log_loss": log_loss(pooled["p_truth"].to_numpy()),
              "step_ece_equal_width": step_ece(d)[0]}
     return est, se, extra
+
+
+def ece_floor(d: dict[str, pd.DataFrame], n_units: int, n_sim: int = 300) -> dict[str, float]:
+    """T12 for a perfectly calibrated system at the test size: the shown probabilities are
+    resampled from the pilot (test-mix weights) and each outcome is drawn from its own
+    probability, so any calibration error left is sampling noise."""
+    conf, w = [], []
+    for c in CIRCUITS:
+        r3 = [json.loads(x) for x in d[c]["ranked3"]]
+        cf, _ = shown_calibration(r3, list(d[c]["truth_group"]))
+        conf.append(cf)
+        w.append(np.full(len(cf), WEIGHTS[c] / max(len(cf), 1)))
+    cf_all, w_all = np.concatenate(conf), np.concatenate(w)
+    per_unit = len(cf_all) / sum(len(d[c]) for c in CIRCUITS)
+    n = round(per_unit * n_units)
+    rng = np.random.default_rng(SEED)
+    vals = []
+    for _ in range(n_sim):
+        c = cf_all[rng.choice(len(cf_all), size=n, p=w_all / w_all.sum())]
+        vals.append(ece_equal_mass(c, (rng.random(n) < c).astype(float))[0])
+    return {"n_units": n_units, "mean": float(np.mean(vals)), "p95": float(np.quantile(vals, 0.95))}
+
+
+def hv_steps(d: dict[str, pd.DataFrame]) -> float:
+    """Mean number of powered readings per diagnosis at points that can exceed 50 V."""
+    from differential.safety.hazards import hazard
+
+    def count(cid: str, keys: str) -> int:
+        n = 0
+        for k in json.loads(keys):
+            kind, target = k.split(":", 1)
+            if kind != "lift" and target.upper().startswith("TP") and hazard(cid, target).high_voltage:
+                n += 1
+        return n
+
+    return float(sum(WEIGHTS[c] * np.mean([count(c, k) for k in d[c]["keys"]]) for c in CIRCUITS))
 
 
 def cap_weights(bundle_cid: str, df: pd.DataFrame, share: float) -> np.ndarray:
@@ -284,6 +353,13 @@ def main() -> None:
     if tj.get("locked_on"):
         raise SystemExit("targets are locked; bars cannot change")
     ev = tj["evaluation_sets"]
+    from eval.cases import N_CASES
+
+    ev.update({"single_fault_cases": sum(N_CASES["test"].values()),
+               "channel_strip_cases": N_CASES["test"][COMPOSITE_ID],
+               "cases_per_block": N_CASES["test"][BLOCK_IDS[0]],
+               "aged_cases": sum(N_CASES["test_aged"].values()),
+               "unmodeled_cases": sum(N_CASES["unmodeled_test"].values())})
     n_single, n_cs = ev["single_fault_cases"], ev["channel_strip_cases"]
     d: dict[str, dict[str, Any]] = {}
 
@@ -386,6 +462,12 @@ def main() -> None:
         # What reading the complaint did in the pilot (full system vs engine alone):
         "complaint_accuracy_change_pts": 100 * (acc["hybrid"] - acc["engine"]),
         "complaint_effort_saving_pct": 100 * (1 - d["T11"]["estimate"]),
+        # What a perfectly calibrated system would score on T12 at the test size (ADR-044).
+        "ece_floor": ece_floor(hyb, n_single),
+        # Powered readings at points that can exceed 50 V, per diagnosis (test-mix weights).
+        "hv_steps": {n: hv_steps(r) for n, r in (("hybrid", hyb), ("engine", eng),
+                                                 ("fixed_order", fixed), ("half_split", half),
+                                                 ("random", rnd))},
     }
 
     text = {
@@ -405,6 +487,9 @@ def main() -> None:
     for tid, (n_units, hib) in counts.items():
         d[tid]["pass_count"] = pass_count(d[tid]["bar"], int(n_units), hib)
         d[tid]["n_units"] = int(n_units)
+        d[tid]["bound"] = "exact"
+        d[tid]["chance_met"] = chance_count(d[tid]["estimate"], d[tid]["se"], d[tid]["pass_count"],
+                                            int(n_units), hib)
     for tid, v in d.items():
         if "estimate" in v and "se" in v and tid not in ("T4", "T14", "T22", "T23"):
             v["raw_bar"] = (v["estimate"] - K * v["se"] if v.get("direction") == ">="
@@ -422,6 +507,8 @@ def main() -> None:
             t["derivation"] = derivation(t["id"], v)
             t["pilot_text"] = pilot_text(t["id"], v)
             t["chance_met"] = round(float(v["chance_met"]), 3)
+            if "bound" in v:
+                t["bound"] = v["bound"]
             if t["id"] == "T22":
                 t["value_flag_rate"] = b22f
             if t["id"] == "T23":
@@ -445,6 +532,10 @@ def main() -> None:
             t["pass_count"] = next(k for k in range(n7 + 1) if exact_binomial(k, n7).lo1 >= float(t["value"]))
             t["pass_rule_note"] = (f"{t['pass_count']} of {n7} is the smallest count whose exact one-sided "
                                    f"95% lower bound clears {100 * float(t['value']):.0f}%")
+            # Why 70%: with 60 faults a pass needs about 82% observed, which a system truly
+            # 85-90% accurate on the boards reaches most of the time and one at 70% almost never.
+            t["pass_probability"] = {f"{q:.2f}": round(float(binom_dist.sf(t["pass_count"] - 1, n7, q)), 3)
+                                     for q in (0.90, 0.85, 0.80, 0.70)}
     tj["bar_rule"] = ("Each pilot-estimable bar is the protocol-matched pilot's estimate moved against "
                       f"the system by {K} standard errors and rounded to the reporting step, never "
                       "past the estimate (eval/set_bars.py, ADR-029, ADR-043); a bar is met only when "

@@ -1,0 +1,22 @@
+[05:51:55] cases start
+channel_strip test: 2500 cases (637 rejected draws)
+psu test: 500 cases (557 rejected draws)
+triode test: 500 cases (57 rejected draws)
+tone test: 500 cases (127 rejected draws)
+opamp test: 500 cases (18 rejected draws)
+driver test: 500 cases (189 rejected draws)
+channel_strip test_aged: 2500 cases (566 rejected draws)
+psu test_aged: 500 cases (592 rejected draws)
+triode test_aged: 500 cases (50 rejected draws)
+tone test_aged: 500 cases (112 rejected draws)
+opamp test_aged: 500 cases (19 rejected draws)
+driver test_aged: 500 cases (183 rejected draws)
+channel_strip unmodeled_test: 1250 cases (181 rejected draws)
+psu unmodeled_test: 250 cases (37 rejected draws)
+triode unmodeled_test: 250 cases (48 rejected draws)
+tone unmodeled_test: 250 cases (63 rejected draws)
+opamp unmodeled_test: 250 cases (42 rejected draws)
+driver unmodeled_test: 250 cases (29 rejected draws)
+[05:57:52] cases exit 0
+complaint texts written (bank B present; 0 bank-B texts with leakage); nothing scored
+[05:57:54] render exit 0

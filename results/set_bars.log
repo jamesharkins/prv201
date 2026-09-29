@@ -1,17 +1,17 @@
-T1 ≥ 94% {'estimate': 0.9558, 'se': 0.0104, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.94, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.6141, 'pass_count': 952, 'n_units': 1000, 'raw_bar': 0.9402}
-T2 ≥ 94% {'estimate': 0.965, 'se': 0.0144, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.94, 'n_pilot': 200, 'n_test': 500, 'chance_met': 0.7225, 'pass_count': 478, 'n_units': 500, 'raw_bar': 0.9434}
-T3 ≥ 99% {'estimate': 0.9967, 'se': 0.0063, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.99, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.4646, 'pass_count': 995, 'n_units': 1000, 'raw_bar': 0.9872}
-T4 ≥ +4 points each {'estimate_vs_fixed_order': 0.145, 'se_vs_fixed_order': 0.0335, 'bar_vs_fixed_order': 0.09, 'estimate_vs_random': 0.09, 'se_vs_random': 0.0302, 'bar_vs_random': 0.04, 'estimate_vs_half_split': 0.125, 'se_vs_half_split': 0.0324, 'bar_vs_half_split': 0.08, 'chance_met': 0.61, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.04, 'n_pilot': 200, 'n_test': 500, 'rule': "the smallest of the three margin bars, met when every margin's lower bound clears it"}
-T6 ≥ 91% {'estimate': 0.9317, 'se': 0.0122, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.91, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.6899, 'drop_from_new': 0.0242, 'aged_flag_rate': 0.0525, 'aged_wrong_name_rate': 0.0158, 'aged_cs_top1': 0.94, 'n_aged': 500, 'pass_count': 924, 'n_units': 1000, 'raw_bar': 0.9133}
-T8 ≤ 0.64× {'estimate': 0.6178, 'se': 0.0122, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.64, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.7064, 'accuracy_gap': 0.0692, 'raw_bar': 0.636}
-T9 ≤ 0.67× {'estimate': 0.6507, 'se': 0.0119, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.67, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.6437, 'accuracy_gap': 0.0592, 'raw_bar': 0.6686}
-T10 ≤ 0.59× {'estimate': 0.5717, 'se': 0.0111, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.59, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.6533, 'accuracy_gap': 0.0483, 'raw_bar': 0.5884}
-T11 ≤ 0.98× {'estimate': 0.9651, 'se': 0.0096, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.98, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.6221, 'accuracy_gap': 0.0125, 'raw_bar': 0.9796}
-T12 ≤ 0.02 {'estimate': 0.0121, 'se': 0.0055, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.02, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.5867, 'brier': 0.0881, 'log_loss': 0.2183, 'step_ece_equal_width': 0.0143, 'raw_bar': 0.0204}
-T13 ≤ 12% {'estimate': 0.088, 'se': 0.02, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.12, 'n_pilot': 250.0, 'n_test': 500, 'chance_met': 0.6394, 'pass_count': 49, 'n_units': 500, 'raw_bar': 0.118}
-T22 ≥ 51% flagged; AUROC ≥ 0.77 {'flagged_estimate': 0.552, 'flagged_se': 0.0293, 'flagged_bar': 0.51, 'estimate': 0.8011, 'se': 0.0187, 'bar': 0.77, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'n_pilot': 250.0, 'n_test': 500, 'chance_met': 0.387}
-T23 ≥ 94% named; ≥ 99% right when naming {'estimate': 0.9575, 'se': 0.009, 'bar': 0.94, 'accuracy_estimate': 0.9983, 'accuracy_se': 0.0017, 'accuracy_bar': 0.99, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.7385}
-T14 ≥ −1 points each {'wrong_prior_catalog_mix': -0.0008, 'wrong_prior_catalog_mix_se': 0.0069, 'uniform_prior_capacitor_mix': -0.0007, 'uniform_prior_capacitor_mix_se': 0.0053, 'bar': -0.01, 'bar_catalog_mix': -0.01, 'bar_capacitor_mix': -0.01, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'n_pilot': 500, 'n_test': 1000, 'chance_met': 0.3784}
+T1 ≥ 94% {'estimate': 0.9558, 'se': 0.0104, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.94, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.8302, 'pass_count': 4728, 'n_units': 5000, 'bound': 'exact', 'raw_bar': 0.9402}
+T2 ≥ 94% {'estimate': 0.965, 'se': 0.0144, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.94, 'n_pilot': 200, 'n_test': 2500, 'chance_met': 0.8759, 'pass_count': 2370, 'n_units': 2500, 'bound': 'exact', 'raw_bar': 0.9434}
+T3 ≥ 99% {'estimate': 0.9967, 'se': 0.0063, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.99, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.756, 'pass_count': 4962, 'n_units': 5000, 'bound': 'exact', 'raw_bar': 0.9872}
+T4 ≥ +4 points each {'estimate_vs_fixed_order': 0.145, 'se_vs_fixed_order': 0.0335, 'bar_vs_fixed_order': 0.09, 'estimate_vs_random': 0.09, 'se_vs_random': 0.0302, 'bar_vs_random': 0.04, 'estimate_vs_half_split': 0.125, 'se_vs_half_split': 0.0324, 'bar_vs_half_split': 0.08, 'chance_met': 0.8525, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.04, 'n_pilot': 200, 'n_test': 2500, 'rule': "the smallest of the three margin bars, met when every margin's lower bound clears it"}
+T6 ≥ 91% {'estimate': 0.9317, 'se': 0.0122, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'bar': 0.91, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.8793, 'drop_from_new': 0.0242, 'aged_flag_rate': 0.0525, 'aged_wrong_name_rate': 0.0158, 'aged_cs_top1': 0.94, 'n_aged': 500, 'pass_count': 4584, 'n_units': 5000, 'bound': 'exact', 'raw_bar': 0.9133}
+T8 ≤ 0.64× {'estimate': 0.6178, 'se': 0.0122, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.64, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.8938, 'accuracy_gap': 0.0692, 'raw_bar': 0.636}
+T9 ≤ 0.67× {'estimate': 0.6507, 'se': 0.0119, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.67, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.8516, 'accuracy_gap': 0.0592, 'raw_bar': 0.6686}
+T10 ≤ 0.59× {'estimate': 0.5717, 'se': 0.0111, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.59, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.8584, 'accuracy_gap': 0.0483, 'raw_bar': 0.5884}
+T11 ≤ 0.98× {'estimate': 0.9651, 'se': 0.0096, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.98, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.8355, 'accuracy_gap': 0.0125, 'raw_bar': 0.9796}
+T12 ≤ 0.02 {'estimate': 0.0121, 'se': 0.0055, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.02, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.8075, 'brier': 0.0881, 'log_loss': 0.2183, 'step_ece_equal_width': 0.0143, 'raw_bar': 0.0204}
+T13 ≤ 12% {'estimate': 0.088, 'se': 0.02, 'k': 1.5, 'direction': '<=', 'step': 0.01, 'bar': 0.12, 'n_pilot': 250.0, 'n_test': 2500, 'chance_met': 0.8437, 'pass_count': 272, 'n_units': 2500, 'bound': 'exact', 'raw_bar': 0.118}
+T22 ≥ 51% flagged; AUROC ≥ 0.77 {'flagged_estimate': 0.552, 'flagged_se': 0.0293, 'flagged_bar': 0.51, 'estimate': 0.8011, 'se': 0.0187, 'bar': 0.77, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'n_pilot': 250.0, 'n_test': 2500, 'chance_met': 0.6969}
+T23 ≥ 94% named; ≥ 99% right when naming {'estimate': 0.9575, 'se': 0.009, 'bar': 0.94, 'accuracy_estimate': 0.9983, 'accuracy_se': 0.0017, 'accuracy_bar': 0.99, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.9133}
+T14 ≥ −1 points each {'wrong_prior_catalog_mix': -0.0008, 'wrong_prior_catalog_mix_se': 0.0069, 'uniform_prior_capacitor_mix': -0.0007, 'uniform_prior_capacitor_mix_se': 0.0053, 'bar': -0.01, 'bar_catalog_mix': -0.01, 'bar_capacitor_mix': -0.01, 'k': 1.5, 'direction': '>=', 'step': 0.01, 'n_pilot': 500, 'n_test': 5000, 'chance_met': 0.6852}
 {
  "accuracy_weighted": {
   "engine": 0.9433333333333334,
@@ -99,6 +99,18 @@ T14 ≥ −1 points each {'wrong_prior_catalog_mix': -0.0008, 'wrong_prior_catal
  },
  "complaint_accuracy_change_pts": 1.2499999999999956,
  "complaint_effort_saving_pct": 3.486982279270401,
- "joint_chance_primaries": 0.062393700820946967,
- "expected_primary_misses": 2.2163287023739024
+ "ece_floor": {
+  "n_units": 5000,
+  "mean": 0.0021517771022222204,
+  "p95": 0.003377374933333333
+ },
+ "hv_steps": {
+  "hybrid": 0.2708333333333333,
+  "engine": 0.30333333333333334,
+  "fixed_order": 1.8991666666666667,
+  "half_split": 1.7666666666666666,
+  "random": 1.5033333333333334
+ },
+ "joint_chance_primaries": 0.361100829157373,
+ "expected_primary_misses": 0.9351102916026875
 }

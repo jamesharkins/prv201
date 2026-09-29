@@ -805,3 +805,37 @@ deleted.
   miss is reported.
 - **Consequences.** `eval/set_bars.py` states the rule, and `results/targets.json`
   records the expected number of primary misses beside the joint chance.
+
+## ADR-044 - Larger simulated test sets, exact bounds for counts, and three reported quantities
+
+- **Context.** Round 5 of the M1 review. Every grader found that the printed pass counts
+  (952 of 1,000, 924 of 1,000, at most 49 of 500) came from a normal approximation while
+  the caption named the exact bound, which needs 953, 926 and at most 47. The ML reviewer
+  noted that bars set 1.5 pilot standard errors below the estimate pass only about 61% of
+  the time by construction when the test set is barely larger than the pilot, although
+  simulated test units cost only computer time. T7's 70% was explained only through its
+  pass count. Reviewers asked how often the tool sends a technician to a high-voltage
+  point, and whether T12's 0.02 bar sits at the noise floor of the calibration measure.
+- **Decision.** (1) The simulated test sets grow fivefold: 5,000 single-fault units (2,500
+  channel strip, 500 per block), 5,000 aged units with the same mix and 2,500 out-of-catalog
+  units. The pilot, and so every bar, is unchanged; a larger test set only measures each
+  bar more precisely. Each primary's predictive chance of being met is now 81-88%; if the
+  six pilot-estimable primaries were independent, all would pass with a chance near 36%,
+  and about one miss is expected. (2) Targets that count units (T1, T2, T3, T6, T13) are
+  judged with the exact (Clopper-Pearson) one-sided bound, as the caption says; every unit
+  of a pooled test set carries the same weight, so a pooled rate is a plain proportion.
+  Pass counts and chances are computed under that rule. (3) T7 keeps its 70% bar, now
+  explained by what 60 faults can show: a pass needs 49 right, which a system truly 90%
+  accurate on the boards reaches 99% of the time, one at 85% 82%, and one at 70% 3%.
+  (4) Reported without bars: powered readings per diagnosis at points that can exceed
+  50 V, for every method (pilot: the engine 0.3, the scripts 1.5-1.9); and the calibration
+  error a perfectly calibrated system would show at the test size (about 0.002 at 5,000
+  units, against T12's 0.02 bar).
+- **Also fixed.** Simulation checkpoints keyed a job by circuit, split, hypothesis and
+  draw, so two evaluation cases that drew the same fault on the same attempt shared a key;
+  growing a split then skipped new cases whose key the old ledger already held. Case jobs
+  now carry their case number in the key (`montecarlo.CASE_INDEX_BASE`); catalog jobs keep
+  their keys, so training checkpoints stay valid. The earlier sets were built fresh after
+  the ADR-039 signature change and were not affected.
+- **Consequences.** The full evaluation takes longer (about two hours on four cores with
+  the effort-weight sensitivity runs); the LLM comparison keeps its 300 stratified units.

@@ -18,9 +18,9 @@ AQUA, AQUA_T = "#1baf7a", "#e0f5ed"
 GRAY, GRAY_T = "#52514e", "#f1f0ec"
 INK = "#0b0b0b"
 # Drawn at its printed size (full text width, shown at 100 %), so the type sizes
-# below are the sizes on paper.
-FIG_W, FIG_H = 6.5, 2.76
-BODY_PT, TITLE_PT = 7.4, 8.4
+# below are the sizes on paper (round 5: at 56 % width the labels printed near 4 pt).
+FIG_W, FIG_H = 6.5, 1.92
+BODY_PT, TITLE_PT = 7.4, 8.2
 LINE = BODY_PT * 1.3 / 72 / FIG_H  # body line height in axes units
 TITLE = TITLE_PT / 72 / FIG_H
 
@@ -74,13 +74,13 @@ def main() -> None:
     w1, gap = 0.2025, 0.027
     xs = [0.075 + i * (w1 + gap) for i in range(4)]
     row1 = [
-        ("Circuit model", "netlist and test points\nfrom the schematic"),
-        ("Fault catalog", "every single-part fault\n× part tolerances"),
-        ("SPICE Monte Carlo", "readings at every test\npoint, for every unit"),
-        ("Fault signatures", "learned likelihoods,\nambiguity groups"),
+        ("Circuit model", "netlist and test points"),
+        ("Fault catalog", "every single-part fault"),
+        ("SPICE Monte Carlo", "tolerances; new and aged"),
+        ("Fault signatures", "likelihoods, groups"),
     ]
-    h1 = box_height(2)
-    y1 = 1 - inch(0.045) - h1
+    h1 = box_height(1)
+    y1 = 1 - inch(0.04) - h1
     for x, (t, b) in zip(xs, row1, strict=True):
         box(ax, x, y1, w1, t, b, BLUE, BLUE_T)
     for i in range(3):
@@ -89,41 +89,32 @@ def main() -> None:
 
     # Row 2: online diagnosis loop
     hb = box_height(3)
-    yb = y1 - inch(0.3) - hb
-    xb, wb = 0.47, 0.215
-    box(ax, xb, yb, wb, "Bayesian belief", "every suspect, plus\n“no single fault fits”,\nupdated per reading",
-        BLUE, BLUE_T)
-    h3 = box_height(2)
-    yc = yb + (hb - h3) / 2
-    box(ax, 0.075, yc, 0.165, "Complaint", "“hums and\nsounds thin”", GRAY, GRAY_T)
-    box(ax, 0.27, yc, 0.17, "LLM reads it", "symptoms only;\nno fault guessing", ORANGE, ORANGE_T)
-    arrow(ax, (0.244, yc + h3 / 2), (0.266, yc + h3 / 2))
-    arrow(ax, (0.444, yc + h3 / 2), (0.466, yc + h3 / 2), ORANGE)
-
-    xr, wr = 0.715, 0.27
-    yn = yb + hb - h3
-    box(ax, xr, yn, wr, "Next measurement", "most suspects ruled out\nper unit of effort, explained",
-        BLUE, BLUE_T)
+    yb = y1 - inch(0.24) - hb
+    widths = [0.12, 0.15, 0.2, 0.2, 0.185]
+    g2 = (0.91 - sum(widths)) / 4
+    x2 = [0.075]
+    for w in widths[:-1]:
+        x2.append(x2[-1] + w + g2)
     h2 = box_height(2)
-    yt = yn - inch(0.22) - h2
-    box(ax, xr, yt, wr, "Technician measures", "meter, scope or photo;\nconfirms every reading",
-        AQUA, AQUA_T)
-    arrow(ax, (xb + wb + 0.004, yn + h3 / 2), (xr - 0.004, yn + h3 / 2), BLUE)
-    arrow(ax, (xr + wr / 2, yn - 0.004), (xr + wr / 2, yt + h2 + 0.004), GRAY)
-    arrow(ax, (xr - 0.004, yt + h2 / 2), (xb + wb + 0.004, yb + inch(0.15)), AQUA)
-    # the learned physics feeds the belief (route passes above the right column)
-    arrow(ax, (xs[3] + 0.03, y1 - 0.004), (xb + wb * 0.62, yb + hb + 0.004), BLUE, rad=-0.08)
-    lane_label(ax, yb + hb / 2 - inch(0.09), "ONLINE")
-
-    # stop -> repair ticket
-    ht = box_height(2)
-    yk = yb - inch(0.17) - ht
-    band_y, band_h = inch(0.04), inch(0.22)
-    assert yk > band_y + band_h + inch(0.035), yk
-    box(ax, xb, yk, wb, "Repair ticket", "at ≥ 90 %: diagnosis,\nevidence, sign-off", GRAY, GRAY_T)
-    arrow(ax, (xb + wb / 2, yb - 0.004), (xb + wb / 2, yk + ht + 0.004), GRAY)
+    yc = yb + (hb - h2) / 2
+    box(ax, x2[0], yc, widths[0], "Complaint", "“hums and\nsounds thin”", GRAY, GRAY_T)
+    box(ax, x2[1], yc, widths[1], "LLM reads it", "symptoms only;\nno fault guessing", ORANGE, ORANGE_T)
+    box(ax, x2[2], yb, widths[2], "Bayesian belief",
+        "every suspect and\n“no single fault fits”;\nat ≥ 90 %: repair ticket", BLUE, BLUE_T)
+    box(ax, x2[3], yc, widths[3], "Next measurement", "rules out most suspects\nper unit of effort", BLUE, BLUE_T)
+    box(ax, x2[4], yc, widths[4], "Technician", "measures and\nconfirms each reading", AQUA, AQUA_T)
+    colors = [GRAY, ORANGE, BLUE, BLUE]
+    for i in range(4):
+        arrow(ax, (x2[i] + widths[i] + 0.003, yc + h2 / 2), (x2[i + 1] - 0.003, yc + h2 / 2), colors[i])
+    # each reading goes back into the belief (under the row)
+    arrow(ax, (x2[4] + widths[4] * 0.35, yc - 0.004), (x2[2] + widths[2] * 0.75, yb - 0.004), AQUA, rad=-0.12)
+    # the learned physics feeds the belief
+    arrow(ax, (xs[3] + w1 * 0.3, y1 - 0.004), (x2[2] + widths[2] * 0.62, yb + hb + 0.004), BLUE, rad=-0.05)
+    lane_label(ax, yb + hb / 2, "ONLINE")
 
     # Guardrails band
+    band_y, band_h = inch(0.03), inch(0.2)
+    assert yb - inch(0.16) > band_y + band_h, (yb, band_y + band_h)
     ax.add_patch(FancyBboxPatch((0.075, band_y), 0.91, band_h,
                                 boxstyle="round,pad=0.004,rounding_size=0.012",
                                 linewidth=0.9, edgecolor="#c3c2b7", facecolor="#f7f6f3"))

@@ -98,38 +98,58 @@
   type: statute
   authors: ["European Parliament", "Council of the European Union"]
   title: "Regulation (EU) 2026/1744 of 8 July 2026 amending Regulations (EU) 2024/1689, (EU) 2018/1139 and (EU) 2023/1230 as regards the simplification of the implementation of harmonised rules on artificial intelligence (Digital Omnibus on AI)"
-  container: "Official Journal of the European Union, OJ L, 2026/1744"
-  publisher: "EUR-Lex, Publications Office of the European Union"
+  container: "Official Journal of the European Union, OJ L, 2026/1744, 24.7.2026 (CELEX 32026R1744). EUR-Lex was blocked from the build sandbox; quotes copied from a text export of the EUR-Lex HTML in GitHub repo lexbeam-software/eu-ai-act-mcp (law/celex-32026R1744-omnibus.txt, commit c05f88f), whitespace normalised. Canonical page in citation_overrides.yaml."
+  publisher: "Publications Office of the European Union (text via GitHub reproduction)"
   date: "2026-07-08"
-  url: "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng"
-  accessed: "2026-09-28"
-  verified: search_snippet_only
+  url: "https://github.com/lexbeam-software/eu-ai-act-mcp/blob/c05f88f31ce0c3efa1f091ef9ca9608dc8c1c10d/law/celex-32026R1744-omnibus.txt"
+  accessed: "2026-09-29"
+  verified: fetched
   claims:
     - claim: "The Digital Omnibus on AI was adopted as Regulation (EU) 2026/1744 of 8 July 2026. It amends the AI Act, Regulation (EU) 2018/1139 and the Machinery Regulation (EU) 2023/1230."
-      quote: "of 8 July 2026 amending Regulations (EU) 2024/1689, (EU) 2018/1139 and (EU) 2023/1230 as regards the simplification of the implementation of harmonised rules on artificial intelligence (Digital Omnibus on AI)"
-    - claim: "Regulation (EU) 2026/1744 was published in the Official Journal on 24 July 2026."
-      quote: "published in the Official Journal of the European Union (OJ L, 2026/1744) on 24 July 2026"
+      quote: "amending Regulations (EU) 2024/1689, (EU) 2018/1139 and (EU) 2023/1230 as regards the simplification of the implementation of harmonised rules on artificial intelligence (Digital Omnibus on AI)"
+    - claim: "The act was signed on 8 July 2026."
+      quote: "Done at Strasbourg, 8 July 2026."
+    - claim: "Regulation (EU) 2026/1744 was published in the Official Journal L series on 24 July 2026 (header of the OJ text, whitespace normalised)."
+      quote: "Official Journal of the European Union EN L series 2026/1744 24.7.2026"
+    - claim: "The act enters into force on the third day after publication (24 July 2026 + 3 days = 27 July 2026)."
+      quote: "This Regulation shall enter into force on the third day following that of its publication in the Official Journal of the European Union"
     - claim: "The Omnibus sets the Chapter III high-risk rules to apply from 2 December 2027 for Annex III (Article 6(2)) systems and from 2 August 2028 for Annex I (Article 6(1)) systems."
       quote: "set to 2 December 2027 for AI systems classified as high-risk pursuant to Article 6(2) and Annex III, and to 2 August 2028 for AI systems classified as high-risk pursuant to Article 6(1) and Annex I"
+    - claim: "The Omnibus replaces Article 4 of the AI Act in full."
+      quote: "Article 4 is replaced by the following:"
+    - claim: "As replaced, Article 4(1) keeps the AI-literacy duty on providers and deployers, worded as taking measures to support the development of AI literacy of their staff."
+      quote: "Providers and deployers of AI systems shall take measures to support the development of AI literacy of their staff and other persons dealing with the operation and use of AI systems on their behalf"
+    - claim: "As replaced, Article 4(1) states that providers and deployers need not guarantee any specific level of AI literacy of any individual."
+      quote: "This obligation does not require providers or deployers to guarantee any specific level of AI literacy of any individual."
+    - claim: "Recital 8 explains that Article 4 is amended to require providers and deployers to take measures to support AI literacy."
+      quote: "Article 4 of Regulation (EU) 2024/1689 should be amended to require providers and deployers to take measures to support the development of AI literacy of their staff"
+  notes: "The November 2025 proposal COM(2025) 836 would have turned Article 4 into a Commission and Member State duty to 'encourage' providers and deployers; that wording was not adopted (scratchpad law_ethics_notes.md, item 1)."
 
 - key: eu_ai_act_consolidated_2026
   type: statute
   authors: ["Publications Office of the European Union"]
   title: "Regulation (EU) 2024/1689, consolidated text 02024R1689-20260727 (incorporating Regulation (EU) 2026/1744)"
-  publisher: "EUR-Lex"
+  container: "EUR-Lex consolidated version (CELEX 02024R1689-20260727). EUR-Lex was blocked from the build sandbox; quotes copied from the text export in GitHub repo lexbeam-software/eu-ai-act-mcp (law/celex-02024R1689-20260727-consolidated.txt, commit c05f88f). Consolidated texts have no legal effect; the OJ acts are authoritative. Canonical page in citation_overrides.yaml."
+  publisher: "EUR-Lex (text via GitHub reproduction)"
   date: "2026-07-27"
-  url: "https://eur-lex.europa.eu/eli/reg/2024/1689/2026-07-27/eng"
-  accessed: "2026-09-28"
-  verified: search_snippet_only
+  url: "https://github.com/lexbeam-software/eu-ai-act-mcp/blob/c05f88f31ce0c3efa1f091ef9ca9608dc8c1c10d/law/celex-02024R1689-20260727-consolidated.txt"
+  accessed: "2026-09-29"
+  verified: fetched
   claims:
     - claim: "As amended, Article 4 requires providers and deployers to take measures that support the development of AI literacy among their staff."
       quote: "Providers and deployers of AI systems shall take measures to support the development of AI literacy of their staff and other persons dealing with the operation and use of AI systems on their behalf"
+    - claim: "As amended, Article 4 does not require providers or deployers to guarantee any specific level of AI literacy."
+      quote: "This obligation does not require providers or deployers to guarantee any specific level of AI literacy of any individual."
     - claim: "As amended, Article 4 requires the Commission and the Member States to support providers and deployers, especially SMEs, in meeting the AI-literacy obligation."
       quote: "The Commission and the Member States shall support and facilitate the efforts of providers and deployers of AI systems, in particular SMEs, in fulfilling their obligation under paragraph 1 of this Article"
+    - claim: "Chapters I and II (including Article 4) apply from 2 February 2025 under amended Article 113(a)."
+      quote: "Chapters I and II shall apply from 2 February 2025"
+    - claim: "Under amended Article 113(c), the Chapter III Sections 1-3 rules apply to Annex III high-risk systems from 2 December 2027."
+      quote: "2 December 2027 as regards AI systems classified as high-risk pursuant to Article 6(2) and Annex III"
     - claim: "For high-risk AI in products covered by Annex I Section B legislation, only Article 6(1), the new Article 60a and Articles 102 to 112 apply."
       quote: "only Article 6(1), Article 60a and Articles 102 to 112 shall apply."
-    - claim: "Search-result text says that third-party assessment required only for non-health-and-safety risks, such as radio spectrum or EMI, does not satisfy Article 6(1)(b). The snippet could not be pinned to this page with certainty; verify before relying on it."
-      quote: "risks relating to the distribution of radio spectrum or electromagnetic interference that do not affect health and safety, shall not be considered as fulfilling the condition in paragraph 1, point (b)."
+    - claim: "Article 6(1c), inserted by the Omnibus: third-party assessment required only for non-health-and-safety risks, such as radio spectrum or electromagnetic interference, does not satisfy Article 6(1)(b)."
+      quote: "risks relating to the distribution of radio spectrum or electromagnetic interference that do not affect health and safety, shall not be considered as fulfilling the condition in paragraph 1, point (b)"
 
 - key: council_pr_2026_05_07
   type: press_release
@@ -828,22 +848,28 @@
 - key: eu_pld_2024_2853
   type: statute
   authors: ["European Parliament", "Council of the European Union"]
-  title: "Directive (EU) 2024/2853 of 23 October 2024 on liability for defective products (Product Liability Directive)"
-  container: "Official Journal of the European Union, OJ L, 2024/2853"
-  publisher: "EUR-Lex"
+  title: "Directive (EU) 2024/2853 of 23 October 2024 on liability for defective products and repealing Council Directive 85/374/EEC"
+  container: "Official Journal of the European Union, OJ L, 2024/2853, 18.11.2024. EUR-Lex was blocked from the build sandbox; quotes copied from a plain-text extraction of the OJ PDF in GitHub repo Shauryagulati/eu-law-agent (data/txt/OJ_L_202402853_EN_TXT.txt, commit ac905e4), PDF line breaks joined. Canonical page in citation_overrides.yaml."
+  publisher: "Publications Office of the European Union (text via GitHub reproduction)"
   date: "2024-10-23"
-  url: "https://eur-lex.europa.eu/eli/dir/2024/2853/oj/eng"
-  accessed: "2026-09-28"
-  verified: search_snippet_only
+  url: "https://github.com/Shauryagulati/eu-law-agent/blob/ac905e4ba93102e50acef68fc83077510dc9a680/data/txt/OJ_L_202402853_EN_TXT.txt"
+  accessed: "2026-09-29"
+  verified: fetched
   claims:
-    - claim: "The new PLD defines 'product' to include software."
-      quote: "\"Product\" means all movables, even if integrated into, or inter-connected with, another movable or an immovable; it includes electricity, digital manufacturing files, raw materials and software."
-    - claim: "Member States must transpose the PLD by 9 December 2026."
+    - claim: "Article 4(1): the new PLD defines 'product' to include software."
+      quote: "‘product’ means all movables, even if integrated into, or inter-connected with, another movable or an immovable; it includes electricity, digital manufacturing files, raw materials and software"
+    - claim: "Recital 13: software is a product for no-fault liability however it is supplied or used."
+      quote: "software is a product for the purposes of applying no-fault liability, irrespective of the mode of its supply or usage"
+    - claim: "Article 22(1): Member States must transpose the PLD by 9 December 2026."
       quote: "Member States shall bring into force the laws, regulations and administrative provisions necessary to comply with this Directive by 9 December 2026."
-    - claim: "The PLD applies to products placed on the market or put into service after 9 December 2026."
+    - claim: "Article 2(1): the PLD applies to products placed on the market or put into service after 9 December 2026."
       quote: "This Directive shall apply to products placed on the market or put into service after 9 December 2026."
-    - claim: "The PLD does not compensate damage to property used exclusively for professional purposes."
-      quote: "damage to property used exclusively for professional purposes should not be compensated under this Directive."
+    - claim: "Article 6(1)(a): compensable damage includes death or personal injury, including medically recognised damage to psychological health."
+      quote: "death or personal injury, including medically recognised damage to psychological health"
+    - claim: "Recital 22: the PLD does not compensate damage to property used exclusively for professional purposes."
+      quote: "In line with this Directive’s objective of making compensation available only to natural persons, damage to property used exclusively for professional purposes should not be compensated under this Directive."
+    - claim: "Article 2(2): free and open-source software developed or supplied outside the course of a commercial activity is excluded."
+      quote: "This Directive does not apply to free and open-source software that is developed or supplied outside the course of a commercial activity."
 
 - key: us_ai_lead_act_s2937
   type: docs
@@ -858,24 +884,73 @@
     - claim: "The AI LEAD Act (S. 2937) would classify AI systems as products and create a federal product-liability cause of action for AI harms."
       quote: "The AI LEAD Act classifies AI systems as products and creates a federal cause of action for products liability claims to be brought when an AI system causes harm."
 
+- key: us_s2937_ai_lead_act_billstatus
+  type: docs
+  authors: ["U.S. Senate"]
+  title: "S. 2937 (119th Congress), AI LEAD Act: bill status"
+  container: "Bill-status record derived from GovInfo BILLSTATUS-119s2937.xml and congress.gov (both blocked from the build sandbox), mirrored in GitHub repo windy-civi-pipelines-V1-archived/usa-data-pipeline_old (snapshot commit ce1c622, 2025-10-19). Later actions are not in this snapshot. Canonical page in citation_overrides.yaml."
+  publisher: "Library of Congress / GPO (via GitHub mirror)"
+  date: "2025-09-29"
+  url: "https://github.com/windy-civi-pipelines-V1-archived/usa-data-pipeline_old/blob/ce1c622c5cb74d9c6fd4d975200be08f45477837/data_output/data_processed/country:us/congress/sessions/119/bills/S2937/metadata.json"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+    - claim: "S. 2937's long title: a bill to establish legal standards for advanced AI products."
+      quote: "A bill to establish legal standards for advanced artificial intelligence products."
+    - claim: "The bill was read twice and referred to the Senate Judiciary Committee (29 September 2025)."
+      quote: "Read twice and referred to the Committee on the Judiciary."
+    - claim: "Sponsor Sen. Richard J. Durbin; cosponsor Sen. Josh Hawley."
+      quote: "Richard J. Durbin"
+
 - key: us_rise_act_s2081
   type: docs
   authors: ["U.S. Senate (Sen. Lummis)"]
-  title: "S. 2081, Responsible Innovation and Safe Expertise (RISE) Act of 2025, 119th Congress"
-  publisher: "Congress.gov / Office of Sen. Lummis"
-  date: "2025"
-  url: "https://www.congress.gov/bill/119th-congress/senate-bill/2081/text"
-  accessed: "2026-09-28"
-  verified: search_snippet_only
+  title: "S. 2081, Responsible Innovation and Safe Expertise (RISE) Act of 2025, 119th Congress, introduced in Senate"
+  container: "GPO bill XML BILLS-119s2081is (govinfo.gov and congress.gov were blocked from the build sandbox), mirrored in GitHub repo windy-civi-pipelines-V1-archived/usa-data-pipeline-with-text-archive (commit d811704); tags stripped. Canonical page in citation_overrides.yaml."
+  publisher: "U.S. Government Publishing Office (via GitHub mirror)"
+  date: "2025-06-12"
+  url: "https://github.com/windy-civi-pipelines-V1-archived/usa-data-pipeline-with-text-archive/blob/d81170470ca6a80b1a8777521de3a9f5bd33ed57/data_output/data_processed/country:us/congress/sessions/119/bills/S2081/files/BILLS-119s2081is_Introduced_in_Senate.xml"
+  accessed: "2026-09-29"
+  verified: fetched
   claims:
-    - claim: "The RISE Act would give AI developers immunity from civil liability for errors when a learned professional uses their product, conditioned on publishing a model card and model specification."
+    - claim: "S. 2081 was introduced by Sen. Lummis on 12 June 2025 and referred to the Commerce, Science, and Transportation Committee."
+      quote: "Ms. Lummis introduced the following bill; which was read twice and referred to the Committee on Commerce, Science, and Transportation"
+    - claim: "The RISE Act would give AI developers immunity from civil liability for errors when a learned professional uses their product for a client, if the developer publishes a model card and model specification and documents known limitations and failure modes."
       quote: "A developer shall be immune from civil liability for errors generated by an artificial intelligence product when used by a learned professional in the course of providing professional services to a client"
-    - claim: "The RISE Act's sponsor says professionals, including engineers, keep the duty to verify AI outputs."
-      quote: "they retain the legal duty to exercise due diligence, verify the system's outputs, and stand behind the advice they deliver."
+    - claim: "The immunity would not cover recklessness or willful misconduct."
+      quote: "shall be conferred to a developer only for acts or omissions that do not constitute recklessness or willful misconduct by the developer"
 
 # =============================================================================================
 # E. ELECTRICAL SAFETY (text opened via an eCFR-API-derived corpus on GitHub; ecfr.gov and osha.gov were blocked)
 # =============================================================================================
+- key: osh_act_1970_sec3_5_employer
+  type: statute
+  authors: ["U.S. Congress"]
+  title: "Occupational Safety and Health Act of 1970, Pub. L. 91-596, sec. 3(5) (29 U.S.C. 652(5)), definition of 'employer'"
+  container: "GPO statute compilation of the OSH Act as amended through P.L. 116-92, USLM XML file COMPS-1523 in the Government Publishing Office's GitHub repository usgpo/uslm (commit 4ec9db2); tags stripped."
+  publisher: "U.S. Government Publishing Office"
+  date: "1970-12-29"
+  url: "https://github.com/usgpo/uslm/blob/4ec9db2f4d5d8c18d54cbee5fd64cee9992e9311/previous/sample-files/COMPS-1523.xml"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+    - claim: "Under the OSH Act, an 'employer' is a person engaged in a business affecting commerce who has employees."
+      quote: "means a person engaged in a business affecting commerce who has employees"
+
+- key: ecfr_29_1904_31
+  type: regulation
+  authors: ["U.S. Occupational Safety and Health Administration"]
+  title: "29 CFR 1904.31, Covered employees"
+  container: "Code of Federal Regulations, Title 29, Part 1904. ecfr.gov and osha.gov were blocked from the build sandbox; quote copied from the eCFR-derived Markdown mirror in GitHub repo AlextheYounga/ecfr (commit 2acf280, 2026-04-07). Canonical page in citation_overrides.yaml."
+  publisher: "U.S. Department of Labor, OSHA (text via GitHub eCFR mirror)"
+  date: "2026"
+  url: "https://github.com/AlextheYounga/ecfr/blob/2acf280edfab169375fe2d0639bdf9e85b37002c/ecfr/title-29-Labor/subtitle-B-Regulations-Relating-Labor/chapter-XVII-Occupational-Safety-Health-Administration-Department-Labor/part-1904-Recording-Reporting-Occupational-Injuries-Illnesses/subpart-D-Other-OSHA-Injury-Illness-Recordkeeping-Requirements/section-1904.31.md"
+  accessed: "2026-09-29"
+  verified: fetched
+  claims:
+    - claim: "OSHA's own regulation states that self-employed individuals are not covered by the OSH Act (29 CFR 1904.31(b)(1))."
+      quote: "No, self-employed individuals are not covered by the OSH Act or this regulation."
+
 - key: osha_1910_333
   type: regulation
   authors: ["Occupational Safety and Health Administration"]

@@ -242,8 +242,9 @@ gao_yang_jiang_2021_incipient_tim:
   container: "IEEE Transactions on Instrumentation and Measurement"
   volume: "vol. 70, pp. 1-15"
 eu_ai_omnibus_2026_1744:
-  container: "Official Journal of the European Union, OJ L, 2026/1744"
-  date: "2026-07-24"
+  container: "Official Journal of the European Union, OJ L, 2026/1744, 24 Jul. 2026"
+  date: "2026-07-08"
+  url: "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng"
 fluke_117_input_characteristics:
   title: "Fluke 110/113/114/115/117 True-rms Multimeter Users Manual, Table 7 (input characteristics, Fluke 117)"
   container: "Fluke Corporation"
@@ -283,3 +284,24 @@ li_acflow_2020:
 ma_eddi_2019:
   url: "https://proceedings.mlr.press/v97/ma19c.html"
 
+# ---- round-5 law sources (scratchpad law_ethics_notes.md, 2026-09-29) --------
+eu_ai_act_consolidated_2026:
+  container: "EUR-Lex, consolidated text 02024R1689-20260727"
+  url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02024R1689-20260727"
+eu_pld_2024_2853:
+  container: "Official Journal of the European Union, OJ L, 2024/2853, 18 Nov. 2024"
+  url: "https://eur-lex.europa.eu/eli/dir/2024/2853/oj/eng"
+osh_act_1970_sec3_5_employer:
+  title: "Occupational Safety and Health Act of 1970, sec. 3(5), 29 U.S.C. 652(5)"
+  container: "United States Code, Title 29"
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title29-section652"
+ecfr_29_1904_31:
+  title: "29 CFR 1904.31, Covered employees"
+  container: "Code of Federal Regulations (eCFR text current in 2026)"
+  url: "https://www.ecfr.gov/current/title-29/section-1904.31"
+us_rise_act_s2081:
+  container: "119th Congress"
+  url: "https://www.congress.gov/bill/119th-congress/senate-bill/2081/text"
+us_s2937_ai_lead_act_billstatus:
+  container: "119th Congress"
+  url: "https://www.congress.gov/bill/119th-congress/senate-bill/2937"

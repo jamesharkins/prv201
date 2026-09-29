@@ -1,13 +1,13 @@
 # M1 - Problem statement: submission sheet
 
 **Submit:** `M1.pdf` (5 body pages + references; nothing else follows the
-references). `M1_supplement.pdf` (industry watch and course coverage map) is
+references). `M1_supplement.pdf` (secondary targets, industry watch and course coverage map) is
 optional background and is not needed to read the statement.
 
 | File | What it is |
 |---|---|
 | `M1.pdf` | The deliverable |
-| `M1_supplement.pdf` | Optional supplement: industry watch, course coverage map |
+| `M1_supplement.pdf` | Optional supplement: secondary targets, industry watch, course coverage map |
 | `M1.typ`, `base.typ` | Typst source generated from `templates/M1/M1.typ.j2` and `templates/base.typ` |
 | `M1.parts.json` | Evidence use per signed part (read by `tools/check_balance.py`) |
 | `M1.cites.json` | Cited source keys in reference order (read by `tools/check_citations.py`) |

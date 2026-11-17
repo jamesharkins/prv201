@@ -419,7 +419,7 @@ html = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Dif
 <style>{css}</style></head><body>
 <p class="kicker">MILESTONE 3 · PROTOTYPE · TRACK A: BUILD</p>
 <h1>Differential: the working prototype, how to run it, and what it measured</h1>
-<p class="meta">PRV 201 Frontiers of Technology (AI) · Stevens Institute of Technology · November 2026 · Code: github.com/jamesharkins/prv201, branch <code>main</code>, tag <code>m3-ready</code> (code at commit <code>{COMMIT}</code>)</p>
+<p class="meta">PRV 201 Frontiers of Technology (AI) · Stevens Institute of Technology · November 2026 · Code: github.com/jamesharkins/prv201, branch <code>main</code>, tag <code>m3-ready</code></p>
 <div class="part"><span class="pt">Part 1 of 1 — Prototype, results against the locked targets, and changes from M2</span></div>
 {SIG}
 {summary}

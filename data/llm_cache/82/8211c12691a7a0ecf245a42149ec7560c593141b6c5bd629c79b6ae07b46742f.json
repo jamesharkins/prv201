@@ -1,0 +1,249 @@
+{
+ "request": {
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 4000,
+  "system": "You are an experienced audio electronics technician diagnosing a unit on the bench. Exactly one component has failed. Use the measure tool to take readings (each costs effort; stay within the budget), then call diagnose with your ranked list of the most likely faults, naming them exactly as in the fault list. Think like a technician: compare readings with the healthy values and their tolerances.",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Circuit: Block 3 - Passive Baxandall tone control. Passive Baxandall bass/treble control with 100k audio-taper pots at mid-rotation. About 27 dB mid-band insertion loss when driven from the triode stage's ~43k output impedance; within +1.3/-0.8 dB of the 1 kHz level from 20 Hz to 20 kHz at the centre settings.\n\nStages: tone = Passive tone control\n\nParts:\n- R301: resistor 47k (stage tone)\n- VR301: potentiometer 100k (stage tone)\n- C301: film_cap 10n (stage tone)\n- C302: film_cap 100n (stage tone)\n- R302: resistor 4.7k (stage tone)\n- R303: resistor 33k (stage tone)\n- C303: film_cap 1n (stage tone)\n- VR302: potentiometer 100k (stage tone)\n- C304: film_cap 10n (stage tone)\n\nNetlist of the healthy circuit (SPICE; node names as in the test points):\n* Differential reference circuit - Block 3: passive Baxandall tone control (standalone)\n* ---------------------------------------------------------------------------\n* Original generic design written for this project, after the passive form of\n* Baxandall's tone control (Wireless World, 1952). Bass: R301-VR301-R302 divider\n* with C301/C302 bridging the pot sections. Treble: C303-VR302-C304 with the\n* wiper to the output; the bass wiper joins the output through R303.\n* Potentiometers are 100k audio (A) taper set to mid-rotation, which on an A\n* taper leaves ~10 % of the track between wiper and the grounded end. Each pot\n* is modelled as upper track (A), lower track (B) and a 1 ohm wiper contact (W).\n* Fixtures: source with 43k output impedance (the triode stage's Ra || rp) and a\n* 100k load (the op-amp stage bias resistor).\n* Run standalone: ngspice -b circuits/tone/tone.cir\n* ---------------------------------------------------------------------------\n.include ../lib/devices.lib\n\n* ---- Fixtures ----\nVIN_T tone_src 0 DC 0 AC 1 SIN(0 1 1k)\nRSRC_T tone_src tone_in 43k\nRLOAD_OP tone_out 0 100k\n\n* ---- Bass section ----\nR301 tone_in bass_a 47k\nRVR301A bass_a bass_t 90k\nRVR301B bass_t bass_b 10k\nRVR301W bass_t bass_w 1\nC301 bass_a bass_w 10n\nC302 bass_w bass_b 100n\nR302 bass_b 0 4.7k\nR303 bass_w tone_out 33k\n\n* ---- Treble section ----\nC303 tone_in treb_a 1n\nRVR302A treb_a treb_t 90k\nRVR302B treb_t treb_b 10k\nRVR302W treb_t tone_out 1\nC304 treb_b 0 10n\n\n.control\nset noaskquit\nac dec 5 10 100k\nlet gdb = db(mag(v(tone_out)))\nprint gdb\n.endc\n.end\n\nTest points:\n- TP10: node tone_in, Tone-control input (stage tone)\n- TP11: node bass_w, Bass control wiper (stage tone)\n- TP12: node tone_out, Tone-control output (stage tone)\n\nMeasurements (key | what | healthy reading and range | cost):\n- dc:TP10 | DC voltage at TP10 | 0 \u00b5V (range -822 \u00b5V to 822 \u00b5V) | cost 1\n- dc:TP11 | DC voltage at TP11 | 0 \u00b5V (range -822 \u00b5V to 822 \u00b5V) | cost 1\n- dc:TP12 | DC voltage at TP12 | 0 \u00b5V (range -822 \u00b5V to 822 \u00b5V) | cost 1\n- ac:TP10 | 1 kHz signal level (gain from input) at TP10 | 0.539 V/V (-5.4 dB) (range 0.509 V/V (-5.9 dB) to 0.571 V/V (-4.9 dB)) | cost 3\n- ac:TP11 | 1 kHz signal level (gain from input) at TP11 | 0.0485 V/V (-26.3 dB) (range 0.0449 V/V (-27.0 dB) to 0.0525 V/V (-25.6 dB)) | cost 3\n- ac:TP12 | 1 kHz signal level (gain from input) at TP12 | 0.0449 V/V (-27.0 dB) (range 0.0415 V/V (-27.6 dB) to 0.0486 V/V (-26.3 dB)) | cost 3\n- ac20:TP12 | 20 Hz response (gain from input) at TP12 | 0.0509 V/V (-25.9 dB) (range 0.0409 V/V (-27.8 dB) to 0.0633 V/V (-24.0 dB)) | cost 3\n- ac20k:TP12 | 20 kHz response (gain from input) at TP12 | 0.0406 V/V (-27.8 dB) (range 0.0313 V/V (-30.1 dB) to 0.0527 V/V (-25.6 dB)) | cost 3\n- lift:<ref> | desolder one lead of a part and test it out of circuit | result: within or out of tolerance | cost 10 (12 for parts on high-voltage nodes)\n\nFault list (name faults exactly like this):\n- R301:open: R301 open circuit\n- R301:short: R301 short circuit\n- R301:drift_x0.5: R301 value drifted to 0.5x\n- R301:drift_x2: R301 value drifted to 2x\n- R301:drift_x10: R301 value drifted to 10x\n- VR301:wiper_open: VR301 wiper open\n- VR301:track_open: VR301 track open\n- C301:open: C301 open circuit\n- C301:short: C301 short circuit\n- C302:open: C302 open circuit\n- C302:short: C302 short circuit\n- R302:open: R302 open circuit\n- R302:short: R302 short circuit\n- R302:drift_x0.5: R302 value drifted to 0.5x\n- R302:drift_x2: R302 value drifted to 2x\n- R302:drift_x10: R302 value drifted to 10x\n- R303:open: R303 open circuit\n- R303:short: R303 short circuit\n- R303:drift_x0.5: R303 value drifted to 0.5x\n- R303:drift_x2: R303 value drifted to 2x\n- R303:drift_x10: R303 value drifted to 10x\n- C303:open: C303 open circuit\n- C303:short: C303 short circuit\n- VR302:wiper_open: VR302 wiper open\n- VR302:track_open: VR302 track open\n- C304:open: C304 open circuit\n- C304:short: C304 short circuit\n\nBudget: 40 effort units.\n\nCustomer complaint: I'm bringing in the channel strip from our vocal chain for you to look at. The level coming out is lower than our other channels, maybe 8 dB going by the meters. It's only slight, but it's there. Let me know if you need anything else from us.\n\nDiagnose the unit. (Session 2 of 3.)"
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "text": "I'll start by measuring the AC levels at the three test points.",
+      "type": "text"
+     },
+     {
+      "id": "toolu_01Vwo3ESPRrvUFJ3sN9iQwzh",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "ac:TP12"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     },
+     {
+      "id": "toolu_01XLhbemrL4GEZ2yA9VNJPTC",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "ac:TP10"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     },
+     {
+      "id": "toolu_01AVdpjEMSj2BZ7HLT6vNg5b",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "ac:TP11"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01Vwo3ESPRrvUFJ3sN9iQwzh",
+      "content": "{\"key\": \"ac:TP12\", \"reading\": \"0.0175 V/V (-35.1 dB)\", \"effort_spent\": 3.0}"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01XLhbemrL4GEZ2yA9VNJPTC",
+      "content": "{\"key\": \"ac:TP10\", \"reading\": \"0.568 V/V (-4.9 dB)\", \"effort_spent\": 6.0}"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01AVdpjEMSj2BZ7HLT6vNg5b",
+      "content": "{\"key\": \"ac:TP11\", \"reading\": \"0.0476 V/V (-26.4 dB)\", \"effort_spent\": 9.0}"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "signature": "CAQSiAcKEQgTGAI4AUIJbmFycmF0aW9uEgyXpevWnxROCidVpL0aDI8wuCNDk4G9hrLxOCIwUCb5wNRqHRyYlZV6ht3xjIw3tpgf+JlHt+gTlHz9jtS4kC5NYJCKoIvD7AjuUYPPKqQGhhfkgunUDgOICayQ20y2+vdk4GSSLwObXb/hC3fwqKjie5Plw5Y1TzIzTsfK5vnuETPBJ1fIIlY0AmJ28IqnYxy77ur37sLEXhRoNXL2QZTuKnzeh6Je5meE3SNJIFlSDUXQOEpCBspVKK32jtgq08ojeYzaBfakrXXywekB8Bcnz4d7l+4XEBbFgQ+w9osuqKRbiisoyQ6i52ImJGeZVR54U3bcw/WtBcLVsp4o2juYEAEhqrjwFW4KFGCkNWzyTac9k8aDv0byI//qT8DrSSlvFw6Vsk9ISyjOQpC0ZHvKGRRY5QlRBj7o0QU4S+nu5ZhH4LhREd9NOagLItTSwaD2OfQL2G+1K/+Xtq1HFLXXBp+iSNL1UEJp/GOQJPcuj0Cbpu3PaUF5WOIKpMxe8ApzjSD9xR0zXkAy7vb+htH/wYzRmc9wnrK7nzzmjw1JrSJLctDBm1W1Ny90GrnXkb6Ozk8bQ0GSbyfdETvYThauZoxr750CvgIhDj50SF/NasSgutIQ7Fx+o3UPaBDLd+VlUsbfOj3VZHuEwKyNVd+Z5bsZxvBWZy8GqeVCA9Y9HVW668tn+vt5u46yvWcDCalwRdzOD6EdA38N8nFgP7JnMrp4vUYhnksXgnA2FwDMJcnNJDauGSk8b3DUWxFl0yoUUF0sDm9SJGSk+7MB9p3bdQPJEs1p+uvD/e7NYmedbOIFKfLk5kdw/mUDyXxMxAS5Uvg6md9mqGnu7kBoGHMDKQhMCmlStag5aby63dZRXB6HgTMM0GcliYerLZ0U74uqARvUFq3cfLwr6Da2F17nNuO+mF6ORm4uCRnz037Dq5QcrquuLZj9K35ojfThFyB5w6KakDXBaOfaLMLkRmLH2QvdQV8g+4W1J9DSz157wwTedJSLTJbo0eCgKkhEOEacUS3Dddx6XuTUCi+nDqoMgxQsAiJ7w1mfG6bv7GxP523r7IDI5l6IvoRYC45si8B52oqVudoFxfM8ALBIBV3a7hsPezDbzqDWG7sfKj5tHABXlOK8E05sGGmjm8KetpXAt5KswyGuQHWP/HmuZ5xhHhEjGAE=",
+      "thinking": "TP12 reads 8 dB low while TP11 is normal, and the bass wiper path through R303 is the suspect. I'm checking the response at 20 Hz and 20 kHz next.\n\n",
+      "type": "thinking"
+     },
+     {
+      "id": "toolu_01TgqjtAdo9AC9R1F5oPcwhW",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "ac20:TP12"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     },
+     {
+      "id": "toolu_01RUvaWspbF41aAVV6UfjRUf",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "ac20k:TP12"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01TgqjtAdo9AC9R1F5oPcwhW",
+      "content": "{\"key\": \"ac20:TP12\", \"reading\": \"0.0524 V/V (-25.6 dB)\", \"effort_spent\": 12.0}"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01RUvaWspbF41aAVV6UfjRUf",
+      "content": "{\"key\": \"ac20k:TP12\", \"reading\": \"0.011 V/V (-39.2 dB)\", \"effort_spent\": 15.0}"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "signature": "CAQSzgsKEQgTGAI4AUIJbmFycmF0aW9uEgx7puX2hRTSIDauIrUaDFYKQ4KapB5uDlPaKSIwhjk4yOTGPh8p7WzyM6vUowKOcZgtmIhXkjSD3YMgTxKLvxg2IF+OLWJFOnVcZJgaKuoK4eEsDU2Q3xGC3X1J5va2xOXscR5bAnZ75CCq1ZOb0/q4EzCMEaW1Hhg/0d7wE2yVBpbUUj9QHuEA9WPGDJH+4Xkbu+2ygXAyKTn9/8QCFTMxOUomQmvbo1Qi8pm3K/TiZm9HGWAVNf2+1PWRZNBmQX5DHdEaajFpV3llaNVT30C0eIxVUz7wcAb+Eu3TcTp9PJuDlBdeJ8DTcI0LO9f7HRZ8nbb7sj4wAU1trolnii93Q0pxU2yFYetjXMHwxgMtfWgLTmngy4iLJbjoxOz8GiLJzOsVdgrbLcCTcSXjHA6LGCgyrf6a+cVKJHwiGei/lFN8StSDUgYEdrLLDSL5lS/QCmf3sylFBQ3JzR1AONW3VIUkKLag/KTGuno4ldL0g6jSr2hU6QeaPb7ZfqlKfv6dvYfk0mLnpJ5YQh7Po3SwrKiYa8bsi4QdJL56N5LB5sVOpizlLrdFtBhIQo4puKO1CQncW8bgIuU0xUITA2OBVxxYSp2H8iMAHI+qhVWjXNzfIiKIFM9W2B8ebQe0MI/bJIvqLew0M61i6HvCZfwvy3jG0CgjHl7433ZW538a4V34SGEGJKYHIrYA6nR6jvww0W9lhLXDgsLyagfFA45VHh8wEjkNhwLzmOOuLuhQYpNNyY1svkLjM2qH6jOcotNZVCffWMcyG03NrxI6k7UKMMJh6KfIQuVbHv2CXJchv9bER5rUmq14wQOQjxWRNf0J3OAPFkoTFbY+sF0EIyHFnOBC1AhRgx5/3Xcqvfwf0nPBrC4u20aswDqNnAo8ku3tVt9GBrW9WtRo8ZKaHggS06pCM0SJor0S/U00IxE/afidzcPnRvR5M+od1V0wS7rO+kpGI0PFRMmF58X9vCpbi4YiGYAZ3SlhP+W3BfUAWgOPDOQReS6fuWcIu4Ms1gQ8gzd6QtZmblXucL7Nfi+FxSiGQlQLBUKzL0iYNtPHkeAo4OhZpicn5uOxyszMl77Ekuhw4i3CTtSWj8Miz1oBnbRlVA4m3y6xjP/rKrLGSIpEmHmph6d8YMoS6wk+DecpiD4XXRO4tQl87oYt+V/arO1ad0cMPU/zeTx218Uks4MGJjQEkl6sbb0fTSHnhxqswoYtRO545JWz0PB2+Fs5G25bJX/EuKO8/zp8Ug6j0qLgm1V2a9vI/QIumHn9w5qNgeXMr7wGtbKpyhuIClpZFukUVJQ1tIE4RocWkF6BU++cgOXOSgAF74EmV12P1k+NSl9WjuAYTfF65d1G0WSyoff/98fseV51ut588s6sTbNQ9yXiFVPXPBBzgqtw3yKDH2ITAjWx//cUUwki8PdfImYo7d2jRQaVlA/KrDWkSV0DXDjjRMN1QjePkZhFPYfoF+wMUHgOoXd11LVAIIp1AHUrKzlFenUuQSfXrPI+QGt6qkyy0mHOu0UeBirtr6Bv78cNCy7h7Snh9qY545cPy0bP7RGkDNIyCUv+BD6P40iXi9Sua3lN/5lT7pUn8KspA4VwDBbZe7Q5qW88935/n9WlvdkGfpSlkVJ+nAv5mT70hfcJIPstE4aZoSgdz8Gn2bQatem29yAzKAdsiDHTsPEJqlt91ZCnIuQFGUvXyrkdWrOQWIMG/Hi6z82MO2gbKlaXP9Wfjk7LAYpEfYqemF3Y6OwdUj48gRrs7FM/JlEZz3pDmHqDzEVn0kpW5he8ruaHVsLBhTpwN3L7oeJR3YUfuAgFstKIErUW5g4e844H1xNFr/PDw3dFHHEfoeYu0E7t2dczTMyhBDADGSlMfZi4i1fEW8OiYAMVPK1chfoqJWrnGLdL23I68p1e9BoqqtXGSUM4Je07nqWn3daUAj7cRAQnVzy9GAE=",
+      "thinking": "Treble is the likely fault: the 1 kHz and 20 kHz outputs are low while 20 Hz is normal, and with the bass path unchanged the treble contribution has dropped. Next I'll check the DC levels to separate C304 and VR302 from C303.\n\n",
+      "type": "thinking"
+     },
+     {
+      "id": "toolu_01NYSML51ZdquTbjpNH4km6H",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "dc:TP12"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01NYSML51ZdquTbjpNH4km6H",
+      "content": "{\"key\": \"dc:TP12\", \"reading\": \"0 \\u00b5V\", \"effort_spent\": 16.0}"
+     }
+    ]
+   }
+  ],
+  "tools": [
+   {
+    "name": "measure",
+    "description": "Take one measurement on the unit.",
+    "input_schema": {
+     "type": "object",
+     "properties": {
+      "key": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "key"
+     ],
+     "additionalProperties": false
+    }
+   },
+   {
+    "name": "diagnose",
+    "description": "Finish with a ranked list of fault names.",
+    "input_schema": {
+     "type": "object",
+     "properties": {
+      "ranked_faults": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "confidence": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "ranked_faults",
+      "confidence"
+     ],
+     "additionalProperties": false
+    }
+   }
+  ],
+  "thinking": {
+   "type": "between_tools"
+  }
+ },
+ "response": {
+  "id": "msg_011Ch85UNJipCMQdkW5Hhcac",
+  "container": null,
+  "content": [
+   {
+    "signature": "CAQS2QoKEQgTGAI4AUIJbmFycmF0aW9uEgzHLCAobzZsgXUuySoaDD23D3EO6MHxuvYQnyIwzsHINT3q3/MiwMsKmqrJn0DTysnSsGi8Sb/wwMX+xTL5GaaYn1HvtQJCAIuncRjUKvUJZVtjHfhNj6fU5xydw5hJUptXmEd4Q3bEIIb8v/QU58TJ0EoFXmMnPQ6W3qDEoFROT1VQ1j5qcTPZ07nPW4lWaXQSiLzZpbLw2NQJz6Gh2u/JRXWoQsK+oYTBFqh8VcMvV6g34Ka1RgSO3A3xTJtUrRFeqL0/SO9p76Q+DvYm+JKE4eV9AJSV9u0e8qISdbXQIgcOyTGmstQgVSMvLwQCtrKVnlT2uCjG7V8etIyVRjQqrBX/KykR+ldUQELr6v2ySpSEDVkMQrff0uwHmRnRBw8nhoFeRgNxm6jMEN6vKUrPSEwHBX21A20kQYOcrG+PC7+WX6t1oqEg2SnQjhJ96T7StH/LHjOEopYlXadp7LxA2he/635ZThbCseXaqX0L18VFLyoCmrxG2u3jnauuI6SowWpCe/SJWGyy6EtvGTa1iUYn8cZP1pT29/6RraC4+k4oI00VWeiBkX4sZvD3vbla9OneKVCrZFLkWBzCtnQ2CyoN/cvi9NQzeapkUH2iGfV0U3WOVmoSt237GEYGsFTnDg51tDWQoBMknRxNDcX8tfZRhLBZEVmg3z2Wyq2873R7FaexbdCHwQWomgPx/C/ILUXtsbzkxt7H6A1qZlqe7do1TjwS1HfMVlKculv6fNb19CD3O2Co+W7YRZrkJOUmteHlYi00toweJ9F6hnnGOj7/EKwkRP/AB0lSkf8+dR14ceCzvnbdpXNi7/fefjWuHoHtQsFFTQUxM4aBTmhMa4IV27Cy8i65AdjWDO2ZpACepOQZXqKfReXR9IezKo3aLPZZg1nmKIetpa0JVQ0MvjYZrbPyJktJqJTDaIhPbP95u1nVPC/plNGCGoIEQ+lKlX++057NqnlYx8UcIpe+qLJ+sQL9r7Mvc4x0EpbxrrB99f7lgS/CFOfLBmhc1gxvdL7RGNEeuGsArraDVXC36pLNYeYgdNd9wdTixraIfvrVXGTYO5dulvoBtF0EQ9i9FfJSueymfom3EeuGHELdPMMLscDF+mc/XZ8knTjybt3obFo9L4FmSDOJigJcdGCofQZvWTq8Bcyk7GaXlC4pPZbHwM51mnJo6+N56Kiz5LIRVxzVyVT41GZAKuvw5zMwcvLzqI6TloaBcBihwoiFF2A6aab+JCeoRWBhlOrAi13nMy3OCswB7uhgTbGsbx+5stEwXwLr32xq6h5Y4e+QsaKESdpZjR6C985RUzmYqEEfH0JCURsoyXg9P892zgdt5A4nxr/dk/Z/3oTRHR49ui2xoTgNiXHkmF7VFHhbEzzLgA8KhHI1zlKue0g+DDGjBOmjV1c0M98Hdck3mKO6ouIv6haIb7i3F64dyK/QUu1G0wUP7ZV/qwZ1hKGKMiwUUBlv8WbCCX7ZPYN1g5gcjwOd1D7LIdSAGohMfhx7gUr3gPg5Ov+F8INc7FAjiFG6u8Ssvn+XEY2fT6eAhpv0x8xLjxGS6lnu1qGpoLv6kBVuHL8C7bQSqQ1mAGjBz1j0WtOGaqObl06aEQP24Z2Ft8lciaWRI51OoV3rfVYbd98mBbqfIklRCnDm8430VABbek3x8LMG/Usej4euhD54iiJrlPsWkUWA971KvLmhk6kHbcpEQujMm3iNSKdZu7QC7iVPpo1ldu4GDYDnHnZE0zmgJd1diSEdYwnOAVHi3kdA3BLO+207uedcFnajLOf6YMTJGAE=",
+    "thinking": "A short C304 would ground treble_b and leave the output about 10% above ground through R303, which fits the drop in the mid and high bands. With VR302's wiper open instead, the output only matches the measured -35 dB once the 1 \u03a9 path loads it, so I'm checking that next.\n\n",
+    "type": "thinking"
+   },
+   {
+    "id": "toolu_01MXnLufkYSGvAyMHSMvgpUi",
+    "caller": {
+     "type": "direct"
+    },
+    "input": {
+     "ranked_faults": [
+      "C304:short",
+      "VR302:wiper_open",
+      "C303:open",
+      "R303:drift_x2",
+      "VR302:track_open"
+     ],
+     "confidence": 0.5
+    },
+    "name": "diagnose",
+    "type": "tool_use"
+   }
+  ],
+  "diagnostics": null,
+  "model": "claude-sonnet-5-5",
+  "role": "assistant",
+  "stop_details": null,
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 0,
+    "ephemeral_5m_input_tokens": 368
+   },
+   "cache_creation_input_tokens": 368,
+   "cache_read_input_tokens": 3795,
+   "inference_geo": "global",
+   "input_tokens": 2,
+   "output_tokens": 352,
+   "output_tokens_details": {
+    "thinking_tokens": 233
+   },
+   "service_tier": "standard",
+   "speed": "standard"
+  }
+ }
+}

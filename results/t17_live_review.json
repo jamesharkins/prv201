@@ -225,5 +225,6 @@
    "cause_detail": "The recommend_measurement/expected_readings result gives each suspect's interval in a field named range_95; the model labelled it '95% range' in its first draft. The label is right in meaning (it is the 95 % predictive interval) but 95 is not a number in any tool result, so the check flagged it.",
    "why_it_survived_the_rewrite": "quoted in the rewrite's acknowledgement of the check"
   }
- ]
+ ],
+ "shown_to_technician_note": "Each entry's shown_to_technician field shows only that entry's mention replaced. redact_ungrounded (differential/agent/grounding.py) replaces every flagged mention in a reply at once, so where a reply has two entries (tone-test-0220), the reply shown had both replaced."
 }

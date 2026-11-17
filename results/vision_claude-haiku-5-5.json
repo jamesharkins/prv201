@@ -1,0 +1,941 @@
+{
+ "synthetic": {
+  "dataset": {
+   "path": "data/meter_photos/synthetic",
+   "n": 300,
+   "difficulty": {
+    "medium": 120,
+    "easy": 120,
+    "hard": 60
+   },
+   "labels_sha256": "f00d528794d032e8b51fe107c1cc694b027972bf72e209ceff154c3d7e8c8b1d",
+   "seed": 20260928
+  },
+  "offline": {
+   "n": 300,
+   "exact_match": 0.993333,
+   "exact_match_ci95": [
+    0.983333,
+    1.0
+   ],
+   "correct": 298,
+   "no_answer_rate": 0.003333,
+   "wrong_answer_rate": 0.003333,
+   "accuracy_when_answered": 0.996656,
+   "per_difficulty": {
+    "easy": {
+     "n": 120,
+     "exact_match": 1.0,
+     "no_answer_rate": 0.0
+    },
+    "medium": {
+     "n": 120,
+     "exact_match": 1.0,
+     "no_answer_rate": 0.0
+    },
+    "hard": {
+     "n": 60,
+     "exact_match": 0.966667,
+     "no_answer_rate": 0.016667
+    }
+   },
+   "per_mode_unit": {
+    "AC V": {
+     "n": 21,
+     "exact_match": 1.0
+    },
+    "AC mV": {
+     "n": 38,
+     "exact_match": 0.973684
+    },
+    "DC V": {
+     "n": 158,
+     "exact_match": 0.993671
+    },
+    "DC mV": {
+     "n": 33,
+     "exact_match": 1.0
+    },
+    "resistance M\u03a9": {
+     "n": 17,
+     "exact_match": 1.0
+    },
+    "resistance k\u03a9": {
+     "n": 24,
+     "exact_match": 1.0
+    },
+    "resistance \u03a9": {
+     "n": 9,
+     "exact_match": 1.0
+    }
+   },
+   "overload": {
+    "n": 20,
+    "exact_match": 1.0
+   },
+   "confidence": {
+    "mean_when_correct": 0.985954,
+    "mean_when_wrong": 0.516212,
+    "coverage_at_0.9": 0.99,
+    "accuracy_at_0.9": 1.0
+   },
+   "confusion": {
+    "error_parts": {
+     "no_answer": 1,
+     "value_text": 1
+    },
+    "characters": {
+     "5->1": 1
+    },
+    "units": {},
+    "modes": {},
+    "examples": [
+     {
+      "file": "meter_0061.jpg",
+      "difficulty": "hard",
+      "truth": "26.6 mV AC",
+      "read": null,
+      "confidence": null,
+      "error": null
+     },
+     {
+      "file": "meter_0131.jpg",
+      "difficulty": "hard",
+      "truth": "255.0 V DC",
+      "read": "215.0 V DC",
+      "confidence": 0.516,
+      "error": null
+     }
+    ]
+   },
+   "seconds_per_image": {
+    "mean": 0.0761,
+    "p95": 0.096683
+   }
+  },
+  "claude": {
+   "n": 300,
+   "exact_match": 0.903333,
+   "exact_match_ci95": [
+    0.87,
+    0.933333
+   ],
+   "correct": 271,
+   "no_answer_rate": 0.0,
+   "wrong_answer_rate": 0.096667,
+   "accuracy_when_answered": 0.903333,
+   "per_difficulty": {
+    "easy": {
+     "n": 120,
+     "exact_match": 0.958333,
+     "no_answer_rate": 0.0
+    },
+    "medium": {
+     "n": 120,
+     "exact_match": 0.958333,
+     "no_answer_rate": 0.0
+    },
+    "hard": {
+     "n": 60,
+     "exact_match": 0.683333,
+     "no_answer_rate": 0.0
+    }
+   },
+   "per_mode_unit": {
+    "AC V": {
+     "n": 21,
+     "exact_match": 0.904762
+    },
+    "AC mV": {
+     "n": 38,
+     "exact_match": 0.631579
+    },
+    "DC V": {
+     "n": 158,
+     "exact_match": 0.936709
+    },
+    "DC mV": {
+     "n": 33,
+     "exact_match": 0.939394
+    },
+    "resistance M\u03a9": {
+     "n": 17,
+     "exact_match": 1.0
+    },
+    "resistance k\u03a9": {
+     "n": 24,
+     "exact_match": 0.958333
+    },
+    "resistance \u03a9": {
+     "n": 9,
+     "exact_match": 1.0
+    }
+   },
+   "overload": {
+    "n": 20,
+    "exact_match": 1.0
+   },
+   "confidence": {
+    "mean_when_correct": 0.892288,
+    "mean_when_wrong": 0.770345,
+    "coverage_at_0.9": 0.68,
+    "accuracy_at_0.9": 0.965686
+   },
+   "confusion": {
+    "error_parts": {
+     "value_text": 14,
+     "mode": 18,
+     "unit": 2
+    },
+    "characters": {
+     "text length/layout": 12,
+     "4->.": 1,
+     ".->4": 1,
+     "7->1": 1
+    },
+    "units": {
+     "V->other": 1,
+     "mV->V": 1
+    },
+    "modes": {
+     "AC->DC": 16,
+     "DC->AC": 1,
+     "DC->other": 1
+    },
+    "examples": [
+     {
+      "file": "meter_0011.jpg",
+      "difficulty": "hard",
+      "truth": "-0.1 mV DC",
+      "read": "-01 mV DC",
+      "confidence": 0.6,
+      "error": null
+     },
+     {
+      "file": "meter_0015.jpg",
+      "difficulty": "hard",
+      "truth": "93.4 mV AC",
+      "read": "93.4 mV DC",
+      "confidence": 0.9,
+      "error": null
+     },
+     {
+      "file": "meter_0016.jpg",
+      "difficulty": "hard",
+      "truth": "7.65 V DC",
+      "read": "165 V DC",
+      "confidence": 0.8,
+      "error": null
+     },
+     {
+      "file": "meter_0061.jpg",
+      "difficulty": "hard",
+      "truth": "26.6 mV AC",
+      "read": "266 mV DC",
+      "confidence": 0.8,
+      "error": null
+     },
+     {
+      "file": "meter_0065.jpg",
+      "difficulty": "hard",
+      "truth": "-0.1 mV DC",
+      "read": "0.1 mV DC",
+      "confidence": 0.8,
+      "error": null
+     },
+     {
+      "file": "meter_0097.jpg",
+      "difficulty": "hard",
+      "truth": "0.7 mV AC",
+      "read": "0.7 mV DC",
+      "confidence": 0.7,
+      "error": null
+     },
+     {
+      "file": "meter_0117.jpg",
+      "difficulty": "easy",
+      "truth": "279.4 mV AC",
+      "read": "279.4 mV DC",
+      "confidence": 0.93,
+      "error": null
+     },
+     {
+      "file": "meter_0128.jpg",
+      "difficulty": "hard",
+      "truth": "-254.5 V DC",
+      "read": "-25.45 V DC",
+      "confidence": 0.6,
+      "error": null
+     },
+     {
+      "file": "meter_0136.jpg",
+      "difficulty": "hard",
+      "truth": "101.3 k\u03a9 resistance",
+      "read": "1013 k\u03a9 resistance",
+      "confidence": 0.8,
+      "error": null
+     },
+     {
+      "file": "meter_0155.jpg",
+      "difficulty": "easy",
+      "truth": "343.1 mV AC",
+      "read": "343.1 mV DC",
+      "confidence": 0.85,
+      "error": null
+     },
+     {
+      "file": "meter_0159.jpg",
+      "difficulty": "easy",
+      "truth": "82.8 mV AC",
+      "read": "82.8 mV DC",
+      "confidence": 0.93,
+      "error": null
+     },
+     {
+      "file": "meter_0169.jpg",
+      "difficulty": "medium",
+      "truth": "0.6 mV AC",
+      "read": "0.6 mV DC",
+      "confidence": 0.8,
+      "error": null
+     }
+    ]
+   },
+   "seconds_per_image": {
+    "mean": 1.782552,
+    "p95": 3.311871
+   },
+   "model": "claude-haiku-5-5",
+   "api_calls": 300,
+   "cost_usd_total_session": 0.03821
+  }
+ },
+ "synthetic_pilot": {
+  "dataset": {
+   "path": "(rendered, not saved)",
+   "n": 300,
+   "difficulty": {
+    "medium": 120,
+    "hard": 60,
+    "easy": 120
+   },
+   "labels_sha256": "129aae75699562d2e70ef5a5426435f87511aa80bb9c4d69cbb71416b8af9bf9",
+   "seed": 20261001
+  },
+  "offline": {
+   "n": 300,
+   "exact_match": 0.986667,
+   "exact_match_ci95": [
+    0.973333,
+    0.996667
+   ],
+   "correct": 296,
+   "no_answer_rate": 0.013333,
+   "wrong_answer_rate": 0.0,
+   "accuracy_when_answered": 1.0,
+   "per_difficulty": {
+    "easy": {
+     "n": 120,
+     "exact_match": 1.0,
+     "no_answer_rate": 0.0
+    },
+    "medium": {
+     "n": 120,
+     "exact_match": 1.0,
+     "no_answer_rate": 0.0
+    },
+    "hard": {
+     "n": 60,
+     "exact_match": 0.933333,
+     "no_answer_rate": 0.066667
+    }
+   },
+   "per_mode_unit": {
+    "AC V": {
+     "n": 15,
+     "exact_match": 1.0
+    },
+    "AC mV": {
+     "n": 39,
+     "exact_match": 1.0
+    },
+    "DC V": {
+     "n": 154,
+     "exact_match": 0.980519
+    },
+    "DC mV": {
+     "n": 34,
+     "exact_match": 1.0
+    },
+    "resistance M\u03a9": {
+     "n": 19,
+     "exact_match": 1.0
+    },
+    "resistance k\u03a9": {
+     "n": 34,
+     "exact_match": 0.970588
+    },
+    "resistance \u03a9": {
+     "n": 5,
+     "exact_match": 1.0
+    }
+   },
+   "overload": {
+    "n": 19,
+    "exact_match": 1.0
+   },
+   "confidence": {
+    "mean_when_correct": 0.985108,
+    "mean_when_wrong": null,
+    "coverage_at_0.9": 0.976667,
+    "accuracy_at_0.9": 1.0
+   },
+   "confusion": {
+    "error_parts": {
+     "no_answer": 4
+    },
+    "characters": {},
+    "units": {},
+    "modes": {},
+    "examples": [
+     {
+      "file": "meter_0043.jpg",
+      "difficulty": "hard",
+      "truth": "0.739 V DC",
+      "read": null,
+      "confidence": null,
+      "error": null
+     },
+     {
+      "file": "meter_0092.jpg",
+      "difficulty": "hard",
+      "truth": "9.36 V DC",
+      "read": null,
+      "confidence": null,
+      "error": null
+     },
+     {
+      "file": "meter_0172.jpg",
+      "difficulty": "hard",
+      "truth": "0.707 V DC",
+      "read": null,
+      "confidence": null,
+      "error": null
+     },
+     {
+      "file": "meter_0224.jpg",
+      "difficulty": "hard",
+      "truth": "22.58 k\u03a9 resistance",
+      "read": null,
+      "confidence": null,
+      "error": null
+     }
+    ]
+   },
+   "seconds_per_image": {
+    "mean": 0.073797,
+    "p95": 0.090985
+   }
+  },
+  "claude": {
+   "n": 300,
+   "exact_match": 0.893333,
+   "exact_match_ci95": [
+    0.86,
+    0.926667
+   ],
+   "correct": 268,
+   "no_answer_rate": 0.0,
+   "wrong_answer_rate": 0.106667,
+   "accuracy_when_answered": 0.893333,
+   "per_difficulty": {
+    "easy": {
+     "n": 120,
+     "exact_match": 0.958333,
+     "no_answer_rate": 0.0
+    },
+    "medium": {
+     "n": 120,
+     "exact_match": 0.866667,
+     "no_answer_rate": 0.0
+    },
+    "hard": {
+     "n": 60,
+     "exact_match": 0.816667,
+     "no_answer_rate": 0.0
+    }
+   },
+   "per_mode_unit": {
+    "AC V": {
+     "n": 15,
+     "exact_match": 1.0
+    },
+    "AC mV": {
+     "n": 39,
+     "exact_match": 0.615385
+    },
+    "DC V": {
+     "n": 154,
+     "exact_match": 0.928571
+    },
+    "DC mV": {
+     "n": 34,
+     "exact_match": 0.911765
+    },
+    "resistance M\u03a9": {
+     "n": 19,
+     "exact_match": 0.947368
+    },
+    "resistance k\u03a9": {
+     "n": 34,
+     "exact_match": 0.941176
+    },
+    "resistance \u03a9": {
+     "n": 5,
+     "exact_match": 1.0
+    }
+   },
+   "overload": {
+    "n": 19,
+    "exact_match": 0.894737
+   },
+   "confidence": {
+    "mean_when_correct": 0.888918,
+    "mean_when_wrong": 0.814375,
+    "coverage_at_0.9": 0.733333,
+    "accuracy_at_0.9": 0.95
+   },
+   "confusion": {
+    "error_parts": {
+     "mode": 16,
+     "value_text": 18
+    },
+    "characters": {
+     "text length/layout": 14,
+     ".->2": 2,
+     "2->.": 2,
+     "6->.": 1,
+     ".->6": 1,
+     ".->0": 1,
+     "0->.": 1
+    },
+    "units": {},
+    "modes": {
+     "AC->DC": 15,
+     "DC->AC": 1
+    },
+    "examples": [
+     {
+      "file": "meter_0000.jpg",
+      "difficulty": "medium",
+      "truth": "0.4 mV AC",
+      "read": "0.4 mV DC",
+      "confidence": 0.85,
+      "error": null
+     },
+     {
+      "file": "meter_0010.jpg",
+      "difficulty": "medium",
+      "truth": "OL M\u03a9 resistance",
+      "read": "0.1 M\u03a9 resistance",
+      "confidence": 0.7,
+      "error": null
+     },
+     {
+      "file": "meter_0022.jpg",
+      "difficulty": "easy",
+      "truth": "0.1 mV AC",
+      "read": "0.1 mV DC",
+      "confidence": 0.9,
+      "error": null
+     },
+     {
+      "file": "meter_0028.jpg",
+      "difficulty": "medium",
+      "truth": "272.2 V DC",
+      "read": "272.2 V AC",
+      "confidence": 0.7,
+      "error": null
+     },
+     {
+      "file": "meter_0030.jpg",
+      "difficulty": "medium",
+      "truth": "46.71 k\u03a9 resistance",
+      "read": "4.671 k\u03a9 resistance",
+      "confidence": 0.93,
+      "error": null
+     },
+     {
+      "file": "meter_0041.jpg",
+      "difficulty": "medium",
+      "truth": "1.207 V DC",
+      "read": "12.07 V DC",
+      "confidence": 0.85,
+      "error": null
+     },
+     {
+      "file": "meter_0044.jpg",
+      "difficulty": "hard",
+      "truth": "1.205 V DC",
+      "read": "1205 V DC",
+      "confidence": 0.85,
+      "error": null
+     },
+     {
+      "file": "meter_0055.jpg",
+      "difficulty": "medium",
+      "truth": "294.6 mV AC",
+      "read": "294.6 mV DC",
+      "confidence": 0.9,
+      "error": null
+     },
+     {
+      "file": "meter_0074.jpg",
+      "difficulty": "medium",
+      "truth": "99.6 mV AC",
+      "read": "99.6 mV DC",
+      "confidence": 0.93,
+      "error": null
+     },
+     {
+      "file": "meter_0079.jpg",
+      "difficulty": "hard",
+      "truth": "3.1 mV AC",
+      "read": "3.1 mV DC",
+      "confidence": 0.8,
+      "error": null
+     },
+     {
+      "file": "meter_0091.jpg",
+      "difficulty": "medium",
+      "truth": "3.2 mV AC",
+      "read": "3.2 mV DC",
+      "confidence": 0.85,
+      "error": null
+     },
+     {
+      "file": "meter_0098.jpg",
+      "difficulty": "medium",
+      "truth": "-0.2 mV DC",
+      "read": "0.2 mV DC",
+      "confidence": 0.7,
+      "error": null
+     }
+    ]
+   },
+   "seconds_per_image": {
+    "mean": 1.772057,
+    "p95": 3.685779
+   },
+   "model": "claude-haiku-5-5",
+   "api_calls": 300,
+   "cost_usd_total_session": 0.076563
+  }
+ },
+ "synthetic_test": {
+  "dataset": {
+   "path": "(rendered, not saved)",
+   "n": 300,
+   "difficulty": {
+    "medium": 120,
+    "hard": 60,
+    "easy": 120
+   },
+   "labels_sha256": "f65092eca3964610758f8c28737b08b22fd4c0c2f7fe94a2f74ff681042f990e",
+   "seed": 20261028
+  },
+  "offline": {
+   "n": 300,
+   "exact_match": 1.0,
+   "exact_match_ci95": [
+    1.0,
+    1.0
+   ],
+   "correct": 300,
+   "no_answer_rate": 0.0,
+   "wrong_answer_rate": 0.0,
+   "accuracy_when_answered": 1.0,
+   "per_difficulty": {
+    "easy": {
+     "n": 120,
+     "exact_match": 1.0,
+     "no_answer_rate": 0.0
+    },
+    "medium": {
+     "n": 120,
+     "exact_match": 1.0,
+     "no_answer_rate": 0.0
+    },
+    "hard": {
+     "n": 60,
+     "exact_match": 1.0,
+     "no_answer_rate": 0.0
+    }
+   },
+   "per_mode_unit": {
+    "AC V": {
+     "n": 17,
+     "exact_match": 1.0
+    },
+    "AC mV": {
+     "n": 31,
+     "exact_match": 1.0
+    },
+    "DC V": {
+     "n": 150,
+     "exact_match": 1.0
+    },
+    "DC mV": {
+     "n": 43,
+     "exact_match": 1.0
+    },
+    "resistance M\u03a9": {
+     "n": 14,
+     "exact_match": 1.0
+    },
+    "resistance k\u03a9": {
+     "n": 37,
+     "exact_match": 1.0
+    },
+    "resistance \u03a9": {
+     "n": 8,
+     "exact_match": 1.0
+    }
+   },
+   "overload": {
+    "n": 19,
+    "exact_match": 1.0
+   },
+   "confidence": {
+    "mean_when_correct": 0.985305,
+    "mean_when_wrong": null,
+    "coverage_at_0.9": 0.99,
+    "accuracy_at_0.9": 1.0
+   },
+   "confusion": {
+    "error_parts": {},
+    "characters": {},
+    "units": {},
+    "modes": {},
+    "examples": []
+   },
+   "seconds_per_image": {
+    "mean": 0.075177,
+    "p95": 0.107543
+   }
+  },
+  "claude": {
+   "n": 300,
+   "exact_match": 0.893333,
+   "exact_match_ci95": [
+    0.856667,
+    0.926667
+   ],
+   "correct": 268,
+   "no_answer_rate": 0.0,
+   "wrong_answer_rate": 0.106667,
+   "accuracy_when_answered": 0.893333,
+   "per_difficulty": {
+    "easy": {
+     "n": 120,
+     "exact_match": 0.958333,
+     "no_answer_rate": 0.0
+    },
+    "medium": {
+     "n": 120,
+     "exact_match": 0.958333,
+     "no_answer_rate": 0.0
+    },
+    "hard": {
+     "n": 60,
+     "exact_match": 0.633333,
+     "no_answer_rate": 0.0
+    }
+   },
+   "per_mode_unit": {
+    "AC V": {
+     "n": 17,
+     "exact_match": 0.941176
+    },
+    "AC mV": {
+     "n": 31,
+     "exact_match": 0.774194
+    },
+    "DC V": {
+     "n": 150,
+     "exact_match": 0.913333
+    },
+    "DC mV": {
+     "n": 43,
+     "exact_match": 0.953488
+    },
+    "resistance M\u03a9": {
+     "n": 14,
+     "exact_match": 0.857143
+    },
+    "resistance k\u03a9": {
+     "n": 37,
+     "exact_match": 0.837838
+    },
+    "resistance \u03a9": {
+     "n": 8,
+     "exact_match": 0.875
+    }
+   },
+   "overload": {
+    "n": 19,
+    "exact_match": 1.0
+   },
+   "confidence": {
+    "mean_when_correct": 0.892351,
+    "mean_when_wrong": 0.7575,
+    "coverage_at_0.9": 0.67,
+    "accuracy_at_0.9": 0.960199
+   },
+   "confusion": {
+    "error_parts": {
+     "mode": 11,
+     "value_text": 21,
+     "unit": 4
+    },
+    "characters": {
+     "text length/layout": 17,
+     "2->.": 2,
+     ".->2": 2,
+     "1->.": 1,
+     ".->1": 1,
+     ".->3": 1,
+     "3->.": 1
+    },
+    "units": {
+     "k\u03a9->\u03a9": 1,
+     "k\u03a9->V": 1,
+     "M\u03a9->mV": 1,
+     "k\u03a9->other": 1
+    },
+    "modes": {
+     "AC->DC": 8,
+     "resistance->DC": 2,
+     "DC->AC": 1
+    },
+    "examples": [
+     {
+      "file": "meter_0002.jpg",
+      "difficulty": "medium",
+      "truth": "300.1 mV AC",
+      "read": "300.1 mV DC",
+      "confidence": 0.93,
+      "error": null
+     },
+     {
+      "file": "meter_0027.jpg",
+      "difficulty": "hard",
+      "truth": "11.02 V DC",
+      "read": "1.102 V DC",
+      "confidence": 0.6,
+      "error": null
+     },
+     {
+      "file": "meter_0032.jpg",
+      "difficulty": "easy",
+      "truth": "592.8 mV DC",
+      "read": "5928 mV DC",
+      "confidence": 0.93,
+      "error": null
+     },
+     {
+      "file": "meter_0048.jpg",
+      "difficulty": "medium",
+      "truth": "0.2 mV AC",
+      "read": "0.2 mV DC",
+      "confidence": 0.85,
+      "error": null
+     },
+     {
+      "file": "meter_0053.jpg",
+      "difficulty": "hard",
+      "truth": "46.71 k\u03a9 resistance",
+      "read": "46.71 \u03a9 resistance",
+      "confidence": 0.85,
+      "error": null
+     },
+     {
+      "file": "meter_0059.jpg",
+      "difficulty": "easy",
+      "truth": "7.71 V DC",
+      "read": "7.711 V DC",
+      "confidence": 0.9,
+      "error": null
+     },
+     {
+      "file": "meter_0107.jpg",
+      "difficulty": "hard",
+      "truth": "2.184 k\u03a9 resistance",
+      "read": "2.184 V DC",
+      "confidence": 0.6,
+      "error": null
+     },
+     {
+      "file": "meter_0109.jpg",
+      "difficulty": "hard",
+      "truth": "0.6 \u03a9 resistance",
+      "read": "06 \u03a9 resistance",
+      "confidence": 0.5,
+      "error": null
+     },
+     {
+      "file": "meter_0110.jpg",
+      "difficulty": "hard",
+      "truth": "1.317 V DC",
+      "read": "13.17 V DC",
+      "confidence": 0.8,
+      "error": null
+     },
+     {
+      "file": "meter_0113.jpg",
+      "difficulty": "medium",
+      "truth": "282.1 V DC",
+      "read": "28.21 V DC",
+      "confidence": 0.9,
+      "error": null
+     },
+     {
+      "file": "meter_0119.jpg",
+      "difficulty": "hard",
+      "truth": "0.987 M\u03a9 resistance",
+      "read": "0.987 mV DC",
+      "confidence": 0.6,
+      "error": null
+     },
+     {
+      "file": "meter_0128.jpg",
+      "difficulty": "hard",
+      "truth": "31.4 mV DC",
+      "read": "314 mV DC",
+      "confidence": 0.8,
+      "error": null
+     }
+    ]
+   },
+   "seconds_per_image": {
+    "mean": 1.756439,
+    "p95": 3.39713
+   },
+   "model": "claude-haiku-5-5",
+   "api_calls": 300,
+   "cost_usd_total_session": 0.114268
+  }
+ },
+ "real": {
+  "status": "no labelled real photos (data/meter_photos/real/labels.jsonl not present)"
+ },
+ "target": {
+  "id": "T19",
+  "offline": 0.9,
+  "claude": 0.95,
+  "judged_on": "synthetic_test",
+  "offline_met": true,
+  "claude_met": false
+ },
+ "protocol": "exact match = normalised display text, unit and mode all correct; no answer counts as wrong; 95 % CI from 2000 bootstrap resamples. The offline reader was developed on synthetic sets with seeds [20260928, 7, 20260929]; the pilot set (seed 20261001) was scored before the targets were locked; T19 is judged on the test set (seed 20261028), scored only after the lock. Every reading is confirmed by the technician before it is recorded."
+}

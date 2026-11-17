@@ -266,7 +266,9 @@ class DifferentialAgent:
     # ------------------------------------------------------------ offline
     def _offline(self, text: str) -> str:
         low = text.lower()
-        if re.search(r"\b(ticket|summary|wrap up|write (it )?up)\b", low):
+        # The first message is the complaint, whatever words it uses: a bench technician's
+        # "Service ticket: ..." is a complaint, not a request for the repair ticket (ADR-052).
+        if self.tb.symptoms is not None and re.search(r"\b(ticket|summary|wrap up|write (it )?up)\b", low):
             return str(self.ticket()["markdown"])
         if re.search(r"\bwhy\b|explain|reason", low) and self.pending_key:
             return self._explain(self.pending_key)

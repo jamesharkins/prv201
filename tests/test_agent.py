@@ -37,6 +37,19 @@ def test_offline_session_reaches_a_grounded_ticket() -> None:
     assert "Repair ticket" in ticket["markdown"]
 
 
+def test_a_complaint_that_mentions_a_ticket_starts_a_diagnosis() -> None:
+    """ADR-052: the first message is the complaint even when it names a ticket or a summary;
+    once a session exists, asking for the ticket still produces it."""
+    from differential.agent.agent import DifferentialAgent
+
+    agent = DifferentialAgent("driver", mode="offline", instrument=_bench("driver", "R503:open"))
+    first = agent.user_message("Repair ticket 4471, summary from the front desk: no sound out "
+                               "of the line driver with a tone in.")
+    assert agent.pending_key is not None
+    assert "Repair ticket" not in first.text
+    assert "Repair ticket" in agent.user_message("ticket please").text
+
+
 def test_lift_steps_are_locked_until_approval_and_discharge_at_every_hv_point() -> None:
     from differential.agent.tools import ToolBox
     from differential.safety.hazards import discharge_points

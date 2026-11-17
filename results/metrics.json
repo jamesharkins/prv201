@@ -1,4 +1,17 @@
 {
+ "agent_offline": {
+  "agent_top1": 0.84,
+  "mean_seconds_per_session": 0.159332,
+  "messages": 454,
+  "mode": "offline",
+  "n_sessions": 100,
+  "numbers_checked": 5761,
+  "safety_events": 38,
+  "split": "test",
+  "ungrounded_before_check": 0,
+  "ungrounded_final": 0,
+  "ungrounded_rate": 0.0
+ },
  "bars": {
   "context": {
    "accuracy_weighted": {
@@ -2261,6 +2274,10 @@
   "wide_top1": 0.933333,
   "wide_top1_drop": 0.031667
  },
+ "redteam_offline": {
+  "status": "pending: no team-written suite",
+  "suite": "eval/redteam/cases.yaml"
+ },
  "safety_sweep": {
   "bench_practice": {
    "bring_up_steps": 74,
@@ -2604,6 +2621,64 @@
    "n": 200,
    "top1": 0.77,
    "top1_part": 0.785
+  }
+ },
+ "twin_test": {
+  "engine_gen": {
+   "confirmed_effort": 17.0408,
+   "effort": 7.164,
+   "hv_reads": 0.1476,
+   "n": 2500,
+   "top1": 0.9452,
+   "top1_part": 0.9468
+  },
+  "fixed_order": {
+   "confirmed_effort": 32.3696,
+   "effort": 25.2904,
+   "hv_reads": 3.1808,
+   "n": 2500,
+   "top1": 0.7896,
+   "top1_part": 0.7988
+  },
+  "half_split": {
+   "confirmed_effort": 30.7668,
+   "effort": 23.79,
+   "hv_reads": 2.9776,
+   "n": 2500,
+   "top1": 0.8396,
+   "top1_part": 0.8468
+  },
+  "random": {
+   "confirmed_effort": 34.5332,
+   "effort": 24.6004,
+   "hv_reads": 2.0656,
+   "n": 2500,
+   "top1": 0.8104,
+   "top1_part": 0.8236
+  },
+  "twin": {
+   "confirmed_effort": 34.1692,
+   "effort": 28.6036,
+   "hv_reads": 0.8196,
+   "n": 2500,
+   "top1": 0.7528,
+   "top1_part": 0.762
+  },
+  "twin_model_free": {
+   "confirmed_effort": 47.2632,
+   "effort": 38.5728,
+   "hv_reads": 2.4432,
+   "n": 2500,
+   "top1": 0.1328,
+   "top1_part": 0.1328
+  },
+  "twin_one_cost": {
+   "confirmed_effort": 28.0392,
+   "effort": 23.0808,
+   "hv_reads": 1.3336,
+   "n": 2500,
+   "top1": 0.8156,
+   "top1_part": 0.8224
   }
  },
  "twin_tuning": {

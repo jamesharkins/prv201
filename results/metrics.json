@@ -2774,7 +2774,151 @@
   },
   "synthetic": {
    "claude": {
-    "status": "pending (requires DIFFERENTIAL_API_KEY)"
+    "accuracy_when_answered": 0.976667,
+    "api_calls": 296,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.8,
+     "mean_when_correct": 0.903891,
+     "mean_when_wrong": 0.754286
+    },
+    "confusion": {
+     "characters": {
+      "text length/layout": 1
+     },
+     "error_parts": {
+      "mode": 6,
+      "value_text": 1
+     },
+     "examples": [
+      {
+       "confidence": 0.8,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0065.jpg",
+       "read": "0.1 mV DC",
+       "truth": "-0.1 mV DC"
+      },
+      {
+       "confidence": 0.75,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0097.jpg",
+       "read": "0.7 mV DC",
+       "truth": "0.7 mV AC"
+      },
+      {
+       "confidence": 0.88,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0141.jpg",
+       "read": "304.3 mV DC",
+       "truth": "304.3 mV AC"
+      },
+      {
+       "confidence": 0.8,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0225.jpg",
+       "read": "26.6 mV DC",
+       "truth": "26.6 mV AC"
+      },
+      {
+       "confidence": 0.85,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0268.jpg",
+       "read": "293.1 mV DC",
+       "truth": "293.1 mV AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0271.jpg",
+       "read": "0.9 mV DC",
+       "truth": "0.9 mV AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0289.jpg",
+       "read": "0.6 mV DC",
+       "truth": "0.6 mV AC"
+      }
+     ],
+     "modes": {
+      "AC->DC": 6
+     },
+     "units": {}
+    },
+    "correct": 293,
+    "cost_usd_total_session": 0.539116,
+    "exact_match": 0.976667,
+    "exact_match_ci95": [
+     0.956667,
+     0.993333
+    ],
+    "model": "claude-sonnet-5-5",
+    "n": 300,
+    "no_answer_rate": 0.0,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 20
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 0.933333,
+      "n": 60,
+      "no_answer_rate": 0.0
+     },
+     "medium": {
+      "exact_match": 0.975,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 1.0,
+      "n": 21
+     },
+     "AC mV": {
+      "exact_match": 0.842105,
+      "n": 38
+     },
+     "DC V": {
+      "exact_match": 1.0,
+      "n": 158
+     },
+     "DC mV": {
+      "exact_match": 0.969697,
+      "n": 33
+     },
+     "resistance M\u03a9": {
+      "exact_match": 1.0,
+      "n": 17
+     },
+     "resistance k\u03a9": {
+      "exact_match": 1.0,
+      "n": 24
+     },
+     "resistance \u03a9": {
+      "exact_match": 1.0,
+      "n": 9
+     }
+    },
+    "seconds_per_image": {
+     "mean": 2.777134,
+     "p95": 5.351422
+    },
+    "wrong_answer_rate": 0.023333
    },
    "dataset": {
     "difficulty": {
@@ -2884,15 +3028,186 @@
      }
     },
     "seconds_per_image": {
-     "mean": 0.086911,
-     "p95": 0.123385
+     "mean": 0.075062,
+     "p95": 0.096063
     },
     "wrong_answer_rate": 0.003333
    }
   },
   "synthetic_pilot": {
    "claude": {
-    "status": "pending (requires DIFFERENTIAL_API_KEY)"
+    "accuracy_when_answered": 0.966667,
+    "api_calls": 300,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.8,
+     "mean_when_correct": 0.906724,
+     "mean_when_wrong": 0.589
+    },
+    "confusion": {
+     "characters": {
+      ".->7": 2,
+      "7->.": 2,
+      "text length/layout": 1
+     },
+     "error_parts": {
+      "mode": 7,
+      "value_text": 3
+     },
+     "examples": [
+      {
+       "confidence": 0.88,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0055.jpg",
+       "read": "294.6 mV DC",
+       "truth": "294.6 mV AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0079.jpg",
+       "read": "3.1 mV DC",
+       "truth": "3.1 mV AC"
+      },
+      {
+       "confidence": 0.86,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0091.jpg",
+       "read": "3.2 mV DC",
+       "truth": "3.2 mV AC"
+      },
+      {
+       "confidence": 0.4,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0100.jpg",
+       "read": "4465 V DC",
+       "truth": "4.465 V DC"
+      },
+      {
+       "confidence": 0.7,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0106.jpg",
+       "read": "524.1 mV DC",
+       "truth": "524.1 mV AC"
+      },
+      {
+       "confidence": 0.4,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0114.jpg",
+       "read": "-13.77 V DC",
+       "truth": "-137.7 V DC"
+      },
+      {
+       "confidence": 0.55,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0157.jpg",
+       "read": "3.641 V AC",
+       "truth": "3.641 V DC"
+      },
+      {
+       "confidence": 0.3,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0172.jpg",
+       "read": "0.707 V AC",
+       "truth": "0.707 V DC"
+      },
+      {
+       "confidence": 0.4,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0214.jpg",
+       "read": "2.733 V DC",
+       "truth": "27.33 V DC"
+      },
+      {
+       "confidence": 0.8,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0299.jpg",
+       "read": "80.6 mV DC",
+       "truth": "80.6 mV AC"
+      }
+     ],
+     "modes": {
+      "AC->DC": 5,
+      "DC->AC": 2
+     },
+     "units": {}
+    },
+    "correct": 290,
+    "cost_usd_total_session": 1.091526,
+    "exact_match": 0.966667,
+    "exact_match_ci95": [
+     0.943333,
+     0.986667
+    ],
+    "model": "claude-sonnet-5-5",
+    "n": 300,
+    "no_answer_rate": 0.0,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 19
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 0.866667,
+      "n": 60,
+      "no_answer_rate": 0.0
+     },
+     "medium": {
+      "exact_match": 0.983333,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 1.0,
+      "n": 15
+     },
+     "AC mV": {
+      "exact_match": 0.871795,
+      "n": 39
+     },
+     "DC V": {
+      "exact_match": 0.967532,
+      "n": 154
+     },
+     "DC mV": {
+      "exact_match": 1.0,
+      "n": 34
+     },
+     "resistance M\u03a9": {
+      "exact_match": 1.0,
+      "n": 19
+     },
+     "resistance k\u03a9": {
+      "exact_match": 1.0,
+      "n": 34
+     },
+     "resistance \u03a9": {
+      "exact_match": 1.0,
+      "n": 5
+     }
+    },
+    "seconds_per_image": {
+     "mean": 2.377152,
+     "p95": 5.092139
+    },
+    "wrong_answer_rate": 0.033333
    },
    "dataset": {
     "difficulty": {
@@ -3015,19 +3330,282 @@
      }
     },
     "seconds_per_image": {
-     "mean": 0.087178,
-     "p95": 0.108158
+     "mean": 0.071621,
+     "p95": 0.087913
+    },
+    "wrong_answer_rate": 0.0
+   }
+  },
+  "synthetic_test": {
+   "claude": {
+    "accuracy_when_answered": 0.97,
+    "api_calls": 300,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.83,
+     "mean_when_correct": 0.910619,
+     "mean_when_wrong": 0.627778
+    },
+    "confusion": {
+     "characters": {
+      ".->2": 1,
+      "2->.": 1,
+      "text length/layout": 1
+     },
+     "error_parts": {
+      "mode": 5,
+      "unit": 2,
+      "value_text": 2
+     },
+     "examples": [
+      {
+       "confidence": 0.6,
+       "difficulty": "easy",
+       "error": null,
+       "file": "meter_0078.jpg",
+       "read": "27.24 V DC",
+       "truth": "272.4 V DC"
+      },
+      {
+       "confidence": 0.4,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0109.jpg",
+       "read": "0.6 k\u03a9 resistance",
+       "truth": "0.6 \u03a9 resistance"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0119.jpg",
+       "read": "0.987 k\u03a9 resistance",
+       "truth": "0.987 M\u03a9 resistance"
+      },
+      {
+       "confidence": 0.5,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0128.jpg",
+       "read": "314 mV DC",
+       "truth": "31.4 mV DC"
+      },
+      {
+       "confidence": 0.8,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0136.jpg",
+       "read": "6.64 V DC",
+       "truth": "6.64 V AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0137.jpg",
+       "read": "51.0 mV DC",
+       "truth": "51.0 mV AC"
+      },
+      {
+       "confidence": 0.85,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0139.jpg",
+       "read": "112.9 mV DC",
+       "truth": "112.9 mV AC"
+      },
+      {
+       "confidence": 0.7,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0212.jpg",
+       "read": "99.8 mV DC",
+       "truth": "99.8 mV AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0269.jpg",
+       "read": "14.84 V AC",
+       "truth": "14.84 V DC"
+      }
+     ],
+     "modes": {
+      "AC->DC": 4,
+      "DC->AC": 1
+     },
+     "units": {
+      "M\u03a9->k\u03a9": 1,
+      "\u03a9->k\u03a9": 1
+     }
+    },
+    "correct": 291,
+    "cost_usd_total_session": 1.606456,
+    "exact_match": 0.97,
+    "exact_match_ci95": [
+     0.95,
+     0.986667
+    ],
+    "model": "claude-sonnet-5-5",
+    "n": 300,
+    "no_answer_rate": 0.0,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 19
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 0.991667,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 0.866667,
+      "n": 60,
+      "no_answer_rate": 0.0
+     },
+     "medium": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 0.941176,
+      "n": 17
+     },
+     "AC mV": {
+      "exact_match": 0.903226,
+      "n": 31
+     },
+     "DC V": {
+      "exact_match": 0.986667,
+      "n": 150
+     },
+     "DC mV": {
+      "exact_match": 0.976744,
+      "n": 43
+     },
+     "resistance M\u03a9": {
+      "exact_match": 0.928571,
+      "n": 14
+     },
+     "resistance k\u03a9": {
+      "exact_match": 1.0,
+      "n": 37
+     },
+     "resistance \u03a9": {
+      "exact_match": 0.875,
+      "n": 8
+     }
+    },
+    "seconds_per_image": {
+     "mean": 2.521356,
+     "p95": 5.098451
+    },
+    "wrong_answer_rate": 0.03
+   },
+   "dataset": {
+    "difficulty": {
+     "easy": 120,
+     "hard": 60,
+     "medium": 120
+    },
+    "labels_sha256": "f65092eca3964610758f8c28737b08b22fd4c0c2f7fe94a2f74ff681042f990e",
+    "n": 300,
+    "path": "(rendered, not saved)",
+    "seed": 20261028
+   },
+   "offline": {
+    "accuracy_when_answered": 1.0,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.99,
+     "mean_when_correct": 0.985305,
+     "mean_when_wrong": null
+    },
+    "confusion": {
+     "characters": {},
+     "error_parts": {},
+     "examples": [],
+     "modes": {},
+     "units": {}
+    },
+    "correct": 300,
+    "exact_match": 1.0,
+    "exact_match_ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 300,
+    "no_answer_rate": 0.0,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 19
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 1.0,
+      "n": 60,
+      "no_answer_rate": 0.0
+     },
+     "medium": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 1.0,
+      "n": 17
+     },
+     "AC mV": {
+      "exact_match": 1.0,
+      "n": 31
+     },
+     "DC V": {
+      "exact_match": 1.0,
+      "n": 150
+     },
+     "DC mV": {
+      "exact_match": 1.0,
+      "n": 43
+     },
+     "resistance M\u03a9": {
+      "exact_match": 1.0,
+      "n": 14
+     },
+     "resistance k\u03a9": {
+      "exact_match": 1.0,
+      "n": 37
+     },
+     "resistance \u03a9": {
+      "exact_match": 1.0,
+      "n": 8
+     }
+    },
+    "seconds_per_image": {
+     "mean": 0.07622,
+     "p95": 0.1094
     },
     "wrong_answer_rate": 0.0
    }
   },
   "target": {
    "claude": 0.95,
-   "claude_met": null,
+   "claude_met": true,
    "id": "T19",
    "judged_on": "synthetic_test",
    "offline": 0.9,
-   "offline_met": null
+   "offline_met": true
   }
  }
 }

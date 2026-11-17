@@ -13,6 +13,7 @@ failure analysis, and changes from M2.
 
 ```bash
 python tools/engineering_facts.py      # tests, coverage, code size -> results/engineering.json
+python -m eval.run_eval                # targets_result, after the agent and red-team runs
 python tools/m3_analysis.py            # failure analysis -> results/m3_analysis.json
                                        # (the LLM-alone part replays data/llm_cache from
                                        #  branch claude/m3-live-results; without it, pending)
@@ -23,10 +24,14 @@ python tools/check_claims.py "$PWD/submissions/M3/M3.pdf"
 
 ## Human actions before submitting
 
-1. Create the tag `m3-ready` on the commit submitted (GitHub, Releases, "Create a new
-   release", tag `m3-ready`, target `main`); tag pushes are blocked from the cloud
-   sessions. Also create `targets-locked` on `60cca12` if it is not on GitHub yet.
-2. Render the Canvas copy with your name as the signer (third argument above).
-3. Optional, recommended: read the flagged red-team replies in
-   `results/redteam_review.json` as the second, human reviewer the suite's README asks for,
-   and the 15 live numbers in `results/t17_live_review.json`.
+1. Create the tags on GitHub (tag pushes are blocked from the cloud sessions). For each, open
+   the repository's Releases page, choose "Draft a new release", type the tag name under
+   "Choose a tag" and pick its target, then publish:
+   - `targets-locked`, target branch `locks/targets-locked` (the lock commit `60cca12`);
+   - `m2-ready`, target branch `claude/differential-build` (`81267dd`);
+   - `m3-ready`, target branch `main`.
+2. Render the Canvas copy with your name as the signer (third argument above) and submit it
+   with the repository link.
+3. Recommended: read the live red-team replies in `results/redteam_review_full.json` as the
+   second, human labeler the suite's README asks for, and the live numbers in
+   `results/t17_live_review.json` (the start of T17's human audit).

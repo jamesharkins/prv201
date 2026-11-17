@@ -254,5 +254,96 @@
    "stopped_confident_share": 0.991,
    "accuracy_when_confident": 0.885
   }
+ },
+ "live_vs_engine": {
+  "n": 100,
+  "live_correct": 91,
+  "engine_correct": 94,
+  "right_engine_wrong_live": 5,
+  "of_those_stopped_with_less_effort": 5,
+  "right_live_wrong_engine": 2,
+  "sessions_with_less_effort": 25,
+  "sessions_with_more_effort": 11,
+  "sessions_without_measurement": 4,
+  "api_calls_per_diagnosis": 4.11,
+  "cost_per_diagnosis_usd": 0.0214,
+  "uncached_cost_per_diagnosis_usd": 0.0394,
+  "caching_saving_share": 0.456
+ },
+ "small_samples": {
+  "agent_live": {
+   "k": 91,
+   "n": 100,
+   "ci95": [
+    0.836,
+    0.958
+   ]
+  },
+  "agent_offline": {
+   "k": 92,
+   "n": 100,
+   "ci95": [
+    0.8484,
+    0.9648
+   ]
+  },
+  "agent_offline_before_adr052": {
+   "k": 84,
+   "n": 100,
+   "ci95": [
+    0.7532,
+    0.9057
+   ]
+  }
+ },
+ "t13_mix": {
+  "n": 2500,
+  "double_share": 0.796,
+  "modification_share": 0.204,
+  "misleading_double": 0.0568,
+  "misleading_modification": 0.3176,
+  "misleading_reweighted_70_30": 0.135
+ },
+ "calibration_by_scope": {
+  "engine_gen": {
+   "none": {
+    "n": 2369,
+    "accuracy": 0.931,
+    "mean_belief": 0.966
+   },
+   "under_half": {
+    "n": 1542,
+    "accuracy": 0.979,
+    "mean_belief": 0.979
+   },
+   "half_or_more": {
+    "n": 1075,
+    "accuracy": 0.993,
+    "mean_belief": 0.979
+   }
+  },
+  "engine_eig_nocost": {
+   "none": {
+    "n": 258,
+    "accuracy": 0.946,
+    "mean_belief": 0.977
+   },
+   "under_half": {
+    "n": 583,
+    "accuracy": 0.991,
+    "mean_belief": 0.981
+   },
+   "half_or_more": {
+    "n": 4116,
+    "accuracy": 0.866,
+    "mean_belief": 0.967
+   }
+  }
+ },
+ "t17_redteam_live": {
+  "numbers_checked": 287,
+  "left_after_check": 19,
+  "cases": 13,
+  "n_cases": 145
  }
 }

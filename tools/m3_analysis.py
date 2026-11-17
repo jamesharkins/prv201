@@ -12,6 +12,9 @@ Writes results/m3_analysis.json with:
   - cost_ablation: the engine with and without effort weighting (readings taken, stops);
   - live_vs_engine: the live agent next to the engine on the same units, and the cost of a
     live diagnosis with and without prompt caching;
+  - small_samples, t13_mix, calibration_by_scope, t17_redteam_live: exact intervals for the
+    agent runs, the out-of-catalog mix against the locked one, calibration by how much a
+    session relied on the oscilloscope, and grounding in the live red-team replies;
   - llm_only: the language-model-alone baseline (T5) replayed from the response cache (no
     key, no cost), next to the full system on the same units, by circuit and part kind.
 
@@ -227,11 +230,83 @@ def live_vs_engine() -> dict[str, Any]:
     }
 
 
+def exact_interval(k: int, n: int) -> list[float]:
+    """Two-sided 95% Clopper-Pearson interval for k of n."""
+    from scipy.stats import beta
+
+    lo = 0.0 if k == 0 else float(beta.ppf(0.025, k, n - k + 1))
+    hi = 1.0 if k == n else float(beta.ppf(0.975, k + 1, n - k))
+    return [round(lo, 4), round(hi, 4)]
+
+
+def small_samples() -> dict[str, Any]:
+    """Exact intervals for the 100-session agent runs."""
+    out: dict[str, Any] = {}
+    for name in ("agent_live", "agent_offline", "agent_offline_before_adr052"):
+        p = RESULTS / f"{name}.jsonl"
+        if p.exists():
+            rows = [json.loads(x) for x in p.read_text().splitlines() if x.strip()]
+            k = sum(bool(r["correct"]) for r in rows)
+            out[name] = {"k": k, "n": len(rows), "ci95": exact_interval(k, len(rows))}
+    return out
+
+
+def t13_mix() -> dict[str, Any]:
+    """The out-of-catalog test set as built against the locked 70/30 mix of double faults
+    and modifications (units are kept only if symptomatic, which shifts the mix), and the
+    misleading share reweighted to the locked mix."""
+    k = t13_by_kind()["by_kind"]
+    double = k["double_fault"]
+    mods = {key: k[key] for key in ("solder_bridge", "wrong_value_part")}
+    n_mod = sum(v["n"] for v in mods.values())
+    mis_mod = sum(v.get("misleading", 0) for v in mods.values()) / n_mod
+    mis_double = double.get("misleading", 0) / double["n"]
+    n = double["n"] + n_mod
+    return {"n": n, "double_share": round(double["n"] / n, 4), "modification_share": round(n_mod / n, 4),
+            "misleading_double": round(mis_double, 4), "misleading_modification": round(mis_mod, 4),
+            "misleading_reweighted_70_30": round(0.7 * mis_double + 0.3 * mis_mod, 4)}
+
+
+def calibration_by_scope() -> dict[str, Any]:
+    """Sessions that stopped at the confidence threshold, split by the share of their
+    readings taken with the oscilloscope: how often they were right against the belief shown."""
+    scope = ("ac", "ac20", "ac20k", "hum", "thd")
+    out: dict[str, Any] = {}
+    for system in ("engine_gen", "engine_eig_nocost"):
+        d = pd.concat([pd.read_parquet(f) for f in sorted(RUNS.glob(f"{system}__*__test.parquet"))])
+        d = d[d["single_fault"] & (d["stop_reason"] == "confident")]
+        keys = d["keys"].map(json.loads)
+        share = keys.map(lambda ks: sum(1 for k in ks if k.split(":")[0] in scope) / len(ks) if ks else 0.0)
+        bands = {"none": share == 0, "under_half": (share > 0) & (share < 0.5), "half_or_more": share >= 0.5}
+        out[system] = {b: {"n": int(m.sum()), "accuracy": round(float(d[m]["correct"].mean()), 3),
+                           "mean_belief": round(float(d[m]["confidence"].mean()), 3)} for b, m in bands.items()}
+    return out
+
+
+def t17_redteam_live() -> dict[str, Any]:
+    p = RESULTS / "redteam_live.json"
+    if not p.exists():
+        return {"status": "pending"}
+    res = json.loads(p.read_text())
+    checked = left = cases = 0
+    for r in res:
+        u = 0
+        for rep in r["replies"]:
+            g = rep["meta"].get("grounding") or {}
+            checked += int(g.get("checked", 0))
+            u += len(g.get("ungrounded", []))
+        left += u
+        cases += int(u > 0)
+    return {"numbers_checked": checked, "left_after_check": left, "cases": cases, "n_cases": len(res)}
+
+
 def main() -> None:
     result = {"t13_by_kind": t13_by_kind(), "agent_vs_engine": agent_vs_engine(),
               "redteam": redteam(), "llm_only": llm_only_vs_system(),
               "misses": misses(), "cost_ablation": cost_ablation(),
-              "live_vs_engine": live_vs_engine()}
+              "live_vs_engine": live_vs_engine(), "small_samples": small_samples(),
+              "t13_mix": t13_mix(), "calibration_by_scope": calibration_by_scope(),
+              "t17_redteam_live": t17_redteam_live()}
     (RESULTS / "m3_analysis.json").write_text(json.dumps(result, indent=1) + "\n")
     print(json.dumps(result, indent=1))
 

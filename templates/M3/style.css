@@ -43,3 +43,10 @@ p code { font-size: 8.1pt; }
 ul.tight { margin: 2px 0 5px 0; padding-left: 16px; }
 ul.tight li { margin-bottom: 2px; text-align: justify; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.figpage { break-before: page; }
+.figpage svg { width: 100%; height: auto; display: block; }
+.shotfig img { width: 58%; margin: 0 auto; }
+ol.steps { font-size: 8pt; margin: 4px 0 0; padding-left: 18px; columns: 2; column-gap: 22px; line-height: 1.28; }
+ol.steps li { margin-bottom: 2px; break-inside: avoid; text-align: left; }
+.key { font-family: Inter, sans-serif; font-size: 7.4pt; color: #3c3c38; margin-top: 5px; }
+.sw { display: inline-block; width: 10px; height: 10px; border: 1.5px solid; border-radius: 2px; vertical-align: -1px; margin: 0 3px 0 8px; }

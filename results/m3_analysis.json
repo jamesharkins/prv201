@@ -1,0 +1,258 @@
+{
+ "t13_by_kind": {
+  "n": 2500,
+  "by_kind": {
+   "double_fault": {
+    "n": 1990,
+    "faulty_part": 1155,
+    "flagged": 722,
+    "misleading": 113,
+    "misleading_share": 0.0568
+   },
+   "solder_bridge": {
+    "n": 327,
+    "flagged": 217,
+    "misleading": 110,
+    "misleading_share": 0.3364
+   },
+   "wrong_value_part": {
+    "n": 183,
+    "flagged": 95,
+    "misleading": 52,
+    "faulty_part": 36,
+    "misleading_share": 0.2842
+   }
+  },
+  "by_circuit": {
+   "channel_strip": {
+    "n": 1250,
+    "faulty_part": 718,
+    "flagged": 356,
+    "misleading": 176,
+    "misleading_share": 0.1408
+   },
+   "driver": {
+    "n": 250,
+    "flagged": 129,
+    "faulty_part": 91,
+    "misleading": 30,
+    "misleading_share": 0.12
+   },
+   "opamp": {
+    "n": 250,
+    "faulty_part": 129,
+    "flagged": 89,
+    "misleading": 32,
+    "misleading_share": 0.128
+   },
+   "psu": {
+    "n": 250,
+    "flagged": 143,
+    "faulty_part": 97,
+    "misleading": 10,
+    "misleading_share": 0.04
+   },
+   "tone": {
+    "n": 250,
+    "flagged": 184,
+    "faulty_part": 51,
+    "misleading": 15,
+    "misleading_share": 0.06
+   },
+   "triode": {
+    "n": 250,
+    "flagged": 133,
+    "faulty_part": 105,
+    "misleading": 12,
+    "misleading_share": 0.048
+   }
+  }
+ },
+ "agent_vs_engine": {
+  "file": "agent_offline_before_adr052.jsonl",
+  "n": 100,
+  "agent_correct": 84,
+  "engine_correct_same_units": 94,
+  "sessions_without_measurement": 10,
+  "wrong_without_measurement": 8,
+  "live_correct_on_those": 8
+ },
+ "redteam": {
+  "offline": {
+   "attack": {
+    "refused": 27,
+    "diagnosis_started": 71
+   },
+   "benign": {
+    "diagnosis_started": 44,
+    "refused": 3
+   },
+   "endorsing_phrase_matches": 0
+  },
+  "live": {
+   "attack": {
+    "refused": 87,
+    "other": 11
+   },
+   "benign": {
+    "other": 11,
+    "refused": 36
+   },
+   "endorsing_phrase_matches": 0
+  }
+ },
+ "llm_only": {
+  "n": 300,
+  "top1_llm": 0.7433,
+  "top1_system": 0.94,
+  "by_circuit": {
+   "channel_strip": {
+    "n": 150,
+    "llm": 0.72,
+    "system": 0.9333
+   },
+   "driver": {
+    "n": 30,
+    "llm": 0.7,
+    "system": 0.9
+   },
+   "opamp": {
+    "n": 30,
+    "llm": 0.9333,
+    "system": 0.9667
+   },
+   "psu": {
+    "n": 30,
+    "llm": 0.9667,
+    "system": 0.9
+   },
+   "tone": {
+    "n": 30,
+    "llm": 0.3667,
+    "system": 0.9667
+   },
+   "triode": {
+    "n": 30,
+    "llm": 0.8667,
+    "system": 1.0
+   }
+  },
+  "by_part_kind": {
+   "bjt": {
+    "n": 33,
+    "llm": 0.9091,
+    "system": 0.9091
+   },
+   "diode": {
+    "n": 23,
+    "llm": 1.0,
+    "system": 0.9565
+   },
+   "electrolytic": {
+    "n": 49,
+    "llm": 0.8571,
+    "system": 0.898
+   },
+   "film_cap": {
+    "n": 43,
+    "llm": 0.6279,
+    "system": 0.9302
+   },
+   "opamp": {
+    "n": 24,
+    "llm": 0.9583,
+    "system": 0.875
+   },
+   "potentiometer": {
+    "n": 27,
+    "llm": 0.1111,
+    "system": 0.963
+   },
+   "resistor": {
+    "n": 56,
+    "llm": 0.5357,
+    "system": 0.9643
+   },
+   "triode": {
+    "n": 23,
+    "llm": 1.0,
+    "system": 1.0
+   },
+   "zener": {
+    "n": 22,
+    "llm": 1.0,
+    "system": 1.0
+   }
+  },
+  "wrong_named": 77,
+  "wrong_same_part_other_mode": 17,
+  "mean_confidence_right": 0.747,
+  "mean_confidence_wrong": 0.444,
+  "units_all_sessions_agree": 200,
+  "units_all_sessions_differ": 27,
+  "mean_effort_llm": 24.27,
+  "mean_steps_llm": 8.28
+ },
+ "misses": {
+  "n": 5000,
+  "misses": 237,
+  "flagged": 187,
+  "wrong_name": 50,
+  "by_circuit": {
+   "channel_strip": {
+    "misses": 94,
+    "flagged": 58,
+    "wrong_name": 36
+   },
+   "driver": {
+    "misses": 17,
+    "flagged": 14,
+    "wrong_name": 3
+   },
+   "opamp": {
+    "misses": 8,
+    "flagged": 6,
+    "wrong_name": 2
+   },
+   "psu": {
+    "misses": 73,
+    "flagged": 66,
+    "wrong_name": 7
+   },
+   "tone": {
+    "misses": 33,
+    "flagged": 31,
+    "wrong_name": 2
+   },
+   "triode": {
+    "misses": 12,
+    "flagged": 12,
+    "wrong_name": 0
+   }
+  },
+  "most_flagged": {
+   "C101:short": 23,
+   "C504:short": 20,
+   "C103:short": 19,
+   "R103:short": 18,
+   "C104:short": 12,
+   "R505:open": 8
+  }
+ },
+ "cost_ablation": {
+  "engine_gen": {
+   "n": 5000,
+   "scope_step_share": 0.274,
+   "lift_step_share": 0.003,
+   "stopped_confident_share": 0.997,
+   "accuracy_when_confident": 0.959
+  },
+  "engine_eig_nocost": {
+   "n": 5000,
+   "scope_step_share": 0.648,
+   "lift_step_share": 0.024,
+   "stopped_confident_share": 0.991,
+   "accuracy_when_confident": 0.885
+  }
+ }
+}

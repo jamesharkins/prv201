@@ -25,6 +25,18 @@ make demo           # http://localhost:8000 - offline mode, no API key needed
 
 Set `DIFFERENTIAL_API_KEY` to run the live Claude agent (`DIFFERENTIAL_MODE=live`).
 
+## Inspect without running anything
+
+- `docs/bench/index.html`: open it in a browser. It replays held-out units through the
+  engine step by step (each replay matches the stored test run) and shows the test-run
+  statistics. Built by `tools/build_bench.py`.
+- `submissions/M3/M3.pdf`: the M3 design document (what was built, how to run it, results
+  against the locked targets, failure analysis and changes from M2), rendered by
+  `templates/M3/build.py` from the result files.
+- `docs/media/`: screenshots, a demo GIF and a silent 90-second capture, all offline.
+- `results/`: every reported number; `docs/DECISIONS.md`: every design decision and every
+  change after the lock.
+
 ## Results against the locked targets
 
 The targets in `results/targets.json` were locked on << targets.locked_on >> (git tag

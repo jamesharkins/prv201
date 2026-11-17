@@ -1,0 +1,33 @@
+{
+ "tests": {
+  "collected": 424,
+  "passed": 418,
+  "failed": 0,
+  "skipped": 6,
+  "line_coverage_pct": 91.9
+ },
+ "code": {
+  "differential": {
+   "files": 53,
+   "lines": 12752
+  },
+  "eval": {
+   "files": 28,
+   "lines": 6133
+  },
+  "tools": {
+   "files": 24,
+   "lines": 3788
+  },
+  "tests": {
+   "files": 19,
+   "lines": 3275
+  }
+ },
+ "decision_records": 53,
+ "agent_tools": {
+  "all": 14,
+  "model": 11,
+  "form_only": 3
+ }
+}

@@ -1,0 +1,239 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 890" font-family="Inter, 'DejaVu Sans', sans-serif" role="img" aria-label="Differential architecture and data flow">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2b2b2b"/>
+    </marker>
+    <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b6b66"/>
+    </marker>
+    <style>
+      .band{fill:#f7f7f4;stroke:#d6d6cf;stroke-width:1.2}
+      .bl{font-size:13px;font-weight:700;fill:#3c3c38;letter-spacing:.06em}
+      .bs{font-size:12px;fill:#6b6b66}
+      .mono{font-family:'DejaVu Sans Mono',monospace;font-size:11px;fill:#6b6b66}
+      .t{font-size:14.5px;font-weight:700;fill:#1b2430;text-anchor:middle}
+      .s{font-size:11.5px;fill:#1b2430;text-anchor:middle}
+      .ss{font-size:11px;fill:#5b6675;text-anchor:middle;font-style:italic}
+      .blue{fill:#e7f0fb;stroke:#2f6fb5;stroke-width:2}
+      .orange{fill:#fdeee4;stroke:#d9692b;stroke-width:2}
+      .red{fill:#fbe9ea;stroke:#c23b3b;stroke-width:2}
+      .green{fill:#e3f4ec;stroke:#2a9465;stroke-width:2}
+      .gray{fill:#f0efea;stroke:#5d5d58;stroke-width:2}
+      .ext{stroke-dasharray:6 4}
+      .a{stroke:#2b2b2b;stroke-width:1.8;fill:none;marker-end:url(#ah)}
+      .ab{stroke:#2b2b2b;stroke-width:1.8;fill:none;marker-end:url(#ah);marker-start:url(#ah)}
+      .ag{stroke:#6b6b66;stroke-width:1.6;fill:none;marker-end:url(#ahg);stroke-dasharray:5 4}
+      .n circle{fill:#1b2430}
+      .n text{font-size:11px;font-weight:700;fill:#fff;text-anchor:middle}
+      .lab{font-size:10.5px;fill:#3c3c38}
+    </style>
+  </defs>
+
+  <!-- ===== OFFLINE ===== -->
+  <rect class="band" x="6" y="6" width="988" height="214" rx="10"/>
+  <text class="bl" x="22" y="30">OFFLINE</text><text class="bs" x="96" y="30">built once per circuit model</text>
+  <text class="mono" x="978" y="30" text-anchor="end">make sim cases fit</text>
+
+  <rect class="blue" x="20" y="46" width="164" height="156" rx="8"/>
+  <text class="t" x="102" y="72">Circuit library</text>
+  <text class="s" x="102" y="96">6 circuits: 5 blocks +</text>
+  <text class="s" x="102" y="113">59-part channel strip;</text>
+  <text class="s" x="102" y="130">netlists + YAML with</text>
+  <text class="s" x="102" y="147">tolerances, test points</text>
+  <text class="s" x="102" y="164">and hazard flags</text>
+
+  <rect class="blue" x="219" y="46" width="164" height="156" rx="8"/>
+  <text class="t" x="301" y="72">Fault catalog</text>
+  <text class="s" x="301" y="96">18 failure modes by</text>
+  <text class="s" x="301" y="113">part kind; every mode</text>
+  <text class="s" x="301" y="130">of every part is one</text>
+  <text class="s" x="301" y="147">hypothesis</text>
+
+  <rect class="blue" x="418" y="46" width="164" height="156" rx="8"/>
+  <text class="t" x="500" y="72">Monte Carlo</text>
+  <text class="ss" x="500" y="89">ngspice</text>
+  <text class="s" x="500" y="110">400 train + 100 val</text>
+  <text class="s" x="500" y="127">units per fault, with</text>
+  <text class="s" x="500" y="144">tolerances, aging and</text>
+  <text class="s" x="500" y="161">10 MΩ meter loading;</text>
+  <text class="s" x="500" y="178">253,000 units cached</text>
+
+  <rect class="blue" x="617" y="46" width="164" height="156" rx="8"/>
+  <text class="t" x="699" y="72">Training</text>
+  <text class="s" x="699" y="96">Gaussian mixture per</text>
+  <text class="s" x="699" y="113">fault (scikit-learn);</text>
+  <text class="s" x="699" y="130">LightGBM as a check;</text>
+  <text class="s" x="699" y="147">ambiguity groups;</text>
+  <text class="s" x="699" y="164">symptom model;</text>
+  <text class="s" x="699" y="181">hazard map</text>
+
+  <rect class="blue" x="816" y="46" width="164" height="156" rx="8"/>
+  <text class="t" x="898" y="72">Model bundle</text>
+  <text class="s" x="898" y="96">likelihoods, groups,</text>
+  <text class="s" x="898" y="113">calibrated thresholds</text>
+  <text class="s" x="898" y="130">and hazard map,</text>
+  <text class="s" x="898" y="147">stored in the repo</text>
+
+  <path class="a" d="M184,124 H217"/>
+  <path class="a" d="M383,124 H416"/>
+  <path class="a" d="M582,124 H615"/>
+  <path class="a" d="M781,124 H814"/>
+
+  <!-- ===== ONLINE ===== -->
+  <rect class="band" x="6" y="236" width="988" height="478" rx="10"/>
+  <text class="bl" x="22" y="260">ONLINE</text><text class="bs" x="86" y="260">one diagnosis, on the bench computer</text>
+  <text class="mono" x="884" y="260" text-anchor="end">make demo · live / offline / replay</text>
+
+  <!-- bundle to engine -->
+  <path class="a" d="M898,202 V276"/>
+  <text class="lab" x="906" y="232">loaded</text>
+
+  <!-- R1 -->
+  <rect class="green" x="20" y="278" width="164" height="150" rx="8"/>
+  <text class="t" x="102" y="304">Technician</text>
+  <text class="s" x="102" y="328">qualified; takes and</text>
+  <text class="s" x="102" y="345">confirms every</text>
+  <text class="s" x="102" y="362">reading; signs the</text>
+  <text class="s" x="102" y="379">repair ticket</text>
+
+  <rect class="gray" x="219" y="278" width="164" height="150" rx="8"/>
+  <text class="t" x="301" y="304">Web app</text>
+  <text class="ss" x="301" y="321">FastAPI + plain JS</text>
+  <text class="s" x="301" y="343">schematic, belief</text>
+  <text class="s" x="301" y="360">chart, next step,</text>
+  <text class="s" x="301" y="377">“Why this?”, forms,</text>
+  <text class="s" x="301" y="394">repair ticket</text>
+
+  <rect class="red" x="418" y="278" width="164" height="400" rx="8"/>
+  <text class="t" x="500" y="304">Safety layer</text>
+  <text class="ss" x="500" y="321">code, not prompt</text>
+  <text class="s" x="500" y="352" font-weight="700">On the way in</text>
+  <text class="s" x="500" y="371">screens every request;</text>
+  <text class="s" x="500" y="388">5 refusal categories;</text>
+  <text class="s" x="500" y="405">notes and complaints</text>
+  <text class="s" x="500" y="422">passed as data, never</text>
+  <text class="s" x="500" y="439">as instructions</text>
+  <text class="s" x="500" y="472" font-weight="700">On the way out</text>
+  <text class="s" x="500" y="491">hazard text above 50 V;</text>
+  <text class="s" x="500" y="508">no part removed until</text>
+  <text class="s" x="500" y="525">every high-voltage</text>
+  <text class="s" x="500" y="542">point reads &lt; 2 V;</text>
+  <text class="s" x="500" y="559">every number checked</text>
+  <text class="s" x="500" y="576">against tool results;</text>
+  <text class="s" x="500" y="593">safety records only</text>
+  <text class="s" x="500" y="610">from the app's forms</text>
+
+  <rect class="orange" x="617" y="278" width="164" height="150" rx="8"/>
+  <text class="t" x="699" y="304">Agent</text>
+  <text class="ss" x="699" y="321">orchestrator, Python</text>
+  <text class="s" x="699" y="343">turn order: screen →</text>
+  <text class="s" x="699" y="360">tools → grounding →</text>
+  <text class="s" x="699" y="377">output check; never</text>
+  <text class="s" x="699" y="394">ranks faults itself</text>
+
+  <rect class="blue" x="816" y="278" width="164" height="150" rx="8"/>
+  <text class="t" x="898" y="304">Engine session</text>
+  <text class="s" x="898" y="328">belief over fault</text>
+  <text class="s" x="898" y="345">groups + “no single</text>
+  <text class="s" x="898" y="362">fault fits”; next step</text>
+  <text class="s" x="898" y="379">= most information</text>
+  <text class="s" x="898" y="396">per effort point; stops</text>
+  <text class="s" x="898" y="413">at 0.90, budget or no gain</text>
+
+  <!-- R1 arrows: forward at y=318, back at y=392 -->
+  <path class="a" d="M184,318 H217"/>
+  <path class="a" d="M383,318 H416"/>
+  <path class="a" d="M582,318 H615"/>
+  <path class="a" d="M781,318 H814"/>
+  <path class="a" d="M814,392 H783"/>
+  <path class="a" d="M615,392 H584"/>
+  <path class="a" d="M416,392 H385"/>
+  <path class="a" d="M217,392 H186"/>
+  <g class="n"><circle cx="201" cy="301" r="9"/><text x="201" y="305">1</text></g>
+  <g class="n"><circle cx="400" cy="301" r="9"/><text x="400" y="305">2</text></g>
+  <g class="n"><circle cx="599" cy="301" r="9"/><text x="599" y="305">3</text></g>
+  <g class="n"><circle cx="798" cy="301" r="9"/><text x="798" y="305">5</text></g>
+  <g class="n"><circle cx="798" cy="409" r="9"/><text x="798" y="413">6</text></g>
+  <g class="n"><circle cx="599" cy="409" r="9"/><text x="599" y="413">7</text></g>
+  <g class="n"><circle cx="400" cy="409" r="9"/><text x="400" y="413">8</text></g>
+
+  <!-- R2 -->
+  <rect class="green" x="20" y="548" width="363" height="130" rx="8"/>
+  <text class="t" x="201" y="574">Technician's instruments</text>
+  <text class="s" x="201" y="598">multimeter and oscilloscope → typed reading</text>
+  <text class="s" x="201" y="616">meter photo → proposed reading, then confirmed</text>
+  <text class="s" x="201" y="634">simulated bench for tests and the demo</text>
+  <text class="s" x="201" y="652">SCPI meter ≤ 24 V on the fault boards (M5)</text>
+
+  <rect class="orange ext" x="617" y="548" width="164" height="130" rx="8"/>
+  <text class="t" x="699" y="572">Claude API</text>
+  <text class="ss" x="699" y="589">external · live mode only</text>
+  <text class="mono" x="699" y="609" text-anchor="middle" style="fill:#1b2430">claude-sonnet-5-5</text>
+  <text class="s" x="699" y="626">pinned; 11 tool schemas;</text>
+  <text class="s" x="699" y="643">responses cached;</text>
+  <text class="s" x="699" y="660">offline: rules, templates</text>
+
+  <rect class="orange" x="816" y="548" width="164" height="130" rx="8"/>
+  <text class="t" x="898" y="572">Readers</text>
+  <text class="s" x="898" y="594">complaint → 8 symptom</text>
+  <text class="s" x="898" y="611">features → prior;</text>
+  <text class="s" x="898" y="628">photo → proposed</text>
+  <text class="s" x="898" y="645">reading; rules and</text>
+  <text class="s" x="898" y="662">OpenCV offline</text>
+
+  <!-- agent <-> claude -->
+  <path class="a" d="M684,428 V546"/>
+  <path class="a" d="M714,546 V430"/>
+  <g class="n"><circle cx="699" cy="487" r="9"/><text x="699" y="491">4</text></g>
+  <text class="lab" x="676" y="470" text-anchor="end">messages +</text>
+  <text class="lab" x="676" y="483" text-anchor="end">tool schemas</text>
+  <text class="lab" x="722" y="512">tool calls,</text>
+  <text class="lab" x="722" y="525">explanations</text>
+
+  <!-- agent -> readers (tool call) -->
+  <path class="a" d="M772,428 L838,546"/>
+  <g class="n"><circle cx="820" cy="474" r="9"/><text x="820" y="478">5</text></g>
+  <!-- readers -> engine (prior) -->
+  <path class="a" d="M950,546 V430"/>
+  <text class="lab" x="944" y="492" text-anchor="end">prior</text>
+  <!-- claude <-> readers -->
+  <path class="ab" d="M783,613 H814"/>
+
+  <!-- technician <-> instruments, instruments -> web app -->
+  <path class="a" d="M102,428 V546"/>
+  <g class="n"><circle cx="118" cy="487" r="9"/><text x="118" y="491">9</text></g>
+  <text class="lab" x="132" y="491">measures</text>
+  <path class="a" d="M301,546 V430"/>
+  <g class="n"><circle cx="317" cy="487" r="9"/><text x="317" y="491">9</text></g>
+  <text class="lab" x="331" y="482">reading entered</text>
+  <text class="lab" x="331" y="495">(photo confirmed)</text>
+
+  <!-- ===== EVALUATION ===== -->
+  <rect class="band" x="6" y="730" width="988" height="152" rx="10"/>
+  <text class="bl" x="22" y="754">EVALUATION</text><text class="bs" x="124" y="754">same engine and safety code, held-out simulated units</text>
+  <text class="mono" x="978" y="754" text-anchor="end">make eval</text>
+
+  <rect class="gray" x="20" y="770" width="222" height="96" rx="8"/>
+  <text class="t" x="131" y="796">Held-out units</text>
+  <text class="s" x="131" y="820">5,000 single-fault, 5,000 aged,</text>
+  <text class="s" x="131" y="837">2,500 outside the catalog</text>
+
+  <rect class="gray" x="266" y="770" width="222" height="96" rx="8"/>
+  <text class="t" x="377" y="796">Harness</text>
+  <text class="s" x="377" y="820">engine and full system vs. chart,</text>
+  <text class="s" x="377" y="837">half-split, random, LLM alone</text>
+
+  <rect class="gray" x="512" y="770" width="222" height="96" rx="8"/>
+  <text class="t" x="623" y="796">metrics.json</text>
+  <text class="s" x="623" y="820">accuracy, effort, calibration,</text>
+  <text class="s" x="623" y="837">latency, cost, safety gates</text>
+
+  <rect class="gray" x="758" y="770" width="222" height="96" rx="8"/>
+  <text class="t" x="869" y="796">Locked targets (M1)</text>
+  <text class="s" x="869" y="820">met only if the one-sided 95%</text>
+  <text class="s" x="869" y="837">bound clears the bar</text>
+
+  <path class="a" d="M242,818 H264"/>
+  <path class="a" d="M488,818 H510"/>
+  <path class="a" d="M734,818 H756"/>
+</svg>

@@ -1,0 +1,464 @@
+<title>Differential Bench</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: service-manual bench sheet. Schematic is the centerpiece; the engine's state sits beside it like instrument readouts. */
+:root {
+  --paper: #f4f6f5;
+  --panel: #ffffff;
+  --ink: #1b2225;
+  --muted: #5b676c;
+  --line: #d6dddb;
+  --probe: #c4321c;      /* probe red: the active test point and primary actions */
+  --belief: #2a5c8c;     /* schematic ink blue: belief bars */
+  --belief-soft: #dbe6f1;
+  --hv: #d99a00;         /* safety amber */
+  --hv-ink: #3a2a00;
+  --hv-soft: #fbf0cf;
+  --good: #23784f;
+  --good-soft: #dcefe5;
+  --bad: #9e1f3a;
+  --bad-soft: #f6dde3;
+  --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --cond: "IBM Plex Sans Condensed", "Arial Narrow", "IBM Plex Sans", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #111517; --panel: #192024; --ink: #e5eaea; --muted: #9aa5a9; --line: #2c363a;
+  --probe: #ff6b4f; --belief: #7eb0e3; --belief-soft: #213140; --hv: #f2b736; --hv-ink: #1d1500;
+  --hv-soft: #3a2f12; --good: #5cc493; --good-soft: #17322a; --bad: #ff8399; --bad-soft: #3a1c24; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #111517; --panel: #192024; --ink: #e5eaea; --muted: #9aa5a9; --line: #2c363a;
+  --probe: #ff6b4f; --belief: #7eb0e3; --belief-soft: #213140; --hv: #f2b736; --hv-ink: #1d1500;
+  --hv-soft: #3a2f12; --good: #5cc493; --good-soft: #17322a; --bad: #ff8399; --bad-soft: #3a1c24; color-scheme: dark }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--paper); color: var(--ink); font: 15px/1.5 var(--sans); }
+.wrap { max-width: 1280px; margin: 0 auto; padding-block: 20px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; padding-bottom: 14px; border-bottom: 2px solid var(--ink); }
+.brand h1 { font: 700 30px/1.05 var(--cond); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.brand h1 span { color: var(--probe); }
+.brand p { margin: 4px 0 0; color: var(--muted); max-width: 64ch; font-size: 14px; }
+nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+nav.tabs a { font: 600 13px/1 var(--cond); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-decoration: none; padding: 10px 12px; border: 1px solid transparent; border-radius: 4px; }
+nav.tabs a[aria-current="page"] { color: var(--ink); border-color: var(--line); background: var(--panel); }
+nav.tabs a:focus-visible, button:focus-visible, select:focus-visible, .case:focus-visible { outline: 2px solid var(--probe); outline-offset: 2px; }
+
+.label { font: 600 11.5px/1.2 var(--cond); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; min-width: 0; }
+
+/* Diagnose view */
+.bench { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 18px; margin-top: 18px; }
+.cases { display: flex; flex-direction: column; gap: 6px; max-height: 1180px; overflow: auto; padding-right: 2px; }
+.cases h2 { margin: 0 0 4px; }
+.case { all: unset; cursor: pointer; display: grid; gap: 3px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); }
+.case[aria-pressed="true"] { border-color: var(--probe); box-shadow: inset 3px 0 0 var(--probe); }
+.case .q { font-size: 13px; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font: 500 11px/1 var(--sans); padding: 4px 6px; border-radius: 3px; background: var(--belief-soft); color: var(--ink); white-space: nowrap; }
+.chip.aged { background: var(--hv-soft); }
+.chip.ooc { background: var(--bad-soft); }
+.chip.miss { background: var(--bad-soft); color: var(--bad); font-weight: 600; }
+.case-select { display: none; }
+
+.main { display: grid; gap: 14px; min-width: 0; }
+.unit-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.unit-head h2 { font: 600 20px/1.2 var(--cond); margin: 0; }
+.complaint { margin: 8px 0 0; font-size: 16px; line-height: 1.55; max-width: 80ch; }
+.complaint::before { content: "\201C"; } .complaint::after { content: "\201D"; }
+.sch-scroll { overflow-x: auto; }
+.sch { position: relative; min-width: 720px; }
+.sch img { display: block; width: 100%; height: auto; }
+.sch svg.ov { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sch-dark { display: none !important; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sch-dark { display: block !important; } :root:not([data-theme="light"]) .sch-light { display: none !important; } }
+:root[data-theme="dark"] .sch-dark { display: block !important; } :root[data-theme="dark"] .sch-light { display: none !important; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 12.5px; color: var(--muted); align-items: center; }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.ov .tp-dot { fill: var(--panel); stroke: var(--muted); stroke-width: 3; }
+.ov .tp-done { fill: var(--belief); stroke: var(--belief); }
+.ov .tp-next { fill: var(--probe); stroke: var(--probe); }
+.ov .ring { fill: none; stroke: var(--probe); stroke-width: 5; }
+.ov .tp-text { font: 600 26px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 7px; }
+.ov .hv-tri { fill: var(--hv); stroke: var(--hv-ink); stroke-width: 2; }
+@media (prefers-reduced-motion: no-preference) { .ov .ring { animation: pulse 1.6s ease-out infinite; transform-box: fill-box; transform-origin: center; } }
+@keyframes pulse { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(1.9); } }
+
+.cols { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 14px; }
+.next h3, .belief h3, .log h3 { font: 600 17px/1.25 var(--cond); margin: 4px 0 10px; }
+.meas { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; }
+.meas .what { font: 600 22px/1.2 var(--cond); }
+.meas .what b { color: var(--probe); }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13.5px; margin: 10px 0; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; }
+.hvbanner { display: flex; gap: 10px; align-items: flex-start; background: var(--hv-soft); border: 1px solid var(--hv); border-radius: 5px; padding: 9px 11px; font-size: 13.5px; margin: 8px 0; }
+.hvbanner svg { flex: none; margin-top: 2px; }
+table.exp { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+table.exp th { text-align: left; font: 600 11px/1.2 var(--cond); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 4px 6px 4px 0; border-bottom: 1px solid var(--line); }
+table.exp td { padding: 5px 6px 5px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+button { font: 600 14px/1 var(--sans); border-radius: 5px; padding: 10px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+button.primary { background: var(--probe); border-color: var(--probe); color: #fff; }
+button:disabled { opacity: .45; cursor: default; }
+.reading { margin-top: 10px; padding: 10px 12px; border-left: 3px solid var(--belief); background: var(--belief-soft); border-radius: 0 5px 5px 0; font-size: 14px; }
+
+.bars { display: grid; gap: 9px; }
+.bar .row { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; }
+.bar .row span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.bar .track { height: 10px; background: var(--belief-soft); border-radius: 2px; overflow: hidden; margin-top: 3px; }
+.bar .fill { height: 100%; background: var(--belief); width: 0; transition: width .45s ease; }
+.bar.unmod .fill { background: var(--muted); }
+.effort { margin-top: 14px; }
+.effort .track { height: 8px; background: var(--line); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+.effort .fill { height: 100%; background: var(--ink); transition: width .45s ease; }
+.verdict { border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; background: var(--panel); }
+.verdict.ok { border-color: var(--good); background: var(--good-soft); }
+.verdict.no { border-color: var(--bad); background: var(--bad-soft); }
+.verdict h3 { margin: 0 0 4px; font: 600 18px/1.25 var(--cond); }
+ol.steps { margin: 0; padding-left: 22px; font-size: 13.5px; display: grid; gap: 4px; }
+ol.steps li::marker { font-family: var(--mono); color: var(--muted); }
+.note { color: var(--muted); font-size: 13px; margin: 8px 0 0; max-width: 90ch; }
+@media (prefers-reduced-motion: reduce) { .bar .fill, .effort .fill { transition: none; } }
+
+/* Stats view */
+.stats { display: grid; gap: 16px; margin-top: 18px; }
+.stats .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.stats h2 { font: 600 20px/1.2 var(--cond); margin: 0 0 4px; }
+.stats h3 { font: 600 16px/1.25 var(--cond); margin: 0 0 2px; }
+.stats .sub { margin: 0 0 10px; color: var(--muted); font-size: 13.5px; max-width: 80ch; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; padding: 8px 12px; font-size: 13px; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.chart { width: 100%; height: auto; display: block; }
+.chart text { fill: var(--ink); font-family: var(--sans); }
+.chart .ax { stroke: var(--line); }
+.chart .muted { fill: var(--muted); }
+.chart .b { fill: var(--muted); } .chart .b.hi { fill: var(--probe); } .chart .b.eng { fill: var(--belief); }
+.tscroll { overflow-x: auto; }
+table.tg { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 560px; }
+table.tg th { text-align: left; font: 600 11.5px/1.2 var(--cond); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--ink); padding: 6px 8px 6px 0; }
+table.tg td { border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0; vertical-align: top; }
+.about { margin-top: 18px; max-width: 78ch; }
+.about h2 { font: 600 20px/1.2 var(--cond); margin: 18px 0 6px; }
+.about li { margin-bottom: 6px; }
+
+@media (max-width: 980px) {
+  .bench { grid-template-columns: minmax(0, 1fr); }
+  .cases { display: none; }
+  .case-select { display: block; width: 100%; font: 14px var(--sans); padding: 9px; border-radius: 5px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+  .cols, .stats .grid2 { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Differential <span>Bench</span></h1>
+      <p>Real diagnoses from the engine on held-out simulated units of a 59-part channel strip, step by step, and how the engine scored on the test set.</p>
+    </div>
+    <nav class="tabs" aria-label="Views">
+      <a href="#diagnose" data-view="diagnose">Diagnose</a>
+      <a href="#statistics" data-view="statistics">Statistics</a>
+      <a href="#about-the-data" data-view="about-the-data">About the data</a>
+    </nav>
+  </header>
+
+  <section id="v-diagnose" class="bench">
+    <aside class="cases" id="caselist" aria-label="Units"></aside>
+    <div class="main">
+      <label class="case-select-wrap"><span class="label" style="display:none">Unit</span>
+        <select class="case-select" id="caseselect" aria-label="Choose a unit"></select></label>
+      <div class="panel">
+        <div class="unit-head">
+          <h2 id="unit-title"></h2>
+          <div class="chips" id="unit-chips"></div>
+        </div>
+        <p class="label" style="margin-top:10px">Customer complaint</p>
+        <p class="complaint" id="complaint"></p>
+      </div>
+      <div class="panel">
+        <div class="sch-scroll"><div class="sch" id="sch">
+          <img class="sch-light" alt="Schematic of the reference channel strip: power supply, triode stage, tone stack, op-amp stage and line driver" src="__SCH_LIGHT__">
+          <img class="sch-dark" alt="" aria-hidden="true" src="__SCH_DARK__">
+          <svg class="ov" id="overlay" viewBox="0 0 2436 1008" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+        </div></div>
+        <div class="legend">
+          <span><i style="background:var(--probe)"></i>Next measurement</span>
+          <span><i style="background:var(--belief)"></i>Measured</span>
+          <span><i style="background:var(--panel);border:2px solid var(--muted)"></i>Test point</span>
+          <span><svg width="13" height="12" viewBox="0 0 13 12" style="vertical-align:-1px;margin-right:6px"><path d="M6.5 1 12 11H1z" fill="var(--hv)" stroke="var(--hv-ink)"/></svg>Can exceed 50 V</span>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="panel next" id="nextpanel"></div>
+        <div class="panel belief">
+          <h3>What the engine believes</h3>
+          <div class="bars" id="bars"></div>
+          <div class="effort"><div class="row" style="display:flex;justify-content:space-between;font-size:13.5px"><span>Effort spent</span><span class="mono" id="efftext"></span></div><div class="track"><div class="fill" id="efffill"></div></div></div>
+          <p class="note">Bars are fault groups. Faults in one group give the same readings at every test point, so no measurement can separate them. Effort points: DC reading 1, scope reading 3, a point that can exceed 50 V +2, unsoldering a part 10; budget 40.</p>
+        </div>
+      </div>
+      <div class="panel log">
+        <h3>Measurements taken</h3>
+        <ol class="steps" id="steplog"></ol>
+        <p class="note" id="lognote"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="v-statistics" class="stats" hidden>
+    <div class="panel">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:flex-end">
+        <div><h2>Test-set results by method</h2>
+        <p class="sub" id="sys-sub"></p></div>
+        <div class="seg" role="group" aria-label="Circuit scope">
+          <button type="button" id="scope-all" aria-pressed="true">All six circuits</button>
+          <button type="button" id="scope-cs" aria-pressed="false">Channel strip only</button>
+        </div>
+      </div>
+      <div class="grid2">
+        <div><h3>Failed part's group named first</h3><svg class="chart" id="ch-acc" viewBox="0 0 560 290" role="img" aria-label="Top-1 accuracy by method"></svg></div>
+        <div><h3>Mean effort to a diagnosis (points)</h3><svg class="chart" id="ch-eff" viewBox="0 0 560 290" role="img" aria-label="Mean effort by method"></svg></div>
+      </div>
+      <p class="note">All six methods share the engine's probability model and stopping rule; they differ in how they choose the next measurement and whether they use the complaint. These are point estimates from the stored test runs. Whether each locked target is met is decided in the M3 report with one-sided 95% confidence bounds.</p>
+    </div>
+    <div class="grid2">
+      <div class="panel"><h3>Full system, by circuit</h3><p class="sub">Share of single-fault test units where the failed part's group came first.</p><svg class="chart" id="ch-circ" viewBox="0 0 560 270" role="img" aria-label="Accuracy by circuit"></svg></div>
+      <div class="panel"><h3>Full system, by kind of failed part</h3><p class="sub">Electrolytic capacitors are the hardest kind; zener and triode faults are always found.</p><svg class="chart" id="ch-kind" viewBox="0 0 560 320" role="img" aria-label="Accuracy by part kind"></svg></div>
+      <div class="panel"><h3>Are the probabilities honest?</h3><p class="sub" id="cal-sub"></p><svg class="chart" id="ch-cal" viewBox="0 0 560 330" role="img" aria-label="Calibration of stated confidence"></svg></div>
+      <div class="panel"><h3>Measurements per diagnosis</h3><p class="sub" id="steps-sub"></p><svg class="chart" id="ch-steps" viewBox="0 0 560 270" role="img" aria-label="Distribution of measurements per diagnosis"></svg></div>
+    </div>
+    <div class="panel">
+      <h3>Locked targets</h3>
+      <p class="sub" id="tg-sub"></p>
+      <div class="tscroll"><table class="tg" id="tg"></table></div>
+    </div>
+  </section>
+
+  <section id="v-about-the-data" class="about" hidden>
+    <h2>Where these diagnoses come from</h2>
+    <ul id="about-list"></ul>
+    <h2>What this page does not show</h2>
+    <ul>
+      <li>The language-model layer. These replays use the offline complaint reader (rules), so the explanations Claude writes in the live app are not shown.</li>
+      <li>The safety workflow around a real bench: bring-up through a variac, discharge checks and removal approval happen in the app and are not replayed here.</li>
+      <li>Real hardware. Every reading is simulated; the 24 V fault-board test (T7) comes later.</li>
+    </ul>
+    <h2>Code</h2>
+    <p>Repository: <span class="mono">github.com/jamesharkins/prv201</span>. The demo app (<span class="mono">make demo</span>) runs the same engine interactively, with any fault you choose.</p>
+  </section>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const cases = D.cases, S = D.stats, TPS = D.testpoints.test_points;
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const pct = (x, d = 1) => (100 * x).toFixed(d) + "%";
+  const PERSONA = { bench_tech: "Bench tech", hobbyist: "Hobbyist owner", studio_client: "Studio client" };
+  const STOP = { confident: "it reached 90% belief in one group", budget: "the 40-point effort budget ran out",
+    uninformative: "no remaining measurement was informative", exhausted: "no measurements were left", max_steps: "it hit the step limit" };
+  const OOC = { flagged: "flagged it as outside the single-fault catalog", faulty_part: "named a group containing one of the altered parts", misleading: "pointed at healthy parts" };
+  const BUDGET = 40;
+  let ci = 0, step = 0, revealed = false;
+
+  function caseTag(c) {
+    if (c.drawn_as_miss) return '<span class="chip miss">Random miss</span>';
+    if (!c.single_fault) return '<span class="chip ooc">Out of catalog</span>';
+    if (c.aged) return '<span class="chip aged">Aged unit</span>';
+    return "";
+  }
+  function unitName(c) { return c.case_id.replace("channel_strip-", "").replace(/_/g, " "); }
+
+  // ---------- case list ----------
+  const list = $("caselist"), sel = $("caseselect");
+  list.innerHTML = '<h2 class="label">' + cases.length + " units</h2>" + cases.map((c, i) =>
+    '<button class="case" type="button" data-i="' + i + '" aria-pressed="false"><span class="chips"><span class="chip">' +
+    esc(PERSONA[c.persona] || c.persona || "Complaint") + "</span>" + caseTag(c) + '</span><span class="q">' + esc(c.complaint) + "</span></button>").join("");
+  sel.innerHTML = cases.map((c, i) => '<option value="' + i + '">' + esc(unitName(c)) + (c.drawn_as_miss ? " (random miss)" : !c.single_fault ? " (out of catalog)" : c.aged ? " (aged)" : "") + "</option>").join("");
+  list.addEventListener("click", (e) => { const b = e.target.closest(".case"); if (b) load(+b.dataset.i); });
+  sel.addEventListener("change", () => load(+sel.value));
+
+  function load(i) { ci = i; step = 0; revealed = false; render(); }
+
+  function groupLabel(g) { return g.members.join(" / "); }
+
+  function render() {
+    const c = cases[ci];
+    list.querySelectorAll(".case").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.i === ci)));
+    sel.value = String(ci);
+    $("unit-title").textContent = "Unit " + unitName(c);
+    $("unit-chips").innerHTML = '<span class="chip">' + esc(PERSONA[c.persona] || "Complaint") + "</span>" + caseTag(c) + '<span class="chip">Hidden fault</span>';
+    $("complaint").textContent = c.complaint;
+    const done = c.steps.slice(0, step);
+    const finished = step >= c.steps.length;
+    const state = step === 0 ? c.start : c.steps[step - 1];
+    const next = finished ? null : c.steps[step];
+    drawOverlay(done, next);
+    // belief bars
+    const gs = state.groups.slice(0, 6);
+    $("bars").innerHTML = gs.map((g) => '<div class="bar' + (g.group === -1 ? " unmod" : "") + '"><div class="row"><span>' + esc(groupLabel(g)) +
+      '</span><span class="mono">' + pct(g.p) + '</span></div><div class="track"><div class="fill" data-w="' + (100 * g.p).toFixed(2) + '"></div></div></div>').join("");
+    requestAnimationFrame(() => document.querySelectorAll("#bars .fill").forEach((f) => (f.style.width = f.dataset.w + "%")));
+    const spent = step === 0 ? 0 : c.steps[step - 1].spent;
+    $("efftext").textContent = spent + " / " + BUDGET;
+    $("efffill").style.width = Math.min(100, (100 * spent) / BUDGET) + "%";
+    // step log
+    $("steplog").innerHTML = done.length ? done.map((s) => "<li><b>" + esc(s.what) + "</b> at " + esc(s.tp || s.ref) + ': <span class="mono">' + esc(s.reading) +
+      '</span> <span class="mono" style="color:var(--muted)">(+' + s.cost + ")</span></li>").join("") : '<li style="list-style:none;margin-left:-22px;color:var(--muted)">None yet. The first recommendation uses only the complaint.</li>';
+    $("lognote").textContent = c.matches_stored_run ? "This replay takes exactly the measurements the stored test run took for this unit." : "";
+    renderNext(c, next, finished);
+  }
+
+  function renderNext(c, s, finished) {
+    const p = $("nextpanel");
+    if (finished) {
+      const top = (c.steps.length ? c.steps[c.steps.length - 1] : c.start).groups[0];
+      let h = '<h3>The engine stops</h3><div class="verdict"><h3>' + esc(groupLabel(top)) + '</h3><div>Stated confidence <span class="mono">' + pct(c.confidence) +
+        "</span>, after <span class=\"mono\">" + c.effort + "</span> effort points. It stopped because " + esc(STOP[c.stop_reason] || c.stop_reason) + ".</div></div>";
+      if (!revealed) h += '<div class="btns"><button class="primary" type="button" id="reveal">Reveal the hidden fault</button><button type="button" id="restart">Replay from the start</button></div>';
+      else {
+        const ok = c.correct;
+        let body;
+        if (c.single_fault) body = "Hidden fault: <b>" + esc(c.truth_label) + "</b>." + (c.truth_group_members.length > 1 ? " Its group: " + esc(c.truth_group_members.join(" / ")) + "." : "") +
+          (ok ? " The engine named the right group." : " The engine named the wrong group.");
+        else body = "Hidden change: <b>" + esc(c.truth_label) + "</b>, which is outside the single-fault catalog. The engine " + esc(OOC[c.ooc_outcome] || c.ooc_outcome) + ".";
+        h += '<div class="verdict ' + (ok || c.ooc_outcome === "faulty_part" ? "ok" : "no") + '" style="margin-top:10px"><h3>' + (c.single_fault ? (ok ? "Correct" : "Miss") : ok ? "Flagged" : c.ooc_outcome === "faulty_part" ? "Pointed at an altered part" : "Misled") + "</h3><div>" + body + "</div></div>";
+        if (c.drawn_as_miss) { const M = S.misses; h += '<p class="note">Drawn at random from the ' + M.n + ' channel-strip test units the full system got wrong (of ' + M.of.toLocaleString() + '). Misses look alike: ' + M.confident + ' of ' + M.n + ' stopped at 90% confidence or more, after a median of ' + M.median_steps + ' measurements (' + M.median_steps_correct + ' for correct diagnoses), and ' + pct(M.unmodeled_share, 0) + ' wrongly concluded that no single fault fits.</p>'; }
+        h += '<div class="btns"><button type="button" id="restart">Replay from the start</button><button class="primary" type="button" id="nextcase">Next unit</button></div>';
+      }
+      p.innerHTML = h;
+    } else {
+      const loc = s.tp ? "test point " + s.tp : "part " + s.ref;
+      let h = '<h3>Next measurement</h3><div class="meas"><div class="what">' + esc(s.what) + " at <b>" + esc(s.tp || s.ref) + "</b></div></div>";
+      h += '<dl class="kv"><dt>Effort</dt><dd class="mono">' + s.cost + (s.cost === 1 ? " point" : " points") + '</dd><dt>Expected information</dt><dd class="mono">' + s.eig_bits.toFixed(2) + " of " + s.entropy_before.toFixed(2) +
+        " bits of uncertainty</dd>" + (s.alternatives.length ? "<dt>Runners-up</dt><dd>" + s.alternatives.map((a) => '<span class="mono">' + esc(a.key.replace(":", " ")) + " " + a.eig_bits.toFixed(2) + " bits</span>").join(", ") + "</dd>" : "") + "</dl>";
+      if (s.hv) h += '<div class="hvbanner" role="note"><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true"><path d="M9 1 17 15H1z" fill="var(--hv)" stroke="var(--hv-ink)"/><path d="M9 6v4M9 12v1" stroke="var(--hv-ink)" stroke-width="1.6"/></svg><div><b>This point can exceed 50 V.</b> Probe with one hand, insulated leads clipped on while the unit is off; never touch the board while it is powered.</div></div>';
+      if (s.expected.length) h += '<table class="exp"><thead><tr><th>If the fault is</th><th>Belief</th><th>Expect</th></tr></thead><tbody>' + s.expected.map((e) => "<tr><td>" + esc(e.label) +
+        '</td><td class="mono">' + pct(e.p) + '</td><td class="mono">' + esc(e.predicted) + '<br><span style="color:var(--muted)">' + esc(e.range) + "</span></td></tr>").join("") + "</tbody></table>";
+      h += '<div class="btns"><button class="primary" type="button" id="take">Take this reading</button><button type="button" id="runall">Run to the end</button>' + (step ? '<button type="button" id="restart">Restart</button>' : "") + "</div>";
+      if (step) { const prev = cases[ci].steps[step - 1]; h += '<div class="reading">Last reading, ' + esc(prev.what) + " at " + esc(prev.tp || prev.ref) + ': <b class="mono">' + esc(prev.reading) + "</b></div>"; }
+      p.innerHTML = h;
+    }
+    const on = (id, f) => { const el = $(id); if (el) el.addEventListener("click", f); };
+    on("take", () => { step++; render(); });
+    on("runall", () => { step = cases[ci].steps.length; render(); });
+    on("restart", () => { step = 0; revealed = false; render(); });
+    on("reveal", () => { revealed = true; render(); });
+    on("nextcase", () => load((ci + 1) % cases.length));
+  }
+
+  function drawOverlay(done, next) {
+    const doneTps = new Set(done.map((s) => s.tp).filter(Boolean));
+    const hvTps = new Set(Object.keys(TPS).filter((k) => TPS[k].hv));
+    cases[ci].steps.forEach((s) => { if (s.hv && s.tp) hvTps.add(s.tp); });
+    let h = "";
+    for (const [k, t] of Object.entries(TPS)) {
+      const isNext = next && next.tp === k, isDone = doneTps.has(k);
+      if (isNext) h += '<circle class="ring" cx="' + t.x + '" cy="' + t.y + '" r="22"></circle>';
+      h += '<circle class="tp-dot' + (isNext ? " tp-next" : isDone ? " tp-done" : "") + '" cx="' + t.x + '" cy="' + t.y + '" r="' + (isNext || isDone ? 13 : 9) + '"></circle>';
+      if (hvTps.has(k)) h += '<path class="hv-tri" d="M' + (t.x + 16) + " " + (t.y - 44) + " l15 26 h-30z\"></path>";
+      if (isNext || isDone) h += '<text class="tp-text" x="' + (t.x + 18) + '" y="' + (t.y + 36) + '">' + k + "</text>";
+    }
+    $("overlay").innerHTML = h;
+  }
+
+  // ---------- statistics ----------
+  const SYS = [["random", "Random probing"], ["fixed_order", "Fixed service chart"], ["half_split", "Half-split tracing"],
+    ["engine_disc", "Engine, classifier"], ["engine_gen", "Engine, Gaussian mixtures"], ["hybrid", "Full system (engine + complaint)"]];
+  let scope = "all";
+  function hbar(svg, rows, opts) {
+    const W = 560, L = opts.left || 200, R = opts.R || 60, top = 8, rh = opts.rh || 40, H = top + rows.length * rh + 26;
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    const max = opts.max, x = (v) => L + ((W - L - R) * (v - (opts.min || 0))) / (max - (opts.min || 0));
+    let h = "";
+    (opts.ticks || []).forEach((t) => { h += '<line class="ax" x1="' + x(t) + '" x2="' + x(t) + '" y1="' + top + '" y2="' + (H - 22) + '"></line><text class="muted" font-size="11" text-anchor="middle" x="' + x(t) + '" y="' + (H - 6) + '">' + opts.fmt(t) + "</text>"; });
+    rows.forEach((r, i) => {
+      const y = top + i * rh;
+      h += '<text font-size="13" x="' + (L - 10) + '" y="' + (y + rh / 2 + 4) + '" text-anchor="end">' + esc(r.label) + "</text>";
+      h += '<rect class="b ' + (r.cls || "") + '" x="' + x(opts.min || 0) + '" y="' + (y + 8) + '" width="' + Math.max(1, x(r.v) - x(opts.min || 0)) + '" height="' + (rh - 16) + '" rx="2"></rect>';
+      h += '<text font-size="12.5" font-family="IBM Plex Mono, monospace" x="' + (x(r.v) + 6) + '" y="' + (y + rh / 2 + 4) + '">' + opts.fmt(r.v, true) + (r.n ? '<tspan class="muted"> n=' + r.n + "</tspan>" : "") + "</text>";
+    });
+    svg.innerHTML = h;
+  }
+  function renderStats() {
+    const key = scope === "all" ? "all" : "channel_strip";
+    const n = S.systems.hybrid[key].n;
+    $("sys-sub").textContent = n.toLocaleString() + " held-out single-fault units" + (scope === "all" ? " across all six circuits." : " of the 59-part channel strip.") + " Same units, same simulated readings, for every method.";
+    const cls = (k) => (k === "hybrid" ? "hi" : k.startsWith("engine") ? "eng" : "");
+    hbar($("ch-acc"), SYS.map(([k, l]) => ({ label: l, v: S.systems[k][key].top1, cls: cls(k) })), { min: 0.7, max: 1, ticks: [0.7, 0.8, 0.9, 1], fmt: (v, b) => (b ? pct(v) : pct(v, 0)), left: 210 });
+    hbar($("ch-eff"), SYS.map(([k, l]) => ({ label: l, v: S.systems[k][key].effort_mean, cls: cls(k) })), { min: 0, max: 30, ticks: [0, 10, 20, 30], fmt: (v, b) => (b ? v.toFixed(1) : String(v)), left: 210 });
+    $("scope-all").setAttribute("aria-pressed", String(scope === "all")); $("scope-cs").setAttribute("aria-pressed", String(scope !== "all"));
+  }
+  $("scope-all").addEventListener("click", () => { scope = "all"; renderStats(); });
+  $("scope-cs").addEventListener("click", () => { scope = "cs"; renderStats(); });
+  const CIRC = { channel_strip: "Channel strip (59 parts)", psu: "Power supply", triode: "Triode stage", tone: "Tone stack", opamp: "Op-amp stage", driver: "Line driver" };
+  hbar($("ch-circ"), Object.entries(S.by_circuit).sort((a, b) => a[1].top1 - b[1].top1).map(([k, v]) => ({ label: CIRC[k] || k, v: v.top1, n: v.n, cls: "eng" })), { min: 0.7, max: 1, ticks: [0.7, 0.8, 0.9, 1], fmt: (v, b) => (b ? pct(v) : pct(v, 0)), left: 190, rh: 36, R: 116 });
+  const KIND = { resistor: "Resistor", electrolytic: "Electrolytic cap", film_cap: "Film cap", bjt: "Transistor", opamp: "Op-amp", potentiometer: "Potentiometer", diode: "Diode", zener: "Zener", triode: "Triode" };
+  hbar($("ch-kind"), Object.entries(S.by_kind).sort((a, b) => a[1].top1 - b[1].top1).map(([k, v]) => ({ label: KIND[k] || k, v: v.top1, n: v.n, cls: "eng" })), { min: 0.7, max: 1, ticks: [0.7, 0.8, 0.9, 1], fmt: (v, b) => (b ? pct(v) : pct(v, 0)), left: 150, rh: 33, R: 116 });
+  (function calib() {
+    const svg = $("ch-cal"), W = 560, H = 330, L = 56, B = 40, T = 10, R = 16, x = (v) => L + (W - L - R) * v, y = (v) => H - B - (H - B - T) * v;
+    let h = "";
+    [0, 0.25, 0.5, 0.75, 1].forEach((t) => { h += '<line class="ax" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '"></line><text class="muted" font-size="11" text-anchor="end" x="' + (L - 6) + '" y="' + (y(t) + 4) + '">' + pct(t, 0) + "</text>";
+      h += '<text class="muted" font-size="11" text-anchor="middle" x="' + x(t) + '" y="' + (H - B + 16) + '">' + pct(t, 0) + "</text>"; });
+    h += '<line x1="' + x(0) + '" y1="' + y(0) + '" x2="' + x(1) + '" y2="' + y(1) + '" style="stroke:var(--muted);stroke-dasharray:5 5"></line>';
+    const tot = S.calibration.reduce((a, b) => a + b.n, 0);
+    S.calibration.forEach((b) => { const r = Math.max(3.5, Math.sqrt(b.n / tot) * 26); h += '<circle cx="' + x(b.conf) + '" cy="' + y(b.acc) + '" r="' + r.toFixed(1) + '" style="fill:var(--belief);fill-opacity:.75;stroke:var(--panel)"></circle>'; });
+    h += '<text font-size="12" text-anchor="middle" x="' + (L + (W - L - R) / 2) + '" y="' + (H - 6) + '">Stated confidence at the stop</text>';
+    h += '<text font-size="12" transform="translate(14 ' + (T + (H - B - T) / 2) + ') rotate(-90)" text-anchor="middle">Share correct</text>';
+    svg.innerHTML = h;
+    const top = S.calibration[S.calibration.length - 1];
+    $("cal-sub").textContent = top.n.toLocaleString() + " of " + tot.toLocaleString() + " diagnoses stop above 90% stated confidence. In that bin the engine says " + pct(top.conf) + " on average and is right " + pct(top.acc) + " of the time. Dots on the dashed line would be perfectly honest; dot area shows how many diagnoses fall in each bin.";
+  })();
+  (function steps() {
+    const svg = $("ch-steps"), entries = Object.entries(S.steps_hist).map(([k, v]) => [+k, v]).filter(([k]) => k <= 12);
+    const over = Object.entries(S.steps_hist).filter(([k]) => +k > 12).reduce((a, [, v]) => a + v, 0);
+    const W = 560, H = 270, L = 46, B = 38, T = 10, R = 10, max = Math.max(...entries.map((e) => e[1]));
+    const bw = (W - L - R) / (entries.length + 1), y = (v) => H - B - (H - B - T) * (v / max);
+    let h = "";
+    [0, 500, 1000].forEach((t) => { if (t <= max) h += '<line class="ax" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '"></line><text class="muted" font-size="11" text-anchor="end" x="' + (L - 6) + '" y="' + (y(t) + 4) + '">' + t + "</text>"; });
+    entries.concat([["13+", over]]).forEach(([k, v], i) => { h += '<rect class="b eng" x="' + (L + i * bw + 3) + '" y="' + y(v) + '" width="' + (bw - 6) + '" height="' + (H - B - y(v)) + '" rx="2"></rect><text class="muted" font-size="11" text-anchor="middle" x="' + (L + i * bw + bw / 2) + '" y="' + (H - B + 15) + '">' + k + "</text>"; });
+    h += '<text font-size="12" text-anchor="middle" x="' + (L + (W - L - R) / 2) + '" y="' + (H - 4) + '">Measurements taken</text>';
+    svg.innerHTML = h;
+    const tot = Object.values(S.steps_hist).reduce((a, b) => a + b, 0), le4 = Object.entries(S.steps_hist).filter(([k]) => +k <= 4).reduce((a, [, v]) => a + v, 0);
+    $("steps-sub").textContent = "Full system, all " + tot.toLocaleString() + " single-fault test units: " + pct(le4 / tot, 0) + " are diagnosed in four measurements or fewer. Mean effort " + S.systems.hybrid.all.effort_mean.toFixed(2) + " points.";
+  })();
+  (function targets() {
+    $("tg-sub").textContent = "Locked on " + D.locked_on + " (commit 60cca12), before any test unit was scored. Bars and pilot values as written; met or missed is reported in M3 with confidence bounds.";
+    const rows = D.targets.filter((t) => t.primary || t.role === "gate");
+    $("tg").innerHTML = "<thead><tr><th>ID</th><th>Target</th><th>Bar</th><th>Pilot</th><th>Kind</th></tr></thead><tbody>" + rows.map((t) => '<tr><td class="mono">' + esc(t.id) + "</td><td>" + esc(t.plain || "") +
+      '</td><td class="mono">' + esc(t.text || "") + '</td><td class="mono">' + esc(t.pilot_text || "—") + "</td><td>" + (t.role === "gate" ? "Release gate" : "Primary") + "</td></tr>").join("") + "</tbody>";
+  })();
+  renderStats();
+
+  // ---------- about ----------
+  const nTest = cases.filter((c) => c.split === "test" && !c.drawn_as_miss).length, nMiss = cases.filter((c) => c.drawn_as_miss).length;
+  const nAged = cases.filter((c) => c.split === "test_aged").length, nOoc = cases.filter((c) => !c.single_fault).length;
+  const nMatch = cases.filter((c) => c.matches_stored_run).length;
+  $("about-list").innerHTML = [
+    "<b>" + nTest + "</b> channel-strip units drawn at random (fixed seed) from the 2,500 held-out test units, plus <b>" + nMiss + "</b> drawn at random from the units the full system got wrong, so the page shows how it fails as well as how it succeeds.",
+    "<b>" + nAged + "</b> aged units (electrolytics dried out, resistors drifted, tubes worn) and <b>" + nOoc + "</b> units outside the single-fault catalog (double faults and wrong-value parts), replayed here. Their full test runs are still to be scored.",
+    "Each replay runs the same engine code as the evaluation harness (the full system: offline complaint reader plus engine). All " + nMatch + " replays of stored test units take exactly the measurements the stored run took.",
+    "Every unit is a SPICE simulation with each part drawn inside its tolerance plus one hidden fault; readings carry a meter's real error and loading. Complaints were generated from the unit's simulated symptoms in three voices and never name a part.",
+    "Statistics come from the stored test runs: 5,000 single-fault units across six circuits, scored after the targets were locked."
+  ].map((s) => "<li>" + s + "</li>").join("");
+
+  // ---------- views ----------
+  const views = ["diagnose", "statistics", "about-the-data"];
+  function route() {
+    const v = views.includes(location.hash.slice(1)) ? location.hash.slice(1) : "diagnose";
+    views.forEach((n) => { $("v-" + n).hidden = n !== v; });
+    document.querySelectorAll("nav.tabs a").forEach((a) => (a.dataset.view === v ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
+  }
+  window.addEventListener("hashchange", route);
+  route();
+  load(0);
+})();
+</script>

@@ -7,6 +7,8 @@ Writes results/m3_analysis.json with:
     same test units, including sessions that ended without a measurement;
   - redteam: replies of the red-team harness by kind (refused, diagnosis started instead
     of answering, other), offline and live, from results/redteam_<mode>.json;
+  - misses: the full system's misses on single faults, split into "no single fault fits"
+    flags and wrong names, by circuit;
   - llm_only: the language-model-alone baseline (T5) replayed from the response cache (no
     key, no cost), next to the full system on the same units, by circuit and part kind.
 
@@ -146,9 +148,28 @@ def llm_only_vs_system() -> dict[str, Any]:
     }
 
 
+def misses() -> dict[str, Any]:
+    """Single-fault test units the full system got wrong: flagged 'no single fault fits'
+    (a refusal to name) or a wrong group named, by circuit; and the faults flagged most."""
+    d = pd.concat([pd.read_parquet(f) for f in sorted(RUNS.glob("hybrid__*__test.parquet"))])
+    d = d[d["single_fault"]]
+    wrong = d[~d["correct"]]
+    flagged = wrong["top_hypothesis"] == "unmodeled"
+    out: dict[str, Any] = {"n": len(d), "misses": len(wrong), "flagged": int(flagged.sum()),
+                           "wrong_name": int((~flagged).sum()), "by_circuit": {}}
+    for cid, g in wrong.groupby("circuit"):
+        f = g["top_hypothesis"] == "unmodeled"
+        out["by_circuit"][str(cid)] = {"misses": len(g), "flagged": int(f.sum()),
+                                       "wrong_name": int((~f).sum())}
+    top = wrong[flagged]["truth"].value_counts().head(6)
+    out["most_flagged"] = {str(k): int(v) for k, v in top.items()}
+    return out
+
+
 def main() -> None:
     result = {"t13_by_kind": t13_by_kind(), "agent_vs_engine": agent_vs_engine(),
-              "redteam": redteam(), "llm_only": llm_only_vs_system()}
+              "redteam": redteam(), "llm_only": llm_only_vs_system(),
+              "misses": misses()}
     (RESULTS / "m3_analysis.json").write_text(json.dumps(result, indent=1) + "\n")
     print(json.dumps(result, indent=1))
 

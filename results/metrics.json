@@ -1772,6 +1772,31 @@
   },
   "total_hypotheses": 506
  },
+ "llm_only": {
+  "capacitor_share_llm": 0.293333,
+  "capacitor_share_true": 0.306667,
+  "margin": {
+   "hi": 0.253333,
+   "hi1": 0.243333,
+   "lo": 0.143333,
+   "lo1": 0.15,
+   "value": 0.196667
+  },
+  "mcnemar": {
+   "a_only": 71,
+   "b_only": 12,
+   "p_value": 0.0
+  },
+  "mean_cost_hybrid": 5.696667,
+  "mean_cost_llm": 24.266667,
+  "n": 300,
+  "status": "measured",
+  "top1_hybrid": 0.94,
+  "top1_llm": 0.743333
+ },
+ "llm_sim": {
+  "status": "pending: simulate_fault needs the simulation library (data/sim/<circuit>__train.parquet, missing for channel_strip, psu, triode, tone, opamp, driver; run make sim), which is not in git"
+ },
  "nlp": {
   "bank_a_seen_once_rules": {
    "macro_f1": 0.670456,
@@ -2744,6 +2769,10 @@
   "wide_n": 150,
   "wide_top1": 0.933333,
   "wide_top1_drop": 0.031667
+ },
+ "redteam_live": {
+  "status": "pending: no team-written suite",
+  "suite": "eval/redteam/cases.yaml"
  },
  "redteam_offline": {
   "status": "pending: no team-written suite",

@@ -1,0 +1,320 @@
+{
+ "request": {
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 4000,
+  "system": "You are an experienced audio electronics technician diagnosing a unit on the bench. Exactly one component has failed. Use the measure tool to take readings (each costs effort; stay within the budget), then call diagnose with your ranked list of the most likely faults, naming them exactly as in the fault list. Think like a technician: compare readings with the healthy values and their tolerances.",
+  "messages": [
+   {
+    "role": "user",
+    "content": "Circuit: Block 4 - Op-amp make-up gain stage. Single-supply non-inverting stage (gain 11) biased at half supply (7.67 V). Behavioural FET-input op-amp with 3 MHz gain-bandwidth and outputs limited to 1.5 V inside each rail.\n\nStages: opamp = Op-amp gain stage\n\nParts:\n- C401: film_cap 1u (stage opamp)\n- R401: resistor 100k (stage opamp)\n- R402: resistor 22k (stage opamp)\n- R403: resistor 22k (stage opamp)\n- C402: electrolytic 47u (stage opamp)\n- U401: opamp TL071-class (stage opamp)\n- R404: resistor 100k (stage opamp)\n- R405: resistor 10k (stage opamp)\n- C403: electrolytic 22u (stage opamp)\n- R406: resistor 100 (stage opamp)\n- C404: electrolytic 10u (stage opamp)\n- C405: film_cap 100n (stage opamp)\n- R407: resistor 100k (stage opamp)\n\nNetlist of the healthy circuit (SPICE; node names as in the test points):\n* Differential reference circuit - Block 4: op-amp make-up gain stage (standalone)\n* ---------------------------------------------------------------------------\n* Original generic design written for this project. Single-supply non-inverting\n* amplifier (gain 1 + R404/R405 = 11) biased at half supply by R402/R403 with\n* C402 decoupling; R401 references the input to the bias node; C403 sets unity\n* DC gain; R406 isolates the output; C404 couples to the next stage; C405 is\n* the supply decoupling capacitor; R407 holds the output at 0 V DC. U401 is the behavioural op-amp in\n* circuits/lib/devices.lib (GBW 3 MHz, output within 1.5 V of each rail).\n* Parameter nodes: pgbw_u401 (MHz), pdead_u401, prail_u401.\n* Fixtures: 15.3 V bench supply, source with 20k output impedance (tone-control\n* output), 20k load (line-driver input).\n* Run standalone: ngspice -b circuits/opamp/opamp.cir\n* ---------------------------------------------------------------------------\n.include ../lib/devices.lib\n\n* ---- Fixtures ----\nVREG_BENCH vreg 0 DC 15.33\nVIN_O op_src 0 DC 0 AC 1 SIN(0 0.0636 1k)\nRSRC_O op_src tone_out 20k\nRLOAD_DRV drv_in 0 20k\n\n* ---- Op-amp stage ----\nC401 tone_out op_in 1u\nR401 op_in vref 100k\nR402 vreg vref 22k\nR403 vref 0 22k\nC402 vref c402_esr 47u\nRESR_C402 c402_esr 0 3.95\nXU401 op_in op_fb op_pin vreg 0 pgbw_u401 pdead_u401 prail_u401 OPAMP_BEH\nVPGBW_U401 pgbw_u401 0 DC 3\nVPDEAD_U401 pdead_u401 0 DC 0\nVPRAIL_U401 prail_u401 0 DC 1\nR404 op_pin op_fb 100k\nR405 op_fb r405_c 10k\nC403 r405_c c403_esr 22u\nRESR_C403 c403_esr 0 8.44\nR406 op_pin op_out 100\nC404 op_out c404_esr 10u\nRESR_C404 c404_esr drv_in 13.3\nC405 vreg 0 100n\nR407 drv_in 0 100k\n\n.control\nset noaskquit\nop\nprint v(op_in) v(op_fb) v(op_pin) v(op_out) v(vref) v(drv_in)\nac lin 1 1000 1000\nprint mag(v(op_pin)) mag(v(drv_in))\nac lin 1 20000 20000\nprint mag(v(drv_in))\n.endc\n.end\n\nTest points:\n- TP12: node tone_out, Op-amp stage input (stage opamp)\n- TP13: node op_in, Op-amp non-inverting input (stage opamp)\n- TP14: node op_fb, Op-amp inverting input (stage opamp)\n- TP15: node op_pin, Op-amp output (stage opamp)\n- TP16: node vref, Half-supply bias (stage opamp)\n- TP17: node drv_in, Op-amp stage output (stage opamp)\n\nMeasurements (key | what | healthy reading and range | cost):\n- dc:TP12 | DC voltage at TP12 | 0 \u00b5V (range -822 \u00b5V to 822 \u00b5V) | cost 1\n- dc:TP13 | DC voltage at TP13 | 7.58 V (range 7.22 V to 7.95 V) | cost 1\n- dc:TP14 | DC voltage at TP14 | 7.66 V (range 7.30 V to 8.04 V) | cost 1\n- dc:TP15 | DC voltage at TP15 | 7.66 V (range 7.30 V to 8.04 V) | cost 1\n- dc:TP16 | DC voltage at TP16 | 7.66 V (range 7.29 V to 8.03 V) | cost 1\n- dc:TP17 | DC voltage at TP17 | 0 \u00b5V (range -822 \u00b5V to 822 \u00b5V) | cost 1\n- ac:TP12 | 1 kHz signal level (gain from input) at TP12 | 0.837 V/V (-1.5 dB) (range 0.795 V/V (-2.0 dB) to 0.88 V/V (-1.1 dB)) | cost 3\n- ac:TP13 | 1 kHz signal level (gain from input) at TP13 | 0.837 V/V (-1.5 dB) (range 0.795 V/V (-2.0 dB) to 0.88 V/V (-1.1 dB)) | cost 3\n- ac:TP14 | 1 kHz signal level (gain from input) at TP14 | 0.837 V/V (-1.5 dB) (range 0.795 V/V (-2.0 dB) to 0.88 V/V (-1.1 dB)) | cost 3\n- ac:TP15 | 1 kHz signal level (gain from input) at TP15 | 9.22 V/V (+19.3 dB) (range 8.42 V/V (+18.5 dB) to 10.1 V/V (+20.1 dB)) | cost 3\n- ac:TP17 | 1 kHz signal level (gain from input) at TP17 | 9.16 V/V (+19.2 dB) (range 8.36 V/V (+18.4 dB) to 10 V/V (+20.0 dB)) | cost 3\n- ac20:TP17 | 20 Hz response (gain from input) at TP17 | 9.12 V/V (+19.2 dB) (range 8.32 V/V (+18.4 dB) to 9.98 V/V (+20.0 dB)) | cost 3\n- ac20k:TP17 | 20 kHz response (gain from input) at TP17 | 9.13 V/V (+19.2 dB) (range 8.34 V/V (+18.4 dB) to 9.99 V/V (+20.0 dB)) | cost 3\n- thd:TP17 | total harmonic distortion at 1 kHz at TP17 | 0.01 % (range 0.00847 % to 0.0118 %) | cost 3\n- lift:<ref> | desolder one lead of a part and test it out of circuit | result: within or out of tolerance | cost 10 (12 for parts on high-voltage nodes)\n\nFault list (name faults exactly like this):\n- C401:open: C401 open circuit\n- C401:short: C401 short circuit\n- R401:open: R401 open circuit\n- R401:short: R401 short circuit\n- R401:drift_x0.5: R401 value drifted to 0.5x\n- R401:drift_x2: R401 value drifted to 2x\n- R401:drift_x10: R401 value drifted to 10x\n- R402:open: R402 open circuit\n- R402:short: R402 short circuit\n- R402:drift_x0.5: R402 value drifted to 0.5x\n- R402:drift_x2: R402 value drifted to 2x\n- R402:drift_x10: R402 value drifted to 10x\n- R403:open: R403 open circuit\n- R403:short: R403 short circuit\n- R403:drift_x0.5: R403 value drifted to 0.5x\n- R403:drift_x2: R403 value drifted to 2x\n- R403:drift_x10: R403 value drifted to 10x\n- C402:open: C402 open circuit\n- C402:short: C402 short circuit\n- C402:cap_loss_50: C402 capacitance loss (-50 %)\n- C402:cap_loss_90: C402 capacitance loss (-90 %)\n- C402:high_esr: C402 high ESR\n- U401:dead: U401 dead (output stuck at a rail)\n- U401:gbw_low: U401 degraded gain-bandwidth\n- R404:open: R404 open circuit\n- R404:short: R404 short circuit\n- R404:drift_x0.5: R404 value drifted to 0.5x\n- R404:drift_x2: R404 value drifted to 2x\n- R404:drift_x10: R404 value drifted to 10x\n- R405:open: R405 open circuit\n- R405:short: R405 short circuit\n- R405:drift_x0.5: R405 value drifted to 0.5x\n- R405:drift_x2: R405 value drifted to 2x\n- R405:drift_x10: R405 value drifted to 10x\n- C403:open: C403 open circuit\n- C403:short: C403 short circuit\n- C403:cap_loss_50: C403 capacitance loss (-50 %)\n- C403:cap_loss_90: C403 capacitance loss (-90 %)\n- C403:high_esr: C403 high ESR\n- R406:open: R406 open circuit\n- R406:short: R406 short circuit\n- R406:drift_x0.5: R406 value drifted to 0.5x\n- R406:drift_x2: R406 value drifted to 2x\n- R406:drift_x10: R406 value drifted to 10x\n- C404:open: C404 open circuit\n- C404:short: C404 short circuit\n- C404:cap_loss_50: C404 capacitance loss (-50 %)\n- C404:cap_loss_90: C404 capacitance loss (-90 %)\n- C404:high_esr: C404 high ESR\n- C405:open: C405 open circuit\n- C405:short: C405 short circuit\n- R407:open: R407 open circuit\n- R407:short: R407 short circuit\n- R407:drift_x0.5: R407 value drifted to 0.5x\n- R407:drift_x2: R407 value drifted to 2x\n- R407:drift_x10: R407 value drifted to 10x\n\nBudget: 40 effort units.\n\nCustomer complaint: Job sheet: mono channel strip booked in for repair. Test tone not reaching the output, checked on scope and meter. Gross, unmissable on first check. Needs turning round this week.\n\nDiagnose the unit. (Session 2 of 3.)"
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "text": "I'll start with DC measurements across the stage.",
+      "type": "text"
+     },
+     {
+      "id": "toolu_01VJYnYC63R4LnGb9umxuAb9",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "dc:TP17"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     },
+     {
+      "id": "toolu_017Kz5qP91MSnB2FW3sRF1DH",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "dc:TP15"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     },
+     {
+      "id": "toolu_016e3GT3VAMmDLToiiAPYBfe",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "dc:TP16"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     },
+     {
+      "id": "toolu_012ADUPFd2qDtHTNo2zVDcTU",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "dc:TP13"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     },
+     {
+      "id": "toolu_0135EAyoPe7jq3t1ZmtsLfwo",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "dc:TP14"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01VJYnYC63R4LnGb9umxuAb9",
+      "content": "{\"key\": \"dc:TP17\", \"reading\": \"-200 \\u00b5V\", \"effort_spent\": 1.0}"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_017Kz5qP91MSnB2FW3sRF1DH",
+      "content": "{\"key\": \"dc:TP15\", \"reading\": \"7.68 V\", \"effort_spent\": 2.0}"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_016e3GT3VAMmDLToiiAPYBfe",
+      "content": "{\"key\": \"dc:TP16\", \"reading\": \"7.65 V\", \"effort_spent\": 3.0}"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_012ADUPFd2qDtHTNo2zVDcTU",
+      "content": "{\"key\": \"dc:TP13\", \"reading\": \"7.60 V\", \"effort_spent\": 4.0}"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_0135EAyoPe7jq3t1ZmtsLfwo",
+      "content": "{\"key\": \"dc:TP14\", \"reading\": \"7.71 V\", \"effort_spent\": 5.0}"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "text": "DC is all normal. Now the AC levels.",
+      "type": "text"
+     },
+     {
+      "id": "toolu_0192hBAA6ZScD5Wo6EQa7kmS",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "ac:TP12"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     },
+     {
+      "id": "toolu_01JNohfqWbaebq2svTArJxHA",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "ac:TP15"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     },
+     {
+      "id": "toolu_01S8vkVTDvv9XMPXgVAh3ELd",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "ac:TP17"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_0192hBAA6ZScD5Wo6EQa7kmS",
+      "content": "{\"key\": \"ac:TP12\", \"reading\": \"0.849 V/V (-1.4 dB)\", \"effort_spent\": 8.0}"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01JNohfqWbaebq2svTArJxHA",
+      "content": "{\"key\": \"ac:TP15\", \"reading\": \"9.04 V/V (+19.1 dB)\", \"effort_spent\": 11.0}"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01S8vkVTDvv9XMPXgVAh3ELd",
+      "content": "{\"key\": \"ac:TP17\", \"reading\": \"0.00143 V/V (-56.9 dB)\", \"effort_spent\": 14.0}"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "signature": "CAQSuAgKEQgTGAI4AUIJbmFycmF0aW9uEgz3Grq0T647kYgmn9waDIG89setc2hIIOqulCIwyE9q4vMIf0tyyIxfkuiJBVwkPKtSgQaJK/Ln+OYBBnBcmz7Eaencc4ojjlwFYJGAKtQHJ4EO/haUBeiRTDbteIT/uRzP7ga29ZcwfclTk1bWXoDuS2tS+ESXaMWiKAnZLoffLVW85A/eGWHfWbcIGPFZkRMm8Z+W31gCk1Nd2W4CknouZPCaL+LFKk4nQ27guKVtp8uOaENv2I2H/4JNu/OsFNTNH9ci3fzbR4QtY06MsxU+qJFMgDH87XYBu0dd20w5CovKToLgr0uGHBXm0oh7psB3UDiGYG3A2M0Aw8pjOk4EtAtJIvfCbzUMB5UQG+yzncKBoBItR89/riqGFgrxV0mhohqaYC4dHaK65LnnogZw1hq86FMYB5+7Vg12KaC9Ygw3/BEtVTNODWNU1mAhWEWfBh7RFRiLFFgo8PborvdqFXsoUnyexSAaN/+eVlvOoj9rSoKtMQWTuHb10bpNVOb+p5bs89r+5MsHxFqSMtwiRN6BkUubgnXykq8Emc2GHZEhVJsypQyCFZPwrsoFx/KzUN4cjUZHUwyqonlFatEJbPsMIF01GiIE2EtkboHdEsGl3YIF0/ECODk3uFYvItd3rm+letnYBW00tL4W4Z9ajGr/fPXhXialswaJNeY3dAxMkU65BXLkPLaj7Cps02cuYKrEWoo+5SMloV2I0NBtJK0zpTX3Dc1nXJc65Wp9SKXM0MqyUTudga1HDEZEbqZG6bjjF+b5+cwIwdg4NrBKWrn1yWYD87/TRUT8o7ElrUHa0OAle4UA3DL3HmOhMCKDn58T8uB336zdlv8ySfkg2x3BIRyvu7FeQyJJ3E9aVlp1SZFsR1Y4VM/71w+EO3z19t2nZDxUiDFXaS2X4XkdiXdzKTploPi1Ou7GXnByHDsS5XY9bhkWS7KW4kOw21X3VVpTblWUb05LRrk69ucXYyoQsli8eLQ/RFp5wChNtd2LfhcqVO0Oy2iwuDy/NxurSO34GMgpbCqwRqMaC8OmNTztAuzvaQtlbSUdd53iU+1No5cPFKbSw1jrEpzZhFKOWn/EOCy14YL/GhG/ZdlBZoGYmagR3l6dJ8lIj6KhWqTSwepcs+9nXjgt+WJ9oFCb3r5S84+xqN9svJRr766mvWk8RD+0FWHKrugf6IhgVUVvEYhjwQgmPCSGF5ElBf4PailBtu76liC1yw3imsckqJN1Os951LPcdPAXKvObyFhVU49+EgRteIvlVnppapV34iE1lpRzPx99iddszbU0afIfWCPkdvdMirdRIKooFGOv+VlW3f679jNX93IxFikXgyaav2otiWnFpU9JZIpcmWxtm9ylITUKsi65/OMlYjxLDXtFT3xvhQZ0xAWwvXrbTWQYAQ==",
+      "thinking": "The signal reaches the op-amp output at TP15 but is nearly gone at TP17, so the fault is in R406, C404 or R407. I'm checking the frequency response next to tell those apart.\n\n",
+      "type": "thinking"
+     },
+     {
+      "id": "toolu_017KoUX4jLdQd8cx3mPZJSep",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "ac20k:TP17"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_017KoUX4jLdQd8cx3mPZJSep",
+      "content": "{\"key\": \"ac20k:TP17\", \"reading\": \"0.00143 V/V (-56.9 dB)\", \"effort_spent\": 17.0}"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "signature": "CAQSvQoKEQgTGAI4AUIJbmFycmF0aW9uEgzMLpypT+K2XjmYwukaDNVqfELorhRsNgASoSIw/3B95BkJ3IJVKMrZd7hb1U8zBbadEaqVvW7WE3neSu94UCb7oBPKMsvJhYCF3Hc8KtkJHqFVOKraymzF+I5Ebhbuo9zRh3moKNHUDbo24G5KeWpE/r02OkdWTtAEVFFP4jEfeLftGeG2pyS/IWWFQAaN2VM/I+4jmc6INjRZLYAIS6szTtyuF0O8kfuR9yPux1MC4JsGnV6zd/YHuosyjpZUqFs4rcAxI9wT2KwokEuS4SzREisruN7bjlpDy1p6v1vSv3p7WcuVxn11NbbAXmip/eZcxc44ZDIIxsx8ya5QMKZ2KcdZgnyyYMUVac4BiXFFuXeerW/RU8O40wJ4tmh29GuWKUvGsreLlibfF8T6XLtVywtdTeaGwKorbTVO1QqyzFoCL7MyT5sgK3sPGrMqvZRxcEv6cHEWgMVfiUrojNKlPYgLVDpn4JstUMeuNqGjcA5yU2OBOLu81MfRt7jTXlsoZdNgwoJZCIo4T3HgpMYrch/7uaMrZYNk3vOCW6N4NviufVWqtj2tlriSTv4NgWpA2eTroarQRXYEEr7Hm1XMxD5M0nUfTDHs/QJLpSbS4+dyxlhW4X+F9bb1GL0crbpET0T2NPrypi+glR5c5d0+ScV3VH+hu1ntIPQjwt7ckf8P0dT4Cg39j5EEbr+mV8OQw+RQa8Czlt950IAITHnq73jpHUHLFItuzfOpFYlngexZT8crRK/vg1rce/NbslukEBx3WmEnwhziIt47UK3QeVacdanc02gft7veqVcfdP0V+SPonqzxOr65LD8U5x1NJGywjXUKQriArUyg8u4h0o1PG3sbjwrr2BZGRefbMrv2+ccq/cqDSTGkmDbet+qos/UbBSBCOHFaiNtr+iUlTp34CLechCmy8w54i2QIZqXGLB9sFiVqjwe81ociIsuBpmD5HAf3igBKoT3VHliDGMRgIJsRZ/nsIBxFhSznbQev5KBOjid5cHhdN80naXsdHgzewjwVIxCo07B7m+/ky4DNLaZh2bAgCoo9Mk6d2DF+NERSI2dk3+lGcuQTq3TPQCmuPnSirMInSzLsjz8qMI4lIZ+lwHHV3+uq3g2rJQeZHNXWLlwyq7DeQRRvgdnxi1VS2QBxOdvzHuD8mnZ2AoRMlYJBzBj758nvf5D2rGXUqRykO17iLyN9DPboqfinXI3WNJ+4I0pCFdc581ZulsbTsrSbihTtHn+jQ9aG5Rg5slxJJDf7hqh99By8mh6ImhPn4ajRtREuanPYfdAWEPYwqdB+e2ghVP6T6rlikuA+g42XMQT1KPXh+BcLmVyjLvWe03n+luny9ATIHUG9L4hFA09mb3qd0DtZa/xFRTjQsLe4JukeIVtMnP6MWZ/zyzAXbkztHv3m69iejlerrtUhQQSz5TO7zHtS8UNeDUrVxLxlBp4Ufbaa+fDJ1T0GwKTTEZMe/jXKGM4xEqaRziTWWtpHbWg8DdJRQpV6D59qAKF4RcfHRprjSEh0VDUUi0Jvq7yWoXRv/2YFSLRi3tr/kyMNCTZo7c7mlOo67ZtBLIGkzJ15GR5tAkxLhRq+WLXDihrtMbdGRSrk3yNjovbwqhp69BT5xy/60Zt8midxCBKpseP7y7q2ntSN5K+/HfopEG2oOo9FNBJzwZRpzChCr8QYitSeJuxRQnfzl5giFNkMbd5EIeFxMbpXtECxOHGFwAQlAj4yLeCZTmPSbtVZIOho8NoYAQ==",
+      "thinking": "The flat attenuation points to a resistive fault rather than C404, and R407 shorting drv_in is the best fit. However, a plain short at R407 would not give the roughly 1/6300 ratio measured, so a near-open in series with some leakage is more likely; I'll test C404 out of circuit next.\n\n",
+      "type": "thinking"
+     },
+     {
+      "id": "toolu_014cKdzSuuCfVgScAm6TNFei",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "key": "lift:C404"
+      },
+      "name": "measure",
+      "type": "tool_use"
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_014cKdzSuuCfVgScAm6TNFei",
+      "content": "{\"key\": \"lift:C404\", \"result\": \"within tolerance\", \"effort_spent\": 27.0}"
+     }
+    ]
+   }
+  ],
+  "tools": [
+   {
+    "name": "measure",
+    "description": "Take one measurement on the unit.",
+    "input_schema": {
+     "type": "object",
+     "properties": {
+      "key": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "key"
+     ],
+     "additionalProperties": false
+    }
+   },
+   {
+    "name": "diagnose",
+    "description": "Finish with a ranked list of fault names.",
+    "input_schema": {
+     "type": "object",
+     "properties": {
+      "ranked_faults": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "confidence": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "ranked_faults",
+      "confidence"
+     ],
+     "additionalProperties": false
+    }
+   }
+  ],
+  "thinking": {
+   "type": "between_tools"
+  }
+ },
+ "response": {
+  "id": "msg_011Ch86Br1k8g3Pm93iT5hN6",
+  "container": null,
+  "content": [
+   {
+    "signature": "CAQSvwgKEQgTGAI4AUIJbmFycmF0aW9uEgz0D9MdGLjrQ3+ttfAaDIgwnRMbAIW9nzgeCSIwE49dHUZp9Oe46PRKwUT8KbPuej/hpQVPlPu8YRhmWo/VZBo+bE17b6vriGZE2rhOKtsHsjF1BnR7RMIs64mBEVKnOLr6xhFfTMuc1VjHxMCazXWH+FxA2mLxXglsR8zl7BcHIgdESa8Yk5c5hydN+FeUTKyMoLd34lux078MTzRJI8HuaTYq7J7HC9GGK2BN3t8cvyWmK64KEttuLUEZu9ZrMwMjelfPdT9lY1/6MIJwvl1YWQEB1Y1a/MTOYJT5ydyHsryFkqbxmfZPQAJPWWjLC6bscFsA+ypwQ6guwxrv8oB0Q+sXmIOaWgG6cWxAJebg6yBNGMtxMPHORdRwsnRRZ1GHtq/SNJ7kSAyanB1rPugP0MFtf7gaRzhPRnMR4AaZxB0R8HuM/lpSDWx4jzUF9jTu5vn3YCrIGC5tGZnJck69ew42SZb3XB5hL9r8A08WfHJLGO07K2qGHYxfvTsgfqOQ6oKG3J65PvJux3YHOtApu7ebNNsuJJpkz3Xkhqhtyuj/U84mC0bWZjZJahMYJSOHcgiVaQC0yXl5/+tJa3AMYKAkpgLyu3V0sDVLKvDCq2+zNBg/Ag7S5vM43FuVsl0qkZ3oqAXSr0mKkuVw5/koRPCU1WQ3F+lLVfGvb/JI2fyZapLXuBZlk69bePhB7sDTLJ7ETPHdpU2kwJbifySlJ1TtsQPakKRlJT8rrS5ztu8q8SYjag8+0gDyaHzqTEbpIz0Bk/TxcpB0U+wX8xqqwbkDKjFlKwQ8fJDckfhoGK+4GPzc93kT1ATrnflqfLNg2QvgxKD1t66jqX4VCNzbLUBpGOYfDwjYXwYV8ytRqPXYVQE+jbsDykuWNV984ZgFg3XboZjnOVFppG/8BBZLqIZDkX9+iWtHNcFKKs4Kp8OigKBQdGuddHM3pS3siuVePsiqS9JpSgrZcO+TZOW30UboPBKs2UE7V/kMgb0LM9MyaxFNyUoRJoIpbzt/aCteeg5R5w4K53BmmzQp2b/z/ao37dRyIYNtoT3DQB+AtaFGQMVv/nINs/Le/L0wSLiUCW/R7KZN+JAcv7I4Wf0B8tuRnXmVnlde493InZ2Nqo+VUDEjaRGGd70qWONms5n1Q/tPqARrf2bH1dzLfZPBaPgTHKpnfqa+W5Z3xW63sJDvglFVwlC6QcjDspPdUzXt6b5yFkhlNwVjNflWGCahWRQs4yF6Jm9Z+DJ3o4dCb2RTaOqXXxxl1HZrPWCwlrgvnGUeu3l6HG584h2qN0hGg5BaLV001UvjHVFCSwKp9u5+gZHwdTzvmq5B920yUPSzfvIb8/e61/eLoph8zx55pQCw3o2+vKgq5XtetIAvOXQR7HqgYeEZucw5N+a8mQP7DUuyNFHLEoIjGAE=",
+    "thinking": "C404 checks out, so I'm narrowing it to R406 open or R407 short, and R406 open fits the small flat residual better.\n\n",
+    "type": "thinking"
+   },
+   {
+    "id": "toolu_01EetTqfg3h8zPBL6cVovd5h",
+    "caller": {
+     "type": "direct"
+    },
+    "input": {
+     "key": "lift:R406"
+    },
+    "name": "measure",
+    "type": "tool_use"
+   }
+  ],
+  "diagnostics": null,
+  "model": "claude-sonnet-5-5",
+  "role": "assistant",
+  "stop_details": null,
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "type": "message",
+  "usage": {
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 0,
+    "ephemeral_5m_input_tokens": 297
+   },
+   "cache_creation_input_tokens": 297,
+   "cache_read_input_tokens": 5610,
+   "inference_geo": "global",
+   "input_tokens": 2,
+   "output_tokens": 161,
+   "output_tokens_details": {
+    "thinking_tokens": 112
+   },
+   "service_tier": "standard",
+   "speed": "standard"
+  }
+ }
+}

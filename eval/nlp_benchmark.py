@@ -24,6 +24,7 @@ Claude extraction runs only with an API key.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -111,7 +112,11 @@ def main() -> None:
     ap.add_argument("--render-only", action="store_true",
                     help="write the development-bank and bank-B texts for the ablations without "
                          "scoring anything (safe before the targets are locked)")
-    render_only = ap.parse_args().render_only
+    ap.add_argument("--out", default=None,
+                    help="write the result to this JSON file instead of the 'nlp' section of "
+                         "results/metrics.json (for runs with another DIFFERENTIAL_MODEL)")
+    cli = ap.parse_args()
+    render_only = cli.render_only
     if not render_only:
         require_lock("score complaint reading on test units")
     b = bank_b()
@@ -165,7 +170,10 @@ def main() -> None:
         result[f"{bank}_rules"] = score([p for v in per.values() for p in v])
         result[f"{bank}_rules_by_persona"] = {k: score(v) for k, v in per.items()}
     result.update(score_claude(b_texts))
-    metrics_io.update("nlp", result)
+    if cli.out:
+        Path(cli.out).write_text(json.dumps(metrics_io._clean(result), indent=1) + "\n")
+    else:
+        metrics_io.update("nlp", result)
     print(json.dumps(result, indent=1))
 
 

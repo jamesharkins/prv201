@@ -1,4 +1,3428 @@
 {
+ "agent_live": {
+  "agent_top1": 0.91,
+  "api_calls": 411,
+  "cost_usd_total": 2.144965,
+  "mean_cost_usd_per_diagnosis": 0.02145,
+  "mean_seconds_per_session": 10.805312,
+  "messages": 457,
+  "mode": "live",
+  "model": "claude-sonnet-5-5",
+  "n_sessions": 100,
+  "numbers_checked": 6133,
+  "safety_events": 59,
+  "sessions_with_offline_fallback": 0,
+  "split": "test",
+  "tokens": {
+   "cache_read": 1062037,
+   "cache_write": 441990,
+   "input": 7888,
+   "output": 91801
+  },
+  "ungrounded_before_check": 20,
+  "ungrounded_final": 15,
+  "ungrounded_rate": 0.002446
+ },
+ "agent_offline": {
+  "agent_top1": 0.84,
+  "mean_seconds_per_session": 0.159332,
+  "messages": 454,
+  "mode": "offline",
+  "n_sessions": 100,
+  "numbers_checked": 5761,
+  "safety_events": 38,
+  "split": "test",
+  "ungrounded_before_check": 0,
+  "ungrounded_final": 0,
+  "ungrounded_rate": 0.0
+ },
+ "analyses": {
+  "capacitor_share": {
+   "engine_gen": {
+    "diagnosed": 0.2782,
+    "true": 0.297
+   },
+   "hybrid": {
+    "diagnosed": 0.2784,
+    "true": 0.297
+   },
+   "recap_prior": {
+    "diagnosed": 0.3154,
+    "true": 0.297
+   }
+  },
+  "disaggregated": {
+   "by_circuit": {
+    "channel_strip": {
+     "count": 2500,
+     "mean": 0.9624
+    },
+    "driver": {
+     "count": 500,
+     "mean": 0.966
+    },
+    "opamp": {
+     "count": 500,
+     "mean": 0.984
+    },
+    "psu": {
+     "count": 500,
+     "mean": 0.854
+    },
+    "tone": {
+     "count": 500,
+     "mean": 0.934
+    },
+    "triode": {
+     "count": 500,
+     "mean": 0.976
+    }
+   },
+   "by_fault_type": {
+    "dead": {
+     "count": 33,
+     "mean": 0.878788
+    },
+    "degradation": {
+     "count": 177,
+     "mean": 0.898305
+    },
+    "drift": {
+     "count": 1293,
+     "mean": 0.982212
+    },
+    "leakage": {
+     "count": 6,
+     "mean": 1.0
+    },
+    "open": {
+     "count": 1771,
+     "mean": 0.982496
+    },
+    "short": {
+     "count": 1720,
+     "mean": 0.906395
+    }
+   },
+   "by_part_kind": {
+    "bjt": {
+     "count": 196,
+     "mean": 0.954082
+    },
+    "diode": {
+     "count": 31,
+     "mean": 0.870968
+    },
+    "electrolytic": {
+     "count": 958,
+     "mean": 0.888309
+    },
+    "film_cap": {
+     "count": 527,
+     "mean": 0.950664
+    },
+    "opamp": {
+     "count": 61,
+     "mean": 0.901639
+    },
+    "potentiometer": {
+     "count": 65,
+     "mean": 0.984615
+    },
+    "resistor": {
+     "count": 3023,
+     "mean": 0.972213
+    },
+    "triode": {
+     "count": 65,
+     "mean": 1.0
+    },
+    "zener": {
+     "count": 74,
+     "mean": 1.0
+    }
+   }
+  },
+  "effort_weight_sensitivity": {
+   "hv_double": {
+    "T10_vs_random": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 30.5416,
+       "confirming_charge": 10.3004,
+       "effort": 20.2412,
+       "probing": 20.2412,
+       "unsoldering": 0.0
+      },
+      "system": {
+       "confirmed_effort": 17.216,
+       "confirming_charge": 10.2624,
+       "effort": 6.9536,
+       "probing": 6.8324,
+       "unsoldering": 0.1212
+      }
+     },
+     "ratio": {
+      "hi": 0.5711,
+      "hi1": 0.5697,
+      "lo": 0.5566,
+      "lo1": 0.5577,
+      "value": 0.5637
+     },
+     "raw_ratio": {
+      "hi": 0.3513,
+      "hi1": 0.3502,
+      "lo": 0.336,
+      "lo1": 0.3373,
+      "value": 0.3435
+     },
+     "top1_baseline": 0.8634,
+     "top1_gap": 0.0888,
+     "top1_system": 0.9522
+    },
+    "T11_complaint": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 17.216,
+       "confirming_charge": 10.2624,
+       "effort": 6.9536,
+       "probing": 6.8324,
+       "unsoldering": 0.1212
+      },
+      "system": {
+       "confirmed_effort": 16.6002,
+       "confirming_charge": 10.2432,
+       "effort": 6.357,
+       "probing": 6.2454,
+       "unsoldering": 0.1116
+      }
+     },
+     "ratio": {
+      "hi": 0.97,
+      "hi1": 0.9691,
+      "lo": 0.9586,
+      "lo1": 0.9597,
+      "value": 0.9642
+     },
+     "raw_ratio": {
+      "hi": 0.9253,
+      "hi1": 0.9236,
+      "lo": 0.9032,
+      "lo1": 0.9048,
+      "value": 0.9142
+     },
+     "top1_baseline": 0.9522,
+     "top1_gap": -0.0038,
+     "top1_system": 0.9484
+    },
+    "T8_vs_fixed_order": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 29.1478,
+       "confirming_charge": 6.648,
+       "effort": 22.4998,
+       "probing": 17.1422,
+       "unsoldering": 5.3576
+      },
+      "system": {
+       "confirmed_effort": 17.216,
+       "confirming_charge": 10.2624,
+       "effort": 6.9536,
+       "probing": 6.8324,
+       "unsoldering": 0.1212
+      }
+     },
+     "ratio": {
+      "hi": 0.5987,
+      "hi1": 0.5974,
+      "lo": 0.5829,
+      "lo1": 0.5842,
+      "value": 0.5906
+     },
+     "raw_ratio": {
+      "hi": 0.3159,
+      "hi1": 0.3146,
+      "lo": 0.3023,
+      "lo1": 0.3033,
+      "value": 0.3091
+     },
+     "top1_baseline": 0.8616,
+     "top1_gap": 0.0906,
+     "top1_system": 0.9522
+    },
+    "T9_vs_half_split": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 28.3472,
+       "confirming_charge": 6.7728,
+       "effort": 21.5744,
+       "probing": 16.4912,
+       "unsoldering": 5.0832
+      },
+      "system": {
+       "confirmed_effort": 17.216,
+       "confirming_charge": 10.2624,
+       "effort": 6.9536,
+       "probing": 6.8324,
+       "unsoldering": 0.1212
+      }
+     },
+     "ratio": {
+      "hi": 0.6156,
+      "hi1": 0.6143,
+      "lo": 0.5995,
+      "lo1": 0.6006,
+      "value": 0.6073
+     },
+     "raw_ratio": {
+      "hi": 0.3294,
+      "hi1": 0.3282,
+      "lo": 0.3153,
+      "lo1": 0.3164,
+      "value": 0.3223
+     },
+     "top1_baseline": 0.8934,
+     "top1_gap": 0.0588,
+     "top1_system": 0.9522
+    }
+   },
+   "hv_half": {
+    "T10_vs_random": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 26.9186,
+       "confirming_charge": 9.7886,
+       "effort": 17.13,
+       "probing": 17.13,
+       "unsoldering": 0.0
+      },
+      "system": {
+       "confirmed_effort": 15.779,
+       "confirming_charge": 9.8072,
+       "effort": 5.9718,
+       "probing": 5.8678,
+       "unsoldering": 0.104
+      }
+     },
+     "ratio": {
+      "hi": 0.5937,
+      "hi1": 0.5925,
+      "lo": 0.5789,
+      "lo1": 0.5799,
+      "value": 0.5862
+     },
+     "raw_ratio": {
+      "hi": 0.3565,
+      "hi1": 0.3554,
+      "lo": 0.3409,
+      "lo1": 0.3421,
+      "value": 0.3486
+     },
+     "top1_baseline": 0.8918,
+     "top1_gap": 0.0678,
+     "top1_system": 0.9596
+    },
+    "T11_complaint": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 15.779,
+       "confirming_charge": 9.8072,
+       "effort": 5.9718,
+       "probing": 5.8678,
+       "unsoldering": 0.104
+      },
+      "system": {
+       "confirmed_effort": 15.1894,
+       "confirming_charge": 9.791,
+       "effort": 5.3984,
+       "probing": 5.288,
+       "unsoldering": 0.1104
+      }
+     },
+     "ratio": {
+      "hi": 0.9679,
+      "hi1": 0.967,
+      "lo": 0.9575,
+      "lo1": 0.9583,
+      "value": 0.9626
+     },
+     "raw_ratio": {
+      "hi": 0.9149,
+      "hi1": 0.9133,
+      "lo": 0.8926,
+      "lo1": 0.8947,
+      "value": 0.904
+     },
+     "top1_baseline": 0.9596,
+     "top1_gap": -0.0034,
+     "top1_system": 0.9562
+    },
+    "T8_vs_fixed_order": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 24.8428,
+       "confirming_charge": 5.8264,
+       "effort": 19.0164,
+       "probing": 13.3254,
+       "unsoldering": 5.691
+      },
+      "system": {
+       "confirmed_effort": 15.779,
+       "confirming_charge": 9.8072,
+       "effort": 5.9718,
+       "probing": 5.8678,
+       "unsoldering": 0.104
+      }
+     },
+     "ratio": {
+      "hi": 0.6437,
+      "hi1": 0.6422,
+      "lo": 0.6269,
+      "lo1": 0.6282,
+      "value": 0.6352
+     },
+     "raw_ratio": {
+      "hi": 0.3207,
+      "hi1": 0.3195,
+      "lo": 0.3072,
+      "lo1": 0.3085,
+      "value": 0.314
+     },
+     "top1_baseline": 0.8826,
+     "top1_gap": 0.077,
+     "top1_system": 0.9596
+    },
+    "T9_vs_half_split": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 23.5856,
+       "confirming_charge": 6.0036,
+       "effort": 17.582,
+       "probing": 12.3096,
+       "unsoldering": 5.2724
+      },
+      "system": {
+       "confirmed_effort": 15.779,
+       "confirming_charge": 9.8072,
+       "effort": 5.9718,
+       "probing": 5.8678,
+       "unsoldering": 0.104
+      }
+     },
+     "ratio": {
+      "hi": 0.6776,
+      "hi1": 0.6761,
+      "lo": 0.6607,
+      "lo1": 0.6619,
+      "value": 0.669
+     },
+     "raw_ratio": {
+      "hi": 0.347,
+      "hi1": 0.3457,
+      "lo": 0.3325,
+      "lo1": 0.3336,
+      "value": 0.3397
+     },
+     "top1_baseline": 0.9036,
+     "top1_gap": 0.056,
+     "top1_system": 0.9596
+    }
+   },
+   "lift_double": {
+    "T10_vs_random": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 37.842,
+       "confirming_charge": 19.58,
+       "effort": 18.262,
+       "probing": 18.262,
+       "unsoldering": 0.0
+      },
+      "system": {
+       "confirmed_effort": 25.9754,
+       "confirming_charge": 19.6236,
+       "effort": 6.3518,
+       "probing": 6.2518,
+       "unsoldering": 0.1
+      }
+     },
+     "ratio": {
+      "hi": 0.6934,
+      "hi1": 0.6922,
+      "lo": 0.6794,
+      "lo1": 0.6806,
+      "value": 0.6864
+     },
+     "raw_ratio": {
+      "hi": 0.3556,
+      "hi1": 0.3545,
+      "lo": 0.34,
+      "lo1": 0.3413,
+      "value": 0.3478
+     },
+     "top1_baseline": 0.884,
+     "top1_gap": 0.0732,
+     "top1_system": 0.9572
+    },
+    "T11_complaint": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 25.9754,
+       "confirming_charge": 19.6236,
+       "effort": 6.3518,
+       "probing": 6.2518,
+       "unsoldering": 0.1
+      },
+      "system": {
+       "confirmed_effort": 25.334,
+       "confirming_charge": 19.5636,
+       "effort": 5.7704,
+       "probing": 5.6704,
+       "unsoldering": 0.1
+      }
+     },
+     "ratio": {
+      "hi": 0.9798,
+      "hi1": 0.9791,
+      "lo": 0.9708,
+      "lo1": 0.9715,
+      "value": 0.9753
+     },
+     "raw_ratio": {
+      "hi": 0.9191,
+      "hi1": 0.9173,
+      "lo": 0.8979,
+      "lo1": 0.8994,
+      "value": 0.9085
+     },
+     "top1_baseline": 0.9572,
+     "top1_gap": -0.0046,
+     "top1_system": 0.9526
+    },
+    "T8_vs_fixed_order": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 37.3192,
+       "confirming_charge": 13.546,
+       "effort": 23.7732,
+       "probing": 15.0724,
+       "unsoldering": 8.7008
+      },
+      "system": {
+       "confirmed_effort": 25.9754,
+       "confirming_charge": 19.6236,
+       "effort": 6.3518,
+       "probing": 6.2518,
+       "unsoldering": 0.1
+      }
+     },
+     "ratio": {
+      "hi": 0.7033,
+      "hi1": 0.702,
+      "lo": 0.6886,
+      "lo1": 0.6899,
+      "value": 0.696
+     },
+     "raw_ratio": {
+      "hi": 0.2729,
+      "hi1": 0.272,
+      "lo": 0.2614,
+      "lo1": 0.2624,
+      "value": 0.2672
+     },
+     "top1_baseline": 0.8734,
+     "top1_gap": 0.0838,
+     "top1_system": 0.9572
+    },
+    "T9_vs_half_split": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 36.0302,
+       "confirming_charge": 13.498,
+       "effort": 22.5322,
+       "probing": 13.9726,
+       "unsoldering": 8.5596
+      },
+      "system": {
+       "confirmed_effort": 25.9754,
+       "confirming_charge": 19.6236,
+       "effort": 6.3518,
+       "probing": 6.2518,
+       "unsoldering": 0.1
+      }
+     },
+     "ratio": {
+      "hi": 0.728,
+      "hi1": 0.7268,
+      "lo": 0.7135,
+      "lo1": 0.7147,
+      "value": 0.7209
+     },
+     "raw_ratio": {
+      "hi": 0.288,
+      "hi1": 0.287,
+      "lo": 0.2757,
+      "lo1": 0.2768,
+      "value": 0.2819
+     },
+     "top1_baseline": 0.8978,
+     "top1_gap": 0.0594,
+     "top1_system": 0.9572
+    }
+   },
+   "lift_half": {
+    "T10_vs_random": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 23.409,
+       "confirming_charge": 5.147,
+       "effort": 18.262,
+       "probing": 18.262,
+       "unsoldering": 0.0
+      },
+      "system": {
+       "confirmed_effort": 11.448,
+       "confirming_charge": 5.1098,
+       "effort": 6.3382,
+       "probing": 6.1528,
+       "unsoldering": 0.1854
+      }
+     },
+     "ratio": {
+      "hi": 0.4967,
+      "hi1": 0.4955,
+      "lo": 0.4817,
+      "lo1": 0.4826,
+      "value": 0.489
+     },
+     "raw_ratio": {
+      "hi": 0.3549,
+      "hi1": 0.3539,
+      "lo": 0.3394,
+      "lo1": 0.3405,
+      "value": 0.3471
+     },
+     "top1_baseline": 0.884,
+     "top1_gap": 0.0714,
+     "top1_system": 0.9554
+    },
+    "T11_complaint": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 11.448,
+       "confirming_charge": 5.1098,
+       "effort": 6.3382,
+       "probing": 6.1528,
+       "unsoldering": 0.1854
+      },
+      "system": {
+       "confirmed_effort": 10.8292,
+       "confirming_charge": 5.1012,
+       "effort": 5.728,
+       "probing": 5.5786,
+       "unsoldering": 0.1494
+      }
+     },
+     "ratio": {
+      "hi": 0.9527,
+      "hi1": 0.9515,
+      "lo": 0.9394,
+      "lo1": 0.9403,
+      "value": 0.9459
+     },
+     "raw_ratio": {
+      "hi": 0.9146,
+      "hi1": 0.9129,
+      "lo": 0.8927,
+      "lo1": 0.8943,
+      "value": 0.9037
+     },
+     "top1_baseline": 0.9554,
+     "top1_gap": -0.0038,
+     "top1_system": 0.9516
+    },
+    "T8_vs_fixed_order": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 20.7988,
+       "confirming_charge": 3.0772,
+       "effort": 17.7216,
+       "probing": 14.6778,
+       "unsoldering": 3.0438
+      },
+      "system": {
+       "confirmed_effort": 11.448,
+       "confirming_charge": 5.1098,
+       "effort": 6.3382,
+       "probing": 6.1528,
+       "unsoldering": 0.1854
+      }
+     },
+     "ratio": {
+      "hi": 0.5594,
+      "hi1": 0.5581,
+      "lo": 0.5417,
+      "lo1": 0.5431,
+      "value": 0.5504
+     },
+     "raw_ratio": {
+      "hi": 0.3655,
+      "hi1": 0.3641,
+      "lo": 0.35,
+      "lo1": 0.3512,
+      "value": 0.3577
+     },
+     "top1_baseline": 0.8808,
+     "top1_gap": 0.0746,
+     "top1_system": 0.9554
+    },
+    "T9_vs_half_split": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 19.7218,
+       "confirming_charge": 3.208,
+       "effort": 16.5138,
+       "probing": 13.7452,
+       "unsoldering": 2.7686
+      },
+      "system": {
+       "confirmed_effort": 11.448,
+       "confirming_charge": 5.1098,
+       "effort": 6.3382,
+       "probing": 6.1528,
+       "unsoldering": 0.1854
+      }
+     },
+     "ratio": {
+      "hi": 0.5895,
+      "hi1": 0.5881,
+      "lo": 0.5715,
+      "lo1": 0.573,
+      "value": 0.5805
+     },
+     "raw_ratio": {
+      "hi": 0.3921,
+      "hi1": 0.391,
+      "lo": 0.3756,
+      "lo1": 0.377,
+      "value": 0.3838
+     },
+     "top1_baseline": 0.9046,
+     "top1_gap": 0.0508,
+     "top1_system": 0.9554
+    }
+   },
+   "scope_double": {
+    "T10_vs_random": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 35.0656,
+       "confirming_charge": 9.9904,
+       "effort": 25.0752,
+       "probing": 25.0752,
+       "unsoldering": 0.0
+      },
+      "system": {
+       "confirmed_effort": 19.3622,
+       "confirming_charge": 9.7768,
+       "effort": 9.5854,
+       "probing": 9.4022,
+       "unsoldering": 0.1832
+      }
+     },
+     "ratio": {
+      "hi": 0.5599,
+      "hi1": 0.5588,
+      "lo": 0.5446,
+      "lo1": 0.5456,
+      "value": 0.5522
+     },
+     "raw_ratio": {
+      "hi": 0.3917,
+      "hi1": 0.3903,
+      "lo": 0.373,
+      "lo1": 0.3744,
+      "value": 0.3823
+     },
+     "top1_baseline": 0.8104,
+     "top1_gap": 0.1256,
+     "top1_system": 0.936
+    },
+    "T11_complaint": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 19.3622,
+       "confirming_charge": 9.7768,
+       "effort": 9.5854,
+       "probing": 9.4022,
+       "unsoldering": 0.1832
+      },
+      "system": {
+       "confirmed_effort": 17.846,
+       "confirming_charge": 9.702,
+       "effort": 8.144,
+       "probing": 7.9872,
+       "unsoldering": 0.1568
+      }
+     },
+     "ratio": {
+      "hi": 0.9293,
+      "hi1": 0.9282,
+      "lo": 0.9141,
+      "lo1": 0.9153,
+      "value": 0.9217
+     },
+     "raw_ratio": {
+      "hi": 0.8617,
+      "hi1": 0.8597,
+      "lo": 0.8372,
+      "lo1": 0.8391,
+      "value": 0.8496
+     },
+     "top1_baseline": 0.936,
+     "top1_gap": -0.0072,
+     "top1_system": 0.9288
+    },
+    "T8_vs_fixed_order": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 29.7846,
+       "confirming_charge": 6.4444,
+       "effort": 23.3402,
+       "probing": 18.2614,
+       "unsoldering": 5.0788
+      },
+      "system": {
+       "confirmed_effort": 19.3622,
+       "confirming_charge": 9.7768,
+       "effort": 9.5854,
+       "probing": 9.4022,
+       "unsoldering": 0.1832
+      }
+     },
+     "ratio": {
+      "hi": 0.6596,
+      "hi1": 0.6581,
+      "lo": 0.6405,
+      "lo1": 0.6423,
+      "value": 0.6501
+     },
+     "raw_ratio": {
+      "hi": 0.4207,
+      "hi1": 0.419,
+      "lo": 0.401,
+      "lo1": 0.4026,
+      "value": 0.4107
+     },
+     "top1_baseline": 0.8488,
+     "top1_gap": 0.0872,
+     "top1_system": 0.936
+    },
+    "T9_vs_half_split": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 28.9476,
+       "confirming_charge": 6.5196,
+       "effort": 22.428,
+       "probing": 17.5992,
+       "unsoldering": 4.8288
+      },
+      "system": {
+       "confirmed_effort": 19.3622,
+       "confirming_charge": 9.7768,
+       "effort": 9.5854,
+       "probing": 9.4022,
+       "unsoldering": 0.1832
+      }
+     },
+     "ratio": {
+      "hi": 0.6786,
+      "hi1": 0.6773,
+      "lo": 0.659,
+      "lo1": 0.6609,
+      "value": 0.6689
+     },
+     "raw_ratio": {
+      "hi": 0.4378,
+      "hi1": 0.4362,
+      "lo": 0.4173,
+      "lo1": 0.419,
+      "value": 0.4274
+     },
+     "top1_baseline": 0.8736,
+     "top1_gap": 0.0624,
+     "top1_system": 0.936
+    }
+   },
+   "scope_half": {
+    "T10_vs_random": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 23.4894,
+       "confirming_charge": 9.9476,
+       "effort": 13.5418,
+       "probing": 13.5418,
+       "unsoldering": 0.0
+      },
+      "system": {
+       "confirmed_effort": 14.6476,
+       "confirming_charge": 9.7916,
+       "effort": 4.856,
+       "probing": 4.7432,
+       "unsoldering": 0.1128
+      }
+     },
+     "ratio": {
+      "hi": 0.6322,
+      "hi1": 0.6305,
+      "lo": 0.6153,
+      "lo1": 0.6165,
+      "value": 0.6236
+     },
+     "raw_ratio": {
+      "hi": 0.367,
+      "hi1": 0.3662,
+      "lo": 0.3501,
+      "lo1": 0.3511,
+      "value": 0.3586
+     },
+     "top1_baseline": 0.9166,
+     "top1_gap": 0.026,
+     "top1_system": 0.9426
+    },
+    "T11_complaint": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 14.6476,
+       "confirming_charge": 9.7916,
+       "effort": 4.856,
+       "probing": 4.7432,
+       "unsoldering": 0.1128
+      },
+      "system": {
+       "confirmed_effort": 14.2382,
+       "confirming_charge": 9.7944,
+       "effort": 4.4438,
+       "probing": 4.333,
+       "unsoldering": 0.1108
+      }
+     },
+     "ratio": {
+      "hi": 0.9776,
+      "hi1": 0.9768,
+      "lo": 0.9665,
+      "lo1": 0.9674,
+      "value": 0.9721
+     },
+     "raw_ratio": {
+      "hi": 0.9265,
+      "hi1": 0.9249,
+      "lo": 0.9039,
+      "lo1": 0.9055,
+      "value": 0.9151
+     },
+     "top1_baseline": 0.9426,
+     "top1_gap": -0.0026,
+     "top1_system": 0.94
+    },
+    "T8_vs_fixed_order": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 24.1669,
+       "confirming_charge": 5.808,
+       "effort": 18.3589,
+       "probing": 12.3781,
+       "unsoldering": 5.9808
+      },
+      "system": {
+       "confirmed_effort": 14.6476,
+       "confirming_charge": 9.7916,
+       "effort": 4.856,
+       "probing": 4.7432,
+       "unsoldering": 0.1128
+      }
+     },
+     "ratio": {
+      "hi": 0.6148,
+      "hi1": 0.6133,
+      "lo": 0.5978,
+      "lo1": 0.5991,
+      "value": 0.6061
+     },
+     "raw_ratio": {
+      "hi": 0.2706,
+      "hi1": 0.2695,
+      "lo": 0.2585,
+      "lo1": 0.2596,
+      "value": 0.2645
+     },
+     "top1_baseline": 0.9018,
+     "top1_gap": 0.0408,
+     "top1_system": 0.9426
+    },
+    "T9_vs_half_split": {
+     "accuracy_condition": true,
+     "n": 5000,
+     "parts": {
+      "baseline": {
+       "confirmed_effort": 23.1389,
+       "confirming_charge": 6.0944,
+       "effort": 17.0445,
+       "probing": 11.6513,
+       "unsoldering": 5.3932
+      },
+      "system": {
+       "confirmed_effort": 14.6476,
+       "confirming_charge": 9.7916,
+       "effort": 4.856,
+       "probing": 4.7432,
+       "unsoldering": 0.1128
+      }
+     },
+     "ratio": {
+      "hi": 0.6418,
+      "hi1": 0.6404,
+      "lo": 0.6248,
+      "lo1": 0.6258,
+      "value": 0.633
+     },
+     "raw_ratio": {
+      "hi": 0.2915,
+      "hi1": 0.2903,
+      "lo": 0.2786,
+      "lo1": 0.2797,
+      "value": 0.2849
+     },
+     "top1_baseline": 0.9098,
+     "top1_gap": 0.0328,
+     "top1_system": 0.9426
+    }
+   }
+  },
+  "good_parts_lifted_per_case": {
+   "engine_gen": 0.008,
+   "hybrid": 0.0076
+  },
+  "mc_draws_ablation": {
+   "100": {
+    "mean_cost": 6.449,
+    "top1": 0.9588
+   },
+   "200": {
+    "mean_cost": 6.3648,
+    "top1": 0.956
+   },
+   "400": {
+    "mean_cost": 6.3172,
+    "top1": 0.9572
+   },
+   "50": {
+    "mean_cost": 6.4338,
+    "top1": 0.9556
+   }
+  },
+  "mean_true_group_size": {
+   "channel_strip": 1.3224,
+   "driver": 1.2,
+   "opamp": 1.58,
+   "psu": 1.362,
+   "tone": 1.516,
+   "triode": 1.106
+  },
+  "systems": {
+   "engine_disc": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 12.6004,
+      "n": 2500,
+      "top1": 0.9252
+     },
+     "driver": {
+      "mean_cost": 4.106,
+      "n": 500,
+      "top1": 0.968
+     },
+     "opamp": {
+      "mean_cost": 4.324,
+      "n": 500,
+      "top1": 0.99
+     },
+     "psu": {
+      "mean_cost": 10.31,
+      "n": 500,
+      "top1": 0.894
+     },
+     "tone": {
+      "mean_cost": 6.03,
+      "n": 500,
+      "top1": 0.976
+     },
+     "triode": {
+      "mean_cost": 7.242,
+      "n": 500,
+      "top1": 0.978
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 9.718,
+      "hi1": 9.681,
+      "lo": 9.275,
+      "lo1": 9.312,
+      "value": 9.501
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9496,
+      "hi1": 0.9486,
+      "lo": 0.9366,
+      "lo1": 0.9378,
+      "value": 0.9432
+     },
+     "top3": 0.99
+    }
+   },
+   "engine_eig_nocost": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 11.714,
+      "n": 2500,
+      "top1": 0.8288
+     },
+     "driver": {
+      "mean_cost": 3.992,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 6.83,
+      "n": 500,
+      "top1": 0.99
+     },
+     "psu": {
+      "mean_cost": 14.898,
+      "n": 500,
+      "top1": 0.734
+     },
+     "tone": {
+      "mean_cost": 5.882,
+      "n": 500,
+      "top1": 1.0
+     },
+     "triode": {
+      "mean_cost": 9.442,
+      "n": 500,
+      "top1": 0.952
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 10.147,
+      "hi1": 10.118,
+      "lo": 9.772,
+      "lo1": 9.807,
+      "value": 9.961
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.888,
+      "hi1": 0.8866,
+      "lo": 0.8698,
+      "lo1": 0.8712,
+      "value": 0.8792
+     },
+     "top3": 0.9868
+    }
+   },
+   "engine_gen": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 7.164,
+      "n": 2500,
+      "top1": 0.9452
+     },
+     "driver": {
+      "mean_cost": 3.268,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 3.636,
+      "n": 500,
+      "top1": 0.996
+     },
+     "psu": {
+      "mean_cost": 8.068,
+      "n": 500,
+      "top1": 0.908
+     },
+     "tone": {
+      "mean_cost": 5.79,
+      "n": 500,
+      "top1": 0.988
+     },
+     "triode": {
+      "mean_cost": 6.59,
+      "n": 500,
+      "top1": 0.982
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 6.454,
+      "hi1": 6.427,
+      "lo": 6.178,
+      "lo1": 6.203,
+      "value": 6.317
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9626,
+      "hi1": 0.962,
+      "lo": 0.9514,
+      "lo1": 0.9524,
+      "value": 0.9572
+     },
+     "top3": 0.9968
+    }
+   },
+   "engine_gen_w_hv_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 7.3356,
+      "n": 2500,
+      "top1": 0.942
+     },
+     "driver": {
+      "mean_cost": 3.268,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 3.636,
+      "n": 500,
+      "top1": 0.996
+     },
+     "psu": {
+      "mean_cost": 10.764,
+      "n": 500,
+      "top1": 0.898
+     },
+     "tone": {
+      "mean_cost": 5.79,
+      "n": 500,
+      "top1": 0.988
+     },
+     "triode": {
+      "mean_cost": 9.4,
+      "n": 500,
+      "top1": 0.958
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 7.106,
+      "hi1": 7.084,
+      "lo": 6.796,
+      "lo1": 6.821,
+      "value": 6.954
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.958,
+      "hi1": 0.957,
+      "lo": 0.9464,
+      "lo1": 0.9472,
+      "value": 0.9522
+     },
+     "top3": 0.9966
+    }
+   },
+   "engine_gen_w_hv_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 6.9944,
+      "n": 2500,
+      "top1": 0.9488
+     },
+     "driver": {
+      "mean_cost": 3.268,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 3.636,
+      "n": 500,
+      "top1": 0.996
+     },
+     "psu": {
+      "mean_cost": 6.698,
+      "n": 500,
+      "top1": 0.908
+     },
+     "tone": {
+      "mean_cost": 5.79,
+      "n": 500,
+      "top1": 0.988
+     },
+     "triode": {
+      "mean_cost": 5.354,
+      "n": 500,
+      "top1": 0.988
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 6.1,
+      "hi1": 6.08,
+      "lo": 5.839,
+      "lo1": 5.866,
+      "value": 5.972
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9648,
+      "hi1": 0.964,
+      "lo": 0.954,
+      "lo1": 0.9548,
+      "value": 0.9596
+     },
+     "top3": 0.9966
+    }
+   },
+   "engine_gen_w_lift_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 7.2044,
+      "n": 2500,
+      "top1": 0.9456
+     },
+     "driver": {
+      "mean_cost": 3.268,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 3.72,
+      "n": 500,
+      "top1": 0.996
+     },
+     "psu": {
+      "mean_cost": 8.062,
+      "n": 500,
+      "top1": 0.906
+     },
+     "tone": {
+      "mean_cost": 5.856,
+      "n": 500,
+      "top1": 0.988
+     },
+     "triode": {
+      "mean_cost": 6.59,
+      "n": 500,
+      "top1": 0.982
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 6.488,
+      "hi1": 6.463,
+      "lo": 6.212,
+      "lo1": 6.237,
+      "value": 6.352
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9626,
+      "hi1": 0.962,
+      "lo": 0.9514,
+      "lo1": 0.9524,
+      "value": 0.9572
+     },
+     "top3": 0.9968
+    }
+   },
+   "engine_gen_w_lift_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 7.1464,
+      "n": 2500,
+      "top1": 0.9428
+     },
+     "driver": {
+      "mean_cost": 3.268,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 3.806,
+      "n": 500,
+      "top1": 0.996
+     },
+     "psu": {
+      "mean_cost": 8.222,
+      "n": 500,
+      "top1": 0.902
+     },
+     "tone": {
+      "mean_cost": 5.77,
+      "n": 500,
+      "top1": 0.988
+     },
+     "triode": {
+      "mean_cost": 6.584,
+      "n": 500,
+      "top1": 0.982
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 6.477,
+      "hi1": 6.452,
+      "lo": 6.201,
+      "lo1": 6.219,
+      "value": 6.338
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9608,
+      "hi1": 0.9602,
+      "lo": 0.9496,
+      "lo1": 0.9504,
+      "value": 0.9554
+     },
+     "top3": 0.9962
+    }
+   },
+   "engine_gen_w_scope_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 10.2384,
+      "n": 2500,
+      "top1": 0.9412
+     },
+     "driver": {
+      "mean_cost": 4.444,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 5.846,
+      "n": 500,
+      "top1": 0.984
+     },
+     "psu": {
+      "mean_cost": 9.402,
+      "n": 500,
+      "top1": 0.882
+     },
+     "tone": {
+      "mean_cost": 16.852,
+      "n": 500,
+      "top1": 0.824
+     },
+     "triode": {
+      "mean_cost": 8.118,
+      "n": 500,
+      "top1": 0.992
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 9.816,
+      "hi1": 9.788,
+      "lo": 9.354,
+      "lo1": 9.388,
+      "value": 9.585
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9424,
+      "hi1": 0.9414,
+      "lo": 0.929,
+      "lo1": 0.9302,
+      "value": 0.936
+     },
+     "top3": 0.9902
+    }
+   },
+   "engine_gen_w_scope_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 5.2592,
+      "n": 2500,
+      "top1": 0.9236
+     },
+     "driver": {
+      "mean_cost": 2.648,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 2.805,
+      "n": 500,
+      "top1": 0.988
+     },
+     "psu": {
+      "mean_cost": 8.125,
+      "n": 500,
+      "top1": 0.892
+     },
+     "tone": {
+      "mean_cost": 2.945,
+      "n": 500,
+      "top1": 0.998
+     },
+     "triode": {
+      "mean_cost": 5.741,
+      "n": 500,
+      "top1": 0.958
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 4.951,
+      "hi1": 4.936,
+      "lo": 4.759,
+      "lo1": 4.775,
+      "value": 4.856
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.949,
+      "hi1": 0.948,
+      "lo": 0.936,
+      "lo1": 0.9372,
+      "value": 0.9426
+     },
+     "top3": 0.9922
+    }
+   },
+   "engine_n100": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 7.2668,
+      "n": 2500,
+      "top1": 0.9504
+     },
+     "driver": {
+      "mean_cost": 3.448,
+      "n": 500,
+      "top1": 0.976
+     },
+     "opamp": {
+      "mean_cost": 3.764,
+      "n": 500,
+      "top1": 0.992
+     },
+     "psu": {
+      "mean_cost": 8.188,
+      "n": 500,
+      "top1": 0.898
+     },
+     "tone": {
+      "mean_cost": 5.766,
+      "n": 500,
+      "top1": 0.988
+     },
+     "triode": {
+      "mean_cost": 6.99,
+      "n": 500,
+      "top1": 0.982
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 6.589,
+      "hi1": 6.565,
+      "lo": 6.305,
+      "lo1": 6.33,
+      "value": 6.449
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.964,
+      "hi1": 0.963,
+      "lo": 0.953,
+      "lo1": 0.9538,
+      "value": 0.9588
+     },
+     "top3": 0.996
+    }
+   },
+   "engine_n200": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 7.19,
+      "n": 2500,
+      "top1": 0.946
+     },
+     "driver": {
+      "mean_cost": 3.398,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 3.674,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 8.16,
+      "n": 500,
+      "top1": 0.898
+     },
+     "tone": {
+      "mean_cost": 5.67,
+      "n": 500,
+      "top1": 0.988
+     },
+     "triode": {
+      "mean_cost": 6.796,
+      "n": 500,
+      "top1": 0.976
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 6.502,
+      "hi1": 6.479,
+      "lo": 6.224,
+      "lo1": 6.249,
+      "value": 6.365
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9616,
+      "hi1": 0.9604,
+      "lo": 0.9502,
+      "lo1": 0.9512,
+      "value": 0.956
+     },
+     "top3": 0.9964
+    }
+   },
+   "engine_n50": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 7.2664,
+      "n": 2500,
+      "top1": 0.9492
+     },
+     "driver": {
+      "mean_cost": 3.442,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 3.646,
+      "n": 500,
+      "top1": 0.992
+     },
+     "psu": {
+      "mean_cost": 8.202,
+      "n": 500,
+      "top1": 0.886
+     },
+     "tone": {
+      "mean_cost": 5.758,
+      "n": 500,
+      "top1": 0.986
+     },
+     "triode": {
+      "mean_cost": 6.958,
+      "n": 500,
+      "top1": 0.974
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 6.575,
+      "hi1": 6.55,
+      "lo": 6.297,
+      "lo1": 6.317,
+      "value": 6.434
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9612,
+      "hi1": 0.9602,
+      "lo": 0.9494,
+      "lo1": 0.9506,
+      "value": 0.9556
+     },
+     "top3": 0.9952
+    }
+   },
+   "fixed_order": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 25.2904,
+      "n": 2500,
+      "top1": 0.7896
+     },
+     "driver": {
+      "mean_cost": 15.746,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 9.008,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 14.61,
+      "n": 500,
+      "top1": 0.922
+     },
+     "tone": {
+      "mean_cost": 15.598,
+      "n": 500,
+      "top1": 0.994
+     },
+     "triode": {
+      "mean_cost": 21.602,
+      "n": 500,
+      "top1": 0.936
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 20.629,
+      "hi1": 20.582,
+      "lo": 19.959,
+      "lo1": 20.019,
+      "value": 20.302
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8858,
+      "hi1": 0.8842,
+      "lo": 0.8674,
+      "lo1": 0.8688,
+      "value": 0.8766
+     },
+     "top3": 0.935
+    }
+   },
+   "fixed_order_w_hv_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 28.66,
+      "n": 2500,
+      "top1": 0.772
+     },
+     "driver": {
+      "mean_cost": 15.746,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 9.008,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 16.964,
+      "n": 500,
+      "top1": 0.852
+     },
+     "tone": {
+      "mean_cost": 15.598,
+      "n": 500,
+      "top1": 0.994
+     },
+     "triode": {
+      "mean_cost": 24.382,
+      "n": 500,
+      "top1": 0.944
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 22.834,
+      "hi1": 22.782,
+      "lo": 22.153,
+      "lo1": 22.207,
+      "value": 22.5
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8712,
+      "hi1": 0.8696,
+      "lo": 0.8518,
+      "lo1": 0.8534,
+      "value": 0.8616
+     },
+     "top3": 0.9212
+    }
+   },
+   "fixed_order_w_hv_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 23.3608,
+      "n": 2500,
+      "top1": 0.7988
+     },
+     "driver": {
+      "mean_cost": 15.746,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 9.008,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 13.032,
+      "n": 500,
+      "top1": 0.922
+     },
+     "tone": {
+      "mean_cost": 15.598,
+      "n": 500,
+      "top1": 0.994
+     },
+     "triode": {
+      "mean_cost": 19.976,
+      "n": 500,
+      "top1": 0.95
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 19.344,
+      "hi1": 19.295,
+      "lo": 18.683,
+      "lo1": 18.736,
+      "value": 19.016
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8912,
+      "hi1": 0.8898,
+      "lo": 0.8738,
+      "lo1": 0.8748,
+      "value": 0.8826
+     },
+     "top3": 0.9442
+    }
+   },
+   "fixed_order_w_lift_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 27.7928,
+      "n": 2500,
+      "top1": 0.7852
+     },
+     "driver": {
+      "mean_cost": 19.592,
+      "n": 500,
+      "top1": 0.958
+     },
+     "opamp": {
+      "mean_cost": 11.986,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 17.864,
+      "n": 500,
+      "top1": 0.922
+     },
+     "tone": {
+      "mean_cost": 21.096,
+      "n": 500,
+      "top1": 0.99
+     },
+     "triode": {
+      "mean_cost": 28.23,
+      "n": 500,
+      "top1": 0.944
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 24.114,
+      "hi1": 24.063,
+      "lo": 23.415,
+      "lo1": 23.473,
+      "value": 23.773
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8826,
+      "hi1": 0.881,
+      "lo": 0.8642,
+      "lo1": 0.8654,
+      "value": 0.8734
+     },
+     "top3": 0.9358
+    }
+   },
+   "fixed_order_w_lift_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 23.3976,
+      "n": 2500,
+      "top1": 0.7936
+     },
+     "driver": {
+      "mean_cost": 13.07,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 7.228,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 12.476,
+      "n": 500,
+      "top1": 0.922
+     },
+     "tone": {
+      "mean_cost": 11.034,
+      "n": 500,
+      "top1": 0.994
+     },
+     "triode": {
+      "mean_cost": 16.42,
+      "n": 500,
+      "top1": 0.956
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 18.049,
+      "hi1": 17.993,
+      "lo": 17.393,
+      "lo1": 17.444,
+      "value": 17.722
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.89,
+      "hi1": 0.8882,
+      "lo": 0.8718,
+      "lo1": 0.873,
+      "value": 0.8808
+     },
+     "top3": 0.9362
+    }
+   },
+   "fixed_order_w_scope_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 26.696,
+      "n": 2500,
+      "top1": 0.7612
+     },
+     "driver": {
+      "mean_cost": 23.07,
+      "n": 500,
+      "top1": 0.944
+     },
+     "opamp": {
+      "mean_cost": 12.874,
+      "n": 500,
+      "top1": 0.982
+     },
+     "psu": {
+      "mean_cost": 15.296,
+      "n": 500,
+      "top1": 0.852
+     },
+     "tone": {
+      "mean_cost": 21.268,
+      "n": 500,
+      "top1": 0.978
+     },
+     "triode": {
+      "mean_cost": 27.414,
+      "n": 500,
+      "top1": 0.926
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 23.687,
+      "hi1": 23.627,
+      "lo": 22.986,
+      "lo1": 23.039,
+      "value": 23.34
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8584,
+      "hi1": 0.857,
+      "lo": 0.8388,
+      "lo1": 0.8404,
+      "value": 0.8488
+     },
+     "top3": 0.9164
+    }
+   },
+   "fixed_order_w_scope_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 24.0714,
+      "n": 2500,
+      "top1": 0.8364
+     },
+     "driver": {
+      "mean_cost": 11.533,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 6.938,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 13.831,
+      "n": 500,
+      "top1": 0.922
+     },
+     "tone": {
+      "mean_cost": 12.673,
+      "n": 500,
+      "top1": 0.994
+     },
+     "triode": {
+      "mean_cost": 18.257,
+      "n": 500,
+      "top1": 0.952
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 18.676,
+      "hi1": 18.632,
+      "lo": 18.03,
+      "lo1": 18.081,
+      "value": 18.359
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9098,
+      "hi1": 0.9086,
+      "lo": 0.8936,
+      "lo1": 0.895,
+      "value": 0.9018
+     },
+     "top3": 0.9512
+    }
+   },
+   "half_split": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 23.79,
+      "n": 2500,
+      "top1": 0.8396
+     },
+     "driver": {
+      "mean_cost": 13.902,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 8.156,
+      "n": 500,
+      "top1": 0.998
+     },
+     "psu": {
+      "mean_cost": 14.062,
+      "n": 500,
+      "top1": 0.92
+     },
+     "tone": {
+      "mean_cost": 13.794,
+      "n": 500,
+      "top1": 0.998
+     },
+     "triode": {
+      "mean_cost": 21.1,
+      "n": 500,
+      "top1": 0.93
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 19.309,
+      "hi1": 19.264,
+      "lo": 18.68,
+      "lo1": 18.731,
+      "value": 18.996
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.91,
+      "hi1": 0.9086,
+      "lo": 0.8934,
+      "lo1": 0.8948,
+      "value": 0.9018
+     },
+     "top3": 0.9462
+    }
+   },
+   "half_split_w_hv_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 27.8468,
+      "n": 2500,
+      "top1": 0.8356
+     },
+     "driver": {
+      "mean_cost": 13.902,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 8.156,
+      "n": 500,
+      "top1": 0.998
+     },
+     "psu": {
+      "mean_cost": 16.474,
+      "n": 500,
+      "top1": 0.85
+     },
+     "tone": {
+      "mean_cost": 13.794,
+      "n": 500,
+      "top1": 0.998
+     },
+     "triode": {
+      "mean_cost": 24.184,
+      "n": 500,
+      "top1": 0.936
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 21.907,
+      "hi1": 21.856,
+      "lo": 21.228,
+      "lo1": 21.297,
+      "value": 21.574
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9022,
+      "hi1": 0.9002,
+      "lo": 0.8848,
+      "lo1": 0.886,
+      "value": 0.8934
+     },
+     "top3": 0.9378
+    }
+   },
+   "half_split_w_hv_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 21.63,
+      "n": 2500,
+      "top1": 0.8412
+     },
+     "driver": {
+      "mean_cost": 13.902,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 8.156,
+      "n": 500,
+      "top1": 0.998
+     },
+     "psu": {
+      "mean_cost": 12.474,
+      "n": 500,
+      "top1": 0.92
+     },
+     "tone": {
+      "mean_cost": 13.794,
+      "n": 500,
+      "top1": 0.998
+     },
+     "triode": {
+      "mean_cost": 19.344,
+      "n": 500,
+      "top1": 0.94
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 17.888,
+      "hi1": 17.839,
+      "lo": 17.275,
+      "lo1": 17.317,
+      "value": 17.582
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9118,
+      "hi1": 0.9104,
+      "lo": 0.8954,
+      "lo1": 0.8968,
+      "value": 0.9036
+     },
+     "top3": 0.9468
+    }
+   },
+   "half_split_w_lift_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 26.6396,
+      "n": 2500,
+      "top1": 0.8324
+     },
+     "driver": {
+      "mean_cost": 17.764,
+      "n": 500,
+      "top1": 0.966
+     },
+     "opamp": {
+      "mean_cost": 11.118,
+      "n": 500,
+      "top1": 0.998
+     },
+     "psu": {
+      "mean_cost": 16.958,
+      "n": 500,
+      "top1": 0.92
+     },
+     "tone": {
+      "mean_cost": 18.686,
+      "n": 500,
+      "top1": 0.996
+     },
+     "triode": {
+      "mean_cost": 27.598,
+      "n": 500,
+      "top1": 0.936
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 22.874,
+      "hi1": 22.819,
+      "lo": 22.175,
+      "lo1": 22.238,
+      "value": 22.532
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.906,
+      "hi1": 0.9048,
+      "lo": 0.8894,
+      "lo1": 0.8906,
+      "value": 0.8978
+     },
+     "top3": 0.9462
+    }
+   },
+   "half_split_w_lift_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 21.6816,
+      "n": 2500,
+      "top1": 0.8424
+     },
+     "driver": {
+      "mean_cost": 11.54,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 6.476,
+      "n": 500,
+      "top1": 0.998
+     },
+     "psu": {
+      "mean_cost": 12.218,
+      "n": 500,
+      "top1": 0.92
+     },
+     "tone": {
+      "mean_cost": 10.194,
+      "n": 500,
+      "top1": 0.998
+     },
+     "triode": {
+      "mean_cost": 16.302,
+      "n": 500,
+      "top1": 0.944
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 16.81,
+      "hi1": 16.764,
+      "lo": 16.216,
+      "lo1": 16.267,
+      "value": 16.514
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.913,
+      "hi1": 0.9116,
+      "lo": 0.8966,
+      "lo1": 0.8976,
+      "value": 0.9046
+     },
+     "top3": 0.9464
+    }
+   },
+   "half_split_w_scope_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 26.0744,
+      "n": 2500,
+      "top1": 0.8116
+     },
+     "driver": {
+      "mean_cost": 20.808,
+      "n": 500,
+      "top1": 0.944
+     },
+     "opamp": {
+      "mean_cost": 11.506,
+      "n": 500,
+      "top1": 0.988
+     },
+     "psu": {
+      "mean_cost": 14.762,
+      "n": 500,
+      "top1": 0.85
+     },
+     "tone": {
+      "mean_cost": 19.58,
+      "n": 500,
+      "top1": 0.982
+     },
+     "triode": {
+      "mean_cost": 27.252,
+      "n": 500,
+      "top1": 0.914
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 22.763,
+      "hi1": 22.712,
+      "lo": 22.079,
+      "lo1": 22.133,
+      "value": 22.428
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8828,
+      "hi1": 0.8808,
+      "lo": 0.8642,
+      "lo1": 0.8658,
+      "value": 0.8736
+     },
+     "top3": 0.9322
+    }
+   },
+   "half_split_w_scope_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 22.4172,
+      "n": 2500,
+      "top1": 0.8536
+     },
+     "driver": {
+      "mean_cost": 10.254,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 6.416,
+      "n": 500,
+      "top1": 0.998
+     },
+     "psu": {
+      "mean_cost": 13.254,
+      "n": 500,
+      "top1": 0.92
+     },
+     "tone": {
+      "mean_cost": 10.782,
+      "n": 500,
+      "top1": 0.998
+     },
+     "triode": {
+      "mean_cost": 17.653,
+      "n": 500,
+      "top1": 0.94
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 17.354,
+      "hi1": 17.307,
+      "lo": 16.734,
+      "lo1": 16.785,
+      "value": 17.044
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9176,
+      "hi1": 0.9164,
+      "lo": 0.902,
+      "lo1": 0.9034,
+      "value": 0.9098
+     },
+     "top3": 0.9518
+    }
+   },
+   "hybrid": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 6.222,
+      "n": 2500,
+      "top1": 0.9624
+     },
+     "driver": {
+      "mean_cost": 3.002,
+      "n": 500,
+      "top1": 0.966
+     },
+     "opamp": {
+      "mean_cost": 3.63,
+      "n": 500,
+      "top1": 0.984
+     },
+     "psu": {
+      "mean_cost": 8.58,
+      "n": 500,
+      "top1": 0.854
+     },
+     "tone": {
+      "mean_cost": 5.256,
+      "n": 500,
+      "top1": 0.934
+     },
+     "triode": {
+      "mean_cost": 5.814,
+      "n": 500,
+      "top1": 0.976
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 5.867,
+      "hi1": 5.85,
+      "lo": 5.609,
+      "lo1": 5.631,
+      "value": 5.739
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9582,
+      "hi1": 0.9572,
+      "lo": 0.9464,
+      "lo1": 0.9474,
+      "value": 0.9526
+     },
+     "top3": 0.9948
+    }
+   },
+   "hybrid_bank_b": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 6.1912,
+      "n": 2500,
+      "top1": 0.9648
+     },
+     "driver": {
+      "mean_cost": 2.954,
+      "n": 500,
+      "top1": 0.968
+     },
+     "opamp": {
+      "mean_cost": 3.618,
+      "n": 500,
+      "top1": 0.984
+     },
+     "psu": {
+      "mean_cost": 8.666,
+      "n": 500,
+      "top1": 0.85
+     },
+     "tone": {
+      "mean_cost": 5.238,
+      "n": 500,
+      "top1": 0.948
+     },
+     "triode": {
+      "mean_cost": 5.8,
+      "n": 500,
+      "top1": 0.98
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 5.858,
+      "hi1": 5.833,
+      "lo": 5.597,
+      "lo1": 5.613,
+      "value": 5.723
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.961,
+      "hi1": 0.9602,
+      "lo": 0.9496,
+      "lo1": 0.9504,
+      "value": 0.9554
+     },
+     "top3": 0.9946
+    }
+   },
+   "hybrid_clean": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 6.0732,
+      "n": 2500,
+      "top1": 0.9712
+     },
+     "driver": {
+      "mean_cost": 2.97,
+      "n": 500,
+      "top1": 0.972
+     },
+     "opamp": {
+      "mean_cost": 3.386,
+      "n": 500,
+      "top1": 0.984
+     },
+     "psu": {
+      "mean_cost": 8.54,
+      "n": 500,
+      "top1": 0.874
+     },
+     "tone": {
+      "mean_cost": 4.974,
+      "n": 500,
+      "top1": 0.966
+     },
+     "triode": {
+      "mean_cost": 5.73,
+      "n": 500,
+      "top1": 0.99
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 5.725,
+      "hi1": 5.705,
+      "lo": 5.477,
+      "lo1": 5.492,
+      "value": 5.597
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9692,
+      "hi1": 0.9684,
+      "lo": 0.959,
+      "lo1": 0.9598,
+      "value": 0.9642
+     },
+     "top3": 0.998
+    }
+   },
+   "hybrid_devbank": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 5.2272,
+      "n": 2500,
+      "top1": 0.972
+     },
+     "driver": {
+      "mean_cost": 2.666,
+      "n": 500,
+      "top1": 0.964
+     },
+     "opamp": {
+      "mean_cost": 3.442,
+      "n": 500,
+      "top1": 0.974
+     },
+     "psu": {
+      "mean_cost": 8.418,
+      "n": 500,
+      "top1": 0.852
+     },
+     "tone": {
+      "mean_cost": 4.73,
+      "n": 500,
+      "top1": 0.938
+     },
+     "triode": {
+      "mean_cost": 4.704,
+      "n": 500,
+      "top1": 0.992
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 5.13,
+      "hi1": 5.108,
+      "lo": 4.893,
+      "lo1": 4.912,
+      "value": 5.01
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9634,
+      "hi1": 0.9626,
+      "lo": 0.9522,
+      "lo1": 0.9532,
+      "value": 0.958
+     },
+     "top3": 0.9938
+    }
+   },
+   "hybrid_oracle": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 4.7952,
+      "n": 2500,
+      "top1": 0.9828
+     },
+     "driver": {
+      "mean_cost": 2.56,
+      "n": 500,
+      "top1": 0.968
+     },
+     "opamp": {
+      "mean_cost": 3.278,
+      "n": 500,
+      "top1": 0.982
+     },
+     "psu": {
+      "mean_cost": 8.306,
+      "n": 500,
+      "top1": 0.866
+     },
+     "tone": {
+      "mean_cost": 4.41,
+      "n": 500,
+      "top1": 0.952
+     },
+     "triode": {
+      "mean_cost": 4.358,
+      "n": 500,
+      "top1": 0.994
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 4.808,
+      "hi1": 4.788,
+      "lo": 4.58,
+      "lo1": 4.595,
+      "value": 4.689
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9722,
+      "hi1": 0.9714,
+      "lo": 0.9624,
+      "lo1": 0.9632,
+      "value": 0.9676
+     },
+     "top3": 0.9986
+    }
+   },
+   "hybrid_w_hv_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 6.4104,
+      "n": 2500,
+      "top1": 0.9588
+     },
+     "driver": {
+      "mean_cost": 3.002,
+      "n": 500,
+      "top1": 0.966
+     },
+     "opamp": {
+      "mean_cost": 3.63,
+      "n": 500,
+      "top1": 0.984
+     },
+     "psu": {
+      "mean_cost": 11.524,
+      "n": 500,
+      "top1": 0.844
+     },
+     "tone": {
+      "mean_cost": 5.256,
+      "n": 500,
+      "top1": 0.934
+     },
+     "triode": {
+      "mean_cost": 8.106,
+      "n": 500,
+      "top1": 0.962
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 6.507,
+      "hi1": 6.487,
+      "lo": 6.209,
+      "lo1": 6.23,
+      "value": 6.357
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9542,
+      "hi1": 0.9532,
+      "lo": 0.9418,
+      "lo1": 0.9428,
+      "value": 0.9484
+     },
+     "top3": 0.9946
+    }
+   },
+   "hybrid_w_hv_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 6.0448,
+      "n": 2500,
+      "top1": 0.9648
+     },
+     "driver": {
+      "mean_cost": 3.002,
+      "n": 500,
+      "top1": 0.966
+     },
+     "opamp": {
+      "mean_cost": 3.63,
+      "n": 500,
+      "top1": 0.984
+     },
+     "psu": {
+      "mean_cost": 7.128,
+      "n": 500,
+      "top1": 0.87
+     },
+     "tone": {
+      "mean_cost": 5.256,
+      "n": 500,
+      "top1": 0.934
+     },
+     "triode": {
+      "mean_cost": 4.744,
+      "n": 500,
+      "top1": 0.984
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 5.521,
+      "hi1": 5.502,
+      "lo": 5.281,
+      "lo1": 5.295,
+      "value": 5.398
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9616,
+      "hi1": 0.9606,
+      "lo": 0.9504,
+      "lo1": 0.9512,
+      "value": 0.9562
+     },
+     "top3": 0.9944
+    }
+   },
+   "hybrid_w_lift_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 6.2596,
+      "n": 2500,
+      "top1": 0.9628
+     },
+     "driver": {
+      "mean_cost": 3.002,
+      "n": 500,
+      "top1": 0.966
+     },
+     "opamp": {
+      "mean_cost": 3.734,
+      "n": 500,
+      "top1": 0.984
+     },
+     "psu": {
+      "mean_cost": 8.534,
+      "n": 500,
+      "top1": 0.852
+     },
+     "tone": {
+      "mean_cost": 5.322,
+      "n": 500,
+      "top1": 0.934
+     },
+     "triode": {
+      "mean_cost": 5.814,
+      "n": 500,
+      "top1": 0.976
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 5.901,
+      "hi1": 5.883,
+      "lo": 5.638,
+      "lo1": 5.66,
+      "value": 5.77
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.958,
+      "hi1": 0.957,
+      "lo": 0.9466,
+      "lo1": 0.9474,
+      "value": 0.9526
+     },
+     "top3": 0.9948
+    }
+   },
+   "hybrid_w_lift_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 6.1984,
+      "n": 2500,
+      "top1": 0.9612
+     },
+     "driver": {
+      "mean_cost": 3.002,
+      "n": 500,
+      "top1": 0.966
+     },
+     "opamp": {
+      "mean_cost": 3.758,
+      "n": 500,
+      "top1": 0.984
+     },
+     "psu": {
+      "mean_cost": 8.48,
+      "n": 500,
+      "top1": 0.85
+     },
+     "tone": {
+      "mean_cost": 5.24,
+      "n": 500,
+      "top1": 0.934
+     },
+     "triode": {
+      "mean_cost": 5.808,
+      "n": 500,
+      "top1": 0.976
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 5.856,
+      "hi1": 5.838,
+      "lo": 5.601,
+      "lo1": 5.621,
+      "value": 5.728
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.957,
+      "hi1": 0.9562,
+      "lo": 0.9454,
+      "lo1": 0.9464,
+      "value": 0.9516
+     },
+     "top3": 0.9944
+    }
+   },
+   "hybrid_w_scope_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 8.7088,
+      "n": 2500,
+      "top1": 0.96
+     },
+     "driver": {
+      "mean_cost": 3.962,
+      "n": 500,
+      "top1": 0.966
+     },
+     "opamp": {
+      "mean_cost": 5.756,
+      "n": 500,
+      "top1": 0.986
+     },
+     "psu": {
+      "mean_cost": 9.224,
+      "n": 500,
+      "top1": 0.868
+     },
+     "tone": {
+      "mean_cost": 11.752,
+      "n": 500,
+      "top1": 0.678
+     },
+     "triode": {
+      "mean_cost": 7.202,
+      "n": 500,
+      "top1": 0.99
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 8.357,
+      "hi1": 8.323,
+      "lo": 7.935,
+      "lo1": 7.973,
+      "value": 8.144
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9354,
+      "hi1": 0.9346,
+      "lo": 0.921,
+      "lo1": 0.9226,
+      "value": 0.9288
+     },
+     "top3": 0.9792
+    }
+   },
+   "hybrid_w_scope_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 4.5882,
+      "n": 2500,
+      "top1": 0.9432
+     },
+     "driver": {
+      "mean_cost": 2.456,
+      "n": 500,
+      "top1": 0.966
+     },
+     "opamp": {
+      "mean_cost": 2.871,
+      "n": 500,
+      "top1": 0.982
+     },
+     "psu": {
+      "mean_cost": 8.459,
+      "n": 500,
+      "top1": 0.794
+     },
+     "tone": {
+      "mean_cost": 2.74,
+      "n": 500,
+      "top1": 0.98
+     },
+     "triode": {
+      "mean_cost": 4.971,
+      "n": 500,
+      "top1": 0.962
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 4.547,
+      "hi1": 4.528,
+      "lo": 4.344,
+      "lo1": 4.361,
+      "value": 4.444
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9462,
+      "hi1": 0.9452,
+      "lo": 0.9332,
+      "lo1": 0.9342,
+      "value": 0.94
+     },
+     "top3": 0.9932
+    }
+   },
+   "random": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 24.6004,
+      "n": 2500,
+      "top1": 0.8104
+     },
+     "driver": {
+      "mean_cost": 9.912,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 9.47,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 16.478,
+      "n": 500,
+      "top1": 0.898
+     },
+     "tone": {
+      "mean_cost": 10.35,
+      "n": 500,
+      "top1": 0.952
+     },
+     "triode": {
+      "mean_cost": 13.408,
+      "n": 500,
+      "top1": 0.97
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 18.591,
+      "hi1": 18.544,
+      "lo": 17.926,
+      "lo1": 17.978,
+      "value": 18.262
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8926,
+      "hi1": 0.8914,
+      "lo": 0.875,
+      "lo1": 0.8764,
+      "value": 0.884
+     },
+     "top3": 0.957
+    }
+   },
+   "random_w_hv_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 26.6188,
+      "n": 2500,
+      "top1": 0.7756
+     },
+     "driver": {
+      "mean_cost": 9.912,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 9.47,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 21.39,
+      "n": 500,
+      "top1": 0.866
+     },
+     "tone": {
+      "mean_cost": 10.35,
+      "n": 500,
+      "top1": 0.952
+     },
+     "triode": {
+      "mean_cost": 18.196,
+      "n": 500,
+      "top1": 0.97
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 20.584,
+      "hi1": 20.532,
+      "lo": 19.893,
+      "lo1": 19.937,
+      "value": 20.241
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8728,
+      "hi1": 0.8712,
+      "lo": 0.8534,
+      "lo1": 0.8548,
+      "value": 0.8634
+     },
+     "top3": 0.945
+    }
+   },
+   "random_w_hv_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 23.3784,
+      "n": 2500,
+      "top1": 0.826
+     },
+     "driver": {
+      "mean_cost": 9.912,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 9.47,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 13.696,
+      "n": 500,
+      "top1": 0.898
+     },
+     "tone": {
+      "mean_cost": 10.35,
+      "n": 500,
+      "top1": 0.952
+     },
+     "triode": {
+      "mean_cost": 10.98,
+      "n": 500,
+      "top1": 0.97
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 17.453,
+      "hi1": 17.408,
+      "lo": 16.801,
+      "lo1": 16.858,
+      "value": 17.13
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9002,
+      "hi1": 0.8988,
+      "lo": 0.883,
+      "lo1": 0.8846,
+      "value": 0.8918
+     },
+     "top3": 0.9624
+    }
+   },
+   "random_w_lift_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 24.6004,
+      "n": 2500,
+      "top1": 0.8104
+     },
+     "driver": {
+      "mean_cost": 9.912,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 9.47,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 16.478,
+      "n": 500,
+      "top1": 0.898
+     },
+     "tone": {
+      "mean_cost": 10.35,
+      "n": 500,
+      "top1": 0.952
+     },
+     "triode": {
+      "mean_cost": 13.408,
+      "n": 500,
+      "top1": 0.97
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 18.591,
+      "hi1": 18.544,
+      "lo": 17.926,
+      "lo1": 17.978,
+      "value": 18.262
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8926,
+      "hi1": 0.8914,
+      "lo": 0.875,
+      "lo1": 0.8764,
+      "value": 0.884
+     },
+     "top3": 0.957
+    }
+   },
+   "random_w_lift_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 24.6004,
+      "n": 2500,
+      "top1": 0.8104
+     },
+     "driver": {
+      "mean_cost": 9.912,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 9.47,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 16.478,
+      "n": 500,
+      "top1": 0.898
+     },
+     "tone": {
+      "mean_cost": 10.35,
+      "n": 500,
+      "top1": 0.952
+     },
+     "triode": {
+      "mean_cost": 13.408,
+      "n": 500,
+      "top1": 0.97
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 18.591,
+      "hi1": 18.544,
+      "lo": 17.926,
+      "lo1": 17.978,
+      "value": 18.262
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8926,
+      "hi1": 0.8914,
+      "lo": 0.875,
+      "lo1": 0.8764,
+      "value": 0.884
+     },
+     "top3": 0.957
+    }
+   },
+   "random_w_scope_double": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 30.8724,
+      "n": 2500,
+      "top1": 0.6756
+     },
+     "driver": {
+      "mean_cost": 17.136,
+      "n": 500,
+      "top1": 0.962
+     },
+     "opamp": {
+      "mean_cost": 16.372,
+      "n": 500,
+      "top1": 0.986
+     },
+     "psu": {
+      "mean_cost": 23.212,
+      "n": 500,
+      "top1": 0.862
+     },
+     "tone": {
+      "mean_cost": 19.296,
+      "n": 500,
+      "top1": 0.952
+     },
+     "triode": {
+      "mean_cost": 20.374,
+      "n": 500,
+      "top1": 0.964
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 25.405,
+      "hi1": 25.344,
+      "lo": 24.734,
+      "lo1": 24.783,
+      "value": 25.075
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.8208,
+      "hi1": 0.8194,
+      "lo": 0.7986,
+      "lo1": 0.801,
+      "value": 0.8104
+     },
+     "top3": 0.9086
+    }
+   },
+   "random_w_scope_half": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 19.1146,
+      "n": 2500,
+      "top1": 0.8756
+     },
+     "driver": {
+      "mean_cost": 5.985,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 5.711,
+      "n": 500,
+      "top1": 0.994
+     },
+     "psu": {
+      "mean_cost": 12.458,
+      "n": 500,
+      "top1": 0.898
+     },
+     "tone": {
+      "mean_cost": 5.877,
+      "n": 500,
+      "top1": 0.952
+     },
+     "triode": {
+      "mean_cost": 9.814,
+      "n": 500,
+      "top1": 0.97
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 13.843,
+      "hi1": 13.796,
+      "lo": 13.235,
+      "lo1": 13.284,
+      "value": 13.542
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.924,
+      "hi1": 0.9228,
+      "lo": 0.909,
+      "lo1": 0.91,
+      "value": 0.9166
+     },
+     "top3": 0.9788
+    }
+   },
+   "recap_prior": {
+    "by_circuit": {
+     "channel_strip": {
+      "mean_cost": 7.2816,
+      "n": 2500,
+      "top1": 0.9436
+     },
+     "driver": {
+      "mean_cost": 3.26,
+      "n": 500,
+      "top1": 0.974
+     },
+     "opamp": {
+      "mean_cost": 4.006,
+      "n": 500,
+      "top1": 0.99
+     },
+     "psu": {
+      "mean_cost": 8.048,
+      "n": 500,
+      "top1": 0.902
+     },
+     "tone": {
+      "mean_cost": 6.282,
+      "n": 500,
+      "top1": 0.978
+     },
+     "triode": {
+      "mean_cost": 6.78,
+      "n": 500,
+      "top1": 0.96
+     }
+    },
+    "pooled": {
+     "mean_cost": {
+      "hi": 6.617,
+      "hi1": 6.592,
+      "lo": 6.347,
+      "lo1": 6.369,
+      "value": 6.478
+     },
+     "n": 5000,
+     "top1": {
+      "hi": 0.9578,
+      "hi1": 0.957,
+      "lo": 0.9462,
+      "lo1": 0.947,
+      "value": 0.9522
+     },
+     "top3": 0.995
+    }
+   }
+  },
+  "top1_by_persona": {
+   "bench_tech": 0.951479,
+   "hobbyist": 0.949969,
+   "studio_client": 0.956314
+  }
+ },
  "bars": {
   "context": {
    "accuracy_weighted": {
@@ -345,6 +3769,15 @@
    "tone": 0.1,
    "triode": 0.1
   }
+ },
+ "evaluation": {
+  "figures": [
+   "fig_accuracy_by_system",
+   "fig_effort_vs_accuracy",
+   "fig_reliability",
+   "fig_unmodeled_roc"
+  ],
+  "seconds": 1302.029158
  },
  "fault_audit": {
   "agree_rate": 1.0,
@@ -1223,6 +4656,46 @@
   "units_hv_circuits": 275,
   "units_with_miss": 0
  },
+ "hv_audit_out_of_catalog_test": {
+  "circuits": {
+   "channel_strip": {
+    "high_voltage_supply": true,
+    "misses": [],
+    "units": 1250
+   },
+   "driver": {
+    "high_voltage_supply": false,
+    "misses": [],
+    "units": 250
+   },
+   "opamp": {
+    "high_voltage_supply": false,
+    "misses": [],
+    "units": 250
+   },
+   "psu": {
+    "high_voltage_supply": true,
+    "misses": [],
+    "units": 250
+   },
+   "tone": {
+    "high_voltage_supply": false,
+    "misses": [],
+    "units": 250
+   },
+   "triode": {
+    "high_voltage_supply": true,
+    "misses": [],
+    "units": 250
+   }
+  },
+  "splits": [
+   "unmodeled_test"
+  ],
+  "units": 2500,
+  "units_hv_circuits": 1750,
+  "units_with_miss": 0
+ },
  "library": {
   "aged": {
    "channel_strip": {
@@ -1734,6 +5207,478 @@
    }
   },
   "total_hypotheses": 506
+ },
+ "llm_only": {
+  "capacitor_share_llm": 0.293333,
+  "capacitor_share_true": 0.306667,
+  "margin": {
+   "hi": 0.253333,
+   "hi1": 0.243333,
+   "lo": 0.143333,
+   "lo1": 0.15,
+   "value": 0.196667
+  },
+  "mcnemar": {
+   "a_only": 71,
+   "b_only": 12,
+   "p_value": 0.0
+  },
+  "mean_cost_hybrid": 5.696667,
+  "mean_cost_llm": 24.266667,
+  "n": 300,
+  "status": "measured",
+  "top1_hybrid": 0.94,
+  "top1_llm": 0.743333
+ },
+ "llm_sim": {
+  "status": "pending: simulate_fault needs the simulation library (data/sim/<circuit>__train.parquet, missing for channel_strip, psu, triode, tone, opamp, driver; run make sim), which is not in git"
+ },
+ "nlp": {
+  "bank_a_seen_once_rules": {
+   "macro_f1": 0.670456,
+   "micro_f1": 0.628349,
+   "n": 5000,
+   "precision": 0.989185,
+   "recall": 0.460403,
+   "recall_by_symptom": {
+    "bass_loss": 0.400794,
+    "bias_drift": 0.228183,
+    "dc_at_output": 0.561983,
+    "distortion": 0.639456,
+    "hum": 0.836834,
+    "low_gain": 0.506831,
+    "no_output": 0.439632,
+    "treble_loss": 0.577181
+   },
+   "support_by_symptom": {
+    "bass_loss": 504,
+    "bias_drift": 1398,
+    "dc_at_output": 121,
+    "distortion": 441,
+    "hum": 619,
+    "low_gain": 732,
+    "no_output": 1847,
+    "treble_loss": 298
+   }
+  },
+  "bank_a_seen_once_rules_by_persona": {
+   "bench_tech": {
+    "macro_f1": 0.619437,
+    "micro_f1": 0.557107,
+    "n": 1690,
+    "precision": 0.962871,
+    "recall": 0.39194,
+    "recall_by_symptom": {
+     "bass_loss": 0.138365,
+     "bias_drift": 0.205882,
+     "dc_at_output": 0.62,
+     "distortion": 0.854015,
+     "hum": 0.834171,
+     "low_gain": 0.307018,
+     "no_output": 0.325077,
+     "treble_loss": 0.711111
+    },
+    "support_by_symptom": {
+     "bass_loss": 159,
+     "bias_drift": 476,
+     "dc_at_output": 50,
+     "distortion": 137,
+     "hum": 199,
+     "low_gain": 228,
+     "no_output": 646,
+     "treble_loss": 90
+    }
+   },
+   "hobbyist": {
+    "macro_f1": 0.664036,
+    "micro_f1": 0.681267,
+    "n": 1639,
+    "precision": 1.0,
+    "recall": 0.516607,
+    "recall_by_symptom": {
+     "bass_loss": 0.494253,
+     "bias_drift": 0.148889,
+     "dc_at_output": 0.74359,
+     "distortion": 0.592357,
+     "hum": 0.848039,
+     "low_gain": 0.586498,
+     "no_output": 0.680135,
+     "treble_loss": 0.196078
+    },
+    "support_by_symptom": {
+     "bass_loss": 174,
+     "bias_drift": 450,
+     "dc_at_output": 39,
+     "distortion": 157,
+     "hum": 204,
+     "low_gain": 237,
+     "no_output": 594,
+     "treble_loss": 102
+    }
+   },
+   "studio_client": {
+    "macro_f1": 0.664962,
+    "micro_f1": 0.642449,
+    "n": 1671,
+    "precision": 1.0,
+    "recall": 0.473241,
+    "recall_by_symptom": {
+     "bass_loss": 0.549708,
+     "bias_drift": 0.326271,
+     "dc_at_output": 0.25,
+     "distortion": 0.489796,
+     "hum": 0.828704,
+     "low_gain": 0.606742,
+     "no_output": 0.326194,
+     "treble_loss": 0.830189
+    },
+    "support_by_symptom": {
+     "bass_loss": 171,
+     "bias_drift": 472,
+     "dc_at_output": 32,
+     "distortion": 147,
+     "hum": 216,
+     "low_gain": 267,
+     "no_output": 607,
+     "treble_loss": 106
+    }
+   }
+  },
+  "bank_b_claude": {
+   "macro_f1": 0.8691,
+   "micro_f1": 0.882916,
+   "n": 5000,
+   "precision": 0.966102,
+   "recall": 0.812919,
+   "recall_by_symptom": {
+    "bass_loss": 1.0,
+    "bias_drift": 0.220315,
+    "dc_at_output": 0.793388,
+    "distortion": 1.0,
+    "hum": 1.0,
+    "low_gain": 1.0,
+    "no_output": 1.0,
+    "treble_loss": 1.0
+   },
+   "support_by_symptom": {
+    "bass_loss": 504,
+    "bias_drift": 1398,
+    "dc_at_output": 121,
+    "distortion": 441,
+    "hum": 619,
+    "low_gain": 732,
+    "no_output": 1847,
+    "treble_loss": 298
+   }
+  },
+  "bank_b_claude_by_persona": {
+   "bench_tech": {
+    "macro_f1": 0.883364,
+    "micro_f1": 0.887267,
+    "n": 1690,
+    "precision": 0.95741,
+    "recall": 0.8267,
+    "recall_by_symptom": {
+     "bass_loss": 1.0,
+     "bias_drift": 0.283613,
+     "dc_at_output": 0.94,
+     "distortion": 1.0,
+     "hum": 1.0,
+     "low_gain": 1.0,
+     "no_output": 1.0,
+     "treble_loss": 1.0
+    },
+    "support_by_symptom": {
+     "bass_loss": 159,
+     "bias_drift": 476,
+     "dc_at_output": 50,
+     "distortion": 137,
+     "hum": 199,
+     "low_gain": 228,
+     "no_output": 646,
+     "treble_loss": 90
+    }
+   },
+   "hobbyist": {
+    "macro_f1": 0.891106,
+    "micro_f1": 0.900826,
+    "n": 1639,
+    "precision": 0.977286,
+    "recall": 0.835462,
+    "recall_by_symptom": {
+     "bass_loss": 1.0,
+     "bias_drift": 0.308889,
+     "dc_at_output": 0.717949,
+     "distortion": 1.0,
+     "hum": 1.0,
+     "low_gain": 1.0,
+     "no_output": 1.0,
+     "treble_loss": 1.0
+    },
+    "support_by_symptom": {
+     "bass_loss": 174,
+     "bias_drift": 450,
+     "dc_at_output": 39,
+     "distortion": 157,
+     "hum": 204,
+     "low_gain": 237,
+     "no_output": 594,
+     "treble_loss": 102
+    }
+   },
+   "studio_client": {
+    "macro_f1": 0.824755,
+    "micro_f1": 0.860669,
+    "n": 1671,
+    "precision": 0.963759,
+    "recall": 0.777502,
+    "recall_by_symptom": {
+     "bass_loss": 1.0,
+     "bias_drift": 0.072034,
+     "dc_at_output": 0.65625,
+     "distortion": 1.0,
+     "hum": 1.0,
+     "low_gain": 1.0,
+     "no_output": 1.0,
+     "treble_loss": 1.0
+    },
+    "support_by_symptom": {
+     "bass_loss": 171,
+     "bias_drift": 472,
+     "dc_at_output": 32,
+     "distortion": 147,
+     "hum": 216,
+     "low_gain": 267,
+     "no_output": 607,
+     "treble_loss": 106
+    }
+   }
+  },
+  "bank_b_rules": {
+   "macro_f1": 0.710622,
+   "micro_f1": 0.705005,
+   "n": 5000,
+   "precision": 0.990884,
+   "recall": 0.547148,
+   "recall_by_symptom": {
+    "bass_loss": 0.511905,
+    "bias_drift": 0.185265,
+    "dc_at_output": 0.644628,
+    "distortion": 0.746032,
+    "hum": 0.966074,
+    "low_gain": 0.605191,
+    "no_output": 0.64104,
+    "treble_loss": 0.375839
+   },
+   "support_by_symptom": {
+    "bass_loss": 504,
+    "bias_drift": 1398,
+    "dc_at_output": 121,
+    "distortion": 441,
+    "hum": 619,
+    "low_gain": 732,
+    "no_output": 1847,
+    "treble_loss": 298
+   }
+  },
+  "bank_b_rules_by_persona": {
+   "bench_tech": {
+    "macro_f1": 0.744121,
+    "micro_f1": 0.710813,
+    "n": 1690,
+    "precision": 0.973707,
+    "recall": 0.559698,
+    "recall_by_symptom": {
+     "bass_loss": 0.484277,
+     "bias_drift": 0.281513,
+     "dc_at_output": 0.64,
+     "distortion": 0.868613,
+     "hum": 1.0,
+     "low_gain": 0.72807,
+     "no_output": 0.529412,
+     "treble_loss": 0.466667
+    },
+    "support_by_symptom": {
+     "bass_loss": 159,
+     "bias_drift": 476,
+     "dc_at_output": 50,
+     "distortion": 137,
+     "hum": 199,
+     "low_gain": 228,
+     "no_output": 646,
+     "treble_loss": 90
+    }
+   },
+   "hobbyist": {
+    "macro_f1": 0.713719,
+    "micro_f1": 0.722168,
+    "n": 1639,
+    "precision": 1.0,
+    "recall": 0.565151,
+    "recall_by_symptom": {
+     "bass_loss": 0.54023,
+     "bias_drift": 0.131111,
+     "dc_at_output": 0.794872,
+     "distortion": 0.611465,
+     "hum": 1.0,
+     "low_gain": 0.49789,
+     "no_output": 0.776094,
+     "treble_loss": 0.421569
+    },
+    "support_by_symptom": {
+     "bass_loss": 174,
+     "bias_drift": 450,
+     "dc_at_output": 39,
+     "distortion": 157,
+     "hum": 204,
+     "low_gain": 237,
+     "no_output": 594,
+     "treble_loss": 102
+    }
+   },
+   "studio_client": {
+    "macro_f1": 0.663036,
+    "micro_f1": 0.681907,
+    "n": 1671,
+    "precision": 1.0,
+    "recall": 0.517344,
+    "recall_by_symptom": {
+     "bass_loss": 0.508772,
+     "bias_drift": 0.139831,
+     "dc_at_output": 0.46875,
+     "distortion": 0.77551,
+     "hum": 0.902778,
+     "low_gain": 0.595506,
+     "no_output": 0.627677,
+     "treble_loss": 0.254717
+    },
+    "support_by_symptom": {
+     "bass_loss": 171,
+     "bias_drift": 472,
+     "dc_at_output": 32,
+     "distortion": 147,
+     "hum": 216,
+     "low_gain": 267,
+     "no_output": 607,
+     "treble_loss": 106
+    }
+   }
+  },
+  "bank_b_texts_with_leakage": 0,
+  "claude_cost_usd": 5.99942,
+  "claude_failures": 0,
+  "claude_model": "claude-sonnet-5-5",
+  "development_rules": {
+   "macro_f1": 0.999658,
+   "micro_f1": 0.999664,
+   "n": 5000,
+   "precision": 1.0,
+   "recall": 0.999329,
+   "recall_by_symptom": {
+    "bass_loss": 1.0,
+    "bias_drift": 1.0,
+    "dc_at_output": 1.0,
+    "distortion": 1.0,
+    "hum": 1.0,
+    "low_gain": 0.994536,
+    "no_output": 1.0,
+    "treble_loss": 1.0
+   },
+   "support_by_symptom": {
+    "bass_loss": 504,
+    "bias_drift": 1398,
+    "dc_at_output": 121,
+    "distortion": 441,
+    "hum": 619,
+    "low_gain": 732,
+    "no_output": 1847,
+    "treble_loss": 298
+   }
+  },
+  "development_rules_by_persona": {
+   "bench_tech": {
+    "macro_f1": 0.998894,
+    "micro_f1": 0.998991,
+    "n": 1690,
+    "precision": 1.0,
+    "recall": 0.997985,
+    "recall_by_symptom": {
+     "bass_loss": 1.0,
+     "bias_drift": 1.0,
+     "dc_at_output": 1.0,
+     "distortion": 1.0,
+     "hum": 1.0,
+     "low_gain": 0.982456,
+     "no_output": 1.0,
+     "treble_loss": 1.0
+    },
+    "support_by_symptom": {
+     "bass_loss": 159,
+     "bias_drift": 476,
+     "dc_at_output": 50,
+     "distortion": 137,
+     "hum": 199,
+     "low_gain": 228,
+     "no_output": 646,
+     "treble_loss": 90
+    }
+   },
+   "hobbyist": {
+    "macro_f1": 1.0,
+    "micro_f1": 1.0,
+    "n": 1639,
+    "precision": 1.0,
+    "recall": 1.0,
+    "recall_by_symptom": {
+     "bass_loss": 1.0,
+     "bias_drift": 1.0,
+     "dc_at_output": 1.0,
+     "distortion": 1.0,
+     "hum": 1.0,
+     "low_gain": 1.0,
+     "no_output": 1.0,
+     "treble_loss": 1.0
+    },
+    "support_by_symptom": {
+     "bass_loss": 174,
+     "bias_drift": 450,
+     "dc_at_output": 39,
+     "distortion": 157,
+     "hum": 204,
+     "low_gain": 237,
+     "no_output": 594,
+     "treble_loss": 102
+    }
+   },
+   "studio_client": {
+    "macro_f1": 1.0,
+    "micro_f1": 1.0,
+    "n": 1671,
+    "precision": 1.0,
+    "recall": 1.0,
+    "recall_by_symptom": {
+     "bass_loss": 1.0,
+     "bias_drift": 1.0,
+     "dc_at_output": 1.0,
+     "distortion": 1.0,
+     "hum": 1.0,
+     "low_gain": 1.0,
+     "no_output": 1.0,
+     "treble_loss": 1.0
+    },
+    "support_by_symptom": {
+     "bass_loss": 171,
+     "bias_drift": 472,
+     "dc_at_output": 32,
+     "distortion": 147,
+     "hum": 216,
+     "low_gain": 267,
+     "no_output": 607,
+     "treble_loss": 106
+    }
+   }
+  },
+  "gold": "reported symptoms (after complaint noise)"
  },
  "nlp_first_run_before_rule_update": {
   "claude": "pending: requires DIFFERENTIAL_API_KEY",
@@ -2261,6 +6206,14 @@
   "wide_top1": 0.933333,
   "wide_top1_drop": 0.031667
  },
+ "redteam_live": {
+  "status": "pending: no team-written suite",
+  "suite": "eval/redteam/cases.yaml"
+ },
+ "redteam_offline": {
+  "status": "pending: no team-written suite",
+  "suite": "eval/redteam/cases.yaml"
+ },
  "safety_sweep": {
   "bench_practice": {
    "bring_up_steps": 74,
@@ -2548,6 +6501,1328 @@
   },
   "seconds": 17.052242
  },
+ "targets_result": {
+  "T1": {
+   "bar": "\u2265 94%",
+   "ci": {
+    "hi": 0.9583,
+    "hi1": 0.9574,
+    "lo": 0.9463,
+    "lo1": 0.9474,
+    "value": 0.9526
+   },
+   "id": "T1",
+   "n": 5000,
+   "role": "primary",
+   "status": "met",
+   "value": 0.9526
+  },
+  "T10": {
+   "accuracy_condition": true,
+   "bar": "\u2264 0.59\u00d7",
+   "ci": {
+    "hi": 0.5845,
+    "hi1": 0.583,
+    "lo": 0.5697,
+    "lo1": 0.5707,
+    "value": 0.5769
+   },
+   "id": "T10",
+   "n": 5000,
+   "parts": {
+    "baseline": {
+     "confirmed_effort": 28.22,
+     "confirming_charge": 9.958,
+     "effort": 18.262,
+     "probing": 18.262,
+     "unsoldering": 0.0
+    },
+    "system": {
+     "confirmed_effort": 16.2812,
+     "confirming_charge": 9.964,
+     "effort": 6.3172,
+     "probing": 6.2124,
+     "unsoldering": 0.1048
+    }
+   },
+   "raw_ratio": {
+    "hi": 0.3536,
+    "hi1": 0.3524,
+    "lo": 0.3385,
+    "lo1": 0.3396,
+    "value": 0.3459
+   },
+   "role": "secondary",
+   "status": "met",
+   "top1_baseline": 0.884,
+   "top1_gap": 0.0732,
+   "top1_system": 0.9572,
+   "value": 0.576938
+  },
+  "T11": {
+   "accuracy_condition": true,
+   "bar": "\u2264 0.98\u00d7",
+   "ci": {
+    "hi": 0.9675,
+    "hi1": 0.9667,
+    "lo": 0.957,
+    "lo1": 0.9579,
+    "value": 0.9622
+   },
+   "id": "T11",
+   "n": 5000,
+   "parts": {
+    "baseline": {
+     "confirmed_effort": 16.2812,
+     "confirming_charge": 9.964,
+     "effort": 6.3172,
+     "probing": 6.2124,
+     "unsoldering": 0.1048
+    },
+    "system": {
+     "confirmed_effort": 15.6664,
+     "confirming_charge": 9.9272,
+     "effort": 5.7392,
+     "probing": 5.6316,
+     "unsoldering": 0.1076
+    }
+   },
+   "raw_ratio": {
+    "hi": 0.9194,
+    "hi1": 0.9175,
+    "lo": 0.8979,
+    "lo1": 0.8994,
+    "value": 0.9085
+   },
+   "role": "secondary",
+   "status": "met",
+   "top1_baseline": 0.9572,
+   "top1_gap": -0.0046,
+   "top1_system": 0.9526,
+   "value": 0.962239
+  },
+  "T12": {
+   "aged_shown_ece": 0.018304,
+   "bar": "\u2264 0.02",
+   "bins": [
+    {
+     "accuracy": 0.0,
+     "confidence": 0.0,
+     "hi": 0.0,
+     "lo": 0.0,
+     "n": 1500
+    },
+    {
+     "accuracy": 0.0,
+     "confidence": 4e-06,
+     "hi": 4e-05,
+     "lo": 0.0,
+     "n": 1500
+    },
+    {
+     "accuracy": 0.006,
+     "confidence": 0.00086,
+     "hi": 0.00243,
+     "lo": 4e-05,
+     "n": 1500
+    },
+    {
+     "accuracy": 0.011333,
+     "confidence": 0.004952,
+     "hi": 0.00813,
+     "lo": 0.00245,
+     "n": 1500
+    },
+    {
+     "accuracy": 0.026667,
+     "confidence": 0.013462,
+     "hi": 0.0209,
+     "lo": 0.00814,
+     "n": 1500
+    },
+    {
+     "accuracy": 0.038,
+     "confidence": 0.032812,
+     "hi": 0.04943,
+     "lo": 0.0209,
+     "n": 1500
+    },
+    {
+     "accuracy": 0.347333,
+     "confidence": 0.347563,
+     "hi": 0.92251,
+     "lo": 0.04944,
+     "n": 1500
+    },
+    {
+     "accuracy": 0.928667,
+     "confidence": 0.948777,
+     "hi": 0.96929,
+     "lo": 0.92251,
+     "n": 1500
+    },
+    {
+     "accuracy": 0.966,
+     "confidence": 0.981778,
+     "hi": 0.99135,
+     "lo": 0.96931,
+     "n": 1500
+    },
+    {
+     "accuracy": 0.992,
+     "confidence": 0.996777,
+     "hi": 1.0,
+     "lo": 0.99138,
+     "n": 1500
+    }
+   ],
+   "brier": 0.087057,
+   "ci": {
+    "hi": 0.0103,
+    "hi1": 0.01,
+    "lo": 0.0049,
+    "lo1": 0.0053,
+    "value": 0.0071
+   },
+   "every_step_bins": [
+    {
+     "accuracy": 0.029233,
+     "confidence": 0.041545,
+     "hi": 0.1,
+     "lo": 0.0,
+     "n": 3284
+    },
+    {
+     "accuracy": 0.134677,
+     "confidence": 0.14458,
+     "hi": 0.2,
+     "lo": 0.1,
+     "n": 943
+    },
+    {
+     "accuracy": 0.217695,
+     "confidence": 0.250603,
+     "hi": 0.3,
+     "lo": 0.2,
+     "n": 859
+    },
+    {
+     "accuracy": 0.298246,
+     "confidence": 0.344812,
+     "hi": 0.4,
+     "lo": 0.3,
+     "n": 1026
+    },
+    {
+     "accuracy": 0.431267,
+     "confidence": 0.452959,
+     "hi": 0.5,
+     "lo": 0.4,
+     "n": 1113
+    },
+    {
+     "accuracy": 0.51935,
+     "confidence": 0.54226,
+     "hi": 0.6,
+     "lo": 0.5,
+     "n": 1292
+    },
+    {
+     "accuracy": 0.641176,
+     "confidence": 0.648193,
+     "hi": 0.7,
+     "lo": 0.6,
+     "n": 850
+    },
+    {
+     "accuracy": 0.698985,
+     "confidence": 0.750738,
+     "hi": 0.8,
+     "lo": 0.7,
+     "n": 887
+    },
+    {
+     "accuracy": 0.820593,
+     "confidence": 0.856634,
+     "hi": 0.9,
+     "lo": 0.8,
+     "n": 1282
+    },
+    {
+     "accuracy": 0.954692,
+     "confidence": 0.969673,
+     "hi": 1.0,
+     "lo": 0.9,
+     "n": 4966
+    }
+   ],
+   "every_step_ece_equal_width": {
+    "hi": 0.0277,
+    "hi1": 0.0271,
+    "lo": 0.0159,
+    "lo1": 0.017,
+    "value": 0.0213
+   },
+   "id": "T12",
+   "log_loss": 0.207846,
+   "role": "primary",
+   "status": "met",
+   "value": 0.007081
+  },
+  "T13": {
+   "bar": "\u2264 12%",
+   "ci": {
+    "hi": 0.1229,
+    "hi1": 0.1208,
+    "lo": 0.098,
+    "lo1": 0.0998,
+    "value": 0.11
+   },
+   "faulty_part_rate": 0.4764,
+   "hazard_map_misses": {
+    "units": 2500,
+    "units_hv_circuits": 1750,
+    "units_with_miss": 0
+   },
+   "id": "T13",
+   "misleading_by_kind": {
+    "double_fault": 0.056784,
+    "modification": 0.317647
+   },
+   "n_unmodeled": 2500,
+   "role": "primary",
+   "status": "missed",
+   "value": 0.11
+  },
+  "T14": {
+   "bar": "\u2265 \u22121/\u22121 points",
+   "capacitor_heavy_prior_catalog_mix": {
+    "hi": -0.0012,
+    "hi1": -0.0018,
+    "lo": -0.009,
+    "lo1": -0.0082,
+    "value": -0.005
+   },
+   "ci": {
+    "hi": -0.0012,
+    "hi1": -0.0018,
+    "lo": -0.009,
+    "lo1": -0.0082,
+    "value": -0.005
+   },
+   "id": "T14",
+   "role": "secondary",
+   "status": "met",
+   "top1_capacitor_mix_full_system": 0.935373,
+   "uniform_prior_capacitor_mix": {
+    "hi": 0.0028,
+    "hi1": 0.0018,
+    "lo": -0.0076,
+    "lo1": -0.0068,
+    "value": -0.0024
+   },
+   "value": -0.005
+  },
+  "T15": {
+   "bar": "100%",
+   "ci": {
+    "hi": 1.0,
+    "hi1": null,
+    "lo": 1.0,
+    "lo1": null,
+    "value": 1.0
+   },
+   "id": "T15",
+   "independent_check": {
+    "agrees": true,
+    "disagreements": [],
+    "method": "points above 50 V recomputed from the raw training simulations (meter reading and unloaded node)"
+   },
+   "lv_false_alarms": 0,
+   "required_checks": 491,
+   "role": "gate",
+   "status": "met",
+   "steps_checked": 491,
+   "value": 1.0
+  },
+  "T16": {
+   "bar": "0 unsafe",
+   "ci": null,
+   "detail": {
+    "status": "pending: no team-written suite",
+    "suite": "eval/redteam/cases.yaml"
+   },
+   "id": "T16",
+   "note": "requires at least 300 prompts written independently of the rules (eval/redteam)",
+   "role": "gate",
+   "status": "pending",
+   "value": null
+  },
+  "T17": {
+   "bar": "0%",
+   "ci": {
+    "hi": 0.0006,
+    "hi1": 0.0005,
+    "lo": 0.0,
+    "lo1": 0.0,
+    "value": 0.0
+   },
+   "detail": {
+    "agent_top1": 0.84,
+    "mean_seconds_per_session": 0.159332,
+    "messages": 454,
+    "mode": "offline",
+    "n_sessions": 100,
+    "numbers_checked": 5761,
+    "safety_events": 38,
+    "split": "test",
+    "ungrounded_before_check": 0,
+    "ungrounded_final": 0,
+    "ungrounded_rate": 0.0
+   },
+   "id": "T17",
+   "independent_checker": "pending",
+   "role": "gate",
+   "status": "pending",
+   "value": 0.0
+  },
+  "T18": {
+   "bar": "\u2265 0.90 (Claude); \u2265 0.80 (rules)",
+   "ci": {
+    "hi": 0.705,
+    "hi1": 0.705,
+    "lo": 0.705,
+    "lo1": 0.705,
+    "value": 0.705
+   },
+   "claude": {
+    "hi": 0.8829,
+    "hi1": 0.8829,
+    "lo": 0.8829,
+    "lo1": 0.8829,
+    "value": 0.8829
+   },
+   "detail": {
+    "bank_a_seen_once_rules": {
+     "macro_f1": 0.670456,
+     "micro_f1": 0.628349,
+     "n": 5000,
+     "precision": 0.989185,
+     "recall": 0.460403,
+     "recall_by_symptom": {
+      "bass_loss": 0.400794,
+      "bias_drift": 0.228183,
+      "dc_at_output": 0.561983,
+      "distortion": 0.639456,
+      "hum": 0.836834,
+      "low_gain": 0.506831,
+      "no_output": 0.439632,
+      "treble_loss": 0.577181
+     },
+     "support_by_symptom": {
+      "bass_loss": 504,
+      "bias_drift": 1398,
+      "dc_at_output": 121,
+      "distortion": 441,
+      "hum": 619,
+      "low_gain": 732,
+      "no_output": 1847,
+      "treble_loss": 298
+     }
+    },
+    "bank_a_seen_once_rules_by_persona": {
+     "bench_tech": {
+      "macro_f1": 0.619437,
+      "micro_f1": 0.557107,
+      "n": 1690,
+      "precision": 0.962871,
+      "recall": 0.39194,
+      "recall_by_symptom": {
+       "bass_loss": 0.138365,
+       "bias_drift": 0.205882,
+       "dc_at_output": 0.62,
+       "distortion": 0.854015,
+       "hum": 0.834171,
+       "low_gain": 0.307018,
+       "no_output": 0.325077,
+       "treble_loss": 0.711111
+      },
+      "support_by_symptom": {
+       "bass_loss": 159,
+       "bias_drift": 476,
+       "dc_at_output": 50,
+       "distortion": 137,
+       "hum": 199,
+       "low_gain": 228,
+       "no_output": 646,
+       "treble_loss": 90
+      }
+     },
+     "hobbyist": {
+      "macro_f1": 0.664036,
+      "micro_f1": 0.681267,
+      "n": 1639,
+      "precision": 1.0,
+      "recall": 0.516607,
+      "recall_by_symptom": {
+       "bass_loss": 0.494253,
+       "bias_drift": 0.148889,
+       "dc_at_output": 0.74359,
+       "distortion": 0.592357,
+       "hum": 0.848039,
+       "low_gain": 0.586498,
+       "no_output": 0.680135,
+       "treble_loss": 0.196078
+      },
+      "support_by_symptom": {
+       "bass_loss": 174,
+       "bias_drift": 450,
+       "dc_at_output": 39,
+       "distortion": 157,
+       "hum": 204,
+       "low_gain": 237,
+       "no_output": 594,
+       "treble_loss": 102
+      }
+     },
+     "studio_client": {
+      "macro_f1": 0.664962,
+      "micro_f1": 0.642449,
+      "n": 1671,
+      "precision": 1.0,
+      "recall": 0.473241,
+      "recall_by_symptom": {
+       "bass_loss": 0.549708,
+       "bias_drift": 0.326271,
+       "dc_at_output": 0.25,
+       "distortion": 0.489796,
+       "hum": 0.828704,
+       "low_gain": 0.606742,
+       "no_output": 0.326194,
+       "treble_loss": 0.830189
+      },
+      "support_by_symptom": {
+       "bass_loss": 171,
+       "bias_drift": 472,
+       "dc_at_output": 32,
+       "distortion": 147,
+       "hum": 216,
+       "low_gain": 267,
+       "no_output": 607,
+       "treble_loss": 106
+      }
+     }
+    },
+    "bank_b_claude": {
+     "macro_f1": 0.8691,
+     "micro_f1": 0.882916,
+     "n": 5000,
+     "precision": 0.966102,
+     "recall": 0.812919,
+     "recall_by_symptom": {
+      "bass_loss": 1.0,
+      "bias_drift": 0.220315,
+      "dc_at_output": 0.793388,
+      "distortion": 1.0,
+      "hum": 1.0,
+      "low_gain": 1.0,
+      "no_output": 1.0,
+      "treble_loss": 1.0
+     },
+     "support_by_symptom": {
+      "bass_loss": 504,
+      "bias_drift": 1398,
+      "dc_at_output": 121,
+      "distortion": 441,
+      "hum": 619,
+      "low_gain": 732,
+      "no_output": 1847,
+      "treble_loss": 298
+     }
+    },
+    "bank_b_claude_by_persona": {
+     "bench_tech": {
+      "macro_f1": 0.883364,
+      "micro_f1": 0.887267,
+      "n": 1690,
+      "precision": 0.95741,
+      "recall": 0.8267,
+      "recall_by_symptom": {
+       "bass_loss": 1.0,
+       "bias_drift": 0.283613,
+       "dc_at_output": 0.94,
+       "distortion": 1.0,
+       "hum": 1.0,
+       "low_gain": 1.0,
+       "no_output": 1.0,
+       "treble_loss": 1.0
+      },
+      "support_by_symptom": {
+       "bass_loss": 159,
+       "bias_drift": 476,
+       "dc_at_output": 50,
+       "distortion": 137,
+       "hum": 199,
+       "low_gain": 228,
+       "no_output": 646,
+       "treble_loss": 90
+      }
+     },
+     "hobbyist": {
+      "macro_f1": 0.891106,
+      "micro_f1": 0.900826,
+      "n": 1639,
+      "precision": 0.977286,
+      "recall": 0.835462,
+      "recall_by_symptom": {
+       "bass_loss": 1.0,
+       "bias_drift": 0.308889,
+       "dc_at_output": 0.717949,
+       "distortion": 1.0,
+       "hum": 1.0,
+       "low_gain": 1.0,
+       "no_output": 1.0,
+       "treble_loss": 1.0
+      },
+      "support_by_symptom": {
+       "bass_loss": 174,
+       "bias_drift": 450,
+       "dc_at_output": 39,
+       "distortion": 157,
+       "hum": 204,
+       "low_gain": 237,
+       "no_output": 594,
+       "treble_loss": 102
+      }
+     },
+     "studio_client": {
+      "macro_f1": 0.824755,
+      "micro_f1": 0.860669,
+      "n": 1671,
+      "precision": 0.963759,
+      "recall": 0.777502,
+      "recall_by_symptom": {
+       "bass_loss": 1.0,
+       "bias_drift": 0.072034,
+       "dc_at_output": 0.65625,
+       "distortion": 1.0,
+       "hum": 1.0,
+       "low_gain": 1.0,
+       "no_output": 1.0,
+       "treble_loss": 1.0
+      },
+      "support_by_symptom": {
+       "bass_loss": 171,
+       "bias_drift": 472,
+       "dc_at_output": 32,
+       "distortion": 147,
+       "hum": 216,
+       "low_gain": 267,
+       "no_output": 607,
+       "treble_loss": 106
+      }
+     }
+    },
+    "bank_b_rules": {
+     "macro_f1": 0.710622,
+     "micro_f1": 0.705005,
+     "n": 5000,
+     "precision": 0.990884,
+     "recall": 0.547148,
+     "recall_by_symptom": {
+      "bass_loss": 0.511905,
+      "bias_drift": 0.185265,
+      "dc_at_output": 0.644628,
+      "distortion": 0.746032,
+      "hum": 0.966074,
+      "low_gain": 0.605191,
+      "no_output": 0.64104,
+      "treble_loss": 0.375839
+     },
+     "support_by_symptom": {
+      "bass_loss": 504,
+      "bias_drift": 1398,
+      "dc_at_output": 121,
+      "distortion": 441,
+      "hum": 619,
+      "low_gain": 732,
+      "no_output": 1847,
+      "treble_loss": 298
+     }
+    },
+    "bank_b_rules_by_persona": {
+     "bench_tech": {
+      "macro_f1": 0.744121,
+      "micro_f1": 0.710813,
+      "n": 1690,
+      "precision": 0.973707,
+      "recall": 0.559698,
+      "recall_by_symptom": {
+       "bass_loss": 0.484277,
+       "bias_drift": 0.281513,
+       "dc_at_output": 0.64,
+       "distortion": 0.868613,
+       "hum": 1.0,
+       "low_gain": 0.72807,
+       "no_output": 0.529412,
+       "treble_loss": 0.466667
+      },
+      "support_by_symptom": {
+       "bass_loss": 159,
+       "bias_drift": 476,
+       "dc_at_output": 50,
+       "distortion": 137,
+       "hum": 199,
+       "low_gain": 228,
+       "no_output": 646,
+       "treble_loss": 90
+      }
+     },
+     "hobbyist": {
+      "macro_f1": 0.713719,
+      "micro_f1": 0.722168,
+      "n": 1639,
+      "precision": 1.0,
+      "recall": 0.565151,
+      "recall_by_symptom": {
+       "bass_loss": 0.54023,
+       "bias_drift": 0.131111,
+       "dc_at_output": 0.794872,
+       "distortion": 0.611465,
+       "hum": 1.0,
+       "low_gain": 0.49789,
+       "no_output": 0.776094,
+       "treble_loss": 0.421569
+      },
+      "support_by_symptom": {
+       "bass_loss": 174,
+       "bias_drift": 450,
+       "dc_at_output": 39,
+       "distortion": 157,
+       "hum": 204,
+       "low_gain": 237,
+       "no_output": 594,
+       "treble_loss": 102
+      }
+     },
+     "studio_client": {
+      "macro_f1": 0.663036,
+      "micro_f1": 0.681907,
+      "n": 1671,
+      "precision": 1.0,
+      "recall": 0.517344,
+      "recall_by_symptom": {
+       "bass_loss": 0.508772,
+       "bias_drift": 0.139831,
+       "dc_at_output": 0.46875,
+       "distortion": 0.77551,
+       "hum": 0.902778,
+       "low_gain": 0.595506,
+       "no_output": 0.627677,
+       "treble_loss": 0.254717
+      },
+      "support_by_symptom": {
+       "bass_loss": 171,
+       "bias_drift": 472,
+       "dc_at_output": 32,
+       "distortion": 147,
+       "hum": 216,
+       "low_gain": 267,
+       "no_output": 607,
+       "treble_loss": 106
+      }
+     }
+    },
+    "bank_b_texts_with_leakage": 0,
+    "claude_cost_usd": 5.99942,
+    "claude_failures": 0,
+    "claude_model": "claude-sonnet-5-5",
+    "development_rules": {
+     "macro_f1": 0.999658,
+     "micro_f1": 0.999664,
+     "n": 5000,
+     "precision": 1.0,
+     "recall": 0.999329,
+     "recall_by_symptom": {
+      "bass_loss": 1.0,
+      "bias_drift": 1.0,
+      "dc_at_output": 1.0,
+      "distortion": 1.0,
+      "hum": 1.0,
+      "low_gain": 0.994536,
+      "no_output": 1.0,
+      "treble_loss": 1.0
+     },
+     "support_by_symptom": {
+      "bass_loss": 504,
+      "bias_drift": 1398,
+      "dc_at_output": 121,
+      "distortion": 441,
+      "hum": 619,
+      "low_gain": 732,
+      "no_output": 1847,
+      "treble_loss": 298
+     }
+    },
+    "development_rules_by_persona": {
+     "bench_tech": {
+      "macro_f1": 0.998894,
+      "micro_f1": 0.998991,
+      "n": 1690,
+      "precision": 1.0,
+      "recall": 0.997985,
+      "recall_by_symptom": {
+       "bass_loss": 1.0,
+       "bias_drift": 1.0,
+       "dc_at_output": 1.0,
+       "distortion": 1.0,
+       "hum": 1.0,
+       "low_gain": 0.982456,
+       "no_output": 1.0,
+       "treble_loss": 1.0
+      },
+      "support_by_symptom": {
+       "bass_loss": 159,
+       "bias_drift": 476,
+       "dc_at_output": 50,
+       "distortion": 137,
+       "hum": 199,
+       "low_gain": 228,
+       "no_output": 646,
+       "treble_loss": 90
+      }
+     },
+     "hobbyist": {
+      "macro_f1": 1.0,
+      "micro_f1": 1.0,
+      "n": 1639,
+      "precision": 1.0,
+      "recall": 1.0,
+      "recall_by_symptom": {
+       "bass_loss": 1.0,
+       "bias_drift": 1.0,
+       "dc_at_output": 1.0,
+       "distortion": 1.0,
+       "hum": 1.0,
+       "low_gain": 1.0,
+       "no_output": 1.0,
+       "treble_loss": 1.0
+      },
+      "support_by_symptom": {
+       "bass_loss": 174,
+       "bias_drift": 450,
+       "dc_at_output": 39,
+       "distortion": 157,
+       "hum": 204,
+       "low_gain": 237,
+       "no_output": 594,
+       "treble_loss": 102
+      }
+     },
+     "studio_client": {
+      "macro_f1": 1.0,
+      "micro_f1": 1.0,
+      "n": 1671,
+      "precision": 1.0,
+      "recall": 1.0,
+      "recall_by_symptom": {
+       "bass_loss": 1.0,
+       "bias_drift": 1.0,
+       "dc_at_output": 1.0,
+       "distortion": 1.0,
+       "hum": 1.0,
+       "low_gain": 1.0,
+       "no_output": 1.0,
+       "treble_loss": 1.0
+      },
+      "support_by_symptom": {
+       "bass_loss": 171,
+       "bias_drift": 472,
+       "dc_at_output": 32,
+       "distortion": 147,
+       "hum": 216,
+       "low_gain": 267,
+       "no_output": 607,
+       "treble_loss": 106
+      }
+     }
+    },
+    "gold": "reported symptoms (after complaint noise)"
+   },
+   "id": "T18",
+   "role": "secondary",
+   "status": "missed",
+   "value": 0.705005
+  },
+  "T19": {
+   "bar": "\u2265 95% (Claude); \u2265 90% (offline)",
+   "ci": {
+    "hi": 1.0,
+    "hi1": 1.0,
+    "lo": 0.9878,
+    "lo1": 0.9901,
+    "value": 1.0
+   },
+   "claude": {
+    "hi": 0.9862,
+    "hi1": 0.9843,
+    "lo": 0.9438,
+    "lo1": 0.9482,
+    "value": 0.97
+   },
+   "id": "T19",
+   "role": "secondary",
+   "set": "post-lock test photos",
+   "status": "missed",
+   "value": 1.0
+  },
+  "T2": {
+   "bar": "\u2265 94%",
+   "ci": {
+    "hi": 0.9695,
+    "hi1": 0.9685,
+    "lo": 0.9542,
+    "lo1": 0.9555,
+    "value": 0.9624
+   },
+   "id": "T2",
+   "n": 2500,
+   "role": "secondary",
+   "status": "met",
+   "value": 0.9624
+  },
+  "T20": {
+   "bar": "\u2264 0.5 s",
+   "ci": {
+    "hi": 0.0964,
+    "hi1": 0.0964,
+    "lo": 0.0964,
+    "lo1": 0.0964,
+    "value": 0.0964
+   },
+   "id": "T20",
+   "mean": 0.054968,
+   "role": "secondary",
+   "status": "met",
+   "value": 0.09643
+  },
+  "T21": {
+   "api_calls": 411,
+   "bar": "\u2264 $0.10",
+   "ci": {
+    "hi": 0.0215,
+    "hi1": 0.0215,
+    "lo": 0.0215,
+    "lo1": 0.0215,
+    "value": 0.0215
+   },
+   "cost_usd_total": 2.144965,
+   "id": "T21",
+   "model": "claude-sonnet-5-5",
+   "n": 100,
+   "role": "secondary",
+   "status": "met",
+   "tokens": {
+    "cache_read": 1062037,
+    "cache_write": 441990,
+    "input": 7888,
+    "output": 91801
+   },
+   "value": 0.02145
+  },
+  "T22": {
+   "bar": "\u2265 51% flagged; AUROC \u2265 0.77",
+   "ci": {
+    "hi": 0.725,
+    "hi1": 0.7228,
+    "lo": 0.6981,
+    "lo1": 0.6998,
+    "value": 0.7113
+   },
+   "flag_rate": {
+    "hi": 0.4332,
+    "hi1": 0.4304,
+    "lo": 0.3956,
+    "lo1": 0.3984,
+    "value": 0.4136
+   },
+   "id": "T22",
+   "n_unmodeled": 2500,
+   "role": "secondary",
+   "single_false_flag_rate": 0.0374,
+   "status": "missed",
+   "value": 0.711262
+  },
+  "T23": {
+   "accuracy_when_naming": {
+    "hi": 0.9923,
+    "hi1": 0.9919,
+    "lo": 0.9869,
+    "lo1": 0.9873,
+    "value": 0.9896
+   },
+   "bar": "\u2265 94% named; \u2265 99% right when naming",
+   "ci": {
+    "hi": 0.9674,
+    "hi1": 0.9668,
+    "lo": 0.9572,
+    "lo1": 0.9582,
+    "value": 0.9626
+   },
+   "id": "T23",
+   "n_named": 4813,
+   "role": "secondary",
+   "status": "missed",
+   "value": 0.9626
+  },
+  "T24": {
+   "bar": "\u2264 0.19\u00d7",
+   "ci": {
+    "hi": 0.1881,
+    "hi1": 0.1863,
+    "lo": 0.1669,
+    "lo1": 0.1684,
+    "value": 0.1772
+   },
+   "engine_per_diagnosis": 0.3204,
+   "half_split_per_diagnosis": 1.8078,
+   "id": "T24",
+   "n": 5000,
+   "role": "secondary",
+   "status": "met",
+   "value": 0.177232
+  },
+  "T25": {
+   "bar": "at most 1 of \u2265 6",
+   "ci": null,
+   "id": "T25",
+   "note": "requires study S1 with at least 6 technicians (docs/study_s1.md)",
+   "role": "gate",
+   "status": "pending",
+   "value": null
+  },
+  "T26": {
+   "bar": "none",
+   "ci": {
+    "hi": 0.0,
+    "hi1": null,
+    "lo": 0.0,
+    "lo1": null,
+    "value": 0.0
+   },
+   "gaps": {
+    "T1_units:bench_tech": {
+     "hi": 0.0142,
+     "hi1": 0.0123,
+     "lo": -0.0105,
+     "lo1": -0.0085,
+     "value": 0.0017
+    },
+    "T1_units:hobbyist": {
+     "hi": 0.0163,
+     "hi1": 0.0147,
+     "lo": -0.0091,
+     "lo1": -0.0071,
+     "value": 0.0039
+    },
+    "T1_units:studio_client": {
+     "hi": 0.0073,
+     "hi1": 0.0049,
+     "lo": -0.0173,
+     "lo1": -0.0155,
+     "value": -0.0056
+    },
+    "T6_units:bench_tech": {
+     "hi": 0.0,
+     "hi1": -0.0024,
+     "lo": -0.029,
+     "lo1": -0.0263,
+     "value": -0.0147
+    },
+    "T6_units:hobbyist": {
+     "hi": 0.0254,
+     "hi1": 0.023,
+     "lo": -0.0044,
+     "lo1": -0.0023,
+     "value": 0.01
+    },
+    "T6_units:studio_client": {
+     "hi": 0.0212,
+     "hi1": 0.0174,
+     "lo": -0.0097,
+     "lo1": -0.0078,
+     "value": 0.0046
+    }
+   },
+   "id": "T26",
+   "role": "gate",
+   "rule": "gap = other voices' top-1 minus this voice's",
+   "status": "met",
+   "value": 0.0
+  },
+  "T3": {
+   "bar": "\u2265 99%",
+   "ci": {
+    "hi": 0.9966,
+    "hi1": 0.9964,
+    "lo": 0.9924,
+    "lo1": 0.9928,
+    "value": 0.9948
+   },
+   "id": "T3",
+   "n": 5000,
+   "role": "secondary",
+   "status": "met",
+   "value": 0.9948
+  },
+  "T4": {
+   "bar": "\u2265 +10/+8/+4 pts",
+   "ci": {
+    "hi": 0.1224,
+    "hi1": 0.1196,
+    "lo": 0.0892,
+    "lo1": 0.092,
+    "value": 0.1056
+   },
+   "id": "T4",
+   "margins": {
+    "fixed_order": {
+     "full_system_margin": {
+      "hi": 0.1908,
+      "hi1": 0.1876,
+      "lo": 0.1556,
+      "lo1": 0.1592,
+      "value": 0.1728
+     },
+     "margin": {
+      "hi": 0.1736,
+      "hi1": 0.1708,
+      "lo": 0.1384,
+      "lo1": 0.1408,
+      "value": 0.1556
+     },
+     "mcnemar": {
+      "a_only": 479,
+      "b_only": 90,
+      "p_value": 0.0
+     }
+    },
+    "half_split": {
+     "full_system_margin": {
+      "hi": 0.1384,
+      "hi1": 0.136,
+      "lo": 0.1068,
+      "lo1": 0.11,
+      "value": 0.1228
+     },
+     "margin": {
+      "hi": 0.1224,
+      "hi1": 0.1196,
+      "lo": 0.0892,
+      "lo1": 0.092,
+      "value": 0.1056
+     },
+     "mcnemar": {
+      "a_only": 361,
+      "b_only": 97,
+      "p_value": 0.0
+     }
+    },
+    "random": {
+     "full_system_margin": {
+      "hi": 0.1692,
+      "hi1": 0.166,
+      "lo": 0.1368,
+      "lo1": 0.1392,
+      "value": 0.152
+     },
+     "margin": {
+      "hi": 0.152,
+      "hi1": 0.1492,
+      "lo": 0.1188,
+      "lo1": 0.1216,
+      "value": 0.1348
+     },
+     "mcnemar": {
+      "a_only": 418,
+      "b_only": 81,
+      "p_value": 0.0
+     }
+    }
+   },
+   "role": "primary",
+   "smallest_vs": "half_split",
+   "status": "met",
+   "value": 0.1056
+  },
+  "T5": {
+   "bar": "\u2265 +10 points",
+   "ci": {
+    "hi": 0.2533,
+    "hi1": 0.2433,
+    "lo": 0.1433,
+    "lo1": 0.15,
+    "value": 0.1967
+   },
+   "detail": {
+    "capacitor_share_llm": 0.293333,
+    "capacitor_share_true": 0.306667,
+    "margin": {
+     "hi": 0.253333,
+     "hi1": 0.243333,
+     "lo": 0.143333,
+     "lo1": 0.15,
+     "value": 0.196667
+    },
+    "mcnemar": {
+     "a_only": 71,
+     "b_only": 12,
+     "p_value": 0.0
+    },
+    "mean_cost_hybrid": 5.696667,
+    "mean_cost_llm": 24.266667,
+    "n": 300,
+    "status": "measured",
+    "top1_hybrid": 0.94,
+    "top1_llm": 0.743333
+   },
+   "id": "T5",
+   "role": "primary",
+   "status": "met",
+   "value": 0.196667
+  },
+  "T6": {
+   "aged_flagged": 0.0542,
+   "aged_wrong_name": 0.0154,
+   "bar": "\u2265 91%",
+   "by_circuit": {
+    "channel_strip": 0.9404,
+    "driver": 0.948,
+    "opamp": 0.962,
+    "psu": 0.846,
+    "tone": 0.89,
+    "triode": 0.956
+   },
+   "ci": {
+    "hi": 0.9373,
+    "hi1": 0.9362,
+    "lo": 0.923,
+    "lo1": 0.9242,
+    "value": 0.9304
+   },
+   "drop_from_new": {
+    "hi": 0.0308,
+    "hi1": 0.0296,
+    "lo": 0.0128,
+    "lo1": 0.0144,
+    "value": 0.0222
+   },
+   "id": "T6",
+   "n": 5000,
+   "role": "primary",
+   "status": "met",
+   "tolerance_curve_top1": {
+    "1.5x": 0.93,
+    "1x": 0.9624,
+    "2x": 0.833333,
+    "3x": 0.446667
+   },
+   "value": 0.9304
+  },
+  "T7": {
+   "bar": "\u2265 70%",
+   "ci": null,
+   "id": "T7",
+   "note": "requires the hardware fault boards (hardware/fault_board)",
+   "role": "primary",
+   "status": "pending",
+   "value": null
+  },
+  "T8": {
+   "accuracy_condition": true,
+   "bar": "\u2264 0.64\u00d7",
+   "ci": {
+    "hi": 0.6269,
+    "hi1": 0.6257,
+    "lo": 0.6109,
+    "lo1": 0.6123,
+    "value": 0.6189
+   },
+   "id": "T8",
+   "n": 5000,
+   "parts": {
+    "baseline": {
+     "confirmed_effort": 26.3064,
+     "confirming_charge": 6.0048,
+     "effort": 20.3016,
+     "probing": 14.6176,
+     "unsoldering": 5.684
+    },
+    "system": {
+     "confirmed_effort": 16.2812,
+     "confirming_charge": 9.964,
+     "effort": 6.3172,
+     "probing": 6.2124,
+     "unsoldering": 0.1048
+    }
+   },
+   "raw_ratio": {
+    "hi": 0.3176,
+    "hi1": 0.3164,
+    "lo": 0.3046,
+    "lo1": 0.3057,
+    "value": 0.3112
+   },
+   "role": "secondary",
+   "status": "met",
+   "top1_baseline": 0.8766,
+   "top1_gap": 0.0806,
+   "top1_system": 0.9572,
+   "value": 0.618906
+  },
+  "T9": {
+   "accuracy_condition": true,
+   "bar": "\u2264 0.67\u00d7",
+   "ci": {
+    "hi": 0.6545,
+    "hi1": 0.6532,
+    "lo": 0.6383,
+    "lo1": 0.6395,
+    "value": 0.6463
+   },
+   "id": "T9",
+   "n": 5000,
+   "parts": {
+    "baseline": {
+     "confirmed_effort": 25.1924,
+     "confirming_charge": 6.196,
+     "effort": 18.9964,
+     "probing": 13.7196,
+     "unsoldering": 5.2768
+    },
+    "system": {
+     "confirmed_effort": 16.2812,
+     "confirming_charge": 9.964,
+     "effort": 6.3172,
+     "probing": 6.2124,
+     "unsoldering": 0.1048
+    }
+   },
+   "raw_ratio": {
+    "hi": 0.3393,
+    "hi1": 0.3382,
+    "lo": 0.3255,
+    "lo1": 0.3267,
+    "value": 0.3325
+   },
+   "role": "primary",
+   "status": "met",
+   "top1_baseline": 0.9018,
+   "top1_gap": 0.0554,
+   "top1_system": 0.9572,
+   "value": 0.646274
+  }
+ },
  "twin_pilot": {
   "engine_gen": {
    "confirmed_effort": 16.885,
@@ -2604,6 +7879,64 @@
    "n": 200,
    "top1": 0.77,
    "top1_part": 0.785
+  }
+ },
+ "twin_test": {
+  "engine_gen": {
+   "confirmed_effort": 17.0408,
+   "effort": 7.164,
+   "hv_reads": 0.1476,
+   "n": 2500,
+   "top1": 0.9452,
+   "top1_part": 0.9468
+  },
+  "fixed_order": {
+   "confirmed_effort": 32.3696,
+   "effort": 25.2904,
+   "hv_reads": 3.1808,
+   "n": 2500,
+   "top1": 0.7896,
+   "top1_part": 0.7988
+  },
+  "half_split": {
+   "confirmed_effort": 30.7668,
+   "effort": 23.79,
+   "hv_reads": 2.9776,
+   "n": 2500,
+   "top1": 0.8396,
+   "top1_part": 0.8468
+  },
+  "random": {
+   "confirmed_effort": 34.5332,
+   "effort": 24.6004,
+   "hv_reads": 2.0656,
+   "n": 2500,
+   "top1": 0.8104,
+   "top1_part": 0.8236
+  },
+  "twin": {
+   "confirmed_effort": 34.1692,
+   "effort": 28.6036,
+   "hv_reads": 0.8196,
+   "n": 2500,
+   "top1": 0.7528,
+   "top1_part": 0.762
+  },
+  "twin_model_free": {
+   "confirmed_effort": 47.2632,
+   "effort": 38.5728,
+   "hv_reads": 2.4432,
+   "n": 2500,
+   "top1": 0.1328,
+   "top1_part": 0.1328
+  },
+  "twin_one_cost": {
+   "confirmed_effort": 28.0392,
+   "effort": 23.0808,
+   "hv_reads": 1.3336,
+   "n": 2500,
+   "top1": 0.8156,
+   "top1_part": 0.8224
   }
  },
  "twin_tuning": {
@@ -2675,7 +8008,151 @@
   },
   "synthetic": {
    "claude": {
-    "status": "pending (requires DIFFERENTIAL_API_KEY)"
+    "accuracy_when_answered": 0.976667,
+    "api_calls": 296,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.8,
+     "mean_when_correct": 0.903891,
+     "mean_when_wrong": 0.754286
+    },
+    "confusion": {
+     "characters": {
+      "text length/layout": 1
+     },
+     "error_parts": {
+      "mode": 6,
+      "value_text": 1
+     },
+     "examples": [
+      {
+       "confidence": 0.8,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0065.jpg",
+       "read": "0.1 mV DC",
+       "truth": "-0.1 mV DC"
+      },
+      {
+       "confidence": 0.75,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0097.jpg",
+       "read": "0.7 mV DC",
+       "truth": "0.7 mV AC"
+      },
+      {
+       "confidence": 0.88,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0141.jpg",
+       "read": "304.3 mV DC",
+       "truth": "304.3 mV AC"
+      },
+      {
+       "confidence": 0.8,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0225.jpg",
+       "read": "26.6 mV DC",
+       "truth": "26.6 mV AC"
+      },
+      {
+       "confidence": 0.85,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0268.jpg",
+       "read": "293.1 mV DC",
+       "truth": "293.1 mV AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0271.jpg",
+       "read": "0.9 mV DC",
+       "truth": "0.9 mV AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0289.jpg",
+       "read": "0.6 mV DC",
+       "truth": "0.6 mV AC"
+      }
+     ],
+     "modes": {
+      "AC->DC": 6
+     },
+     "units": {}
+    },
+    "correct": 293,
+    "cost_usd_total_session": 0.539116,
+    "exact_match": 0.976667,
+    "exact_match_ci95": [
+     0.956667,
+     0.993333
+    ],
+    "model": "claude-sonnet-5-5",
+    "n": 300,
+    "no_answer_rate": 0.0,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 20
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 0.933333,
+      "n": 60,
+      "no_answer_rate": 0.0
+     },
+     "medium": {
+      "exact_match": 0.975,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 1.0,
+      "n": 21
+     },
+     "AC mV": {
+      "exact_match": 0.842105,
+      "n": 38
+     },
+     "DC V": {
+      "exact_match": 1.0,
+      "n": 158
+     },
+     "DC mV": {
+      "exact_match": 0.969697,
+      "n": 33
+     },
+     "resistance M\u03a9": {
+      "exact_match": 1.0,
+      "n": 17
+     },
+     "resistance k\u03a9": {
+      "exact_match": 1.0,
+      "n": 24
+     },
+     "resistance \u03a9": {
+      "exact_match": 1.0,
+      "n": 9
+     }
+    },
+    "seconds_per_image": {
+     "mean": 2.777134,
+     "p95": 5.351422
+    },
+    "wrong_answer_rate": 0.023333
    },
    "dataset": {
     "difficulty": {
@@ -2785,15 +8262,186 @@
      }
     },
     "seconds_per_image": {
-     "mean": 0.086911,
-     "p95": 0.123385
+     "mean": 0.075062,
+     "p95": 0.096063
     },
     "wrong_answer_rate": 0.003333
    }
   },
   "synthetic_pilot": {
    "claude": {
-    "status": "pending (requires DIFFERENTIAL_API_KEY)"
+    "accuracy_when_answered": 0.966667,
+    "api_calls": 300,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.8,
+     "mean_when_correct": 0.906724,
+     "mean_when_wrong": 0.589
+    },
+    "confusion": {
+     "characters": {
+      ".->7": 2,
+      "7->.": 2,
+      "text length/layout": 1
+     },
+     "error_parts": {
+      "mode": 7,
+      "value_text": 3
+     },
+     "examples": [
+      {
+       "confidence": 0.88,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0055.jpg",
+       "read": "294.6 mV DC",
+       "truth": "294.6 mV AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0079.jpg",
+       "read": "3.1 mV DC",
+       "truth": "3.1 mV AC"
+      },
+      {
+       "confidence": 0.86,
+       "difficulty": "medium",
+       "error": null,
+       "file": "meter_0091.jpg",
+       "read": "3.2 mV DC",
+       "truth": "3.2 mV AC"
+      },
+      {
+       "confidence": 0.4,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0100.jpg",
+       "read": "4465 V DC",
+       "truth": "4.465 V DC"
+      },
+      {
+       "confidence": 0.7,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0106.jpg",
+       "read": "524.1 mV DC",
+       "truth": "524.1 mV AC"
+      },
+      {
+       "confidence": 0.4,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0114.jpg",
+       "read": "-13.77 V DC",
+       "truth": "-137.7 V DC"
+      },
+      {
+       "confidence": 0.55,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0157.jpg",
+       "read": "3.641 V AC",
+       "truth": "3.641 V DC"
+      },
+      {
+       "confidence": 0.3,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0172.jpg",
+       "read": "0.707 V AC",
+       "truth": "0.707 V DC"
+      },
+      {
+       "confidence": 0.4,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0214.jpg",
+       "read": "2.733 V DC",
+       "truth": "27.33 V DC"
+      },
+      {
+       "confidence": 0.8,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0299.jpg",
+       "read": "80.6 mV DC",
+       "truth": "80.6 mV AC"
+      }
+     ],
+     "modes": {
+      "AC->DC": 5,
+      "DC->AC": 2
+     },
+     "units": {}
+    },
+    "correct": 290,
+    "cost_usd_total_session": 1.091526,
+    "exact_match": 0.966667,
+    "exact_match_ci95": [
+     0.943333,
+     0.986667
+    ],
+    "model": "claude-sonnet-5-5",
+    "n": 300,
+    "no_answer_rate": 0.0,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 19
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 0.866667,
+      "n": 60,
+      "no_answer_rate": 0.0
+     },
+     "medium": {
+      "exact_match": 0.983333,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 1.0,
+      "n": 15
+     },
+     "AC mV": {
+      "exact_match": 0.871795,
+      "n": 39
+     },
+     "DC V": {
+      "exact_match": 0.967532,
+      "n": 154
+     },
+     "DC mV": {
+      "exact_match": 1.0,
+      "n": 34
+     },
+     "resistance M\u03a9": {
+      "exact_match": 1.0,
+      "n": 19
+     },
+     "resistance k\u03a9": {
+      "exact_match": 1.0,
+      "n": 34
+     },
+     "resistance \u03a9": {
+      "exact_match": 1.0,
+      "n": 5
+     }
+    },
+    "seconds_per_image": {
+     "mean": 2.377152,
+     "p95": 5.092139
+    },
+    "wrong_answer_rate": 0.033333
    },
    "dataset": {
     "difficulty": {
@@ -2916,19 +8564,282 @@
      }
     },
     "seconds_per_image": {
-     "mean": 0.087178,
-     "p95": 0.108158
+     "mean": 0.071621,
+     "p95": 0.087913
+    },
+    "wrong_answer_rate": 0.0
+   }
+  },
+  "synthetic_test": {
+   "claude": {
+    "accuracy_when_answered": 0.97,
+    "api_calls": 300,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.83,
+     "mean_when_correct": 0.910619,
+     "mean_when_wrong": 0.627778
+    },
+    "confusion": {
+     "characters": {
+      ".->2": 1,
+      "2->.": 1,
+      "text length/layout": 1
+     },
+     "error_parts": {
+      "mode": 5,
+      "unit": 2,
+      "value_text": 2
+     },
+     "examples": [
+      {
+       "confidence": 0.6,
+       "difficulty": "easy",
+       "error": null,
+       "file": "meter_0078.jpg",
+       "read": "27.24 V DC",
+       "truth": "272.4 V DC"
+      },
+      {
+       "confidence": 0.4,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0109.jpg",
+       "read": "0.6 k\u03a9 resistance",
+       "truth": "0.6 \u03a9 resistance"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0119.jpg",
+       "read": "0.987 k\u03a9 resistance",
+       "truth": "0.987 M\u03a9 resistance"
+      },
+      {
+       "confidence": 0.5,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0128.jpg",
+       "read": "314 mV DC",
+       "truth": "31.4 mV DC"
+      },
+      {
+       "confidence": 0.8,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0136.jpg",
+       "read": "6.64 V DC",
+       "truth": "6.64 V AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0137.jpg",
+       "read": "51.0 mV DC",
+       "truth": "51.0 mV AC"
+      },
+      {
+       "confidence": 0.85,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0139.jpg",
+       "read": "112.9 mV DC",
+       "truth": "112.9 mV AC"
+      },
+      {
+       "confidence": 0.7,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0212.jpg",
+       "read": "99.8 mV DC",
+       "truth": "99.8 mV AC"
+      },
+      {
+       "confidence": 0.6,
+       "difficulty": "hard",
+       "error": null,
+       "file": "meter_0269.jpg",
+       "read": "14.84 V AC",
+       "truth": "14.84 V DC"
+      }
+     ],
+     "modes": {
+      "AC->DC": 4,
+      "DC->AC": 1
+     },
+     "units": {
+      "M\u03a9->k\u03a9": 1,
+      "\u03a9->k\u03a9": 1
+     }
+    },
+    "correct": 291,
+    "cost_usd_total_session": 1.606456,
+    "exact_match": 0.97,
+    "exact_match_ci95": [
+     0.95,
+     0.986667
+    ],
+    "model": "claude-sonnet-5-5",
+    "n": 300,
+    "no_answer_rate": 0.0,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 19
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 0.991667,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 0.866667,
+      "n": 60,
+      "no_answer_rate": 0.0
+     },
+     "medium": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 0.941176,
+      "n": 17
+     },
+     "AC mV": {
+      "exact_match": 0.903226,
+      "n": 31
+     },
+     "DC V": {
+      "exact_match": 0.986667,
+      "n": 150
+     },
+     "DC mV": {
+      "exact_match": 0.976744,
+      "n": 43
+     },
+     "resistance M\u03a9": {
+      "exact_match": 0.928571,
+      "n": 14
+     },
+     "resistance k\u03a9": {
+      "exact_match": 1.0,
+      "n": 37
+     },
+     "resistance \u03a9": {
+      "exact_match": 0.875,
+      "n": 8
+     }
+    },
+    "seconds_per_image": {
+     "mean": 2.521356,
+     "p95": 5.098451
+    },
+    "wrong_answer_rate": 0.03
+   },
+   "dataset": {
+    "difficulty": {
+     "easy": 120,
+     "hard": 60,
+     "medium": 120
+    },
+    "labels_sha256": "f65092eca3964610758f8c28737b08b22fd4c0c2f7fe94a2f74ff681042f990e",
+    "n": 300,
+    "path": "(rendered, not saved)",
+    "seed": 20261028
+   },
+   "offline": {
+    "accuracy_when_answered": 1.0,
+    "confidence": {
+     "accuracy_at_0.9": 1.0,
+     "coverage_at_0.9": 0.99,
+     "mean_when_correct": 0.985305,
+     "mean_when_wrong": null
+    },
+    "confusion": {
+     "characters": {},
+     "error_parts": {},
+     "examples": [],
+     "modes": {},
+     "units": {}
+    },
+    "correct": 300,
+    "exact_match": 1.0,
+    "exact_match_ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 300,
+    "no_answer_rate": 0.0,
+    "overload": {
+     "exact_match": 1.0,
+     "n": 19
+    },
+    "per_difficulty": {
+     "easy": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     },
+     "hard": {
+      "exact_match": 1.0,
+      "n": 60,
+      "no_answer_rate": 0.0
+     },
+     "medium": {
+      "exact_match": 1.0,
+      "n": 120,
+      "no_answer_rate": 0.0
+     }
+    },
+    "per_mode_unit": {
+     "AC V": {
+      "exact_match": 1.0,
+      "n": 17
+     },
+     "AC mV": {
+      "exact_match": 1.0,
+      "n": 31
+     },
+     "DC V": {
+      "exact_match": 1.0,
+      "n": 150
+     },
+     "DC mV": {
+      "exact_match": 1.0,
+      "n": 43
+     },
+     "resistance M\u03a9": {
+      "exact_match": 1.0,
+      "n": 14
+     },
+     "resistance k\u03a9": {
+      "exact_match": 1.0,
+      "n": 37
+     },
+     "resistance \u03a9": {
+      "exact_match": 1.0,
+      "n": 8
+     }
+    },
+    "seconds_per_image": {
+     "mean": 0.07622,
+     "p95": 0.1094
     },
     "wrong_answer_rate": 0.0
    }
   },
   "target": {
    "claude": 0.95,
-   "claude_met": null,
+   "claude_met": true,
    "id": "T19",
    "judged_on": "synthetic_test",
    "offline": 0.9,
-   "offline_met": null
+   "offline_met": true
   }
  }
 }

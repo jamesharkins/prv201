@@ -9,11 +9,17 @@
   non-default sampling parameters, so caching is the reproducibility mechanism.
 * Without a key, cached responses are still served (replay); anything uncached
   raises ``LLMUnavailable`` and callers fall back to offline behaviour.
+* Prompt caching (ADR-050): live requests mark the fixed prefix (tool schemas and
+  system prompt) with a ``cache_control`` breakpoint, and multi-turn tool loops also
+  use top-level automatic caching so each turn reads the conversation so far. The
+  markers are added only to the request sent to the API; the response-cache key is
+  computed without them, so replay and offline behaviour are unchanged.
 """
 
 from __future__ import annotations
 
 import base64
+import copy
 import hashlib
 import json
 import time
@@ -24,14 +30,19 @@ from typing import Any
 
 from differential.config import LLM_CACHE_DIR, LLMSettings, llm_settings
 
-# List prices per million tokens (input, output), from the model documentation
-# fetched 2026-09-28 (docs/research/sources_technical.yaml: claude_pricing).
+# List prices in USD per million tokens: (input, 5-minute cache write, cache read,
+# output), from the pricing documentation fetched 2026-11-17
+# (docs/research/sources_technical.yaml: claude_pricing). Claude Haiku 5.5 is the
+# row for prompts up to 100,000 tokens; every prompt in this project is far below it.
 PRICES = {
-    "claude-sonnet-5-5": (2.0, 10.0),
-    "claude-sonnet-5": (2.0, 10.0),
-    "claude-opus-5-5": (4.0, 20.0),
-    "claude-haiku-4-5": (1.0, 5.0),
+    "claude-sonnet-5-5": (2.0, 2.5, 0.10, 10.0),
+    "claude-sonnet-5": (2.0, 2.5, 0.20, 10.0),
+    "claude-opus-5-5": (4.0, 5.0, 0.20, 20.0),
+    "claude-haiku-5-5": (0.10, 0.125, 0.01, 0.50),
+    "claude-haiku-4-5": (1.0, 1.25, 0.10, 5.0),
 }
+
+EPHEMERAL = {"type": "ephemeral"}
 
 
 class LLMUnavailable(RuntimeError):
@@ -40,16 +51,32 @@ class LLMUnavailable(RuntimeError):
 
 @dataclass
 class Usage:
+    """Token counts from the API's usage fields. ``input_tokens`` is the uncached part
+    of the prompt; cache writes and reads are counted separately, as the API bills them."""
+
     calls: int = 0
     cached_calls: int = 0
     input_tokens: int = 0
+    cache_write_tokens: int = 0
+    cache_read_tokens: int = 0
     output_tokens: int = 0
     seconds: float = 0.0
     log: list[dict[str, Any]] = field(default_factory=list)
 
+    def add(self, u: dict[str, Any]) -> None:
+        self.input_tokens += int(u.get("input_tokens") or 0)
+        self.cache_write_tokens += int(u.get("cache_creation_input_tokens") or 0)
+        self.cache_read_tokens += int(u.get("cache_read_input_tokens") or 0)
+        self.output_tokens += int(u.get("output_tokens") or 0)
+
+    def tokens(self) -> dict[str, int]:
+        return {"input": self.input_tokens, "cache_write": self.cache_write_tokens,
+                "cache_read": self.cache_read_tokens, "output": self.output_tokens}
+
     def cost_usd(self, model: str) -> float:
-        pin, pout = PRICES.get(model, PRICES["claude-sonnet-5-5"])
-        return (self.input_tokens * pin + self.output_tokens * pout) / 1e6
+        pin, pwrite, pread, pout = PRICES.get(model, PRICES["claude-sonnet-5-5"])
+        return (self.input_tokens * pin + self.cache_write_tokens * pwrite
+                + self.cache_read_tokens * pread + self.output_tokens * pout) / 1e6
 
 
 def thinking_config(model: str) -> dict[str, Any] | None:
@@ -63,6 +90,28 @@ def _hash(payload: dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()
 
 
+def with_cache_control(params: dict[str, Any], conversation: bool = False) -> dict[str, Any]:
+    """The request as sent to the API, with prompt-caching breakpoints.
+
+    One explicit breakpoint on the last system block caches the tool schemas and the
+    system prompt together (tools render before system). With ``conversation`` the
+    top-level automatic breakpoint also caches the growing message history, so each
+    turn of a tool loop reads everything before it. Prefixes shorter than the model's
+    minimum are simply not cached. ``params`` is not modified.
+    """
+    out = dict(params)
+    system = out.get("system")
+    if isinstance(system, str) and system:
+        out["system"] = [{"type": "text", "text": system, "cache_control": dict(EPHEMERAL)}]
+    elif isinstance(system, list) and system:
+        blocks = copy.deepcopy(system)
+        blocks[-1]["cache_control"] = dict(EPHEMERAL)
+        out["system"] = blocks
+    if conversation:
+        out["cache_control"] = dict(EPHEMERAL)
+    return out
+
+
 class LLMClient:
     def __init__(
         self,
@@ -72,7 +121,8 @@ class LLMClient:
     ) -> None:
         self.settings = settings or llm_settings()
         self.cache_dir = cache_dir or LLM_CACHE_DIR
-        self.usage = Usage()
+        self.usage = Usage()   # live API calls made by this client (billed now)
+        self.served = Usage()  # every response served, live or replayed (its original usage)
         self._client = sdk_client
         if self._client is None and self.settings.api_key:
             import anthropic
@@ -103,27 +153,38 @@ class LLMClient:
         # The request payload never contains the API key.
         p.write_text(json.dumps({"request": payload, "response": response}, indent=1, default=str))
 
-    def create(self, purpose: str, **params: Any) -> dict[str, Any]:
-        """messages.create with caching. Returns the response as a plain dict."""
+    def create(self, purpose: str, cache_conversation: bool = False,
+               **params: Any) -> dict[str, Any]:
+        """messages.create with response caching and prompt caching.
+
+        Returns the response as a plain dict. The response-cache key covers the request
+        without its prompt-caching markers, which do not change what the model sees.
+        """
         payload = {"model": self.model, **params}
         key = _hash(payload)
         hit = self._cached(key)
         if hit is not None:
             self.usage.cached_calls += 1
+            self.served.calls += 1
+            self.served.add(dict(hit["response"].get("usage") or {}))
             return dict(hit["response"])
         if not self.live:
             raise LLMUnavailable(f"no API key and no cached response ({purpose})")
         t0 = time.perf_counter()
-        resp = self._client.messages.create(model=self.model, **params)  # type: ignore[union-attr]
+        request = with_cache_control(params, conversation=cache_conversation)
+        resp = self._client.messages.create(model=self.model, **request)  # type: ignore[union-attr]
         dt = time.perf_counter() - t0
         data = resp.to_dict() if hasattr(resp, "to_dict") else dict(resp)
         u = data.get("usage") or {}
         self.usage.calls += 1
-        self.usage.input_tokens += int(u.get("input_tokens", 0) or 0)
-        self.usage.output_tokens += int(u.get("output_tokens", 0) or 0)
+        self.usage.add(u)
         self.usage.seconds += dt
+        self.served.calls += 1
+        self.served.add(u)
         self.usage.log.append({"purpose": purpose, "seconds": dt,
                                "input_tokens": u.get("input_tokens"),
+                               "cache_write_tokens": u.get("cache_creation_input_tokens"),
+                               "cache_read_tokens": u.get("cache_read_input_tokens"),
                                "output_tokens": u.get("output_tokens")})
         self._store(key, payload, data)
         return data
@@ -194,7 +255,7 @@ class LLMClient:
             th = thinking_config(self.model)
             if th:
                 params["thinking"] = th
-            resp = self.create(purpose, **params)
+            resp = self.create(purpose, cache_conversation=True, **params)
             final = resp
             content = resp.get("content", [])
             msgs.append({"role": "assistant", "content": content})

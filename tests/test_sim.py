@@ -353,8 +353,10 @@ def test_symptom_reference_ignores_aged_healthy_draws() -> None:
     import pandas as pd
 
     from differential.engine.symptom_prior import SymptomModel
-    from differential.sim.montecarlo import load_dataset
+    from differential.sim.montecarlo import dataset_path, load_dataset
 
+    if not dataset_path("tone", "train").exists():
+        pytest.skip("simulation library not built (data/sim/*.parquet; run make sim)")
     tr = load_dataset("tone", "train")
     if "aged" not in tr.columns:
         pytest.skip("training data predates ADR-039")

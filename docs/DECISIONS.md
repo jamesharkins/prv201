@@ -993,3 +993,44 @@ deleted.
 - **Consequences.** 415 tests pass; the safety sweep covers every step with no false
   high-voltage alarm. The session-authentication finding is informational for a localhost
   demo and is recorded in the threat model. The locked T13 text is unchanged.
+
+## ADR-050 - Prompt caching on live requests; cache-aware cost (promised in M2)
+
+- **Context.** M2 promised prompt caching for the live runs. Every live request repeats a
+  fixed prefix (tool schemas and the system prompt), and the agent and the language-model
+  baselines resend a growing conversation each turn. The cost code priced only input and
+  output tokens, and the pricing source recorded a September cache-hit price for Claude
+  Sonnet 5.5 that the pricing page no longer shows.
+- **Decision.**
+  1. Live requests mark the last system block with a `cache_control` breakpoint, which
+     caches the tool schemas and the system prompt together. Tool loops (the agent, the
+     baselines) also set top-level automatic caching, so each turn reads the conversation
+     before it. Single-shot calls (complaint reading, meter photos) put no breakpoint on
+     their unique tail, which would only pay the write premium.
+  2. The markers are added only to the request sent to the API. The response-cache key is
+     the hash of the request without them, as before, so replay and offline modes are
+     unchanged and no recorded response is invalidated.
+  3. Usage counts uncached input, cache writes, cache reads and output separately, from the
+     API's usage fields, and cost uses the list price of each (pricing page re-fetched
+     2026-11-17). Replayed responses carry their original usage, so a rerun from the cache
+     reports the same list-price cost per diagnosis while billing nothing.
+- **Consequences.** Caching changes cost and latency, not what the model sees; it needs no
+  re-run of anything offline.
+
+## ADR-051 - A live reply leaves the engine's next step pending (found by the live smoke test)
+
+- **Context.** The first live smoke test (10 test units, after the lock) showed every live
+  session ending with no measurement taken (effort 0) while offline sessions on the same
+  units measured to a stop. In live mode nothing set the agent's pending step after the
+  model's reply: only the offline paths call the step logic. The app's measure button and
+  forms, and the evaluation's scripted technician, read that pending step, so a live session
+  never got past the complaint and was scored on the prior alone.
+- **Decision.** After a successful live reply the agent sets its pending step from the
+  engine, exactly as the offline path does after a complaint or a reading (the same
+  recommendation, the same gates and trainee withholding). The step is set after the
+  reply's grounding check, so the check sees no extra evidence. The model's requests and
+  replies are unchanged; the ten smoke-test sessions replay from the response cache with
+  identical API usage and now measure as offline sessions do.
+- **Disclosure.** The defect was found on test units. The fix is plumbing (no parameter,
+  prompt or threshold changed), and no live result is quoted from before it. A regression
+  test covers it (`tests/test_agent.py`).

@@ -34,3 +34,7 @@ data/sim_old_rpk/
 # instructor's contact details); the team has it on Canvas. course/SYLLABUS_NOTES.md
 # summarises what the project uses from it.
 course/*.pdf
+results/*.lock
+
+# Claude response cache (replays live runs for free; kept out of git for size)
+data/llm_cache/

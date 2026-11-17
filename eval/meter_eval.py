@@ -245,6 +245,9 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--regenerate", action="store_true", help="re-render data/meter_photos/synthetic")
     ap.add_argument("--n", type=int, default=300, help="photos per rendered set (0 = skip)")
     ap.add_argument("--limit", type=int, default=None, help="evaluate only the first N photos per set")
+    ap.add_argument("--out", default=None,
+                    help="write the result to this JSON file instead of the 'vision' section of "
+                         "results/metrics.json (for runs with another DIFFERENTIAL_MODEL)")
     args = ap.parse_args(argv)
 
     if args.regenerate or not (SYNTHETIC_DIR / "labels.jsonl").exists():
@@ -287,8 +290,12 @@ def main(argv: list[str] | None = None) -> None:
                            f"pilot set (seed {PILOT_SEED}) was scored before the targets were locked; "
                            f"T19 is judged on the test set (seed {TEST_SEED}), scored only after the "
                            "lock. Every reading is confirmed by the technician before it is recorded.")
-    metrics_io.update("vision", results)
-    print(f"wrote section 'vision' to {metrics_io.METRICS}")
+    if args.out:
+        Path(args.out).write_text(json.dumps(metrics_io._clean(results), indent=1) + "\n")
+        print(f"wrote {args.out}")
+    else:
+        metrics_io.update("vision", results)
+        print(f"wrote section 'vision' to {metrics_io.METRICS}")
 
 
 if __name__ == "__main__":

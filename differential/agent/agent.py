@@ -111,10 +111,14 @@ class DifferentialAgent:
         if self.mode == "offline":
             return self._reply(prefix + self._offline(text))
         try:
-            return self._reply(prefix + self._live(text), live=True)
+            turn = self._reply(prefix + self._live(text), live=True)
         except Exception as exc:  # replay miss or API failure: stay useful
             reply = self._offline(text)
             return self._reply(prefix + reply, meta={"fallback": type(exc).__name__})
+        # The step the app offers next (its measure button, the forms) is the engine's, as
+        # in offline mode; without this a live session never had a pending step (ADR-051).
+        self._next_step()
+        return turn
 
     def reading_event(self, key: str, value: float, source: str = "technician") -> Turn:
         """A reading entered through the UI (or an instrument) rather than in chat."""

@@ -411,7 +411,16 @@ def compute_targets(R: dict[str, dict[str, pd.DataFrame]], targets: dict[str, An
     steps = np.concatenate([json.loads(x) for x in cs["step_seconds"]])
     p95 = float(np.percentile(steps, 95)) if len(steps) else float("nan")
     put("T20", Estimate(p95, p95, p95, p95, p95), {"mean": float(steps.mean()) if len(steps) else None})
-    put("T21", None, {"note": "requires DIFFERENTIAL_API_KEY"})
+    # T21 (bound "none"): mean list-price cost of the live agent's diagnoses in the agent
+    # evaluation, from the API's usage fields with prompt caching (ADR-050).
+    live = M.get("agent_live", {})
+    if live.get("mean_cost_usd_per_diagnosis") is not None:
+        c21 = float(live["mean_cost_usd_per_diagnosis"])
+        put("T21", Estimate(c21, c21, c21, c21, c21),
+            {"n": live.get("n_sessions"), "model": live.get("model"), "tokens": live.get("tokens"),
+             "cost_usd_total": live.get("cost_usd_total"), "api_calls": live.get("api_calls")})
+    else:
+        put("T21", None, {"note": "requires DIFFERENTIAL_API_KEY (python -m eval.agent_eval --mode live)"})
     # T25 (release gate): the planted wrong step in study S1 (docs/study_s1.md)
     s1 = M.get("study_s1", {})
     if s1.get("status") == "measured" and int(s1.get("n", 0)) >= 6:

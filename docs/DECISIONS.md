@@ -1034,3 +1034,21 @@ deleted.
 - **Disclosure.** The defect was found on test units. The fix is plumbing (no parameter,
   prompt or threshold changed), and no live result is quoted from before it. A regression
   test covers it (`tests/test_agent.py`).
+
+## ADR-052 - The first message is the complaint, whatever words it uses (found by the offline agent run)
+
+- **Context.** The offline agent evaluation on 100 test units (after the lock) named the
+  right group in 84 sessions, while the engine named it in 94 of the same units. In 10
+  sessions the agent took no measurement, and 8 of them were wrong. All 8 had a complaint in
+  the bench-technician voice, which begins "Service ticket: ...". The offline router treated
+  any message containing "ticket", "summary" or "write up" as a request for the repair
+  ticket, so it closed these sessions on the prior alone. Live mode was not affected: Claude
+  reads the request, and all 8 units were right live. The demo app runs offline, so a
+  technician who typed a complaint this way got an empty ticket.
+- **Decision.** A message is read as a ticket request only once the session has a complaint;
+  the first message is always parsed as the complaint. Nothing else changes: no parameter,
+  rule, prompt or threshold.
+- **Disclosure.** The defect was found on test units. The fix is plumbing, and the result from
+  before it is kept and reported next to the re-run. A regression test written in a different
+  voice covers it (`tests/test_agent.py`). The engine's targets (T1-T14, T22-T26) do not use the
+  agent's router and are unaffected.

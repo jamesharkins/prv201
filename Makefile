@@ -69,6 +69,7 @@ demo:        ## web demo on http://localhost:8000 (offline unless DIFFERENTIAL_A
 docs:        ## render milestone documents (MS=M1 ... or all)
 	$(PY) tools/design_constants.py
 	$(PY) tools/render_docs.py $(MS)
+	$(PY) tools/render_readme.py
 
 docs-check:  ## page limits, balance, claims and spelling for rendered documents
 	$(PY) tools/check_pages.py

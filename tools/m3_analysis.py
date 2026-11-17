@@ -10,6 +10,8 @@ Writes results/m3_analysis.json with:
   - misses: the full system's misses on single faults, split into "no single fault fits"
     flags and wrong names, by circuit;
   - cost_ablation: the engine with and without effort weighting (readings taken, stops);
+  - live_vs_engine: the live agent next to the engine on the same units, and the cost of a
+    live diagnosis with and without prompt caching;
   - llm_only: the language-model-alone baseline (T5) replayed from the response cache (no
     key, no cost), next to the full system on the same units, by circuit and part kind.
 
@@ -190,10 +192,46 @@ def cost_ablation() -> dict[str, Any]:
     return out
 
 
+def live_vs_engine() -> dict[str, Any]:
+    """The live agent's sessions next to the engine's stored run on the same units, and the
+    list-price cost per diagnosis with and without prompt caching."""
+    from differential.agent.llm import PRICES
+
+    live = [json.loads(x) for x in (RESULTS / "agent_live.jsonl").read_text().splitlines() if x.strip()]
+    eng = pd.concat([pd.read_parquet(f) for f in RUNS.glob("hybrid__*__test.parquet")]).set_index("case_id")
+
+    def eng_ok(r: dict[str, Any]) -> bool:
+        return bool(eng.loc[r["case_id"], "correct"])
+
+    def eng_cost(r: dict[str, Any]) -> float:
+        return float(eng.loc[r["case_id"], "cost"])
+
+    only_engine = [r for r in live if eng_ok(r) and not r["correct"]]
+    tok = {k: sum(r["tokens"][k] for r in live) for k in live[0]["tokens"]}
+    pin, _pwrite, _pread, pout = PRICES[live[0]["model"]]
+    uncached = ((tok["input"] + tok["cache_write"] + tok["cache_read"]) * pin + tok["output"] * pout) / 1e6
+    actual = sum(r["cost_usd"] for r in live)
+    return {
+        "n": len(live), "live_correct": sum(bool(r["correct"]) for r in live),
+        "engine_correct": sum(eng_ok(r) for r in live),
+        "right_engine_wrong_live": len(only_engine),
+        "of_those_stopped_with_less_effort": sum(r["effort"] < eng_cost(r) for r in only_engine),
+        "right_live_wrong_engine": sum(bool(r["correct"]) and not eng_ok(r) for r in live),
+        "sessions_with_less_effort": sum(r["effort"] < eng_cost(r) for r in live),
+        "sessions_with_more_effort": sum(r["effort"] > eng_cost(r) for r in live),
+        "sessions_without_measurement": sum(r["effort"] == 0 for r in live),
+        "api_calls_per_diagnosis": round(sum(r["api_calls"] for r in live) / len(live), 2),
+        "cost_per_diagnosis_usd": round(actual / len(live), 4),
+        "uncached_cost_per_diagnosis_usd": round(uncached / len(live), 4),
+        "caching_saving_share": round(1 - actual / uncached, 3),
+    }
+
+
 def main() -> None:
     result = {"t13_by_kind": t13_by_kind(), "agent_vs_engine": agent_vs_engine(),
               "redteam": redteam(), "llm_only": llm_only_vs_system(),
-              "misses": misses(), "cost_ablation": cost_ablation()}
+              "misses": misses(), "cost_ablation": cost_ablation(),
+              "live_vs_engine": live_vs_engine()}
     (RESULTS / "m3_analysis.json").write_text(json.dumps(result, indent=1) + "\n")
     print(json.dumps(result, indent=1))
 

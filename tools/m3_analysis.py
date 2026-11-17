@@ -6,7 +6,9 @@ Writes results/m3_analysis.json with:
   - agent_vs_engine: the offline agent's sessions next to the engine's stored run on the
     same test units, including sessions that ended without a measurement;
   - redteam: replies of the red-team harness by kind (refused, diagnosis started instead
-    of answering, other), offline and live, from results/redteam_<mode>.json.
+    of answering, other), offline and live, from results/redteam_<mode>.json;
+  - llm_only: the language-model-alone baseline (T5) replayed from the response cache (no
+    key, no cost), next to the full system on the same units, by circuit and part kind.
 
 Usage: python tools/m3_analysis.py   (after `make eval` and the agent and red-team runs)
 """
@@ -105,9 +107,48 @@ def redteam() -> dict[str, Any]:
     return out
 
 
+def llm_only_vs_system() -> dict[str, Any]:
+    import numpy as np
+
+    from eval import harness as H
+    from eval import llm_baseline as B
+
+    df = B.run("llm_only")  # replays data/llm_cache; None without a key or a cache
+    if df is None:
+        return {"status": "pending: no cached responses"}
+    hyb = pd.concat([H.run_system(H.SYSTEMS["hybrid"], c, "test") for c in df["circuit"].unique()])
+    m = df.merge(hyb[["case_id", "correct", "truth_kind"]], on="case_id", suffixes=("_llm", "_system"))
+    wrong = same_part = 0
+    for _, r in m[~m["correct_llm"]].iterrows():
+        bundle = H.bundle_for(str(r["circuit"]))
+        ranked = [h for h in json.loads(r["ranked"]) if h in bundle.hypotheses]
+        if ranked:
+            wrong += 1
+            same_part += int(H.parse_fault_id(ranked[0]).ref == H.parse_fault_id(str(r["truth"])).ref)
+
+    def table(col: str) -> dict[str, Any]:
+        return {str(k): {"n": len(g), "llm": round(float(g["correct_llm"].mean()), 4),
+                         "system": round(float(g["correct_system"].mean()), 4)}
+                for k, g in m.groupby(col)}
+
+    conf = pd.to_numeric(m["confidence"], errors="coerce")
+    return {
+        "n": len(m), "top1_llm": round(float(m["correct_llm"].mean()), 4),
+        "top1_system": round(float(m["correct_system"].mean()), 4),
+        "by_circuit": table("circuit"), "by_part_kind": table("truth_kind"),
+        "wrong_named": wrong, "wrong_same_part_other_mode": same_part,
+        "mean_confidence_right": round(float(np.nanmean(conf[m["correct_llm"]])), 3),
+        "mean_confidence_wrong": round(float(np.nanmean(conf[~m["correct_llm"]])), 3),
+        "units_all_sessions_agree": int((m["session_agreement"] == 1.0).sum()),
+        "units_all_sessions_differ": int((m["session_agreement"] < 0.5).sum()),
+        "mean_effort_llm": round(float(m["cost"].mean()), 2),
+        "mean_steps_llm": round(float(m["steps"].mean()), 2),
+    }
+
+
 def main() -> None:
     result = {"t13_by_kind": t13_by_kind(), "agent_vs_engine": agent_vs_engine(),
-              "redteam": redteam()}
+              "redteam": redteam(), "llm_only": llm_only_vs_system()}
     (RESULTS / "m3_analysis.json").write_text(json.dumps(result, indent=1) + "\n")
     print(json.dumps(result, indent=1))
 

@@ -209,6 +209,15 @@ def click_measure(page: Page) -> bool:
     return True
 
 
+def record_bring_up(page: Page, method: str = "series_lamp") -> None:
+    """Units with a high-voltage or mains supply take no powered step until the bring-up
+    is recorded (ADR-049); record it the way a technician would, through the banner form."""
+    form = page.locator(".banner .bringup-form")
+    form.locator("select").select_option(method)
+    form.locator("button[type=submit]").click()
+    wait_idle(page)
+
+
 def confirm_discharge(page: Page) -> None:
     """Handle a locked part removal: record the owner's approval, or enter a discharge
     reading at every high-voltage point the banner lists."""
@@ -274,16 +283,22 @@ def session(
         pending = st.get("pending")
         if not pending:
             break
-        if st.get("banner") and not got_hv:
+        if st.get("banner") and not got_hv and not pending.get("blocked"):
             got_hv = True
             settle(page, 500)
             page.evaluate("() => document.getElementById('side').scrollTo(0, 0)")
             check_layout(page, run, "hv recommendation")
             shot(page, run, out, "02_recommendation_hv", a.suffix)
             frame(page, run, 3200, capture)
-        if first_rec is None:
+        if first_rec is None and not pending.get("blocked"):
             page.evaluate("() => document.getElementById('side').scrollTo(0, 0)")
             first_rec = page.screenshot()
+        if pending.get("blocked") == "bring_up":
+            frame(page, run, 1800, capture)
+            record_bring_up(page)
+            settle(page)
+            frame(page, run, 1200, capture)
+            continue
         if pending.get("blocked") in ("discharge_verification", "owner_approval"):
             confirm_discharge(page)
             settle(page)

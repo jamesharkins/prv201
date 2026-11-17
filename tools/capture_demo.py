@@ -28,6 +28,7 @@ from screenshots import (  # noqa: E402
     click_measure,
     confirm_discharge,
     find_chromium,
+    record_bring_up,
     settle,
     state,
     wait_idle,
@@ -77,6 +78,11 @@ def main(argv: list[str] | None = None) -> int:
             p_ = st.get("pending") or {}
             if not p_ or p_.get("stop"):
                 break
+            if p_.get("blocked") == "bring_up":
+                settle(page, 2500)
+                record_bring_up(page)
+                settle(page, 2500)
+                continue
             if p_.get("blocked"):
                 confirm_discharge(page)
                 settle(page, 3000)

@@ -9,6 +9,7 @@ Writes results/m3_analysis.json with:
     of answering, other), offline and live, from results/redteam_<mode>.json;
   - misses: the full system's misses on single faults, split into "no single fault fits"
     flags and wrong names, by circuit;
+  - cost_ablation: the engine with and without effort weighting (readings taken, stops);
   - llm_only: the language-model-alone baseline (T5) replayed from the response cache (no
     key, no cost), next to the full system on the same units, by circuit and part kind.
 
@@ -166,10 +167,31 @@ def misses() -> dict[str, Any]:
     return out
 
 
+def cost_ablation() -> dict[str, Any]:
+    """The engine with and without effort weighting: which readings it takes, how it stops,
+    and how often it is right when it stops confident (the stop threshold is 0.90)."""
+    scope = ("ac", "ac20", "ac20k", "hum", "thd")
+    out: dict[str, Any] = {}
+    for system in ("engine_gen", "engine_eig_nocost"):
+        d = pd.concat([pd.read_parquet(f) for f in sorted(RUNS.glob(f"{system}__*__test.parquet"))])
+        d = d[d["single_fault"]]
+        keys = d["keys"].map(json.loads)
+        steps = int(keys.map(len).sum())
+        conf = d[d["stop_reason"] == "confident"]
+        out[system] = {
+            "n": len(d),
+            "scope_step_share": round(sum(sum(1 for k in ks if k.split(":")[0] in scope) for ks in keys) / steps, 3),
+            "lift_step_share": round(sum(sum(1 for k in ks if k.startswith("lift")) for ks in keys) / steps, 3),
+            "stopped_confident_share": round(len(conf) / len(d), 3),
+            "accuracy_when_confident": round(float(conf["correct"].mean()), 3),
+        }
+    return out
+
+
 def main() -> None:
     result = {"t13_by_kind": t13_by_kind(), "agent_vs_engine": agent_vs_engine(),
               "redteam": redteam(), "llm_only": llm_only_vs_system(),
-              "misses": misses()}
+              "misses": misses(), "cost_ablation": cost_ablation()}
     (RESULTS / "m3_analysis.json").write_text(json.dumps(result, indent=1) + "\n")
     print(json.dumps(result, indent=1))
 

@@ -85,6 +85,8 @@ strict = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# the tests import the checkers in tools/ and eval/ from the repository root
+pythonpath = ["."]
 addopts = "-q"
 markers = [
     "slow: tests that run ngspice over many draws",

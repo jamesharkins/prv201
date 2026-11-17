@@ -242,11 +242,22 @@ def run(system: str = "llm_only", client: LLMClient | None = None) -> pd.DataFra
 
 def main() -> None:
     """Run both LLM baselines and compare with the full system on the same units."""
+    from differential.sim.montecarlo import dataset_path
     from eval import metrics_io
     from eval.harness import SYSTEMS, run_system
     from eval.stats import mcnemar, paired_diff
 
     for system in ("llm_only", "llm_sim"):
+        missing = [cid for cid in SUBSET if not dataset_path(cid, "train").exists()]
+        if system == "llm_sim" and missing:
+            # simulate_fault reads the training simulations; without them every call would
+            # return an error to the model and the baseline would not be the one specified.
+            status = ("pending: simulate_fault needs the simulation library "
+                      f"(data/sim/<circuit>__train.parquet, missing for {', '.join(missing)}; "
+                      "run make sim), which is not in git")
+            metrics_io.update(system, {"status": status})
+            print(system, status)
+            continue
         df = run(system)
         if df is None:
             metrics_io.update(system, {"status": "pending: requires DIFFERENTIAL_API_KEY"})

@@ -61,6 +61,12 @@ def run_case(row: dict[str, Any], complaint: str, mode: str) -> dict[str, Any]:
     belief = agent.tb.t_get_belief()
     top = belief["ranked_groups"][0]["group"]
     msgs = [g for g in agent.grounding_log if g["where"] == "message"]
+    api: dict[str, Any] = {}
+    if agent.llm is not None:  # list-price usage of every response the session used
+        served = agent.llm.served
+        api = {"api_calls": served.calls, "tokens": served.tokens(),
+               "cost_usd": served.cost_usd(agent.llm.model), "model": agent.llm.model,
+               "fallbacks": sum(1 for t in agent.turns if (t.meta or {}).get("fallback"))}
     return {
         "case_id": row["case_id"], "circuit": row["circuit"], "truth": truth,
         "correct": top == int(groups.group_of[hyps.index(truth)]),
@@ -73,6 +79,7 @@ def run_case(row: dict[str, Any], complaint: str, mode: str) -> dict[str, Any]:
         "safety_events": len(agent.safety_log),
         "effort": agent.tb.engine.cost_spent,
         "seconds": time.perf_counter() - t0,
+        **api,
     }
 
 
@@ -105,6 +112,13 @@ def main(argv: list[str] | None = None) -> None:
            "agent_top1": float(np.mean([r["correct"] for r in results])),
            "mean_seconds_per_session": float(np.mean([r["seconds"] for r in results])),
            "safety_events": sum(r["safety_events"] for r in results)}
+    if args.mode != "offline":  # T21: mean API cost per diagnosis at list prices
+        tok = {k: sum(r["tokens"][k] for r in results) for k in results[0]["tokens"]}
+        out.update({"model": results[0]["model"],
+                    "api_calls": sum(r["api_calls"] for r in results), "tokens": tok,
+                    "cost_usd_total": float(sum(r["cost_usd"] for r in results)),
+                    "mean_cost_usd_per_diagnosis": float(np.mean([r["cost_usd"] for r in results])),
+                    "sessions_with_offline_fallback": sum(1 for r in results if r["fallbacks"])})
     section = f"agent_{args.mode}" + ("" if args.split == "test" else f"_{args.split}")
     metrics_io.update(section, out)
     (metrics_io.METRICS.parent / f"{section}.jsonl").write_text(

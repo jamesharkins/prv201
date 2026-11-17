@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import fcntl
 import json
 import math
 import os
@@ -35,10 +36,14 @@ def load() -> dict[str, Any]:
 def update(section: str, data: dict[str, Any], path: Path | None = None) -> None:
     """Replace one top-level section atomically (other sections are untouched)."""
     path = path or METRICS
-    current = json.loads(path.read_text()) if path.exists() else {}
-    current[section] = _clean(data)
     path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=path.parent, suffix=".tmp")
-    with os.fdopen(fd, "w") as fh:
-        json.dump(current, fh, indent=1, sort_keys=True)
-    os.replace(tmp, path)
+    # Evaluations may run in parallel: the read-modify-write holds an exclusive lock so
+    # one run's section is never lost to another's.
+    with open(path.with_name(path.name + ".lock"), "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        current = json.loads(path.read_text()) if path.exists() else {}
+        current[section] = _clean(data)
+        fd, tmp = tempfile.mkstemp(dir=path.parent, suffix=".tmp")
+        with os.fdopen(fd, "w") as fh:
+            json.dump(current, fh, indent=1, sort_keys=True)
+        os.replace(tmp, path)

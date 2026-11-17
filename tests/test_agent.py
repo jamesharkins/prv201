@@ -745,3 +745,64 @@ def test_discharge_record_needs_the_meter_proved_live_dead_live() -> None:
         tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2))
     assert not tb.discharge_verified
     assert tb.t_confirm_discharge(readings=dict.fromkeys(pts, 0.2), meter_proved=True)["verified"]
+
+
+def test_prompt_caching_markers_only_on_the_wire(tmp_path: Any) -> None:
+    """Live requests carry cache_control breakpoints (system + growing conversation in a
+    tool loop); the response-cache key ignores them, so replay is unaffected."""
+    from differential.agent.llm import LLMClient, _hash, with_cache_control
+
+    sent: list[dict[str, Any]] = []
+
+    class Recording(FakeMessages):
+        def create(self, **params: Any) -> FakeResp:
+            sent.append(params)
+            return super().create(**params)
+
+    resp = {"content": [{"type": "text", "text": "ok"}], "stop_reason": "end_turn",
+            "usage": {"input_tokens": 100, "cache_creation_input_tokens": 1000,
+                      "cache_read_input_tokens": 0, "output_tokens": 10}}
+    sdk = FakeSDK([resp])
+    sdk.messages = Recording([resp])
+    c = LLMClient(LLMSettings(api_key="k", model="claude-sonnet-5-5"), cache_dir=tmp_path,
+                  sdk_client=sdk)
+    tools = [{"name": "t", "description": "d", "input_schema": {"type": "object"}}]
+    msgs = [{"role": "user", "content": "hi"}]
+    c.tool_loop("sys", msgs, tools, lambda n, a: {}, purpose="agent")
+    req = sent[0]
+    assert req["system"] == [{"type": "text", "text": "sys", "cache_control": {"type": "ephemeral"}}]
+    assert req["cache_control"] == {"type": "ephemeral"}
+    assert "cache_control" not in str(msgs) and "cache_control" not in str(tools)
+    # single-shot calls cache the system prompt but put no breakpoint on the unique tail
+    c.text("sys2", "once")
+    assert "cache_control" not in sent[1] and sent[1]["system"][0]["cache_control"]
+    # the stored request (and so the replay key) carries no markers
+    for f in tmp_path.rglob("*.json"):
+        assert "cache_control" not in f.read_text()
+    assert _hash({"a": 1}) == _hash({"a": 1})
+    assert with_cache_control({"system": "s"})["system"][0]["text"] == "s"
+    # cost counts cache writes at the 5-minute write price; replays count in `served` only
+    assert abs(c.usage.cost_usd("claude-sonnet-5-5")
+               - 2 * (100 * 2.0 + 1000 * 2.5 + 10 * 10.0) / 1e6) < 1e-12
+    replay = LLMClient(LLMSettings(api_key=None, model="claude-sonnet-5-5"), cache_dir=tmp_path)
+    replay.text("sys2", "once")
+    assert replay.usage.calls == 0 and replay.served.cache_write_tokens == 1000
+
+
+def test_live_reply_leaves_the_engines_next_step_pending(tmp_path: Any) -> None:
+    """After a live reply the app (and the evaluation's scripted technician) must have the
+    engine's next step pending, as in offline mode; before ADR-051 it stayed None, so a
+    live session took no measurement at all."""
+    from differential.agent.agent import DifferentialAgent
+    from differential.agent.llm import LLMClient
+
+    script = [{"content": [{"type": "text", "text": "Let's start measuring."}],
+               "stop_reason": "end_turn", "usage": {}}]
+    llm = LLMClient(LLMSettings(api_key="k", model="claude-sonnet-5-5"), cache_dir=tmp_path,
+                    sdk_client=FakeSDK(script))
+    live = DifferentialAgent("driver", mode="live", llm=llm)
+    live.user_message("It has no output at all and the fuse is fine.")
+    off = DifferentialAgent("driver", mode="offline")
+    off.user_message("It has no output at all and the fuse is fine.")
+    assert live.pending_key is not None
+    assert live.tb.call("recommend_measurement").get("key") == live.pending_key

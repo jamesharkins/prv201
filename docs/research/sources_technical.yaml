@@ -1382,14 +1382,21 @@
   title: Pricing
   container: Claude Developer Platform documentation
   publisher: Anthropic
-  date: '2026-09-28'
+  date: '2026-11-17'
   url: https://platform.claude.com/docs/en/about-claude/pricing
-  accessed: '2026-09-28'
+  accessed: '2026-11-17'
   verified: fetched
+  note: 'Re-fetched 2026-11-17 for the live runs. The Sonnet 5.5 cache-hit price is now $0.10 (0.05x input); the
+    2026-09-28 fetch recorded $0.20. The cost code (differential/agent/llm.py: PRICES) uses the 2026-11-17 rows.'
   claims:
-  - claim: 'Claude Sonnet 5.5 pricing row: $2 input, $2.50 5m cache write, $4 1h cache write, $0.20 cache hit, $10 output
+  - claim: 'Claude Sonnet 5.5 pricing row: $2 input, $2.50 5m cache write, $4 1h cache write, $0.10 cache hit, $10 output
       per MTok.'
-    quote: '| Claude Sonnet 5.5 | $2 / MTok | $2.50 / MTok | $4 / MTok | $0.20 / MTok | $10 / MTok |'
+    quote: '| Claude Sonnet 5.5 | $2 / MTok | $2.50 / MTok | $4 / MTok | $0.10 / MTok<sup>2</sup> | $10 / MTok |'
+  - claim: 'Claude Haiku 5.5 pricing row (prompts up to 100,000 tokens): $0.10 input, $0.125 5m cache write, $0.20 1h cache
+      write, $0.01 cache hit, $0.50 output per MTok.'
+    quote: '| Claude Haiku 5.5 (for prompts up to 100,000 tokens) | $0.10 / MTok | $0.125 / MTok | $0.20 / MTok | $0.01 / MTok | $0.50 / MTok |'
+  - claim: Cache hits on Claude Opus 5.5 and Claude Sonnet 5.5 are priced at 0.05x the base input price.
+    quote: Cache hits and refreshes on Claude Opus 5.5 and Claude Sonnet 5.5 are priced at 0.05x the base input price.
   - claim: 'Claude Opus 5.5 pricing row: $4 input, $20 output per MTok (cache hit $0.20).'
     quote: '| Claude Opus 5.5 | $4 / MTok | $5 / MTok | $8 / MTok | $0.20 / MTok<sup>2</sup> | $20 / MTok |'
 - key: claude_sonnet_5_5_overview

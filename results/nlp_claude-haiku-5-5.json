@@ -1,0 +1,447 @@
+{
+ "gold": "reported symptoms (after complaint noise)",
+ "bank_b_texts_with_leakage": 0,
+ "bank_b_rules": {
+  "micro_f1": 0.705005,
+  "precision": 0.990884,
+  "recall": 0.547148,
+  "n": 5000,
+  "macro_f1": 0.710622,
+  "recall_by_symptom": {
+   "no_output": 0.64104,
+   "low_gain": 0.605191,
+   "hum": 0.966074,
+   "distortion": 0.746032,
+   "dc_at_output": 0.644628,
+   "bias_drift": 0.185265,
+   "bass_loss": 0.511905,
+   "treble_loss": 0.375839
+  },
+  "support_by_symptom": {
+   "no_output": 1847,
+   "low_gain": 732,
+   "hum": 619,
+   "distortion": 441,
+   "dc_at_output": 121,
+   "bias_drift": 1398,
+   "bass_loss": 504,
+   "treble_loss": 298
+  }
+ },
+ "bank_b_rules_by_persona": {
+  "studio_client": {
+   "micro_f1": 0.681907,
+   "precision": 1.0,
+   "recall": 0.517344,
+   "n": 1671,
+   "macro_f1": 0.663036,
+   "recall_by_symptom": {
+    "no_output": 0.627677,
+    "low_gain": 0.595506,
+    "hum": 0.902778,
+    "distortion": 0.77551,
+    "dc_at_output": 0.46875,
+    "bias_drift": 0.139831,
+    "bass_loss": 0.508772,
+    "treble_loss": 0.254717
+   },
+   "support_by_symptom": {
+    "no_output": 607,
+    "low_gain": 267,
+    "hum": 216,
+    "distortion": 147,
+    "dc_at_output": 32,
+    "bias_drift": 472,
+    "bass_loss": 171,
+    "treble_loss": 106
+   }
+  },
+  "hobbyist": {
+   "micro_f1": 0.722168,
+   "precision": 1.0,
+   "recall": 0.565151,
+   "n": 1639,
+   "macro_f1": 0.713719,
+   "recall_by_symptom": {
+    "no_output": 0.776094,
+    "low_gain": 0.49789,
+    "hum": 1.0,
+    "distortion": 0.611465,
+    "dc_at_output": 0.794872,
+    "bias_drift": 0.131111,
+    "bass_loss": 0.54023,
+    "treble_loss": 0.421569
+   },
+   "support_by_symptom": {
+    "no_output": 594,
+    "low_gain": 237,
+    "hum": 204,
+    "distortion": 157,
+    "dc_at_output": 39,
+    "bias_drift": 450,
+    "bass_loss": 174,
+    "treble_loss": 102
+   }
+  },
+  "bench_tech": {
+   "micro_f1": 0.710813,
+   "precision": 0.973707,
+   "recall": 0.559698,
+   "n": 1690,
+   "macro_f1": 0.744121,
+   "recall_by_symptom": {
+    "no_output": 0.529412,
+    "low_gain": 0.72807,
+    "hum": 1.0,
+    "distortion": 0.868613,
+    "dc_at_output": 0.64,
+    "bias_drift": 0.281513,
+    "bass_loss": 0.484277,
+    "treble_loss": 0.466667
+   },
+   "support_by_symptom": {
+    "no_output": 646,
+    "low_gain": 228,
+    "hum": 199,
+    "distortion": 137,
+    "dc_at_output": 50,
+    "bias_drift": 476,
+    "bass_loss": 159,
+    "treble_loss": 90
+   }
+  }
+ },
+ "bank_a_seen_once_rules": {
+  "micro_f1": 0.628349,
+  "precision": 0.989185,
+  "recall": 0.460403,
+  "n": 5000,
+  "macro_f1": 0.670456,
+  "recall_by_symptom": {
+   "no_output": 0.439632,
+   "low_gain": 0.506831,
+   "hum": 0.836834,
+   "distortion": 0.639456,
+   "dc_at_output": 0.561983,
+   "bias_drift": 0.228183,
+   "bass_loss": 0.400794,
+   "treble_loss": 0.577181
+  },
+  "support_by_symptom": {
+   "no_output": 1847,
+   "low_gain": 732,
+   "hum": 619,
+   "distortion": 441,
+   "dc_at_output": 121,
+   "bias_drift": 1398,
+   "bass_loss": 504,
+   "treble_loss": 298
+  }
+ },
+ "bank_a_seen_once_rules_by_persona": {
+  "studio_client": {
+   "micro_f1": 0.642449,
+   "precision": 1.0,
+   "recall": 0.473241,
+   "n": 1671,
+   "macro_f1": 0.664962,
+   "recall_by_symptom": {
+    "no_output": 0.326194,
+    "low_gain": 0.606742,
+    "hum": 0.828704,
+    "distortion": 0.489796,
+    "dc_at_output": 0.25,
+    "bias_drift": 0.326271,
+    "bass_loss": 0.549708,
+    "treble_loss": 0.830189
+   },
+   "support_by_symptom": {
+    "no_output": 607,
+    "low_gain": 267,
+    "hum": 216,
+    "distortion": 147,
+    "dc_at_output": 32,
+    "bias_drift": 472,
+    "bass_loss": 171,
+    "treble_loss": 106
+   }
+  },
+  "hobbyist": {
+   "micro_f1": 0.681267,
+   "precision": 1.0,
+   "recall": 0.516607,
+   "n": 1639,
+   "macro_f1": 0.664036,
+   "recall_by_symptom": {
+    "no_output": 0.680135,
+    "low_gain": 0.586498,
+    "hum": 0.848039,
+    "distortion": 0.592357,
+    "dc_at_output": 0.74359,
+    "bias_drift": 0.148889,
+    "bass_loss": 0.494253,
+    "treble_loss": 0.196078
+   },
+   "support_by_symptom": {
+    "no_output": 594,
+    "low_gain": 237,
+    "hum": 204,
+    "distortion": 157,
+    "dc_at_output": 39,
+    "bias_drift": 450,
+    "bass_loss": 174,
+    "treble_loss": 102
+   }
+  },
+  "bench_tech": {
+   "micro_f1": 0.557107,
+   "precision": 0.962871,
+   "recall": 0.39194,
+   "n": 1690,
+   "macro_f1": 0.619437,
+   "recall_by_symptom": {
+    "no_output": 0.325077,
+    "low_gain": 0.307018,
+    "hum": 0.834171,
+    "distortion": 0.854015,
+    "dc_at_output": 0.62,
+    "bias_drift": 0.205882,
+    "bass_loss": 0.138365,
+    "treble_loss": 0.711111
+   },
+   "support_by_symptom": {
+    "no_output": 646,
+    "low_gain": 228,
+    "hum": 199,
+    "distortion": 137,
+    "dc_at_output": 50,
+    "bias_drift": 476,
+    "bass_loss": 159,
+    "treble_loss": 90
+   }
+  }
+ },
+ "development_rules": {
+  "micro_f1": 0.999664,
+  "precision": 1.0,
+  "recall": 0.999329,
+  "n": 5000,
+  "macro_f1": 0.999658,
+  "recall_by_symptom": {
+   "no_output": 1.0,
+   "low_gain": 0.994536,
+   "hum": 1.0,
+   "distortion": 1.0,
+   "dc_at_output": 1.0,
+   "bias_drift": 1.0,
+   "bass_loss": 1.0,
+   "treble_loss": 1.0
+  },
+  "support_by_symptom": {
+   "no_output": 1847,
+   "low_gain": 732,
+   "hum": 619,
+   "distortion": 441,
+   "dc_at_output": 121,
+   "bias_drift": 1398,
+   "bass_loss": 504,
+   "treble_loss": 298
+  }
+ },
+ "development_rules_by_persona": {
+  "studio_client": {
+   "micro_f1": 1.0,
+   "precision": 1.0,
+   "recall": 1.0,
+   "n": 1671,
+   "macro_f1": 1.0,
+   "recall_by_symptom": {
+    "no_output": 1.0,
+    "low_gain": 1.0,
+    "hum": 1.0,
+    "distortion": 1.0,
+    "dc_at_output": 1.0,
+    "bias_drift": 1.0,
+    "bass_loss": 1.0,
+    "treble_loss": 1.0
+   },
+   "support_by_symptom": {
+    "no_output": 607,
+    "low_gain": 267,
+    "hum": 216,
+    "distortion": 147,
+    "dc_at_output": 32,
+    "bias_drift": 472,
+    "bass_loss": 171,
+    "treble_loss": 106
+   }
+  },
+  "hobbyist": {
+   "micro_f1": 1.0,
+   "precision": 1.0,
+   "recall": 1.0,
+   "n": 1639,
+   "macro_f1": 1.0,
+   "recall_by_symptom": {
+    "no_output": 1.0,
+    "low_gain": 1.0,
+    "hum": 1.0,
+    "distortion": 1.0,
+    "dc_at_output": 1.0,
+    "bias_drift": 1.0,
+    "bass_loss": 1.0,
+    "treble_loss": 1.0
+   },
+   "support_by_symptom": {
+    "no_output": 594,
+    "low_gain": 237,
+    "hum": 204,
+    "distortion": 157,
+    "dc_at_output": 39,
+    "bias_drift": 450,
+    "bass_loss": 174,
+    "treble_loss": 102
+   }
+  },
+  "bench_tech": {
+   "micro_f1": 0.998991,
+   "precision": 1.0,
+   "recall": 0.997985,
+   "n": 1690,
+   "macro_f1": 0.998894,
+   "recall_by_symptom": {
+    "no_output": 1.0,
+    "low_gain": 0.982456,
+    "hum": 1.0,
+    "distortion": 1.0,
+    "dc_at_output": 1.0,
+    "bias_drift": 1.0,
+    "bass_loss": 1.0,
+    "treble_loss": 1.0
+   },
+   "support_by_symptom": {
+    "no_output": 646,
+    "low_gain": 228,
+    "hum": 199,
+    "distortion": 137,
+    "dc_at_output": 50,
+    "bias_drift": 476,
+    "bass_loss": 159,
+    "treble_loss": 90
+   }
+  }
+ },
+ "bank_b_claude": {
+  "micro_f1": 0.874107,
+  "precision": 0.921674,
+  "recall": 0.831208,
+  "n": 5000,
+  "macro_f1": 0.844945,
+  "recall_by_symptom": {
+   "no_output": 1.0,
+   "low_gain": 1.0,
+   "hum": 1.0,
+   "distortion": 1.0,
+   "dc_at_output": 0.77686,
+   "bias_drift": 0.301144,
+   "bass_loss": 1.0,
+   "treble_loss": 0.993289
+  },
+  "support_by_symptom": {
+   "no_output": 1847,
+   "low_gain": 732,
+   "hum": 619,
+   "distortion": 441,
+   "dc_at_output": 121,
+   "bias_drift": 1398,
+   "bass_loss": 504,
+   "treble_loss": 298
+  }
+ },
+ "bank_b_claude_by_persona": {
+  "studio_client": {
+   "micro_f1": 0.846507,
+   "precision": 0.928952,
+   "recall": 0.777502,
+   "n": 1671,
+   "macro_f1": 0.791658,
+   "recall_by_symptom": {
+    "no_output": 1.0,
+    "low_gain": 1.0,
+    "hum": 1.0,
+    "distortion": 1.0,
+    "dc_at_output": 0.46875,
+    "bias_drift": 0.088983,
+    "bass_loss": 1.0,
+    "treble_loss": 0.981132
+   },
+   "support_by_symptom": {
+    "no_output": 607,
+    "low_gain": 267,
+    "hum": 216,
+    "distortion": 147,
+    "dc_at_output": 32,
+    "bias_drift": 472,
+    "bass_loss": 171,
+    "treble_loss": 106
+   }
+  },
+  "hobbyist": {
+   "micro_f1": 0.892619,
+   "precision": 0.932628,
+   "recall": 0.855902,
+   "n": 1639,
+   "macro_f1": 0.864061,
+   "recall_by_symptom": {
+    "no_output": 1.0,
+    "low_gain": 1.0,
+    "hum": 1.0,
+    "distortion": 1.0,
+    "dc_at_output": 0.820513,
+    "bias_drift": 0.388889,
+    "bass_loss": 1.0,
+    "treble_loss": 1.0
+   },
+   "support_by_symptom": {
+    "no_output": 594,
+    "low_gain": 237,
+    "hum": 204,
+    "distortion": 157,
+    "dc_at_output": 39,
+    "bias_drift": 450,
+    "bass_loss": 174,
+    "treble_loss": 102
+   }
+  },
+  "bench_tech": {
+   "micro_f1": 0.882581,
+   "precision": 0.904762,
+   "recall": 0.861461,
+   "n": 1690,
+   "macro_f1": 0.86478,
+   "recall_by_symptom": {
+    "no_output": 1.0,
+    "low_gain": 1.0,
+    "hum": 1.0,
+    "distortion": 1.0,
+    "dc_at_output": 0.94,
+    "bias_drift": 0.428571,
+    "bass_loss": 1.0,
+    "treble_loss": 1.0
+   },
+   "support_by_symptom": {
+    "no_output": 646,
+    "low_gain": 228,
+    "hum": 199,
+    "distortion": 137,
+    "dc_at_output": 50,
+    "bias_drift": 476,
+    "bass_loss": 159,
+    "treble_loss": 90
+   }
+  }
+ },
+ "claude_failures": 0,
+ "claude_model": "claude-haiku-5-5",
+ "claude_cost_usd": 0.555845
+}

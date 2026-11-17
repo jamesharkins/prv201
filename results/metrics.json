@@ -24,6 +24,19 @@
   "ungrounded_rate": 0.002446
  },
  "agent_offline": {
+  "agent_top1": 0.92,
+  "mean_seconds_per_session": 0.191066,
+  "messages": 482,
+  "mode": "offline",
+  "n_sessions": 100,
+  "numbers_checked": 6077,
+  "safety_events": 40,
+  "split": "test",
+  "ungrounded_before_check": 0,
+  "ungrounded_final": 0,
+  "ungrounded_rate": 0.0
+ },
+ "agent_offline_before_adr052": {
   "agent_top1": 0.84,
   "mean_seconds_per_session": 0.159332,
   "messages": 454,

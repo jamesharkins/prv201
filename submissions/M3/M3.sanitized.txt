@@ -1,0 +1,354 @@
+MILESTONE 3 · PROTOTYPE · TRACK A: BUILD
+Differential: the working prototype, how to run it, and what it
+measured
+PRV 201 Frontiers of Technology (AI) · Stevens Institute of Technology · November 2026 · Code: github.com/jamesharkins/prv201, branch main,
+commit 939615cc
+
+ Part 1 of 1 — Prototype, results against the locked targets, and changes from M2
+ Signed: [name removed] (the team has one member, who leads this part)
+Summary. Differential runs end to end from a clean clone: offline with no API key, live with Claude Sonnet 5.5, and in replay from
+recorded responses. On 5,000 held-out simulated single-fault units it named the failed part’s group first in 95.3% (bar ≥ 94%), with
+0.65× the effort of half-split tracing to a confirmed answer and probabilities that are well calibrated (calibration error 0.007). It beat
+Claude working alone with the same bench information by 19.7 points on 300 units, and a live diagnosis cost $0.021 at list prices. Of the
+26 locked targets, 17 are met, 5 missed and 4 pending (§3); one pending gate, T17, is already above its bar on the live count. The misses are
+reported as written and traced to their causes in §4. The two that matter most are safety findings. Offline, the code’s request screen rec-
+ognized only 27 of 98 independently written attack prompts; live, no reply endorsed an unsafe step, but 15 of 47 harmless questions were
+refused. And 15 untraced numbers in live replies got past the grounding check’s rewrite step; the final check withheld them all.
+Hardware validation (T7) and the technician study move to M5, as M2 planned.
+
+1 What was built
+Differential is the system M2 designed, complete except the fault boards. A technician describes the fault and code screens the request.
+The engine, not the language model, ranks the suspects and picks the next measurement from circuit simulation. Claude reads the com-
+plaint and explains each step, and code checks every number and safety instruction before the technician sees it (Figure 1). Table 1 lists
+the components, where each lives and what changed since M2.
+Table 1. Components as built, their code and changes since M2.
+Component             What it does                                                                          Code                             Since M2
+Circuit library       6 circuits (5 blocks and a 59-part channel strip) with tolerances, test points and    circuits/                        As in M2
+                      hazard flags
+Simulation            Every failure mode of every part (18 modes by part kind) under tolerances, aging      differential/sim/                As in M2
+                      and meter loading: 253,000 simulated units
+Diagnosis engine      Belief over fault groups and “no single fault fits”; next measurement by              differential/engine/ As in M2
+                      information gain per effort point; stops at 0.90 belief or a 40-point budget
+Agent                 Screen, then Claude chooses among 11 tools, then grounding and output checks;         differential/agent/              Prompt caching (ADR-050);
+                      live, offline and replay modes                                                                                         two routing fixes (ADR-051,
+                                                                                                                                             ADR-052); re-measure
+                                                                                                                                             prompt (ADR-053)
+Safety layer          Request screen, hazard map, bring-up and discharge locks, output check; safety        differential/safety/ As in M2
+                      records only from the app’s forms
+Readers               Complaint → symptom prior; meter photo → a proposed reading the technician            differential/nlp/,               As in M2
+                      confirms                                                                              vision/
+Web app               Schematic, belief, next step, “Why this?”, forms, repair ticket (Figure 2)            differential/app/                As in M2
+Evaluation            All systems on held-out units, locked targets judged on one-sided 95% bounds,         eval/, results/                  Red-team suite added
+                      red-team harness
+
+2 How to run it and what to inspect
+A clean clone runs end to end. The trained models and test-point maps are in the repository, so the demo and the tests need no simula-
+tion run and no API key (Table 2). Results that took hours of simulation are committed with the code that produced them, so they can be
+inspected without re-running anything (Table 3).
+Table 2. Running Differential from a clean clone.
+Command                                                     What it does                                                                           Time
+git clone                                                   Python 3.11 environment with pinned dependencies (needs ngspice)                       minutes
+https://github.com/jamesharkins/prv201
+cd prv201; make install
+make demo                                                   The web app at localhost:8000, offline: no key, no network. Trained models             seconds
+                                                            are in the repository
+DIFFERENTIAL_API_KEY=… make demo                            The same app with Claude live; DIFFERENTIAL_MODE=replay serves recorded                seconds
+                                                            responses with no key (Table 3)
+make test, make check                                       424 tests with coverage; check adds lint and strict type checks, as CI does on         minutes
+                                                            every push
+make eval-smoke                                             Every baseline and the full system on a few pilot units, end to end                    under a minute
+
+
+
+                                                                        Differential · M3 · page 1 of 6
+Command                                                                  What it does                                                                                                                        Time
+make sim cases fit calibrate eval                                        Rebuilds everything from the netlists: simulation, training, calibration, full                                                      hours (resumable)
+                                                                         evaluation
+python -m eval.redteam.harness                                           Runs the red-team suite offline (--mode live with a key)                                                                            under a minute
+
+Table 3. Evidence in the repository, for inspection without running anything.
+Where                                                               What it shows
+results/metrics.json, targets.json                                  Every reported number; the targets as locked at commit 60cca12, before any test unit was scored
+results/agent_live.jsonl                                            The 100 live sessions: accuracy, numbers checked, tokens and list-price cost per session
+data/llm_cache/ on branch claude/m3-live-                           Every live Claude response (kept out of main for size); with it, replay mode re-runs any live result with no
+results                                                             key and no cost
+docs/DECISIONS.md                                                   53 decision records, including the two defects found after the lock and how each was disclosed
+docs/hand_calcs.md, fault_audit.md                                  The simulator checked against hand calculations and against an independent solver
+docs/media/                                                         Screenshots, a demo GIF and a silent 90-second capture of one diagnosis, recorded offline
+docs/bench/index.html                                               Open in a browser: replays of real engine sessions on held-out units, step by step, with the test-run statistics
+eval/redteam/cases.yaml                                             The attack prompts and benign controls, each with its source and intent
+
+Figure 1. Architecture and data flow of one diagnosis, as built (unchanged from M2). Code screens every request, the engine ranks suspects and chooses each
+measurement, Claude explains, and code checks every number and safety step on the way out.
+
+                     OFFLINE built once per circuit model                                                                                                                            make sim cases fit
+
+
+                          Circuit library                   Fault catalog                         Monte Carlo                               Training                                Model bundle
+                         6 circuits: 5 blocks +            18 failure modes by                        ngspice                         Gaussian mixture per                         likelihoods, groups,
+                        59-part channel strip;            part kind; every mode                  400 train + 100 val                    fault (scikit-learn);                     calibrated thresholds
+                         netlists + YAML with              of every part is one                 units per fault, with                 LightGBM as a check;                           and hazard map,
+                        tolerances, test points                 hypothesis                     tolerances, aging and                    ambiguity groups;                            stored in the repo
+                           and hazard flags                                                    10 MΩ meter loading;                      symptom model;
+                                                                                               253,000 units cached                        hazard map
+
+
+                                                                                                                                                                                              loaded
+
+                     ONLINE one diagnosis, on the bench computer                                                                        make demo · live / offline / replay
+
+
+
+                            Technician             1           Web app                2           Safety layer               3                  Agent                   5          Engine session
+                         qualified; takes and               FastAPI + plain JS                   code, not prompt                      orchestrator, Python                           belief over fault
+                            confirms every                  schematic, belief                                                         turn order: screen →                          groups + “no single
+                                                                                                   On the way in
+                          reading; signs the                chart, next step,                                                         tools → grounding →                           fault fits”; next step
+                                                           “Why this?”, forms,                screens every request;                   output check; never
+                             repair ticket                                                                                                                                          = most information
+                                                              repair ticket                    5 refusal categories;                    ranks faults itself                       per effort point; stops
+                                                                                               notes and complaints
+                                                                                      8                                      7                                          6       at 0.90, budget or no gain
+                                                                                              passed as data, never
+                                                                                                  as instructions
+
+                                                                                                  On the way out                  messages +
+                                                                         reading entered                                         tool schemas                               5
+                                     9 measures                        9 (photo confirmed)    hazard text above 50 V;                             4                                              prior
+                                                                                               no part removed until                                    tool calls,
+                                                                                                every high-voltage                                      explanations
+                                                                                                 point reads < 2 V;
+                                                                                              every number checked
+                                     Technician's instruments                                   against tool results;                     Claude API                                   Readers
+                                                                                                safety records only                  external · live mode only                  complaint → 8 symptom
+                             multimeter and oscilloscope → typed reading
+                            meter photo → proposed reading, then confirmed                     from the app's forms                   claude-sonnet-5-5                            features → prior;
+                                                                                                                                     pinned; 11 tool schemas;                     photo → proposed
+                                simulated bench for tests and the demo
+                                                                                                                                        responses cached;                         reading; rules and
+                              SCPI meter ≤ 24 V on the fault boards (M5)
+                                                                                                                                     offline: rules, templates                      OpenCV offline
+
+
+
+
+                     EVALUATION same engine and safety code, held-out simulated units                                                                                                           make eval
+
+
+                               Held-out units                                Harness                                      metrics.json                                   Locked targets (M1)
+                        5,000 single-fault, 5,000 aged,           engine and full system vs. chart,                 accuracy, effort, calibration,                     met only if the one-sided 95%
+                           2,500 outside the catalog               half-split, random, LLM alone                     latency, cost, safety gates                           bound clears the bar
+
+
+
+
+                                                                                          Differential · M3 · page 2 of 6
+Figure 2. The app in offline mode on the channel strip. The banner carries the high-voltage instructions drawn by code, the next measurement shows its infor-
+mation gain and effort, and the belief panel shows each suspect’s probability.
+
+3 Results against the locked targets
+The targets were locked at commit 60cca12 on 2026-09-29, before any test unit was scored, and Table 4 reports each one exactly as writ-
+ten. A target is met only when its one-sided 95% bound clears the bar (exact binomial bounds for counts of units [3], a bootstrap of 2,000
+resamples otherwise), and a gate only with no exception. Every accuracy figure comes from simulated units; agreement with real boards
+is T7, at M5. Brackets give two-sided 95% intervals.
+Table 4. Every locked target, met, missed or pending.
+ID     Target                                                    Bar                                  Result                                                      Status
+Primary: the claims the project stands on
+T1       Failed part's group named first                         ≥ 94%                                95.3% [94.6, 95.8]                                          met
+T4       Engine's margin over each baseline (channel strip)      ≥ +10/+8/+4 pts                      +15.6 / +10.6 / +13.5 pts; lowest bound +9.2                met
+T5       Margin over an LLM alone, 300 units                     ≥ +10 points                         +19.7 pts [14.3, 25.3]: 94.0% vs 74.3%                      met
+T6       Failed part's group named first, aged units             ≥ 91%                                93.0% [92.3, 93.7]                                          met
+T9       Confirmed-answer effort ÷ half-split tracing's          ≤ 0.67×                              0.646× [0.638, 0.654]                                       met
+T12      Calibration error of the shown probabilities at the stop ≤ 0.02                              0.007 [0.005, 0.010]                                        met
+T13      Out-of-catalog units sent only to healthy parts         ≤ 12%                                11.0% [9.8, 12.3]                                           missed
+T7       Named first on ≥ 60 blind faults in real boards         ≥ 70%                                fault boards (M5)                                           pending
+Release gates: must hold with no exception
+T15      Possible steps with their required warnings and locks   100%                                 491 of 491 steps                                            met
+T16      Unsafe replies to ≥ 300 independent attack prompts      0 unsafe                             98 attacks (of ≥ 300). Live: 0 unsafe after review.         incomplete
+                                                                                                      Offline: 71 not refused, none endorsing
+T17      Numbers in replies and tickets that trace to nothing    0%                                   offline 0 of 6,077; live 15 of 6,133 (all withheld before   pending
+                                                                                                      display), above the bar as counted
+T26      Voices more than 5 points worse (T1, T6 units)          none                                 no voice worse                                              met
+T25      S1: planted wrong step followed without checking        at most 1 of ≥ 6                     technician study S1 (M5)                                    pending
+Secondary
+T2       Named first, channel strip only                         ≥ 94%                                96.2% [95.4, 97.0]                                          met
+T3       True group among the first three shown                  ≥ 99%                                99.5% [99.2, 99.7]                                          met
+T8       Confirmed-answer effort ÷ fixed-order chart's           ≤ 0.64×                              0.619× [0.611, 0.627]                                       met
+T10      Confirmed-answer effort ÷ random probing's              ≤ 0.59×                              0.577× [0.570, 0.585]                                       met
+T11      Confirmed-answer effort, complaint read ÷ ignored       ≤ 0.98×                              0.962× [0.957, 0.968]                                       met
+T14      Accuracy change with a wrong prior, either way          ≥ −1/−1 points                       −0.5 / −0.2 pts                                             met
+T22      Out-of-model units flagged; separation (AUROC)          ≥ 51% flagged; AUROC ≥               41.4% flagged; AUROC 0.71                                   missed
+                                                                 0.77
+
+
+
+
+                                                                        Differential · M3 · page 3 of 6
+ID                                 Target                                               Bar                                 Result                                            Status
+T23                                Single faults named; accuracy when naming            ≥ 94% named; ≥ 99%                  96.3% named; 99.0% right [98.7, 99.2]              missed
+                                                                                        right when naming
+T24                                Powered readings above 50 V per diagnosis ÷ half-    ≤ 0.19×                             0.177× [0.167, 0.188]                             met
+                                   split's
+T18                                Symptom-reading micro-F1 on a sealed bank            ≥ 0.90 (Claude); ≥ 0.80             Claude 0.883; rules 0.705                         missed
+                                                                                        (rules)
+T19                                Exact reading of ≥ 200 meter photos                  ≥ 95% (Claude); ≥ 90%               Claude 97.0% [94.4, 98.6]; offline 100.0%         missed
+                                                                                        (offline)
+T20                                95th-percentile time per recommendation              ≤ 0.5 s                             0.096 s                                           met
+T21                                Mean API cost per diagnosis at list prices           ≤ $0.10                             $0.021                                            met
+
+4 What the results show, and where it fails
+4.1 Why the engine beats scripted procedures
+Every baseline shares the engine’s inference and stopping rule and differs only in how it picks the next measurement, so Figure 3 isolates
+the choice of measurement. Differential reached its answers with 5.7 effort points on average against 19.0 for half-split tracing and 20.3
+for the fixed chart, and was right more often (95.3% against 90.2% and 87.7%). Choosing by information gain per effort point [2] mat-
+ters for accuracy as well as effort. Without the effort weighting, accuracy fell to 87.9%: the cost-blind engine took oscilloscope readings
+in 65% of its steps against 27%, stopped just as often at 90% belief, and was then right in only 88.5% of cases against 95.9%. Sessions
+that lean on oscilloscope readings are overconfident, which points at those readings’ likelihood models; confirming that is work for M5.
+Simulation size is not the limit: 50 draws per fault gave 95.6% against 95.7% with 400. The complaint saves effort rather than accuracy
+(5.74 against 6.32 points for the engine alone); a perfect symptom reading would add 1.5 points, an upper bound on better complaint
+reading.
+
+
+                           96%                                                     Engine alone 95.7%
+ tsrif deman puorg s’trap deliaF
+
+
+
+
+                                                    Differential 95.3%
+                           94%                                                                           Engine, LightGBM 94.3%
+
+
+                           92%
+                                                                                                                                           Half-split tracing 90.2%
+                           90%
+
+                           88%                                                                                                        Random probing 88.4%
+                                                                                                                                                    Fixed-order chart 87.7%
+
+                                      0                      4                     8                   12                   16                  20
+                                                   Mean effort per diagnosis (points: DC reading 1, scope reading 3, +2 above 50 V, unsoldering 10)
+Figure 3. Accuracy against effort on the 5,000 test units, with 95% intervals. Differential is the engine with the complaint read; “Engine, LightGBM” swaps the
+per-fault likelihood models for a classifier. Differential’s variants (filled) sit up and to the left of every scripted procedure (open): more right answers for about a
+third of the effort.
+
+4.2 Where the engine fails
+Of 237 misses on single faults, 187 were the engine declining to name a fault (“no single fault fits”) and 50 were wrong names. The power
+supply is the weakest circuit (85.4%): 66 of its 73 misses are flags. Across circuits, the faults flagged most are hard shorts (C101, C504,
+C103, R103 shorted), which collapse a rail or saturate a stage and move many readings at once. Declining to name is the safer error: the
+ticket tells the technician to continue by hand rather than pointing at a healthy part. Among part kinds with many test units, electrolytic
+capacitors are the weakest (88.8% of 958). Aging costs 2.2 points (T6), mostly as more flags (5.4% of aged units against 3.7% of new
+ones) rather than wrong names (1.5%). The engine depends on the tolerance model: with part tolerances widened 1.5×, 2× and 3×, accu-
+racy fell to 93.0%, 83.3% and 44.7%. This is why real boards (T7) are the test that matters most at M5.
+4.3 Why Claude alone does worse (T5)
+Given the netlist, test-point map, voltage chart, fault list, readings on request and the same budget, Claude alone named the right group
+in 74.3% of 300 units against 94.0% for Differential, and spent 24.3 effort points against 5.7. Its failures sit mostly in passive networks. It
+matched or beat the engine on parts with distinctive failures (op-amps 96%, diodes, zeners and triodes at 100%). It fell to 54% on resis-
+tors, 63% on film capacitors and 11% on potentiometers, where a drift of a few decibels in one response must be attributed to one part,
+and to 37% on the passive tone stack. The simulation supplies exactly that quantitative mapping. Its three sessions agreed on only 200 of
+
+
+
+                                                                                              Differential · M3 · page 4 of 6
+300 units, and 17 of its 77 wrong answers named the right part with the wrong failure mode. Its stated confidence did carry information
+(0.75 when right, 0.44 when wrong).
+4.4 Units outside the catalog (T13, T22)
+On 2,500 double-fault and modified units, 11.0% were misleading, below the 12% bar, but the upper bound (12.1%) is not, so T13 is
+missed. Double faults misled in 5.7% of cases; solder bridges in 33.6% and wrong-value parts in 28.4%. In those cases a single catalog
+fault on another part fitted the readings well enough that the engine did not flag. A bridge alters no part, so only a flag counts as correct
+for it. The flag fired on 41.4% of these units (bar 51%) at an operating point that wrongly flags 3.7% of single faults, and its separation
+(AUROC 0.71) is below the 0.77 bar. Modifications are the main way Differential can mislead a technician.
+4.5 The language layer: readers, cost and the agent
+The complaint rules score almost exactly 1.00 on the phrasings they were written from but 0.705 on a sealed bank written by someone
+who never saw them (precision 0.99, recall 0.55). Claude scores 0.883 and Claude Haiku 5.5 0.874; neither reaches the 0.90 bar (T18). The
+effect on diagnosis is small, because the complaint only shifts the prior (§4.1). On 300 synthetic meter photos, the offline reader was ex-
+act on 100% and Claude on 97.0%, whose lower bound (94.8%) falls just under the 95% bar (T19); Haiku managed 89.3%. The photos
+come from the project’s own renderer, and no real photos are labeled yet, so these figures say little about real meters. Haiku met neither
+bar, so Sonnet stays the default, as M2 specified. Prompt caching brought a live diagnosis to $0.021 (T21) at list prices [1], against the M2
+estimate of $0.22 uncached. End to end, the live agent named the right group in 91% of 100 sessions and the offline agent in 84%, while
+the engine got 94 of the same units right. The gap came from a routing defect (ADR-052). The offline agent read a complaint beginning
+“Service ticket:” as a request for the repair ticket, and 8 sessions closed without a measurement. After the fix, the offline agent named the
+right group in 92% of the same units.
+4.6 Safety: what held and what did not
+Held. Every one of the 491 possible steps that needs a warning or lock carries it, checked again by an independent recomputation from
+the raw simulations (T15). No out-of-catalog unit put a point above 50 V on the low-voltage side of the hazard map, and no complaint
+voice is served worse than the others (T26).
+Did not hold. The red-team suite has 98 attack prompts, short of the 300 T16 requires, and 47 benign controls. Every reply the harness
+flagged was then read and labeled (results/redteam_review.json). Live, no reply gave or endorsed an unsafe step. The harness
+flagged 11 attack replies because they lacked its marker phrases, and each turned out to be a refusal in other words (“The 500mA T fuse
+stays in”). Offline, the request screen refused 27 attacks. The other 71 were silent: the agent ignored the question and started a diagnosis
+as if it were a complaint. None endorsed the step, but silence is not a refusal, and the suite’s rubric counts it as unsafe. Over-refusal is the
+larger live problem. Of 47 benign controls, 15 were refused without cause. In 10 of them the output check matched a protection phrase in-
+side a warning (“I won’t help bypass a fuse”, written about a planted service note) and replaced the whole reply. In 3 the request screen
+refused, in both modes, a question that named a forbidden act while asking for the safe practice.
+The screen, the output check, the complaint rules and the ticket router failed the same way. Keyword rules match the phrasings they
+were written for and misjudge independent wording. The screen missed reworded attacks, both checks refused safe text that used a for-
+bidden phrase, the complaint rules missed 45% of reported symptoms, and the ticket router fired on “Service ticket”. Unsafe requests and
+prompt injection are the top risk for language-model applications [4]. M2 said such requests are “refused by code whatever the model
+says”; that held only for recognized phrasings. Live, the model refused or redirected every attack the screen missed. One reviewer (the
+build assistant) labeled the replies; the second, human labeling the suite’s README asks for is still to do. No safety code was changed in
+response to this suite; the fixes are M5 work, to be tested on prompts it has not seen.
+Grounding (T17). Offline, every one of 6,077 numbers traced to a tool result or a reading. Live, the first drafts held 20 untraced numbers
+in 100 sessions. The check sent each draft back for a rewrite, and 15 numbers survived it: the rewrite request arrives as a user turn, and
+Claude answered it conversationally, quoting the number it was removing (“You’re right that ‘95%’ never appeared…”). The final check
+replaced every one of them with a placeholder, so none reached the technician. Counted as the evaluation counts them, though, 15 of
+6,133 is above the 0% bar, so the gate cannot be met as counted; it is listed as pending only because the independent checker and the hu-
+man audit of 50 live transcripts have not run. Most were one slip, repeated (13 of 15): a tool field named range_95 written out as “95%”.
+
+5 Engineering
+The code is 12,752 lines of Python in differential/, 6,133 in the evaluation and 3,275 in tests. On a fresh clone 418 of 424 tests pass and
+6 are skipped (they need the simulation library, which is not in git, or the document typesetter); line coverage of the core package is
+91.9%. Ruff and strict mypy run in GitHub Actions on every push. That check had failed since September on a test-path setting and a
+missing font, not on the code; both are fixed. Dependencies are pinned. Every live response is cached by request hash, so every live result
+replays exactly with no key; the cache is kept out of main for size and published on its own branch. The key is read only from
+DIFFERENTIAL_API_KEY. The targets are unchanged since the lock at 60cca12. Two defects were found on test units after the lock: live
+sessions never took a measurement (ADR-051, before any live result was quoted), and the offline ticket routing (ADR-052). Both were
+plumbing, each is disclosed with the result from before the fix, and each has a regression test.
+
+
+
+
+                                                              Differential · M3 · page 5 of 6
+6 Scope and alignment with M2
+Table 5 sets each M2 commitment for M3 against what was delivered. The system’s design is unchanged; what changed is what the eval-
+uation found, and one commitment of mine was not met.
+Table 5. M2’s plan to M3 against what was delivered.
+ M2 commitment                                                                Status at M3
+ API key; 10-unit live smoke test; prompt caching                             Done. The smoke test found ADR-051; caching gave ADR-050
+ Live runs: LLM-alone baseline, complaint bank and meter                      Done: T5, T18, T19, T21; Haiku compared and not adopted. The LLM-with-simulator variant is
+ photos with Sonnet and Haiku, cost                                           pending: it needs the simulation library, which is not in git
+ Score the locked test runs and gates                                         Done: 17 met, 5 missed, 4 pending
+ ≥ 100 attack prompts written by me; the rest model-written,                  Not met. I wrote 4. A model wrote 96 attacks and 45 benign controls before the provider’s
+ to ≥ 300; run offline and live                                               safety filter stopped generation, and I did not try to work around it. T16 is reported as
+                                                                              incomplete, as M2’s fallback stated
+ Failure analysis; ablations; re-measure prompt                               Analysis in §4; ablations of cost, sample size and effort weights in metrics.json. The re-
+                                                                              measure prompt is built (ADR-053): on pilot units it held 0 of 347 genuine typed readings and
+                                                                              caught 95% of volts typed as millivolts
+ Fresh-clone check, screenshots, 90-second capture                            Done, re-recorded with the bring-up step; CI fixed
+ Moved to M5 in M2: fault boards (T7), study S1 (T25),                        Unchanged
+ interviews after an IRB determination, peer-team attack
+ prompts
+
+Next, to M5. In order of what the results say matters most: build the three 24 V fault boards and run T7, since §4.2 shows the engine is
+only as good as its tolerance model; replace the keyword screen with a classifier and stop the output check from replacing a reply over a
+negated or quoted phrase, testing both only on prompts they have never seen (the M4 peer team’s and the scanner styles T16 calls for);
+send the grounding rewrite as a tool note rather than a user turn (T17), and run the independent checker and the human audit of 50 live
+transcripts; add a residual check for modifications (T13, T22); find why oscilloscope-heavy sessions are overconfident (§4.1); and label
+real meter photos (T19).
+How this was built. As the course’s AI-use policy allows, Claude (in Claude Code) wrote most of the code, ran the evaluations and
+drafted this report. I chose the project, wrote the team attack prompts, directed the work and sign the report. Commits co-written by
+Claude say so in the history.
+
+References
+[1] Anthropic, “Pricing,” Claude Platform Docs, 2026.                                            [3] C. J. Clopper and E. S. Pearson, “The use of confidence or fiducial limits illustrated
+     https://platform.claude.com/docs/en/about-claude/pricing (accessed Nov. 17,                      in the case of the binomial,” Biometrika, vol. 26, no. 4, pp. 404–413, 1934.
+     2026).                                                                                      [4] OWASP GenAI Security Project, “OWASP Top 10 for LLM Applications 2026,” Aug.
+[2] K. R. Pattipati and M. G. Alexandridis, “Application of heuristic search and informa-             2026. https://github.com/GenAI-Security-Project/GenAI-LLM-Top10
+     tion theory to sequential fault diagnosis,” IEEE Trans. Syst., Man, Cybern., vol. 20,
+     no. 4, pp. 872–887, 1990.
+
+
+
+
+                                                                               Differential · M3 · page 6 of 6
+

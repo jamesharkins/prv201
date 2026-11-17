@@ -43,6 +43,15 @@ from differential.safety.rules import (
 from differential.sim.faults import parse_fault_id
 from differential.sim.observables import KIND_INSTRUMENT, KIND_LABEL, ObservableSpec
 
+# Readings a person typed (the app's reading form, a chat message). Instrument, simulated
+# bench and confirmed photo readings have their own checks (ADR-053).
+HAND_ENTERED = frozenset({"technician", "manual"})
+
+
+def hand_entered(source: str) -> bool:
+    """A reading a person typed, including a value typed instead of a photo's (ADR-053)."""
+    return source in HAND_ENTERED or source.startswith("typed by the technician")
+
 TOOL_SPECS: list[dict[str, Any]] = [
     {
         "name": "list_circuits",
@@ -253,6 +262,9 @@ class ToolBox:
     clock: Callable[[], float] = time.monotonic
     removal_approved: bool = False
     removal_note: str = ""
+    # Re-measure prompt (ADR-053): hand-entered readings far outside every remaining
+    # suspect's predicted range wait here, by key, until the technician confirms them.
+    unconfirmed: dict[str, float] = field(default_factory=dict)
     # Trainee mode (ADR-034): the trainee commits their own next step before the
     # recommendation is shown, and a named supervisor is required in a high-voltage unit.
     trainee: bool = False
@@ -547,11 +559,36 @@ class ToolBox:
             self.discharge_times = {}
             self.bleeder_attached = False
             self.discharge_expired = False
+        # Re-measure prompt (ADR-053), after the checks above: a hand-entered reading far
+        # outside every remaining suspect's predicted range is held until the technician
+        # re-measures or confirms it (enters the same value again). Readings from an
+        # instrument or the simulated bench, and confirmed photo readings, are not held.
+        flagged = False
+        if hand_entered(source):
+            held = self.unconfirmed.pop(key, None)
+            confirming = held is not None and math.isclose(
+                held, v, rel_tol=1e-9, abs_tol=1e-12)
+            far = None if confirming else self.engine.far_outside_suspects(key, v)
+            if far is not None:
+                self.unconfirmed[key] = v
+                rng = f"{fmt_reading(o.kind, far['low'])} to {fmt_reading(o.kind, far['high'])}"
+                return {"recorded": None, "needs_confirmation": True, "key": key, "value": v,
+                        "text": fmt_reading(o.kind, v), "expected_range": [far["low"], far["high"]],
+                        "expected_range_text": rng, "suspects": far["suspects"],
+                        "message": (f"Not recorded yet: {fmt_reading(o.kind, v)} at {key} is far "
+                                    f"outside what any remaining suspect predicts ({rng}). Check "
+                                    "the meter function, range, lead placement and the test "
+                                    "point, then re-measure. If the reading stands, enter the "
+                                    "same value again to confirm it.")}
+            flagged = confirming
         before = self.engine.ranked_groups(1)[0]
         self.engine.record(key, v, source)
         after = self.t_get_belief()
-        return {"recorded": {"key": key, "value": v, "text": fmt_reading(o.kind, v),
-                             "source": source, "cost": o.cost},
+        recorded: dict[str, Any] = {"key": key, "value": v, "text": fmt_reading(o.kind, v),
+                                    "source": source, "cost": o.cost}
+        if flagged:
+            recorded["confirmed_outside_predictions"] = True
+        return {"recorded": recorded,
                 "top_probability_before": round(before[1], 4), "belief": after}
 
     def measure_with_instrument(self, key: str) -> dict[str, Any]:

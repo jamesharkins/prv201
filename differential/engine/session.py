@@ -52,6 +52,12 @@ CONFIRM_AT = 0.5
 # script's best top-1.
 SCRIPT_CONFIRM_AT = {"fixed_order": 0.4, "half_split": 0.5, "twin": 0.4}
 NORMAL_BAND_SD = 3.0
+# Re-measure prompt (ADR-053): a hand-entered reading is checked against every suspect
+# still holding at least SUSPECT_MIN_P of the belief; if it lies more than FAR_Z
+# predictive standard deviations from each one (about twice the half-width of the 95 %
+# range shown to the technician), the technician is asked to re-measure or confirm it.
+SUSPECT_MIN_P = 0.001
+FAR_Z = 4.0
 LIKELIHOODS = ("generative", "discriminative")
 DEFAULT_BUDGET = 40.0
 STOP_THRESHOLD = 0.90
@@ -596,6 +602,36 @@ class DiagnosisSession:
             from_engine(obs.kind, m - 1.96 * sd),
             from_engine(obs.kind, m + 1.96 * sd),
         )
+
+    def far_outside_suspects(self, key: str, value: float) -> dict[str, float | int] | None:
+        """Is ``value`` far outside every remaining suspect's predicted range for ``key``?
+
+        Returns None when the reading is within FAR_Z predictive standard deviations of
+        at least one suspect with posterior >= SUSPECT_MIN_P (or for a lift verdict);
+        otherwise the suspects' combined 95 % range and the smallest distance, in standard
+        deviations, to any of them. Read-only: the belief is not changed (ADR-053)."""
+        obs = self._obs[key]
+        if obs.is_lift:
+            return None
+        post = self.posterior()[:-1]  # the catalog hypotheses, without U
+        keep = np.flatnonzero(post >= SUSPECT_MIN_P)
+        if len(keep) == 0:
+            return None
+        t = reading_to_engine(obs.kind, float(value))
+        x, idx = self._spice_evidence()
+        cl, mean, var = self.gen.predictive(x, idx, self.gen.key_index([key]))
+        nearest, lo, hi = math.inf, math.inf, -math.inf
+        for h in keep:
+            sel = self.gen.comp_hyp == h
+            w = np.exp(cl[sel] - logsumexp(cl[sel]))
+            m = float((w * mean[sel, 0]).sum())
+            sd = math.sqrt(max(float((w * (var[sel, 0] + mean[sel, 0] ** 2)).sum()) - m * m, 1e-12))
+            nearest = min(nearest, abs(t - m) / sd)
+            lo, hi = min(lo, m - 1.96 * sd), max(hi, m + 1.96 * sd)
+        if nearest <= FAR_Z:
+            return None
+        return {"nearest_sd": round(nearest, 2), "suspects": len(keep),
+                "low": from_engine(obs.kind, lo), "high": from_engine(obs.kind, hi)}
 
     # ------------------------------------------------------------------ run
     def run(self, measure: Callable[[ObservableSpec], float], max_steps: int = 200) -> SessionResult:

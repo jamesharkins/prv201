@@ -107,6 +107,15 @@ def _state(s: dict[str, Any]) -> dict[str, Any]:
         lines = pending["safety"]["lines"]
         banner = {"level": "warning", "title": "High voltage inside: high-voltage supply present",
                   "lines": lines}
+    # Re-measure prompt (ADR-053): hand-entered readings held until the technician
+    # re-measures or confirms them (enters the same value again).
+    held = []
+    for k, v in tb.unconfirmed.items():
+        far = e.far_outside_suspects(k, v) if k not in e.taken() else None
+        kind = e._obs[k].kind
+        held.append({"key": k, "value": v, "text": fmt_reading(kind, v),
+                     "expected_range_text": (f"{fmt_reading(kind, far['low'])} to "
+                                             f"{fmt_reading(kind, far['high'])}" if far else None)})
     readings = [{"step": r.step, "key": r.key, "value": r.value,
                  "text": fmt_reading(e._obs[r.key].kind, r.value), "source": r.source,
                  "cost": r.cost} for r in e.readings]
@@ -126,6 +135,7 @@ def _state(s: dict[str, Any]) -> dict[str, Any]:
         "trainee": ({"supervisor": tb.supervisor, "log": tb.trainee_log} if tb.trainee else None),
         "banner": banner,
         "readings": readings,
+        "held_readings": held,
         "transcript": [_turn(t) for t in agent.turns],
         "revealed": s.get("revealed"),
     }

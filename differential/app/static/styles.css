@@ -632,6 +632,10 @@ select.input, .field-inline select {
 .next-how { margin-top: var(--sp-2); font-size: 13.5px; color: var(--ink-2); }
 .next-how .label { font-weight: 600; color: var(--ink); }
 .next-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-top: var(--sp-3); }
+.next-held { margin-top: var(--sp-3); padding: var(--sp-2) var(--sp-3); border: 1px solid var(--warning-border);
+  border-radius: 8px; background: var(--warning-soft); color: var(--warning-ink); font-size: 13.5px; }
+.next-held .icon { vertical-align: -2px; }
+.next-held .next-actions { margin-top: var(--sp-2); }
 .next-form:empty { display: none; }
 
 .why { margin-top: var(--sp-3); border-top: 1px solid var(--border); padding-top: var(--sp-2); }

@@ -91,6 +91,9 @@ class DifferentialAgent:
         self.confirmed_photo_values: list[float] = []
         self.history_snapshots: list[dict[str, Any]] = []  # belief after each reading (UI chart)
         self.signoff: dict[str, str] | None = None
+        # Re-measure prompt (ADR-053): the turn index at which each held reading was held;
+        # only a technician turn after it can confirm the reading.
+        self.held_at: dict[str, int] = {}
         c = self.tb.bundle.circuit
         self._hv_tokens = {tp.id for tp in c.test_points if hazard(c.id, tp.id).high_voltage} | {
             p.ref for p in c.components if c.component_is_hv(p.ref)}
@@ -125,6 +128,15 @@ class DifferentialAgent:
         res = self.tb.call("record_measurement", {"key": key, "value": value, "source": source})
         if "error" in res:
             return self._reply(f"I couldn't record that: {res['error']}")
+        if res.get("needs_confirmation"):  # held: re-measure or confirm (ADR-053)
+            self.held_at[key] = len(self.turns) + 1
+            self.turns.append(Turn("event", f"{key} = {res['text']} entered ({source}); not "
+                                            "recorded: held for re-measurement or confirmation"))
+            if self.mode != "offline":
+                self.history.append({"role": "user", "content":
+                                     f"[bench event] The technician entered {key} = {res['text']} "
+                                     f"({source}). {res['message']}"})
+            return self._reply(str(res["message"]))
         self.turns.append(Turn("event", f"{key} = {res['recorded']['text']} ({source})"))
         self.snapshot(key)
         if self.mode != "offline":
@@ -290,6 +302,9 @@ class DifferentialAgent:
             res = self.tb.call("record_measurement", {"key": key, "value": value})
             if "error" in res:
                 return f"I couldn't record that: {res['error']}"
+            if res.get("needs_confirmation"):  # held: re-measure or confirm (ADR-053)
+                self.held_at[key] = len(self.turns)
+                return str(res["message"])
             self.snapshot(key)
             return self._after_reading(res)
         if self.tb.symptoms is None or len(text.split()) >= 4:
@@ -593,6 +608,23 @@ class DifferentialAgent:
                 return {"error": "refused: that value does not appear in the technician's "
                                  "messages or a confirmed photo reading. Ask the technician to "
                                  "measure and report it."}
+        if name == "record_measurement":
+            key = str(args.get("key", ""))
+            held = self.tb.unconfirmed.get(key)
+            value = float(args.get("value", float("nan")))
+            # A held reading is confirmed by the technician, never by the model alone: the
+            # same value counts only after a technician turn that follows the hold (ADR-053).
+            if held is not None and math.isclose(held, value, rel_tol=1e-9, abs_tol=1e-12) and \
+                    not any(t.role in ("user", "event") for t in self.turns[self.held_at.get(key, 0):]):
+                return {"error": "refused: this reading is held until the technician re-measures "
+                                 "or confirms it. Ask them to check the meter and the test point "
+                                 "and give the reading again."}
+            # the model passes only the key and the value; a reading in chat is the technician's
+            args = {"key": key, "value": value}
+            result = self.tb.call(name, args)
+            if result.get("needs_confirmation"):
+                self.held_at[key] = len(self.turns)
+            return result
         return self.tb.call(name, args)
 
 

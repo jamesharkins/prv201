@@ -270,3 +270,21 @@ def test_discharge_form_needs_the_meter_proved(client: TestClient) -> None:
     client.post(f"/api/sessions/{sid}/bring_up", json={"method": "variac"})
     r = client.post(f"/api/sessions/{sid}/discharge", json={"readings": {"TP4": 0.2}})
     assert r.status_code == 400 and "live-dead-live" in r.text
+
+
+def test_held_reading_is_shown_until_confirmed(client: TestClient) -> None:
+    """ADR-053 in the app: a far typed reading comes back held in the state, with the
+    suspects' range, and the same value posted again records it."""
+    st = client.post("/api/sessions", json={"circuit_id": "opamp", "seed": 5}).json()
+    sid = st["session_id"]
+    body = client.post(f"/api/sessions/{sid}/messages",
+                       json={"text": "The preamp sounds distorted and quiet"}).json()
+    key = body["state"]["pending"]["key"]
+    assert key.startswith("dc:")
+    held = client.post(f"/api/sessions/{sid}/readings", json={"key": key, "value": 900.0}).json()
+    assert held["reply"]["text"].startswith("Not recorded yet")
+    assert held["state"]["readings"] == []
+    (h,) = held["state"]["held_readings"]
+    assert h["key"] == key and h["value"] == 900.0 and h["expected_range_text"]
+    done = client.post(f"/api/sessions/{sid}/readings", json={"key": key, "value": 900.0}).json()
+    assert done["state"]["held_readings"] == [] and done["state"]["readings"][0]["value"] == 900.0

@@ -1052,3 +1052,40 @@ deleted.
   before it is kept and reported next to the re-run. A regression test written in a different
   voice covers it (`tests/test_agent.py`). The engine's targets (T1-T14, T22-T26) do not use the
   agent's router and are unaffected.
+
+## ADR-053 - Re-measure prompt for a typed reading far outside every suspect's range (promised in M2)
+
+- **Context.** M2 promised, for week 9, a re-measure prompt for readings far outside every
+  suspect's range. Photo readings already had a plausibility check (meter function, range,
+  unit slips, the suspects' 95 % intervals), but a reading typed in the app's form or in chat
+  was recorded as typed. A slip there (volts typed as millivolts, a reversed lead) moves the
+  belief and can send the technician to the wrong part.
+- **Decision.** A hand-entered reading (the app's reading form, a reading in chat, or a value
+  typed instead of a photo's) is checked against every suspect that still holds at least
+  0.1 % of the belief. If it lies more than 4 predictive standard deviations from each of
+  them (about twice the half-width of the 95 % range the technician is shown), it is not
+  recorded. The reply and the next-step card say so, give the suspects' combined range, and
+  ask the technician to check the meter function, range, leads and test point and
+  re-measure; entering the same value again confirms it, and it is then recorded as typed and
+  marked `confirmed_outside_predictions`. A different value is checked afresh. In live mode
+  the model can relay the prompt but cannot confirm: the same value counts only after a
+  technician turn that follows the hold, and the model can no longer pass a `source`. The
+  powered-step side effects (the discharge check is cleared, part removal re-locks) happen
+  whether or not the reading is held. Readings from an instrument or the simulated bench
+  and confirmed photo readings are not held. The model's tool schemas and prompts are
+  unchanged.
+- **Evidence (pilot units only).** `python -m eval.remeasure_check` asks the check, read-only,
+  about each genuine reading in offline sessions on 20 pilot units per circuit and split, and
+  about slips made from it (`results/remeasure_check.json`). It held none of 347 genuine
+  readings on single-fault units and none of 394 on aged-part units, and 37 of 280 (13 %) on
+  unmodeled double-fault units, where the readings really are outside every single-fault
+  prediction; there the confirmation costs one extra entry. It caught 95 % of volts-as-
+  millivolts slips (x1000), 92-95 % of reversed DC leads, 66-72 % of x10 range slips and
+  50-62 % of x0.1 and x0.001 slips (a reading pushed towards zero often still sits inside some
+  suspect's range). The two thresholds were set before this check and not tuned.
+- **Evaluation numbers.** None change: the evaluation's readings come from the simulated
+  bench. Re-running the 100 offline agent sessions and the 145 red-team cases with and without
+  this change gives identical results, and the 100 live sessions replay from the response
+  cache with identical results and API usage. The T7 hardware replay (`eval/fault_board.py`)
+  records the sheet's readings in the engine directly, so the prompt cannot change it, and
+  its protocol's rule (never re-measure a reading because it looks odd) is untouched.

@@ -159,11 +159,13 @@ def test_model_cannot_record_a_value_nobody_typed() -> None:
 
     agent = DifferentialAgent("driver", mode="offline")
     dc = next(o for o in agent.tb.bundle.observables.values() if o.kind == "dc")
-    out = agent._guarded_tool("record_measurement", {"key": dc.key, "value": 12.34})
+    # a plausible value, so the re-measure prompt (ADR-053) does not hold it
+    v = round(agent.tb.call("expected_readings", {"key": dc.key})["predictions"][0]["predicted"], 2)
+    out = agent._guarded_tool("record_measurement", {"key": dc.key, "value": v})
     assert "refused" in out["error"]
-    agent.turns.append(Turn("user", f"I measured 12.34 V at {dc.tp}"))
-    ok = agent._guarded_tool("record_measurement", {"key": dc.key, "value": 12.34})
-    assert "error" not in ok and ok["recorded"]["value"] == 12.34
+    agent.turns.append(Turn("user", f"I measured {v} V at {dc.tp}"))
+    ok = agent._guarded_tool("record_measurement", {"key": dc.key, "value": v})
+    assert "error" not in ok and ok["recorded"]["value"] == v
 
 
 class FakeResp:
@@ -615,6 +617,7 @@ def test_a_photo_value_the_photo_did_not_show_is_labelled_as_typed() -> None:
     agent.tb.photos["p1"] = b"x"
     agent.tb.photo_proposals["p1"] = {"value": 15.12, "text": "15.12"}
     agent.confirm_photo("p1", "dc:TP18", 999.0)
+    agent.confirm_photo("p1", "dc:TP18", 999.0)  # held as far out (ADR-053); confirmed
     agent.confirm_photo("p1", "dc:TP19", 15.12)
     sources = {r.key: r.source for r in agent.tb.engine.readings}
     assert sources["dc:TP18"].startswith("typed by the technician")
@@ -726,6 +729,8 @@ def test_plain_readings_still_record(text: str) -> None:
     agent.user_message("No output from the line out.")
     before = len(agent.tb.engine.readings)
     agent.user_message(text)
+    if agent.tb.unconfirmed:  # read, but held as far outside the suspects (ADR-053)
+        agent.user_message(text)  # the technician confirms it
     assert len(agent.tb.engine.readings) == before + 1
 
 
@@ -740,6 +745,7 @@ def test_a_photo_backs_one_reading_at_its_own_step() -> None:
     agent.confirm_photo("p2", "dc:TP20", 3.3)  # another point
     agent.confirm_photo("p2", "dc:TP19", 3.3)  # its own point
     agent.confirm_photo("p2", "dc:TP21", 3.3)  # reused
+    agent.confirm_photo("p2", "dc:TP21", 3.3)  # held as far out (ADR-053); confirmed
     sources = {r.key: r.source for r in agent.tb.engine.readings}
     assert sources["dc:TP20"] == "typed by the technician (photo:p2 was taken for dc:TP19)"
     assert sources["dc:TP19"] == "photo:p2 (confirmed)"
@@ -819,3 +825,92 @@ def test_live_reply_leaves_the_engines_next_step_pending(tmp_path: Any) -> None:
     off.user_message("It has no output at all and the fuse is fine.")
     assert live.pending_key is not None
     assert live.tb.call("recommend_measurement").get("key") == live.pending_key
+
+
+def _held_setup() -> tuple[Any, str, float]:
+    """An offline opamp session at its first DC step, and a reading far from every suspect."""
+    from differential.agent.agent import DifferentialAgent
+
+    a = DifferentialAgent("opamp", mode="offline")
+    a.user_message("The preamp sounds distorted and quiet")
+    key = a.pending_key
+    assert key is not None and key.startswith("dc:")
+    return a, key, 900.0
+
+
+def test_far_typed_reading_is_held_until_confirmed() -> None:
+    """ADR-053: a typed reading far outside every remaining suspect's predicted range is
+    not recorded until the technician re-measures or confirms it; re-entering the same
+    value confirms it, and a re-measured plausible value is recorded at once."""
+    a, key, far = _held_setup()
+    first = a.reading_event(key, far)
+    assert first.text.startswith("Not recorded yet") and key in a.tb.unconfirmed
+    assert a.tb.engine.readings == [] and a.pending_key == key
+    second = a.reading_event(key, far)  # the technician confirms it
+    assert second.text.startswith("Recorded") and not a.tb.unconfirmed
+    rec = [c.result for c in a.tb.calls if c.name == "record_measurement"][-1]["recorded"]
+    assert rec["confirmed_outside_predictions"] is True and rec["value"] == far
+
+    b, key, far = _held_setup()
+    b.reading_event(key, far)
+    expected = b.tb.call("expected_readings", {"key": key})["predictions"][0]["predicted"]
+    again = b.reading_event(key, expected)  # re-measured: a plausible value
+    assert again.text.startswith("Recorded") and not b.tb.unconfirmed
+    assert b.tb.engine.readings[-1].value == expected
+
+
+def test_instrument_readings_and_plausible_typed_readings_are_never_held() -> None:
+    a, key, far = _held_setup()
+    assert a.tb.engine.far_outside_suspects(key, far) is not None
+    res = a.tb.call("record_measurement", {"key": key, "value": far, "source": "simulated"})
+    assert res["recorded"]["value"] == far and not a.tb.unconfirmed
+    b, key, _ = _held_setup()
+    mid = b.tb.call("expected_readings", {"key": key})["predictions"][0]["predicted"]
+    assert b.tb.engine.far_outside_suspects(key, mid) is None
+    assert "recorded" in b.tb.call("record_measurement", {"key": key, "value": mid}) and \
+        b.tb.engine.readings
+
+
+def test_typed_far_reading_in_chat_is_held_too() -> None:
+    a, key, far = _held_setup()
+    reply = a.user_message(f"{key} = {far:g} V")
+    assert reply.text.startswith("Not recorded yet") and a.tb.engine.readings == []
+    assert a.user_message(f"{key} = {far:g} V").text.startswith("Recorded")
+
+
+def test_model_cannot_confirm_a_held_reading_by_itself() -> None:
+    """Live mode: the model may relay the hold, but only a technician turn after it can
+    confirm; calling record_measurement again in the same turn is refused (ADR-053)."""
+    from differential.agent.agent import Turn
+
+    a, key, far = _held_setup()
+    a.turns.append(Turn("user", f"{key} reads {far:g} V"))
+    held = a._guarded_tool("record_measurement", {"key": key, "value": far})
+    assert held.get("needs_confirmation") and a.tb.engine.readings == []
+    again = a._guarded_tool("record_measurement", {"key": key, "value": far})
+    assert "error" in again and a.tb.engine.readings == []
+    # a source the model passes is ignored: it cannot claim an instrument reading
+    spoof = a._guarded_tool("record_measurement", {"key": key, "value": far, "source": "simulated"})
+    assert "error" in spoof and a.tb.engine.readings == []
+    a.turns.append(Turn("user", f"Yes, checked the leads: {far:g} V again"))
+    ok = a._guarded_tool("record_measurement", {"key": key, "value": far})
+    assert ok["recorded"]["confirmed_outside_predictions"] is True
+
+
+def test_held_powered_reading_still_relocks_part_removal() -> None:
+    """A powered reading means the unit was powered, whether or not it is held for
+    confirmation (ADR-053): the discharge check is cleared and part removal re-locks,
+    as the safety sweep requires."""
+    from differential.agent.agent import DifferentialAgent
+    from differential.safety.hazards import discharge_points
+
+    a = DifferentialAgent("triode", mode="offline")
+    a.tb.t_confirm_bring_up("series_lamp")
+    a.tb.t_confirm_discharge(readings=dict.fromkeys(discharge_points("triode"), 0.3),
+                             meter_proved=True)
+    assert a.tb._discharge_current()
+    key = next(k for k, o in a.tb.bundle.observables.items() if o.kind == "dc")
+    far = 900.0 if a.tb.engine.far_outside_suspects(key, 900.0) else -900.0
+    res = a.tb.call("record_measurement", {"key": key, "value": far})
+    assert res.get("needs_confirmation") and not a.tb._discharge_current()
+    assert a.tb.discharge_readings == {}

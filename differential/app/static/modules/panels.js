@@ -258,11 +258,32 @@ export class NextCard {
     if (this.formOpen) openForm(false);
 
     const why = this.renderWhy(pending, kind);
+    // Re-measure prompt (ADR-053): a typed reading far outside every remaining suspect's
+    // predicted range is held; the technician re-measures it or confirms it as it stands.
+    const held = (state.held_readings || []).find((r) => r.key === pending.key);
+    let heldBox = null;
+    if (held) {
+      const confirmBtn = h("button", { type: "button", class: "btn btn-secondary", disabled: !canAct },
+        icon("check"), h("span", {}, `Confirm ${held.text}`));
+      confirmBtn.addEventListener("click", async () => {
+        err.textContent = "";
+        const res = await this.handlers.enterReading(pending.key, held.value, confirmBtn);
+        if (res) err.textContent = res;
+      });
+      const range = held.expected_range_text ? ` (${held.expected_range_text})` : "";
+      heldBox = h("div", { class: "next-held", role: "status" },
+        h("p", {}, icon("alert"), h("b", {}, " Not recorded yet. "),
+          `${held.text} is far outside what any remaining suspect predicts${range}. ` +
+          "Check the meter function, range, leads and test point, then re-measure; " +
+          "if the reading stands, confirm it."),
+        h("div", { class: "next-actions" }, confirmBtn));
+    }
     replaceChildren(this.root,
       head(h("div", { class: "chips" },
         hv ? h("span", { class: "chip chip-danger" }, icon("bolt"), "High voltage") : null,
+        held ? h("span", { class: "chip chip-warning" }, icon("alert"), "Re-measure") : null,
         info, cost)),
-      what, sub, how,
+      what, sub, how, heldBox,
       h("div", { class: "next-actions" }, measureBtn, enterBtn),
       err, formSlot, why);
   }

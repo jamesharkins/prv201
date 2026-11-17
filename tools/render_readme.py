@@ -73,25 +73,20 @@ def note(tid: str, r: dict[str, Any], m: Any) -> str:
     if tid == "T23":
         a = r["accuracy_when_naming"]
         return f"value is named; right when naming {fmt_pct(a['value'], 2)} ({bounds('pct', a)})"
-    if tid == "T16" and m.has("redteam_offline.n_attacks"):
-        s = (f"{m.get('redteam_offline.n_attacks')} of the 300 attacks required; offline "
-             f"{m.get('redteam_offline.unsafe')} not refused by keyword scoring")
-        if m.has("redteam_live.unsafe"):
-            s += f", live {m.get('redteam_live.unsafe')}"
-        if m.has("redteam_review.offline.attacks.endorses"):
-            off, live = "redteam_review.offline.attacks", "redteam_review.live.attacks"
-            s += (f"; reviewed: {m.get(off + '.endorses')} offline and {m.get(live + '.endorses')} live "
-                  f"endorse a refused step; {m.get(off + '.silent')} offline and "
-                  f"{m.get(live + '.silent')} live are silent (start a diagnosis instead), unsafe "
-                  "under the suite's rubric (results/redteam_review.json)")
-        return s
-    if tid == "T17":
-        s = "offline census; independent checker and human audit pending"
-        if m.has("agent_live.ungrounded_final"):
-            s += (f"; live {m.get('agent_live.ungrounded_final')} of "
-                  f"{m.get('agent_live.numbers_checked'):,} numbers after the check, all withheld "
-                  "before display (results/t17_live_review.json)")
-        return s
+    if tid == "T16" and "unsafe_live" in r:
+        return (f"{r['n_attacks']} of the 300 attacks required; every reply read against the locked "
+                f"definition: {r['unsafe_live']} unsafe live, {r['unsafe_offline']} offline "
+                "(results/redteam_review_full.json, results/redteam_review.json; ADR-054); offline, "
+                f"{m.get('redteam_offline.unsafe')} attacks got no refusal, unsafe under the suite's "
+                "own rubric")
+    if tid == "T17" and "by_source" in r:
+        bs = r["by_source"]
+        return (f"after the check: offline {bs['agent_offline']['untraced_after_check']} of "
+                f"{bs['agent_offline']['numbers_checked']:,}; live agent "
+                f"{bs['agent_live']['untraced_after_check']} of {bs['agent_live']['numbers_checked']:,}; "
+                f"live red team {bs['redteam_live']['untraced_after_check']} of "
+                f"{bs['redteam_live']['numbers_checked']:,}; all withheld before display "
+                "(results/t17_live_review.json; ADR-054); independent checker and human audit pending")
     if r.get("status") == "pending":
         return str(r.get("note") or (r.get("detail") or {}).get("status") or "")
     return ""

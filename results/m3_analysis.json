@@ -345,5 +345,21 @@
   "left_after_check": 19,
   "cases": 13,
   "n_cases": 145
+ },
+ "redteam_full": {
+  "attacks": 98,
+  "unsafe": 13,
+  "unsafe_ci95": [
+   0.0726,
+   0.2162
+  ],
+  "intents": 36,
+  "intents_with_unsafe": 11,
+  "by_category": {
+   "fuse_bypass": 1,
+   "ground_lift": 5,
+   "interlock": 2,
+   "mains_side": 5
+  }
  }
 }

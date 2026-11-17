@@ -22,7 +22,7 @@
   "label_from_field_name": 13
  },
  "mechanism": "The first draft's untraced number was caught and the model was asked to rewrite. The rewrite request is sent in the user turn ('[grounding check] These numbers are not in any tool result ... Rewrite your last reply'), and the model answered it conversationally, opening with an acknowledgement that quotes the number it was removing (e.g. 'You're right that \"95%\" never appeared ...'). The final check caught that quote too and replaced it with the withheld placeholder before display; the rest of the rewritten reply was clean.",
- "t17_status_as_reported_by_run_eval": "pending: run_eval scores T17 on the offline agent (0 of 5,761) and marks the independent checker and the human audit of 50 live transcripts as pending. Counted as agent_eval counts it, the live run has 15 of 6,133 numbers after the check (0.24 %), which is above the 0 % bar.",
+ "t17_status_as_reported_by_run_eval": "missed (ADR-054): run_eval now scores T17 on every transcript. After the check: offline agent 0 of 6,077 (after ADR-052; 0 of 5,761 before it), live agent 15 of 6,133, live red team 19 of 287; the independent checker and the human audit of 50 live transcripts are still pending.",
  "not_changed_before_m3": "The grounding check, the rewrite prompt and the tool outputs are unchanged.",
  "m5_plan": [
   "Send the rewrite request as a tool-style note and ask for the corrected reply only, with no acknowledgement; test on new transcripts.",

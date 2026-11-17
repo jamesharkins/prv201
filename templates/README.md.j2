@@ -33,7 +33,7 @@ Set `DIFFERENTIAL_API_KEY` to run the live Claude agent (`DIFFERENTIAL_MODE=live
 - `submissions/M3/M3.pdf`: the M3 design document (what was built, how to run it, results
   against the locked targets, failure analysis and changes from M2), rendered by
   `templates/M3/build.py` from the result files.
-- `docs/media/`: screenshots, a demo GIF and a silent 90-second capture, all offline.
+- `docs/media/`: screenshots, a demo GIF and a silent capture of one diagnosis (87 s), all offline.
 - `results/`: every reported number; `docs/DECISIONS.md`: every design decision and every
   change after the lock.
 
@@ -59,7 +59,7 @@ list-price cost of $<< "%.4f" | format(m("agent_live.mean_cost_usd_per_diagnosis
 with prompt caching (ADR-050).
 <% endif %>
 Each result's detail is in `results/metrics.json` (section `targets_result`); the decisions
-behind every change after the lock are in `docs/DECISIONS.md` (ADR-050 to ADR-053).
+behind every change after the lock are in `docs/DECISIONS.md` (ADR-050 to ADR-054).
 
 To reproduce: `make install sim cases fit calibrate pilot audit sweep eval docs check`
 (simulation and training take hours; live results also need `DIFFERENTIAL_API_KEY`; see

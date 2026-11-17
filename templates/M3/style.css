@@ -36,6 +36,7 @@ p code { font-size: 8.1pt; }
 .st.partial { background: #fdf0d8; color: #8a5300; }
 .tr td:nth-child(1) { white-space: nowrap; }
 .tr td:nth-child(5) { white-space: nowrap; }
+tr.grp { break-after: avoid; }
 .grp td { background: #f6f8f8; font-family: Inter, sans-serif; font-size: 7.2pt; font-weight: 600; letter-spacing: .03em; color: #0b6e69; padding-top: 3px; }
 .refs-h { margin-top: 8px; }
 .refs { columns: 2; column-gap: 18px; }
@@ -45,7 +46,7 @@ ul.tight li { margin-bottom: 2px; text-align: justify; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .figpage { break-before: page; }
 .figpage svg { width: 100%; height: auto; display: block; }
-.shotfig img { width: 58%; margin: 0 auto; }
+.shotfig img { width: 44%; margin: 0 auto; }
 ol.steps { font-size: 8pt; margin: 4px 0 0; padding-left: 18px; columns: 2; column-gap: 22px; line-height: 1.28; }
 ol.steps li { margin-bottom: 2px; break-inside: avoid; text-align: left; }
 .key { font-family: Inter, sans-serif; font-size: 7.4pt; color: #3c3c38; margin-top: 5px; }

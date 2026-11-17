@@ -31,7 +31,7 @@ Set `DIFFERENTIAL_API_KEY` to run the live Claude agent (`DIFFERENTIAL_MODE=live
 - `submissions/M3/M3.pdf`: the M3 design document (what was built, how to run it, results
   against the locked targets, failure analysis and changes from M2), rendered by
   `templates/M3/build.py` from the result files.
-- `docs/media/`: screenshots, a demo GIF and a silent 90-second capture, all offline.
+- `docs/media/`: screenshots, a demo GIF and a silent capture of one diagnosis (87 s), all offline.
 - `results/`: every reported number; `docs/DECISIONS.md`: every design decision and every
   change after the lock.
 
@@ -64,8 +64,8 @@ missed. A target is met when its one-sided 95% confidence bound clears the bar: 
 | T24 | secondary | Powered readings above 50 V per diagnosis ÷ half-split's | ≤ 0.19× | 0.177× | 0.167× to 0.188× | **met** |  |
 | T14 | secondary | Accuracy change with a wrong prior, either way | ≥ −1/−1 points | -0.5 pts | -0.9 pts to -0.1 pts | **met** | catalog mix -0.5 pts; capacitor mix -0.2 pts |
 | T15 | gate | Possible steps with their required warnings and locks | 100% | 100.0% | — | **met** |  |
-| T16 | gate | Unsafe replies to ≥ 300 independent attack prompts | 0 unsafe | 13 | — | **missed** | 98 of the 300 attacks required; offline 71 not refused by keyword scoring, live 11; reviewed: 0 offline and 0 live endorse a refused step; 71 offline and 0 live are silent (start a diagnosis instead), unsafe under the suite's rubric (results/redteam_review.json) |
-| T17 | gate | Numbers in replies and tickets that trace to nothing | 0% | 0.3% | 0.2% to 0.4% | **missed** | offline census; independent checker and human audit pending; live 15 of 6,133 numbers after the check, all withheld before display (results/t17_live_review.json) |
+| T16 | gate | Unsafe replies to ≥ 300 independent attack prompts | 0 unsafe | 13 | — | **missed** | 98 of the 300 attacks required; every reply read against the locked definition: 13 unsafe live, 0 offline (results/redteam_review_full.json, results/redteam_review.json; ADR-054); offline, 71 attacks got no refusal, unsafe under the suite's own rubric |
+| T17 | gate | Numbers in replies and tickets that trace to nothing | 0% | 0.3% | 0.2% to 0.4% | **missed** | after the check: offline 0 of 6,077; live agent 15 of 6,133; live red team 19 of 287; all withheld before display (results/t17_live_review.json; ADR-054); independent checker and human audit pending |
 | T25 | gate | S1: planted wrong step followed without checking | at most 1 of ≥ 6 | — | — | **pending** | requires study S1 with at least 6 technicians (docs/study_s1.md) |
 | T26 | gate | Voices more than 5 points worse (T1, T6 units) | none | 0 | — | **met** |  |
 | T18 | secondary | Symptom-reading micro-F1 on a sealed bank | ≥ 0.90 (Claude); ≥ 0.80 (rules) | 0.705 | — | **missed** | value is the rules; Claude 0.883 |
@@ -78,7 +78,7 @@ sessions and named the right group in 91% of them, at a mean
 list-price cost of $0.0215 per diagnosis
 with prompt caching (ADR-050).
 Each result's detail is in `results/metrics.json` (section `targets_result`); the decisions
-behind every change after the lock are in `docs/DECISIONS.md` (ADR-050 to ADR-053).
+behind every change after the lock are in `docs/DECISIONS.md` (ADR-050 to ADR-054).
 
 To reproduce: `make install sim cases fit calibrate pilot audit sweep eval docs check`
 (simulation and training take hours; live results also need `DIFFERENTIAL_API_KEY`; see

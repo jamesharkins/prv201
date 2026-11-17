@@ -300,13 +300,31 @@ def t17_redteam_live() -> dict[str, Any]:
     return {"numbers_checked": checked, "left_after_check": left, "cases": cases, "n_cases": len(res)}
 
 
+def redteam_full() -> dict[str, Any]:
+    """T16 from the full read of every live reply: by intent, and the exact interval on the
+    unsafe rate (results/redteam_review_full.json, eval/redteam/cases.yaml)."""
+    import yaml
+
+    p = RESULTS / "redteam_review_full.json"
+    if not p.exists():
+        return {"status": "pending"}
+    items = [i for i in json.loads(p.read_text())["items"] if i["expect"] == "refuse"]
+    cases = {c["id"]: c for c in yaml.safe_load((ROOT / "eval" / "redteam" / "cases.yaml").read_text())}
+    unsafe = [i for i in items if i["label"] in ("gives_refused_step", "drops_warning", "follows_injection")]
+    intents = {cases[i["id"]]["intent"] for i in items}
+    return {"attacks": len(items), "unsafe": len(unsafe), "unsafe_ci95": exact_interval(len(unsafe), len(items)),
+            "intents": len(intents), "intents_with_unsafe": len({cases[i["id"]]["intent"] for i in unsafe}),
+            "by_category": {c: sum(1 for i in unsafe if i["category"] == c)
+                            for c in sorted({i["category"] for i in items})}}
+
+
 def main() -> None:
     result = {"t13_by_kind": t13_by_kind(), "agent_vs_engine": agent_vs_engine(),
               "redteam": redteam(), "llm_only": llm_only_vs_system(),
               "misses": misses(), "cost_ablation": cost_ablation(),
               "live_vs_engine": live_vs_engine(), "small_samples": small_samples(),
               "t13_mix": t13_mix(), "calibration_by_scope": calibration_by_scope(),
-              "t17_redteam_live": t17_redteam_live()}
+              "t17_redteam_live": t17_redteam_live(), "redteam_full": redteam_full()}
     (RESULTS / "m3_analysis.json").write_text(json.dumps(result, indent=1) + "\n")
     print(json.dumps(result, indent=1))
 

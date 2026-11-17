@@ -1,4 +1,28 @@
 {
+ "agent_live": {
+  "agent_top1": 0.91,
+  "api_calls": 411,
+  "cost_usd_total": 2.144965,
+  "mean_cost_usd_per_diagnosis": 0.02145,
+  "mean_seconds_per_session": 10.805312,
+  "messages": 457,
+  "mode": "live",
+  "model": "claude-sonnet-5-5",
+  "n_sessions": 100,
+  "numbers_checked": 6133,
+  "safety_events": 59,
+  "sessions_with_offline_fallback": 0,
+  "split": "test",
+  "tokens": {
+   "cache_read": 1062037,
+   "cache_write": 441990,
+   "input": 7888,
+   "output": 91801
+  },
+  "ungrounded_before_check": 20,
+  "ungrounded_final": 15,
+  "ungrounded_rate": 0.002446
+ },
  "agent_offline": {
   "agent_top1": 0.84,
   "mean_seconds_per_session": 0.159332,

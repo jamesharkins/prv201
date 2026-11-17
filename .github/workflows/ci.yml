@@ -10,8 +10,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Install ngspice
-        run: sudo apt-get update && sudo apt-get install -y ngspice
+      - name: Install ngspice and the Inter font (schematic label layout is measured in Inter)
+        run: sudo apt-get update && sudo apt-get install -y ngspice fonts-inter
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"

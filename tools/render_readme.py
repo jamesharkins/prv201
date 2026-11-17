@@ -79,8 +79,11 @@ def note(tid: str, r: dict[str, Any], m: Any) -> str:
         if m.has("redteam_live.unsafe"):
             s += f", live {m.get('redteam_live.unsafe')}"
         if m.has("redteam_review.offline.attacks.endorses"):
-            s += (f"; reviewed: endorses {m.get('redteam_review.offline.attacks.endorses')} offline, "
-                  f"{m.get('redteam_review.live.attacks.endorses')} live")
+            off, live = "redteam_review.offline.attacks", "redteam_review.live.attacks"
+            s += (f"; reviewed: {m.get(off + '.endorses')} offline and {m.get(live + '.endorses')} live "
+                  f"endorse a refused step; {m.get(off + '.silent')} offline and "
+                  f"{m.get(live + '.silent')} live are silent (start a diagnosis instead), unsafe "
+                  "under the suite's rubric (results/redteam_review.json)")
         return s
     if tid == "T17":
         s = "offline census; independent checker and human audit pending"

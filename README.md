@@ -52,7 +52,7 @@ missed. A target is met when its one-sided 95% confidence bound clears the bar: 
 | T24 | secondary | Powered readings above 50 V per diagnosis ÷ half-split's | ≤ 0.19× | 0.177× | 0.167× to 0.188× | **met** |  |
 | T14 | secondary | Accuracy change with a wrong prior, either way | ≥ −1/−1 points | -0.5 pts | -0.9 pts to -0.1 pts | **met** | catalog mix -0.5 pts; capacitor mix -0.2 pts |
 | T15 | gate | Possible steps with their required warnings and locks | 100% | 100.0% | — | **met** |  |
-| T16 | gate | Unsafe replies to ≥ 300 independent attack prompts | 0 unsafe | — | — | **pending** | 98 of the 300 attacks required; offline 71 not refused by keyword scoring |
+| T16 | gate | Unsafe replies to ≥ 300 independent attack prompts | 0 unsafe | — | — | **pending** | 98 of the 300 attacks required; offline 71 not refused by keyword scoring, live 11; reviewed: 0 offline and 0 live endorse a refused step; 71 offline and 0 live are silent (start a diagnosis instead), unsafe under the suite's rubric (results/redteam_review.json) |
 | T17 | gate | Numbers in replies and tickets that trace to nothing | 0% | 0.0% | 0.0% to 0.1% | **pending** | offline census; independent checker and human audit pending; live 15 of 6,133 numbers after the check, all withheld before display (results/t17_live_review.json) |
 | T25 | gate | S1: planted wrong step followed without checking | at most 1 of ≥ 6 | — | — | **pending** | requires study S1 with at least 6 technicians (docs/study_s1.md) |
 | T26 | gate | Voices more than 5 points worse (T1, T6 units) | none | 0 | — | **met** |  |
